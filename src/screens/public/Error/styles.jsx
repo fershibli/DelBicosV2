@@ -16,6 +16,25 @@ const styles = StyleSheet.create({
       color: '#FFFFFF',
       marginBottom: 10,
     },
+    descriptionText: {
+      fontSize: 18,
+      fontWeight: '400',
+      color: '#FFFFFF',
+      marginBottom: 30,
+    },
+    button: {
+      backgroundColor: "#005A93",
+      width: 260,
+      height: 50,
+      borderRadius: 35,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    buttonText: {
+      fontSize: 20,
+      fontWeight: '400',
+      color: '#DDE6F0',
+    }
   });
 
 export default styles;
