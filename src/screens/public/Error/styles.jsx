@@ -10,9 +10,11 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
     },
-    texto: {
-      fontSize: 24,
-      fontWeight: 'bold',
+    errorText: {
+      fontSize: 36,
+      fontWeight: '700',
+      color: '#FFFFFF',
+      marginBottom: 10,
     },
   });
 
