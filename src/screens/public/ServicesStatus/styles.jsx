@@ -21,8 +21,9 @@ const styles = StyleSheet.create({
     color: '#005A93',
   },
   professionalContainer: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 15,
+    paddingHorizontal: 15
   },
   professionalName: {
     fontWeight: '700',
@@ -162,6 +163,27 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'center',
   },
+  parnerLogo: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  professionalInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  partnerLogo: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  textContainer: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  }
+
 });
 
 export default styles;
