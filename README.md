@@ -128,6 +128,5 @@ To enhance your development experience with ESLint and Prettier, consider instal
 
 - **ESLint**: Integrates ESLint into your editor for real-time linting.
 - **Prettier - Code formatter**: Automatically formats your code according to Prettier's rules.
-- **Prettier ESLint**: Ensures that Prettier and ESLint work together without conflicts.
 
 By installing these extensions, you can maintain code quality and consistency throughout your project.
