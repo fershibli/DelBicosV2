@@ -54,7 +54,7 @@ To ensure code quality and consistency, this project uses ESLint and Prettier. Y
   ```
 - **Fixing Linting Errors**: To automatically fix linting errors, run:
   ```
-  npm run lint:fix
+  npm run lint --fix
   ```
 - **Formatting**: To check for formatting issues, run:
   ```

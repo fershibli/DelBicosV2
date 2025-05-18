@@ -8,7 +8,6 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "lint": "expo lint",
-    "lint:fix": "expo lint --fix",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write ."
   },
