@@ -4,30 +4,31 @@
 
 ```
 DelBicosV2
-├── src
-│   ├── assets          # Static assets like images and fonts
-│   ├── components      # Reusable React components
-│   ├── config          # Configuration files for the application
-│   ├── lib
-│   │  ├── constants    # Constants used throughout the application
-│   │  ├── helpers      # Helper functions and utilities
-│   │  └── hooks        # Custom React hooks
-│   │
-│   ├── screens         # Main screens of the application and navigation
-│   │  ├── private      # Private screens requiring authentication
-│   │  └── public       # Public screens accessible unauthenticated
-│   │
-│   ├── stores          # State management using Zustand
-│   └── theme           # Theme and styling files
+├── 📁 src
+│  ├── 🖼️ assets        # Static assets like images and fonts
+│  ├── 🧩 components    # Reusable React components
+│  ├── ⚙️ config        # Configuration files for the application
+│  │
+│  ├── lib
+│  │  ├── 🧱 constants  # Constants used throughout the application
+│  │  ├── 🔧 helpers    # Helper functions and utilities
+│  │  └── 🪝 hooks      # Custom React hooks
+│  │
+│  ├── 🖥️ screens       # Main screens of the application and navigation
+│  │  ├── 🔐 private    # Private screens requiring authentication
+│  │  └── 🔓 public     # Public screens accessible unauthenticated
+│  │
+│  ├── 💾 stores        # State management using Zustand
+│  └── 🎨 theme         # Theme and styling files
 │
-├── .nvmrc              # NVM configuration file
-├── .prettierrc         # Prettier configuration file
-├── app.json            # Configuration file for the React Native app
-├── eslint.config.js    # ESLint configuration file
-├── index.js            # Entry point for the React Native app
-├── package.json        # Lists dependencies and scripts for the project
-├── README.md           # Project documentation
-└── tsconfig.json       # TypeScript configuration file
+├── ⚙️ .nvmrc            # NVM configuration file
+├── ⚙️ .prettierrc       # Prettier configuration file
+├── ⚙️ app.json          # Configuration file for the React Native app
+├── ⚙️ eslint.config.js  # ESLint configuration file
+├── 📄 index.js          # Entry point for the React Native app
+├── 📦 package.json      # Lists dependencies and scripts for the project
+├── 📖 README.md         # Project documentation
+└── ⚙️ tsconfig.json     # TypeScript configuration file
 ```
 
 ## Installation
