@@ -40,6 +40,13 @@ export function PartnerProfile() {
         </Text>
       </View>
 
+      <View style={styles.navTabs}>
+        <Text style={[styles.tab, styles.activeTab]}>Sobre</Text>
+        <Text style={styles.tab}>Serviços</Text>
+        <Text style={styles.tab}>Galeria</Text>
+        <Text style={styles.tab}>Avaliações</Text>
+      </View>
+
     </View>
   );
 }
