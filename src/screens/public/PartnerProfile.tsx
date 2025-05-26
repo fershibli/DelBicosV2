@@ -4,6 +4,8 @@ import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
 import {  SobreContent } from './PartnerProfile/SobreContent';
+import { ServicosContent } from './PartnerProfile/ServicosContent';
+import { GaleriaContent } from './PartnerProfile/GaleriaContent';
 
 export function PartnerProfile() {
   const navigation = useNavigation();
@@ -15,8 +17,9 @@ export function PartnerProfile() {
       case 'sobre':
         return <SobreContent />;
       case 'servicos':
-        return <SobreContent />;
-      // Adicione os outros casos posteriormente
+        return <ServicosContent />;
+      case 'galeria':
+        return <GaleriaContent />;
       default:
         return <SobreContent />;
     }
@@ -63,6 +66,10 @@ export function PartnerProfile() {
         
         <TouchableOpacity onPress={() => setActiveTab('servicos')}>
           <Text style={[styles.tab, activeTab === 'servicos' && styles.activeTab]}>Serviços</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => setActiveTab('galeria')}>
+          <Text style={[styles.tab, activeTab === 'galeria' && styles.activeTab]}>Serviços</Text>
         </TouchableOpacity>
 
       </View>
