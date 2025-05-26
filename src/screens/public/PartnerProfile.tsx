@@ -32,6 +32,14 @@ export function PartnerProfile() {
           </View>
         </LinearGradient>
       </ImageBackground>
+
+      <View style={styles.addressContainer}>
+        <MaterialCommunityIcons name="map-marker" size={16} color="#000" />
+        <Text style={styles.addressText}>
+          Rua Mascarenhas Carneio, 517- 18600-692 - Vila Santana - Sorocaba / SP
+        </Text>
+      </View>
+
     </View>
   );
 }
