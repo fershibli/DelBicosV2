@@ -1,3 +1,5 @@
+![DelBicos_LogoH](https://github.com/user-attachments/assets/de5add08-da13-426b-88c5-77ce8f7ee680)
+
 # DelBicosV2
 
 ## Project Structure
