@@ -2,9 +2,25 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import {  SobreContent } from './PartnerProfile/SobreContent';
 
 export function PartnerProfile() {
   const navigation = useNavigation();
+  
+  const [activeTab, setActiveTab] = useState<'sobre' | 'servicos' | 'galeria' | 'avaliacoes'>('sobre');
+
+    const renderContent = () => {
+    switch(activeTab) {
+      case 'sobre':
+        return <SobreContent />;
+      case 'servicos':
+        return <SobreContent />;
+      // Adicione os outros casos posteriormente
+      default:
+        return <SobreContent />;
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -41,11 +57,17 @@ export function PartnerProfile() {
       </View>
 
       <View style={styles.navTabs}>
-        <Text style={[styles.tab, styles.activeTab]}>Sobre</Text>
-        <Text style={styles.tab}>Serviços</Text>
-        <Text style={styles.tab}>Galeria</Text>
-        <Text style={styles.tab}>Avaliações</Text>
+        <TouchableOpacity onPress={() => setActiveTab('sobre')}>
+          <Text style={[styles.tab, activeTab === 'sobre' && styles.activeTab]}>Sobre</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity onPress={() => setActiveTab('servicos')}>
+          <Text style={[styles.tab, activeTab === 'servicos' && styles.activeTab]}>Serviços</Text>
+        </TouchableOpacity>
+
       </View>
+
+      {renderContent()}
 
     </View>
   );
