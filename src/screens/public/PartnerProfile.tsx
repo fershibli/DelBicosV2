@@ -6,6 +6,7 @@ import { useState } from 'react';
 import {  SobreContent } from './PartnerProfile/SobreContent';
 import { ServicosContent } from './PartnerProfile/ServicosContent';
 import { GaleriaContent } from './PartnerProfile/GaleriaContent';
+import { AvaliacoesContent } from './PartnerProfile/AvaliacoesContent';
 
 export function PartnerProfile() {
   const navigation = useNavigation();
@@ -20,6 +21,8 @@ export function PartnerProfile() {
         return <ServicosContent />;
       case 'galeria':
         return <GaleriaContent />;
+      case 'avaliacoes':
+        return <AvaliacoesContent />;
       default:
         return <SobreContent />;
     }
@@ -69,7 +72,11 @@ export function PartnerProfile() {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => setActiveTab('galeria')}>
-          <Text style={[styles.tab, activeTab === 'galeria' && styles.activeTab]}>Serviços</Text>
+          <Text style={[styles.tab, activeTab === 'galeria' && styles.activeTab]}>Galeria</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => setActiveTab('avaliacoes')}>
+          <Text style={[styles.tab, activeTab === 'avaliacoes' && styles.activeTab]}>Avaliações</Text>
         </TouchableOpacity>
 
       </View>
