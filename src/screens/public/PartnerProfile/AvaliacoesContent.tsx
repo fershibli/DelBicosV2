@@ -6,7 +6,7 @@ export function AvaliacoesContent() {
   <View style={styles.contentContainer}>
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Avaliações</Text>
-      <Text style={styles.sectionText}>Sem avaliações para este </Text>
+      <Text style={styles.sectionText}>Sem avaliações para este parceiro</Text>
     </View>
   </View>
   );
