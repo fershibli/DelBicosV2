@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "src/screens/public/ServicesStatus/styles.jsx", "src/screens/public/ServicesStatus/ServiceStatusScreen .jsx"  ]
 }
