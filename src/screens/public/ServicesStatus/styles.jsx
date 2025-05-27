@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: '#000000',
     borderRadius: 3,
+    marginBottom: 10,
     overflow: 'hidden',
   },
   itemsHeader: {
