@@ -1,17 +1,24 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "moduleResolution": "bundler",
+    "jsx": "react-native",
+    "plugins": [
+      {
+        "name": "typescript-styled-plugin"
+      }
+    ],
     "strict": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
-  },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts",
-  ]
+      "@assets/*": ["src/assets/*"],
+      "@components/*": ["src/components/*"],
+      "@config/*": ["src/config/*"],
+      "@lib/*": ["src/lib/*"],
+      "@screens/*": ["src/screens/*"],
+      "@stores/*": ["src/stores/*"],
+      "@theme/*": ["src/theme/*"]
+    },
+    "lib": ["dom", "es6", "es2017", "esnext.asynciterable"]
+  }
 }
