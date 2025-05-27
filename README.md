@@ -1,50 +1,134 @@
-# Welcome to your Expo app 👋
+![DelBicos_LogoH](https://github.com/user-attachments/assets/de5add08-da13-426b-88c5-77ce8f7ee680)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# DelBicosV2
 
-## Get started
+## Project Structure
 
-1. Install dependencies
+```
+DelBicosV2
+├── 📁 src
+│  ├── 🖼️ assets        # Static assets like images and fonts
+│  ├── 🧩 components    # Reusable React components
+│  ├── ⚙️ config        # Configuration files for the application
+│  │
+│  ├── lib
+│  │  ├── 🧱 constants  # Constants used throughout the application
+│  │  ├── 🔧 helpers    # Helper functions and utilities
+│  │  └── 🪝 hooks      # Custom React hooks
+│  │
+│  ├── 🖥️ screens       # Main screens of the application and navigation
+│  │  ├── 🔐 private    # Private screens requiring authentication
+│  │  └── 🔓 public     # Public screens accessible unauthenticated
+│  │
+│  ├── 💾 stores        # State management using Zustand
+│  └── 🎨 theme         # Theme and styling files
+│
+├── ⚙️ .nvmrc            # NVM configuration file
+├── ⚙️ .prettierrc       # Prettier configuration file
+├── ⚙️ app.json          # Configuration file for the React Native app
+├── ⚙️ eslint.config.js  # ESLint configuration file
+├── 📄 index.js          # Entry point for the React Native app
+├── 📦 package.json      # Lists dependencies and scripts for the project
+├── 📖 README.md         # Project documentation
+└── ⚙️ tsconfig.json     # TypeScript configuration file
+```
 
-   ```bash
+## Installation
+
+To install the project, follow these steps:
+
+1. Clone the repository:
+
+   ```
+   git clone <repository-url>
+   ```
+
+2. Navigate to the project directory:
+
+   ```
+   cd DelBicosV2
+   ```
+
+3. Install the dependencies:
+   ```
    npm install
    ```
 
-2. Start the app
+## Running the Project
 
-   ```bash
-    npx expo start
-   ```
+To run the project, use the following command:
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+npm start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+This will start the development server.
 
-## Learn more
+### Running on Android Emulator
 
-To learn more about developing your project with Expo, look at the following resources:
+To run the project on an Android emulator, ensure you have the Android SDK and an emulator set up. Then, use the following command:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```
+npm run android
+```
 
-## Join the community
+### Running on iOS Simulator
 
-Join our community of developers creating universal apps.
+To run the project on an iOS simulator, ensure you have Xcode installed. Then, use the following command:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```
+npm run ios
+```
+
+### Running on Web
+
+To run the project on a web browser, use the following command:
+
+```
+npm run web
+```
+
+## Linting and Formatting
+
+To ensure code quality and consistency, this project uses ESLint and Prettier. You can run the following commands to lint and format your code:
+
+### Linting
+
+To check for linting errors, run:
+
+```
+npm run lint
+```
+
+### Fixing Linting Errors
+
+To automatically fix linting errors, run:
+
+```
+npm run lint --fix
+```
+
+### Formatting
+
+To check for formatting issues, run:
+
+```
+npm run format:check
+```
+
+### Fixing Formatting Issues
+
+To automatically fix formatting issues, run:
+
+```
+npm run format:fix
+```
+
+## Recommended VS Code Extensions
+
+To enhance your development experience with ESLint and Prettier, consider installing the following extensions:
+
+- **ESLint**: Integrates ESLint into your editor for real-time linting.
+- **Prettier - Code formatter**: Automatically formats your code according to Prettier's rules.
+
+By installing these extensions, you can maintain code quality and consistency throughout your project.
