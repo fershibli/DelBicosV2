@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import Header from './Components/header';
-import ProfessionalInfo from './Components/ProfessionalInfo';
-import BannerStatus from './Components/BannerStatus';
-import ServiceItems from './Components/ServiceItems';
-import PaymentInfo from './Components/PaymentInfo';
-import styles from './styles';
+import Header from '@components/header';
+import ProfessionalInfo from '@components/ProfessionalInfo';
+import BannerStatus from '@components/BannerStatus';
+import ServiceItems from '@components/ServiceItems';
+import PaymentInfo from '@components/PaymentInfo';
+import styles from '@components/styles';
 
 const ServiceStatusScreen = () => {
   return (
@@ -13,7 +13,7 @@ const ServiceStatusScreen = () => {
       <Header />
       <ProfessionalInfo />
       <View style={styles.divider} />
-      <BannerStatus />
+      <BannerStatus  status="Cancelado"/>
       <ServiceItems />
       <PaymentInfo />
     </View>
