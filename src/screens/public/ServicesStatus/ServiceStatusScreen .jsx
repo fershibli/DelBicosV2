@@ -13,7 +13,7 @@ const ServiceStatusScreen = () => {
       <Header />
       <ProfessionalInfo />
       <View style={styles.divider} />
-      <BannerStatus  status="Cancelado"/>
+      <BannerStatus  status="Executado"/>
       <ServiceItems />
       <PaymentInfo />
     </View>
