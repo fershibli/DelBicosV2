@@ -4,7 +4,7 @@ import Header from '@components/header';
 import ProfessionalInfo from '@components/ProfessionalInfo';
 import BannerStatus from '@components/BannerStatus';
 import ServiceItems from '@components/ServiceItems';
-import PaymentInfo from '@components/PaymentInfo';
+import PaymentInfo from '@components/PaymentInfo/PaymentInfo';
 import styles from '@components/styles';
 
 const mockServices = [
@@ -37,7 +37,9 @@ const mockServices = [
   }
 ];
 
+
 const ServiceStatusScreen = () => {
+    const subtotal = mockServices.reduce((sum, service) => sum + service.price, 0);
   return (
     <View style={styles.container}>
       <Header />
@@ -45,7 +47,13 @@ const ServiceStatusScreen = () => {
       <View style={styles.divider} />
       <BannerStatus  status="Executado"/>
       <ServiceItems items={mockServices} />
-      <PaymentInfo />
+      <PaymentInfo 
+        total={subtotal}
+        discount={40.00}
+        couponCode="BARBEIRO40"
+        paymentMethod="Cartão de Crédito"
+        installments={6}
+      />
     </View>
   );
 };
