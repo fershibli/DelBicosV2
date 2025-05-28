@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     color: '#005A93',
   },
   divider: {
-    height: 1,
+    height: 2,
     backgroundColor: '#D9D9D9',
     marginVertical: 15,
   },
@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
   itemDetails: {
     backgroundColor: '#FFE092',
     padding: 10,
+    marginBottom: 2
   },
   itemRow: {
     flexDirection: 'row',
