@@ -7,6 +7,7 @@ import {  SobreContent } from './PartnerProfile/SobreContent';
 import { ServicosContent } from './PartnerProfile/ServicosContent';
 import { GaleriaContent } from './PartnerProfile/GaleriaContent';
 import { AvaliacoesContent } from './PartnerProfile/AvaliacoesContent';
+import { Rating } from 'react-native-ratings';
 
 export function PartnerProfile() {
   const navigation = useNavigation();
@@ -48,8 +49,15 @@ export function PartnerProfile() {
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>Jefferson Santos</Text>
             <View style={styles.ratingContainer}>
-              <MaterialIcons name="star" size={12} color="#FFD700" />
-              <Text style={styles.ratingText}>4,6 (13 avaliações)</Text>
+            <Rating
+              type='star'
+              ratingCount={5}
+              imageSize={12}
+              readonly
+              startingValue={4.6}
+              fractions={1}
+              style={{ marginRight: 4 }}
+            />
             </View>
           </View>
         </LinearGradient>
@@ -120,6 +128,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    paddingVertical: 2,
   },
   ratingText: {
     color: 'white',
