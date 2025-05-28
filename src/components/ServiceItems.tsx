@@ -14,23 +14,36 @@ interface ServiceItemsProps {
   }[];
 }
 
-const ServiceItems = () => (
-  <View style={styles.itemsContainer}>
-    <View style={styles.itemsHeader}>
-      <Text style={styles.itemsHeaderText}>Itens</Text>
-    </View>
-    <View style={styles.itemDetails}>
-      <View style={styles.itemRow}>
-        <Text style={styles.itemName}>Barba</Text>
-        <Text style={styles.itemDate}>(5/12/2024)</Text>
+const ServiceItems: React.FC<ServiceItemsProps> = ({ items }) => {
+  const formatPrice = (price: number) => {
+    return `R$${price.toFixed(2).replace('.', ',')}`;
+  };
+
+  const formatDate = (dateString: string) => {
+    return `(${dateString})`;
+  };
+
+  return (
+    <View style={styles.itemsContainer}>
+      <View style={styles.itemsHeader}>
+        <Text style={styles.itemsHeaderText}>Itens</Text>
       </View>
-      <View style={styles.itemRow}>
-        <Text style={styles.itemTime}>14:30 - 15:00</Text>
-        <Text style={styles.itemPrice}>R$38,00</Text>
-      </View>
-      <Text style={styles.professionalText}>Profissional: Jefferson</Text>
+      
+      {items.map((item) => (
+        <View key={item.id} style={styles.itemDetails}>
+          <View style={styles.itemRow}>
+            <Text style={styles.itemName}>{item.name}</Text>
+            <Text style={styles.itemDate}>{formatDate(item.date)}</Text>
+          </View>
+          <View style={styles.itemRow}>
+            <Text style={styles.itemTime}>{`${item.startTime} - ${item.endTime}`}</Text>
+            <Text style={styles.itemPrice}>{formatPrice(item.price)}</Text>
+          </View>
+          <Text style={styles.professionalText}>Profissional: {item.professional}</Text>
+        </View>
+      ))}
     </View>
-  </View>
-);
+  );
+};
 
 export default ServiceItems;
