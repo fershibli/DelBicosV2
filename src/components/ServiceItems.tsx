@@ -2,6 +2,18 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import styles from './styles';
 
+interface ServiceItemsProps {
+  items: {
+    id: string;
+    name: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    price: number;
+    professional: string;
+  }[];
+}
+
 const ServiceItems = () => (
   <View style={styles.itemsContainer}>
     <View style={styles.itemsHeader}>
