@@ -9,6 +9,13 @@ import { GaleriaContent } from './PartnerProfile/GaleriaContent';
 import { AvaliacoesContent } from './PartnerProfile/AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
 
+const servicos = [
+  { nome: 'Corte Masculino', preco: 'R$ 30,00', duracao: '30 min' },
+  { nome: 'Barba', preco: 'R$ 20,00', duracao: '20 min' },
+  { nome: 'Luzes', preco: 'R$ 120,00', duracao: '1h 30min' },
+];
+
+
 export function PartnerProfile() {
   const navigation = useNavigation();
   
@@ -19,7 +26,7 @@ export function PartnerProfile() {
       case 'sobre':
         return <SobreContent />;
       case 'servicos':
-        return <ServicosContent />;
+        return <ServicosContent servicos={servicos}/>;
       case 'galeria':
         return <GaleriaContent />;
       case 'avaliacoes':
