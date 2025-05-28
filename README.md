@@ -1,4 +1,10 @@
-![DelBicos_LogoH](https://github.com/user-attachments/assets/de5add08-da13-426b-88c5-77ce8f7ee680)
+<p align="center">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/8f678029-be34-4be1-83f3-4c7fd21eb035">
+      <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/2a47dadf-6288-4ae8-a0a7-d066e3ccf52a">
+      <img alt="Shows a black logo in light color mode and a white one in dark color mode." src="https://user-images.githubusercontent.com/25423296/163456779-a8556205-d0a5-45e2-ac17-42d089e3c3f8.png">
+    </picture>
+</p>
 
 # DelBicosV2
 
