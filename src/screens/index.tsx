@@ -13,6 +13,7 @@ import { Profile } from './Profile';
 import { Settings } from './Settings';
 import { Updates } from './Updates';
 import { NotFound } from './NotFound';
+import { PartnerProfile } from './public/PartnerProfile';
 
 const HomeTabs = createBottomTabNavigator({
   screens: {
@@ -59,6 +60,18 @@ const RootStack = createNativeStackNavigator({
         headerShown: false,
       },
     },
+    PartnerProfile: {
+      screen: PartnerProfile,
+      linking: {
+        path: 'partner/:id',
+        parse: {
+          id: (value) => value,
+        },
+        stringify: {
+          id: (value) => value,
+        },
+      }
+    },
     Profile: {
       screen: Profile,
       linking: {
@@ -100,6 +113,6 @@ type RootStackParamList = StaticParamList<typeof RootStack>;
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
+    interface RootParamList extends RootStackParamList { }
   }
 }
