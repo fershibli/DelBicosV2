@@ -40,15 +40,15 @@ const BannerStatus: React.FC<BannerStatusProps> = ({ status }) => {
   const currentStatus = statusConfig[status];
 
   return (
-    <View style={styles.successContainer}>
+    <View style={styles.statusContainer}>
       <View style={[
-        styles.successBanner, 
+        styles.statusBanner, 
         { 
           backgroundColor: currentStatus.backgroundColor,
           borderColor: currentStatus.borderColor
         }
       ]}>
-        <Text style={[styles.successText, { color: currentStatus.textColor }]}>
+        <Text style={[styles.statusText, { color: currentStatus.textColor }]}>
           {currentStatus.message}
         </Text>
       </View>
