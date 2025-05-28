@@ -43,9 +43,11 @@ const ServiceStatusScreen = () => {
   return (
     <View style={styles.container}>
       <Header />
-      <ProfessionalInfo />
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+        <ProfessionalInfo />
+        <BannerStatus  status="Executado"/>
+        </View>
       <View style={styles.divider} />
-      <BannerStatus  status="Executado"/>
       <ServiceItems items={mockServices} />
       <PaymentInfo 
         total={subtotal}
