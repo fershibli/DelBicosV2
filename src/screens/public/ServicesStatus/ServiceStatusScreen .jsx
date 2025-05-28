@@ -25,6 +25,15 @@ const mockServices = [
     endTime: '15:45',
     price: 45.00,
     professional: 'Jefferson'
+  },
+  {
+    id: '3',
+    name: 'Limpeza de Pele',
+    date: '5/12/2024',
+    startTime: '16:00',
+    endTime: '16:30',
+    price: 50.00,
+    professional: 'Jefferson'
   }
 ];
 
@@ -35,7 +44,7 @@ const ServiceStatusScreen = () => {
       <ProfessionalInfo />
       <View style={styles.divider} />
       <BannerStatus  status="Executado"/>
-      <ServiceItems />
+      <ServiceItems items={mockServices} />
       <PaymentInfo />
     </View>
   );
