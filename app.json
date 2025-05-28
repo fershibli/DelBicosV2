@@ -20,7 +20,7 @@
       "package": "com.satya164.reactnavigationtemplate"
     },
     "web": {
-      "favicon": "./assets/favicon.svg"
+      "favicon": "./assets/favicon.ico"
     },
     "plugins": [
       "expo-asset",
