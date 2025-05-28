@@ -1,59 +1,63 @@
-import { Button, Text } from '@react-navigation/elements';
-import { StyleSheet, View } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 
-export function ServicosContent() {
+type Servico = {
+  nome: string;
+  preco: string;
+  duracao: string;
+};
+
+type ServicosContentProps = {
+  servicos: Servico[];
+};
+
+export function ServicosContent({ servicos }: ServicosContentProps) {
   return (
-  <View style={styles.contentContainer}>
-    <View style={styles.section}>
+    <View style={styles.contentContainer}>
       <Text style={styles.sectionTitle}>Serviços</Text>
-      <Text style={styles.sectionText}>Não informado</Text>
+
+      {servicos.length === 0 ? (
+        <Text style={styles.sectionText}>Nenhum serviço disponível.</Text>
+      ) : (
+        <FlatList
+          data={servicos}
+          keyExtractor={(item, index) => `${item.nome}-${index}`}
+          renderItem={({ item }) => (
+            <View style={styles.servicoItem}>
+              <Text style={styles.nomeServico}>{item.nome}</Text>
+              <Text style={styles.infoServico}>{item.preco} • {item.duracao}</Text>
+            </View>
+          )}
+        />
+      )}
     </View>
-  </View>
   );
 }
 
 const styles = StyleSheet.create({
-  navTabs: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  tab: {
-    fontSize: 17,
-    color: '#666',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  activeTab: {
-    color: '#FC8200',
-    fontWeight: 'bold',
-    borderBottomWidth: 2,
-    borderBottomColor: '#FC8200',
-  },
   contentContainer: {
     padding: 16,
-  },
-  section: {
-    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 17,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 12,
     color: '#333',
   },
   sectionText: {
     fontSize: 15,
     color: '#666',
   },
-  list: {
-    marginLeft: 16,
+  servicoItem: {
+    marginBottom: 16,
   },
-  listItem: {
-    fontSize: 15,
+  nomeServico: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#222',
+  },
+  infoServico: {
+    fontSize: 14,
     color: '#666',
-    marginBottom: 4,
+    marginTop: 2,
   },
 });
