@@ -49,10 +49,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     marginVertical: 15,
   },
-  successContainer: {
+  statusContainer: {
     marginBottom: 20,
   },
-  successBanner: {
+  statusBanner: {
     backgroundColor: '#22843B',
     borderWidth: 1,
     borderColor: '#22843B',
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  successText: {
+  statusText: {
     fontWeight: '700',
     fontSize: 15,
     lineHeight: 18,
