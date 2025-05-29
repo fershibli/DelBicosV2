@@ -32,7 +32,7 @@ const servicos = [
 
 const parceiroDetalhes = {
   descricao: 'Salão especializado em cortes masculinos e barba, com atendimento personalizado e ambiente climatizado. Possuimos os melhores profissionais da região',
-  comodidadesIds: ['1', '3', '5' ]
+  comodidadesIds: ['1', '3', '5', '6', '7' ]
 };
 
 export function PartnerProfile() {
@@ -43,7 +43,11 @@ export function PartnerProfile() {
     const renderContent = () => {
     switch(activeTab) {
       case 'sobre':
-        return <SobreContent />;
+        return <SobreContent
+                 detalhes={parceiroDetalhes.descricao}
+                 comodidadesIds={parceiroDetalhes.comodidadesIds}
+                 todasComodidades={comodidades}
+                 />;
       case 'servicos':
         return <ServicosContent servicos={servicos}/>;
       case 'galeria':
@@ -51,7 +55,12 @@ export function PartnerProfile() {
       case 'avaliacoes':
         return <AvaliacoesContent />;
       default:
-        return <SobreContent />;
+        return <SobreContent
+                 detalhes={parceiroDetalhes.descricao}
+                 comodidadesIds={parceiroDetalhes.comodidadesIds}
+                 todasComodidades={comodidades}
+               />;
+        
     }
   };
 
