@@ -88,7 +88,7 @@ export function PartnerProfile() {
                  disponibilidades={AGENDA_MOCK}
                 />;
       case 'galeria':
-        return <GaleriaContent />;
+        return <GaleriaContent imagens={GALLERY_IMAGE} />;
       case 'avaliacoes':
         return <AvaliacoesContent />;
       default:
