@@ -14,6 +14,33 @@ type Comodidade = {
   nome: string;
 };
 
+type Disponibilidade = {
+  data: string;
+  horarios: string[];
+};
+
+const AGENDA_MOCK: Disponibilidade[] = (() => {
+  const dates = [];
+  const today = new Date();
+  
+  for (let i = 1; i <= 3; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    
+    const dateString = date.toISOString().split('T')[0];
+    
+    dates.push({
+      data: dateString,
+      horarios: [
+        '08:00', '09:00', '10:00', '11:00', 
+        '14:00', '15:00', '16:00', '17:00'
+      ]
+    });
+  }
+  
+  return dates;
+})();
+
 const comodidades: Comodidade[] = [
   { id: '1', nome: 'Acessibilidade à deficientes' },
   { id: '2', nome: 'Atendimento à crianças' },
@@ -34,6 +61,8 @@ const parceiroDetalhes = {
   descricao: 'Salão especializado em cortes masculinos e barba, com atendimento personalizado e ambiente climatizado. Possuimos os melhores profissionais da região',
   comodidadesIds: ['1', '3', '5', '6', '7' ]
 };
+
+
 
 export function PartnerProfile() {
   const navigation = useNavigation();
