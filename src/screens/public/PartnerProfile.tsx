@@ -62,7 +62,12 @@ const parceiroDetalhes = {
   comodidadesIds: ['1', '3', '5', '6', '7' ]
 };
 
-
+const GALLERY_IMAGE = [
+  { id: '1', url: 'https://www.delbicos.com.br/imagem1.jpg' },
+  { id: '2', url: 'https://www.delbicos.com.br/imagem2.jpg' },
+  { id: '3', url: 'https://www.delbicos.com.br/imagem3.jpg' },
+  { id: '4', url: 'https://www.delbicos.com.br/imagem5.jpg' }
+];
 
 export function PartnerProfile() {
   const navigation = useNavigation();
