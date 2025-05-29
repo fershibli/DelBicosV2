@@ -13,6 +13,10 @@ type Avaliacao = {
   data: string;
 };
 
+type AvaliacoesContentProps = {
+  avaliacoes?: Avaliacao[];
+}
+
 export function AvaliacoesContent() {
   return (
   <View style={styles.contentContainer}>
