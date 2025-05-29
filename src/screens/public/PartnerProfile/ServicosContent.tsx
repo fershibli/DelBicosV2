@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   selectedDateButton: {
-    backgroundColor: '#FC8200',
+    backgroundColor: '#005A93',
   },
   dateText: {
     textAlign: 'center',
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedTimeButton: {
-    backgroundColor: '#FC8200',
+    backgroundColor: '#005A93',
   },
   timeText: {
     color: '#333',
