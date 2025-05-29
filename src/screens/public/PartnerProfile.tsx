@@ -63,6 +63,7 @@ export function PartnerProfile() {
               readonly
               startingValue={4.6}
               fractions={1}
+              tintColor='black'
               style={{ marginRight: 4 }}
             />
             </View>
