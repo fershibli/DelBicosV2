@@ -1,287 +1,301 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
-import { useState } from 'react';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, Pressable } from 'react-native';
 
 type Servico = {
+  id: string;
   nome: string;
   preco: string;
   duracao: string;
 };
 
-type ServicosContentProps = {
-  servicos: Servico[];
-};
-
-type HorarioDisponivel = {
-  data: Date;
-  horarios: string[];
-};
-
-const AGENDA_MOCK: HorarioDisponivel[] = [
-  {
-    data: new Date('2025-06-01'),
-    horarios: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00']
-  },
-  {
-    data: new Date('2025-06-02'),
-    horarios: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00']
+const generateMockDates = () => {
+  const dates = [];
+  const today = new Date();
+  
+  for (let i = 1; i <= 3; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    
+    const dateString = date.toISOString().split('T')[0];
+    
+    dates.push({
+      data: dateString,
+      horarios: [
+        '08:00', '09:00', '10:00', '11:00', 
+        '14:00', '15:00', '16:00', '17:00'
+      ]
+    });
   }
-];
+  
+  return dates;
+};
 
-export function ServicosContent({ servicos }: ServicosContentProps) {
+const AGENDA_MOCK = generateMockDates();
+
+export function ServicosContent({ servicos }: { servicos: Servico[] }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedServico, setSelectedServico] = useState<Servico | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [mode, setMode] = useState<'date' | 'time'>('date');
-  const [selectedHorario, setSelectedHorario] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const openAgendamento = (servico: Servico) => {
     setSelectedServico(servico);
     setSelectedDate(null);
-    setSelectedHorario(null);
+    setSelectedTime(null);
     setModalVisible(true);
   };
 
-  const onChangeDateTime = (_: any, pickedDate?: Date) => {
-    setShowDatePicker(false);
-    if (pickedDate) {
-      const dateNormalized = new Date(pickedDate);
-      dateNormalized.setHours(0, 0, 0, 0);
-      setSelectedDate(dateNormalized);
-      setSelectedHorario(null); 
+  const handleConfirm = () => {
+    if (!selectedDate || !selectedTime) {
+      alert('Por favor, selecione uma data e horário');
+      return;
     }
+    
+    alert(`Agendado: ${selectedServico?.nome}\nData: ${formatDate(selectedDate)}\nHorário: ${selectedTime}`);
+    setModalVisible(false);
   };
 
-  const showPicker = (pickerMode: 'date' | 'time') => {
-    setMode(pickerMode);
-    setShowDatePicker(true);
-  };
-
-  const horariosDisponiveis = (): string[] => {
-    if (!selectedDate) return [];
-    const agendaDia = AGENDA_MOCK.find(a =>
-      a.data.getFullYear() === selectedDate.getFullYear() &&
-      a.data.getMonth() === selectedDate.getMonth() &&
-      a.data.getDate() === selectedDate.getDate()
-    );
-    return agendaDia ? agendaDia.horarios : [];
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long' 
+    };
+    return new Date(dateString).toLocaleDateString('pt-BR', options);
   };
 
   return (
-    <View style={styles.contentContainer}>
-      <Text style={styles.sectionTitle}>Serviços</Text>
-
-      {servicos.length === 0 ? (
-        <Text style={styles.sectionText}>Nenhum serviço disponível.</Text>
-      ) : (
-        <FlatList
-          data={servicos}
-          keyExtractor={(item, index) => `${item.nome}-${index}`}
-          renderItem={({ item }) => (
-            <View style={styles.servicoItem}>
-              <Text style={styles.nomeServico}>{item.nome}</Text>
-              <Text style={styles.infoServico}>{item.preco} • {item.duracao}</Text>
-
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => openAgendamento(item)}
-              >
-                <Text style={styles.buttonText}>Agendar</Text>
-              </TouchableOpacity>
+    <View style={styles.container}>
+      <FlatList
+        data={servicos}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.serviceCard}>
+            <View>
+              <Text style={styles.serviceName}>{item.nome}</Text>
+              <Text style={styles.serviceInfo}>{item.preco} • {item.duracao}</Text>
             </View>
-          )}
-        />
-      )}
+            <TouchableOpacity
+              style={styles.bookButton}
+              onPress={() => openAgendamento(item)}
+            >
+              <Text style={styles.bookButtonText}>Agendar</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
 
       <Modal
+        visible={modalVisible}
         transparent
         animationType="slide"
-        visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
+        <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Agendar: {selectedServico?.nome}</Text>
-            <TouchableOpacity onPress={() => showPicker('date')} style={styles.modalButton}>
-              <Text style={styles.modalButtonText}>
-                {selectedDate ? `Data: ${selectedDate.toLocaleDateString()}` : 'Selecionar Dia'}
-              </Text>
-            </TouchableOpacity>
+            <Text style={styles.modalTitle}>Agendar {selectedServico?.nome}</Text>
+            
+            <Text style={styles.sectionTitle}>Selecione a data:</Text>
+            <View style={styles.datesContainer}>
+              {AGENDA_MOCK.map((day) => (
+                <Pressable
+                  key={day.data}
+                  style={[
+                    styles.dateButton,
+                    selectedDate === day.data && styles.selectedDateButton
+                  ]}
+                  onPress={() => {
+                    setSelectedDate(day.data);
+                    setSelectedTime(null);
+                  }}
+                >
+                  <Text style={selectedDate === day.data ? styles.selectedDateText : styles.dateText}>
+                    {formatDate(day.data)}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
             {selectedDate && (
               <>
-                <Text style={{ marginVertical: 8 }}>Horários disponíveis:</Text>
-                <ScrollView horizontal style={{ maxHeight: 60, marginBottom: 10 }}>
-                  {horariosDisponiveis().length === 0 && (
-                    <Text>Nenhum horário disponível para essa data.</Text>
-                  )}
-                  {horariosDisponiveis().map(horario => (
-                    <TouchableOpacity
-                      key={horario}
-                      onPress={() => setSelectedHorario(horario)}
-                      style={[
-                        styles.horarioButton,
-                        selectedHorario === horario && styles.horarioButtonSelected
-                      ]}
-                    >
-                      <Text
+                <Text style={styles.sectionTitle}>Horários disponíveis:</Text>
+                <View style={styles.timesContainer}>
+                  {AGENDA_MOCK
+                    .find(d => d.data === selectedDate)
+                    ?.horarios.map(time => (
+                      <Pressable
+                        key={time}
                         style={[
-                          styles.horarioText,
-                          selectedHorario === horario && styles.horarioTextSelected
+                          styles.timeButton,
+                          selectedTime === time && styles.selectedTimeButton
                         ]}
+                        onPress={() => setSelectedTime(time)}
                       >
-                        {horario}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
+                        <Text style={selectedTime === time ? styles.selectedTimeText : styles.timeText}>
+                          {time}
+                        </Text>
+                      </Pressable>
+                    ))}
+                </View>
               </>
             )}
 
-            {selectedHorario && (
-              <Text style={styles.selectedInfo}>
-                Selecionado: {selectedDate?.toLocaleDateString()} às {selectedHorario}
-              </Text>
-            )}
+            <View style={styles.modalButtons}>
+              <Pressable
+                style={[
+                  styles.confirmButton,
+                  (!selectedDate || !selectedTime) && styles.disabledButton
+                ]}
+                onPress={handleConfirm}
+                disabled={!selectedDate || !selectedTime}
+              >
+                <Text style={styles.confirmButtonText}>Confirmar</Text>
+              </Pressable>
 
-            <Pressable
-              style={[styles.confirmButton, (!selectedDate || !selectedHorario) && { backgroundColor: '#ccc' }]}
-              onPress={() => {
-                if (selectedDate && selectedHorario) {
-                  setModalVisible(false);
-                  alert(`Agendamento confirmado:\n${selectedServico?.nome}\nData: ${selectedDate.toLocaleDateString()} ${selectedHorario}`);
-                }
-              }}
-              disabled={!selectedDate || !selectedHorario}
-            >
-              <Text style={styles.confirmButtonText}>Confirmar Agendamento</Text>
-            </Pressable>
-
-            <Pressable onPress={() => setModalVisible(false)}>
-              <Text style={styles.cancelText}>Cancelar</Text>
-            </Pressable>
+              <Pressable
+                style={styles.cancelButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </Modal>
-
-      {showDatePicker && (
-        <DateTimePicker
-          value={selectedDate || new Date()}
-          mode={mode}
-          is24Hour
-          display="default"
-          onChange={onChangeDateTime}
-          minimumDate={new Date()}
-        />
-      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  contentContainer: {
+  container: {
+    flex: 1,
     padding: 16,
+    backgroundColor: '#f5f5f5',
   },
-  sectionTitle: {
-    fontSize: 17,
-    fontWeight: 'bold',
+  serviceCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 8,
     marginBottom: 12,
-    color: '#333',
+    elevation: 2,
   },
-  sectionText: {
-    fontSize: 15,
-    color: '#666',
-  },
-  servicoItem: {
-    marginBottom: 20,
-  },
-  nomeServico: {
+  serviceName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#222',
+    color: '#333',
   },
-  infoServico: {
+  serviceInfo: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 8,
   },
-  button: {
+  bookButton: {
     backgroundColor: '#FC8200',
     paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
+    paddingHorizontal: 16,
+    borderRadius: 6,
   },
-  buttonText: {
+  bookButtonText: {
     color: 'white',
     fontWeight: '600',
   },
-  modalOverlay: {
+  modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
     backgroundColor: 'white',
+    width: '90%',
     borderRadius: 12,
-    padding: 24,
-    width: '80%',
-    alignItems: 'center',
+    padding: 20,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  modalButton: {
-    backgroundColor: '#EEE',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginVertical: 8,
-    width: '100%',
-  },
-  modalButtonText: {
-    fontSize: 15,
-    color: '#333',
+    marginBottom: 20,
     textAlign: 'center',
+    color: '#333',
   },
-  selectedInfo: {
-    marginTop: 12,
-    fontSize: 14,
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 10,
     color: '#444',
+  },
+  datesContainer: {
+    marginBottom: 20,
+  },
+  dateButton: {
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#f0f0f0',
+    marginBottom: 8,
+  },
+  selectedDateButton: {
+    backgroundColor: '#FC8200',
+  },
+  dateText: {
+    textAlign: 'center',
+    color: '#333',
+  },
+  selectedDateText: {
+    textAlign: 'center',
+    color: 'white',
+    fontWeight: '600',
+  },
+  timesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    marginBottom: 20,
+  },
+  timeButton: {
+    width: 80,
+    padding: 10,
+    margin: 4,
+    borderRadius: 6,
+    backgroundColor: '#f0f0f0',
+    alignItems: 'center',
+  },
+  selectedTimeButton: {
+    backgroundColor: '#FC8200',
+  },
+  timeText: {
+    color: '#333',
+  },
+  selectedTimeText: {
+    color: 'white',
+    fontWeight: '600',
+  },
+  modalButtons: {
+    marginTop: 10,
   },
   confirmButton: {
     backgroundColor: '#FC8200',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    marginTop: 20,
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  disabledButton: {
+    backgroundColor: '#cccccc',
   },
   confirmButtonText: {
     color: 'white',
     fontWeight: '600',
   },
-  cancelText: {
-    color: '#999',
-    marginTop: 12,
-  },
-  horarioButton: {
-    backgroundColor: '#eee',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+  cancelButton: {
+    padding: 14,
     borderRadius: 8,
-    marginRight: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
-  horarioButtonSelected: {
-    backgroundColor: '#FC8200',
-  },
-  horarioText: {
-    color: '#333',
-  },
-  horarioTextSelected: {
-    color: 'white',
-    fontWeight: 'bold',
+  cancelButtonText: {
+    color: '#666',
   },
 });
