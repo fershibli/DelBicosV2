@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, Pressable } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
 import { useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -12,26 +12,60 @@ type ServicosContentProps = {
   servicos: Servico[];
 };
 
+type HorarioDisponivel = {
+  data: Date;
+  horarios: string[];
+};
+
+const AGENDA_MOCK: HorarioDisponivel[] = [
+  {
+    data: new Date('2025-06-01'),
+    horarios: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00']
+  },
+  {
+    data: new Date('2025-06-02'),
+    horarios: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00']
+  }
+];
+
 export function ServicosContent({ servicos }: ServicosContentProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedServico, setSelectedServico] = useState<Servico | null>(null);
-  const [date, setDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [mode, setMode] = useState<'date' | 'time'>('date');
+  const [selectedHorario, setSelectedHorario] = useState<string | null>(null);
 
   const openAgendamento = (servico: Servico) => {
     setSelectedServico(servico);
+    setSelectedDate(null);
+    setSelectedHorario(null);
     setModalVisible(true);
   };
 
-  const onChangeDateTime = (_: any, selectedDate?: Date) => {
-    if (selectedDate) setDate(selectedDate);
+  const onChangeDateTime = (_: any, pickedDate?: Date) => {
     setShowDatePicker(false);
+    if (pickedDate) {
+      const dateNormalized = new Date(pickedDate);
+      dateNormalized.setHours(0, 0, 0, 0);
+      setSelectedDate(dateNormalized);
+      setSelectedHorario(null); 
+    }
   };
 
   const showPicker = (pickerMode: 'date' | 'time') => {
     setMode(pickerMode);
     setShowDatePicker(true);
+  };
+
+  const horariosDisponiveis = (): string[] => {
+    if (!selectedDate) return [];
+    const agendaDia = AGENDA_MOCK.find(a =>
+      a.data.getFullYear() === selectedDate.getFullYear() &&
+      a.data.getMonth() === selectedDate.getMonth() &&
+      a.data.getDate() === selectedDate.getDate()
+    );
+    return agendaDia ? agendaDia.horarios : [];
   };
 
   return (
@@ -69,20 +103,57 @@ export function ServicosContent({ servicos }: ServicosContentProps) {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Agendar: {selectedServico?.nome}</Text>
-
             <TouchableOpacity onPress={() => showPicker('date')} style={styles.modalButton}>
-              <Text style={styles.modalButtonText}>Selecionar Dia</Text>
+              <Text style={styles.modalButtonText}>
+                {selectedDate ? `Data: ${selectedDate.toLocaleDateString()}` : 'Selecionar Dia'}
+              </Text>
             </TouchableOpacity>
+            {selectedDate && (
+              <>
+                <Text style={{ marginVertical: 8 }}>Horários disponíveis:</Text>
+                <ScrollView horizontal style={{ maxHeight: 60, marginBottom: 10 }}>
+                  {horariosDisponiveis().length === 0 && (
+                    <Text>Nenhum horário disponível para essa data.</Text>
+                  )}
+                  {horariosDisponiveis().map(horario => (
+                    <TouchableOpacity
+                      key={horario}
+                      onPress={() => setSelectedHorario(horario)}
+                      style={[
+                        styles.horarioButton,
+                        selectedHorario === horario && styles.horarioButtonSelected
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.horarioText,
+                          selectedHorario === horario && styles.horarioTextSelected
+                        ]}
+                      >
+                        {horario}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </>
+            )}
 
-            <TouchableOpacity onPress={() => showPicker('time')} style={styles.modalButton}>
-              <Text style={styles.modalButtonText}>Selecionar Horário</Text>
-            </TouchableOpacity>
+            {selectedHorario && (
+              <Text style={styles.selectedInfo}>
+                Selecionado: {selectedDate?.toLocaleDateString()} às {selectedHorario}
+              </Text>
+            )}
 
-            <Text style={styles.selectedInfo}>
-              Data: {date.toLocaleDateString()} às {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </Text>
-
-            <Pressable style={styles.confirmButton} onPress={() => setModalVisible(false)}>
+            <Pressable
+              style={[styles.confirmButton, (!selectedDate || !selectedHorario) && { backgroundColor: '#ccc' }]}
+              onPress={() => {
+                if (selectedDate && selectedHorario) {
+                  setModalVisible(false);
+                  alert(`Agendamento confirmado:\n${selectedServico?.nome}\nData: ${selectedDate.toLocaleDateString()} ${selectedHorario}`);
+                }
+              }}
+              disabled={!selectedDate || !selectedHorario}
+            >
               <Text style={styles.confirmButtonText}>Confirmar Agendamento</Text>
             </Pressable>
 
@@ -95,11 +166,12 @@ export function ServicosContent({ servicos }: ServicosContentProps) {
 
       {showDatePicker && (
         <DateTimePicker
-          value={date}
+          value={selectedDate || new Date()}
           mode={mode}
           is24Hour
           display="default"
           onChange={onChangeDateTime}
+          minimumDate={new Date()}
         />
       )}
     </View>
@@ -194,5 +266,22 @@ const styles = StyleSheet.create({
   cancelText: {
     color: '#999',
     marginTop: 12,
+  },
+  horarioButton: {
+    backgroundColor: '#eee',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginRight: 8,
+  },
+  horarioButtonSelected: {
+    backgroundColor: '#FC8200',
+  },
+  horarioText: {
+    color: '#333',
+  },
+  horarioTextSelected: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
