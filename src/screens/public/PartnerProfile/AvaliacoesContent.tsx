@@ -1,6 +1,18 @@
 import { Button, Text } from '@react-navigation/elements';
 import { StyleSheet, View } from 'react-native';
 
+type Avaliacao = {
+  id: string;
+  usuario: {
+    nome: string;
+    fotoUrl: string;
+  };
+  nota: number;
+  titulo?: string;
+  descricao?: string;
+  data: string;
+};
+
 export function AvaliacoesContent() {
   return (
   <View style={styles.contentContainer}>
