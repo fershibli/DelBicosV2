@@ -10,9 +10,9 @@ import { AvaliacoesContent } from './PartnerProfile/AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
 
 const servicos = [
-  { nome: 'Corte Masculino', preco: 'R$ 30,00', duracao: '30 min' },
-  { nome: 'Barba', preco: 'R$ 20,00', duracao: '20 min' },
-  { nome: 'Luzes', preco: 'R$ 120,00', duracao: '1h 30min' },
+  { id: '1', nome: 'Corte Masculino', preco: 'R$ 30,00', duracao: '30 min' },
+  { id: '2', nome: 'Barba', preco: 'R$ 20,00', duracao: '20 min' },
+  { id: '3', nome: 'Luzes', preco: 'R$ 120,00', duracao: '1h 30min' },
 ];
 
 
