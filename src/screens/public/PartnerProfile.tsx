@@ -59,14 +59,14 @@ const servicos = [
 
 const parceiroDetalhes = {
   descricao: 'Salão especializado em cortes masculinos e barba, com atendimento personalizado e ambiente climatizado. Possuimos os melhores profissionais da região',
-  comodidadesIds: ['1', '3', '5', '6', '7' ]
+  comodidadesIds: ['1']
 };
 
 const GALLERY_IMAGE = [
-  { id: '1', url: 'https://www.delbicos.com.br/imagem1.jpg' },
-  { id: '2', url: 'https://www.delbicos.com.br/imagem2.jpg' },
-  { id: '3', url: 'https://www.delbicos.com.br/imagem3.jpg' },
-  { id: '4', url: 'https://www.delbicos.com.br/imagem5.jpg' }
+  { id: '1', url: 'https://media.gettyimages.com/id/872361244/pt/foto/man-getting-his-beard-trimmed-with-electric-razor.jpg?s=612x612&w=gi&k=20&c=nujcdPzm1iSEsvrqiN5SmhmSHPQJJwyDh9uDC8f6-yU=' },
+  { id: '2', url: 'https://st2.depositphotos.com/2931363/9695/i/450/depositphotos_96952024-stock-photo-young-handsome-man-in-barbershop.jpg' },
+  { id: '3', url: 'https://media.gettyimages.com/id/1472388969/pt/foto/smiling-barber-and-customer-in-the-barbershop-watching-a-video-on-a-smartphone.jpg?s=612x612&w=gi&k=20&c=WwgpsuDXob1aRLoEWgl0I_kpVvJGoeMlebLA4SfcCrM=' },
+  { id: '4', url: 'https://thumbs.dreamstime.com/b/cabelo-profissional-do-corte-do-barbeiro-de-seu-cliente-68910066.jpg' }
 ];
 
 export function PartnerProfile() {
