@@ -78,7 +78,10 @@ export function PartnerProfile() {
                  todasComodidades={comodidades}
                  />;
       case 'servicos':
-        return <ServicosContent servicos={servicos}/>;
+        return <ServicosContent 
+                 servicos={servicos}
+                 disponibilidades={AGENDA_MOCK}
+                />;
       case 'galeria':
         return <GaleriaContent />;
       case 'avaliacoes':
