@@ -1,6 +1,15 @@
 import { Button, Text } from '@react-navigation/elements';
 import { StyleSheet, View } from 'react-native';
 
+type Imagem = {
+  id: string;
+  uri: string;
+};
+
+type GaleriaContentProps = {
+  imagens: Imagem[];
+};
+
 export function GaleriaContent() {
   return (
   <View style={styles.contentContainer}>
