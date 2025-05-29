@@ -30,6 +30,10 @@ const servicos = [
   { id: '3', nome: 'Luzes', preco: 'R$ 120,00', duracao: '1h 30min' },
 ];
 
+const parceiroDetalhes = {
+  descricao: 'Salão especializado em cortes masculinos e barba, com atendimento personalizado e ambiente climatizado. Possuimos os melhores profissionais da região',
+  comodidadesIds: ['1', '3', '5' ]
+};
 
 export function PartnerProfile() {
   const navigation = useNavigation();
