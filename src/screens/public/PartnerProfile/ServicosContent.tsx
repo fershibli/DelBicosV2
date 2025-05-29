@@ -8,31 +8,17 @@ type Servico = {
   duracao: string;
 };
 
-const generateMockDates = () => {
-  const dates = [];
-  const today = new Date();
-  
-  for (let i = 1; i <= 3; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    
-    const dateString = date.toISOString().split('T')[0];
-    
-    dates.push({
-      data: dateString,
-      horarios: [
-        '08:00', '09:00', '10:00', '11:00', 
-        '14:00', '15:00', '16:00', '17:00'
-      ]
-    });
-  }
-  
-  return dates;
+type Disponibilidade = {
+  data: string;
+  horarios: string[];
 };
 
-const AGENDA_MOCK = generateMockDates();
+type ServicosContentProps = {
+  servicos: Servico[];
+  disponibilidades: Disponibilidade[];
+};
 
-export function ServicosContent({ servicos }: { servicos: Servico[] }) {
+export function ServicosContent({ servicos, disponibilidades }: ServicosContentProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedServico, setSelectedServico] = useState<Servico | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -97,7 +83,7 @@ export function ServicosContent({ servicos }: { servicos: Servico[] }) {
             
             <Text style={styles.sectionTitle}>Selecione a data:</Text>
             <View style={styles.datesContainer}>
-              {AGENDA_MOCK.map((day) => (
+              {disponibilidades.map((day) => (
                 <Pressable
                   key={day.data}
                   style={[
@@ -120,7 +106,7 @@ export function ServicosContent({ servicos }: { servicos: Servico[] }) {
               <>
                 <Text style={styles.sectionTitle}>Horários disponíveis:</Text>
                 <View style={styles.timesContainer}>
-                  {AGENDA_MOCK
+                  {disponibilidades
                     .find(d => d.data === selectedDate)
                     ?.horarios.map(time => (
                       <Pressable
