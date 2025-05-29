@@ -1,6 +1,15 @@
 import { Button, Text } from '@react-navigation/elements';
 import { StyleSheet, View } from 'react-native';
 
+type SobreContentProps = {
+  detalhes: string;
+  comodidadesIds: string[];
+  todasComodidades: {
+    id: string;
+    nome: string;
+  }[];
+};
+
 export function SobreContent() {
   return (
   <View style={styles.contentContainer}>
