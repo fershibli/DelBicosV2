@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Modal,
+  Pressable,
+} from 'react-native';
 
 type Servico = {
   id: string;
@@ -18,7 +26,10 @@ type ServicosContentProps = {
   disponibilidades: Disponibilidade[];
 };
 
-export function ServicosContent({ servicos, disponibilidades }: ServicosContentProps) {
+export function ServicosContent({
+  servicos,
+  disponibilidades,
+}: ServicosContentProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedServico, setSelectedServico] = useState<Servico | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -36,16 +47,18 @@ export function ServicosContent({ servicos, disponibilidades }: ServicosContentP
       alert('Por favor, selecione uma data e horário');
       return;
     }
-    
-    alert(`Agendado: ${selectedServico?.nome}\nData: ${formatDate(selectedDate)}\nHorário: ${selectedTime}`);
+
+    alert(
+      `Agendado: ${selectedServico?.nome}\nData: ${formatDate(selectedDate)}\nHorário: ${selectedTime}`,
+    );
     setModalVisible(false);
   };
 
   const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { 
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long' 
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
     };
     return new Date(dateString).toLocaleDateString('pt-BR', options);
   };
@@ -59,12 +72,13 @@ export function ServicosContent({ servicos, disponibilidades }: ServicosContentP
           <View style={styles.serviceCard}>
             <View>
               <Text style={styles.serviceName}>{item.nome}</Text>
-              <Text style={styles.serviceInfo}>{item.preco} • {item.duracao}</Text>
+              <Text style={styles.serviceInfo}>
+                {item.preco} • {item.duracao}
+              </Text>
             </View>
             <TouchableOpacity
               style={styles.bookButton}
-              onPress={() => openAgendamento(item)}
-            >
+              onPress={() => openAgendamento(item)}>
               <Text style={styles.bookButtonText}>Agendar</Text>
             </TouchableOpacity>
           </View>
@@ -75,12 +89,13 @@ export function ServicosContent({ servicos, disponibilidades }: ServicosContentP
         visible={modalVisible}
         transparent
         animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
+        onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Agendar {selectedServico?.nome}</Text>
-            
+            <Text style={styles.modalTitle}>
+              Agendar {selectedServico?.nome}
+            </Text>
+
             <Text style={styles.sectionTitle}>Selecione a data:</Text>
             <View style={styles.datesContainer}>
               {disponibilidades.map((day) => (
@@ -88,14 +103,18 @@ export function ServicosContent({ servicos, disponibilidades }: ServicosContentP
                   key={day.data}
                   style={[
                     styles.dateButton,
-                    selectedDate === day.data && styles.selectedDateButton
+                    selectedDate === day.data && styles.selectedDateButton,
                   ]}
                   onPress={() => {
                     setSelectedDate(day.data);
                     setSelectedTime(null);
-                  }}
-                >
-                  <Text style={selectedDate === day.data ? styles.selectedDateText : styles.dateText}>
+                  }}>
+                  <Text
+                    style={
+                      selectedDate === day.data
+                        ? styles.selectedDateText
+                        : styles.dateText
+                    }>
                     {formatDate(day.data)}
                   </Text>
                 </Pressable>
@@ -107,17 +126,21 @@ export function ServicosContent({ servicos, disponibilidades }: ServicosContentP
                 <Text style={styles.sectionTitle}>Horários disponíveis:</Text>
                 <View style={styles.timesContainer}>
                   {disponibilidades
-                    .find(d => d.data === selectedDate)
-                    ?.horarios.map(time => (
+                    .find((d) => d.data === selectedDate)
+                    ?.horarios.map((time) => (
                       <Pressable
                         key={time}
                         style={[
                           styles.timeButton,
-                          selectedTime === time && styles.selectedTimeButton
+                          selectedTime === time && styles.selectedTimeButton,
                         ]}
-                        onPress={() => setSelectedTime(time)}
-                      >
-                        <Text style={selectedTime === time ? styles.selectedTimeText : styles.timeText}>
+                        onPress={() => setSelectedTime(time)}>
+                        <Text
+                          style={
+                            selectedTime === time
+                              ? styles.selectedTimeText
+                              : styles.timeText
+                          }>
                           {time}
                         </Text>
                       </Pressable>
@@ -130,18 +153,16 @@ export function ServicosContent({ servicos, disponibilidades }: ServicosContentP
               <Pressable
                 style={[
                   styles.confirmButton,
-                  (!selectedDate || !selectedTime) && styles.disabledButton
+                  (!selectedDate || !selectedTime) && styles.disabledButton,
                 ]}
                 onPress={handleConfirm}
-                disabled={!selectedDate || !selectedTime}
-              >
+                disabled={!selectedDate || !selectedTime}>
                 <Text style={styles.confirmButtonText}>Confirmar</Text>
               </Pressable>
 
               <Pressable
                 style={styles.cancelButton}
-                onPress={() => setModalVisible(false)}
-              >
+                onPress={() => setModalVisible(false)}>
                 <Text style={styles.cancelButtonText}>Cancelar</Text>
               </Pressable>
             </View>
