@@ -13,6 +13,7 @@ import { Profile } from './Profile';
 import { Settings } from './Settings';
 import { Updates } from './Updates';
 import { NotFound } from './NotFound';
+import ServiceStatusScreen from './public/ServicesStatus/ServiceStatusScreen ';
 
 const HomeTabs = createBottomTabNavigator({
   screens: {
@@ -58,6 +59,12 @@ const RootStack = createNativeStackNavigator({
         title: 'Home',
         headerShown: false,
       },
+    },
+    ServiceStatus: {
+      screen: ServiceStatusScreen,
+      linking: {
+        path: "service-status"
+      }
     },
     Profile: {
       screen: Profile,
