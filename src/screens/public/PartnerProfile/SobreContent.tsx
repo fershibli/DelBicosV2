@@ -1,4 +1,4 @@
-import { Button, Text } from '@react-navigation/elements';
+import { Text } from '@react-navigation/elements';
 import { StyleSheet, View } from 'react-native';
 
 type SobreContentProps = {
@@ -10,25 +10,27 @@ type SobreContentProps = {
   }[];
 };
 
-export function SobreContent({ detalhes, comodidadesIds, todasComodidades }: SobreContentProps) {
-  const comodidadesParceiro = todasComodidades.filter(comodidade => 
-    comodidadesIds.includes(comodidade.id)
+export function SobreContent({
+  detalhes,
+  comodidadesIds,
+  todasComodidades,
+}: SobreContentProps) {
+  const comodidadesParceiro = todasComodidades.filter((comodidade) =>
+    comodidadesIds.includes(comodidade.id),
   );
 
   return (
     <View style={styles.contentContainer}>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Detalhes</Text>
-        <Text style={styles.sectionText}>
-          {detalhes || 'Não informado'}
-        </Text>
+        <Text style={styles.sectionText}>{detalhes || 'Não informado'}</Text>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Comodidades</Text>
         <View style={styles.list}>
           {comodidadesParceiro.length > 0 ? (
-            comodidadesParceiro.map(comodidade => (
+            comodidadesParceiro.map((comodidade) => (
               <Text key={comodidade.id} style={styles.listItem}>
                 • {comodidade.nome}
               </Text>
