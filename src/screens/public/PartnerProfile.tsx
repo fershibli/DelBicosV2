@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -8,7 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useState } from 'react';
 import { SobreContent } from './PartnerProfile/SobreContent';
 import { ServicosContent } from './PartnerProfile/ServicosContent';
 import { GaleriaContent } from './PartnerProfile/GaleriaContent';
@@ -109,7 +109,7 @@ const servicos = [
 const parceiroDetalhes = {
   descricao:
     'Salão especializado em cortes masculinos e barba, com atendimento personalizado e ambiente climatizado. Possuimos os melhores profissionais da região',
-  comodidadesIds: ['1'],
+  comodidadesIds: ['1', '3', '6'],
 };
 
 const GALLERY_IMAGE = [
