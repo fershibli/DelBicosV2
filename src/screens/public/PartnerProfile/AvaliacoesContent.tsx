@@ -1,4 +1,4 @@
-import { Button, Text } from '@react-navigation/elements';
+import { Text } from '@react-navigation/elements';
 import { FlatList, StyleSheet, View, Image } from 'react-native';
 import { Rating } from 'react-native-ratings';
 
@@ -16,14 +16,14 @@ type Avaliacao = {
 
 type AvaliacoesContentProps = {
   avaliacoes?: Avaliacao[];
-}
+};
 
 export function AvaliacoesContent({ avaliacoes = [] }: AvaliacoesContentProps) {
   const formatarData = (dataString: string) => {
-    const options: Intl.DateTimeFormatOptions = { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric' 
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
     };
     return new Date(dataString).toLocaleDateString('pt-BR', options);
   };
@@ -32,30 +32,30 @@ export function AvaliacoesContent({ avaliacoes = [] }: AvaliacoesContentProps) {
     <View style={styles.avaliacaoContainer}>
       <View style={styles.cabecalhoAvaliacao}>
         <Image
-          source={{ uri: item.usuario.foto || 'https://via.placeholder.com/50' }}
+          source={{
+            uri: item.usuario.foto || 'https://via.placeholder.com/50',
+          }}
           style={styles.fotoUsuario}
         />
         <View style={styles.infoUsuario}>
           <Text style={styles.nomeUsuario}>{item.usuario.nome}</Text>
           <View style={styles.ratingContainer}>
             <Rating
-              type='star'
+              type="star"
               ratingCount={5}
               imageSize={16}
               readonly
               startingValue={item.nota}
               fractions={1}
-              tintColor='#f8f8f8'
+              tintColor="#f8f8f8"
             />
             <Text style={styles.dataAvaliacao}>{formatarData(item.data)}</Text>
           </View>
         </View>
       </View>
-      
-      {item.titulo && (
-        <Text style={styles.tituloAvaliacao}>{item.titulo}</Text>
-      )}
-      
+
+      {item.titulo && <Text style={styles.tituloAvaliacao}>{item.titulo}</Text>}
+
       <Text style={styles.descricaoAvaliacao}>{item.descricao}</Text>
     </View>
   );
@@ -65,11 +65,15 @@ export function AvaliacoesContent({ avaliacoes = [] }: AvaliacoesContentProps) {
       {avaliacoes.length === 0 ? (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Avaliações</Text>
-          <Text style={styles.sectionText}>Sem avaliações para este parceiro</Text>
+          <Text style={styles.sectionText}>
+            Sem avaliações para este parceiro
+          </Text>
         </View>
       ) : (
         <>
-          <Text style={styles.sectionTitle}>Avaliações ({avaliacoes.length})</Text>
+          <Text style={styles.sectionTitle}>
+            Avaliações ({avaliacoes.length})
+          </Text>
           <FlatList
             data={avaliacoes}
             renderItem={renderItem}
@@ -82,7 +86,6 @@ export function AvaliacoesContent({ avaliacoes = [] }: AvaliacoesContentProps) {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   section: {
