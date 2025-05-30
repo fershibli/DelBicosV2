@@ -9,6 +9,18 @@ import { GaleriaContent } from './PartnerProfile/GaleriaContent';
 import { AvaliacoesContent } from './PartnerProfile/AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
 
+type Avaliacao = {
+  id: string;
+  usuario: {
+    nome: string;
+    foto: string;
+  };
+  nota: number;
+  titulo?: string;
+  descricao?: string;
+  data: string;
+};
+
 type Comodidade = {
   id: string;
   nome: string;
@@ -40,6 +52,30 @@ const AGENDA_MOCK: Disponibilidade[] = (() => {
   
   return dates;
 })();
+
+const AVALIACOES_MOCK: Avaliacao[] = [
+  {
+    id: '1',
+    usuario: {
+      nome: 'Carlos Silva',
+      foto: 'https://randomuser.me/api/portraits/men/1.jpg'
+    },
+    nota: 4.5,
+    titulo: 'Ótimo atendimento!',
+    descricao: 'O serviço foi excelente e o profissional muito atencioso. Recomendo!',
+    data: '2023-05-15'
+  },
+  {
+    id: '2',
+    usuario: {
+      nome: 'Ana Oliveira',
+      foto: 'https://randomuser.me/api/portraits/women/1.jpg'
+    },
+    nota: 5,
+    descricao: 'Adorei o resultado, superou minhas expectativas!',
+    data: '2023-06-02'
+  },
+];
 
 const comodidades: Comodidade[] = [
   { id: '1', nome: 'Acessibilidade à deficientes' },
@@ -90,7 +126,7 @@ export function PartnerProfile() {
       case 'galeria':
         return <GaleriaContent imagens={GALLERY_IMAGE} />;
       case 'avaliacoes':
-        return <AvaliacoesContent />;
+        return <AvaliacoesContent avaliacoes={AVALIACOES_MOCK}/>;
       default:
         return <SobreContent
                  detalhes={parceiroDetalhes.descricao}
