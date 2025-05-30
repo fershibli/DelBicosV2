@@ -70,7 +70,7 @@ const RootStack = createNativeStackNavigator({
         stringify: {
           id: (value) => value,
         },
-      }
+      },
     },
     Profile: {
       screen: Profile,
@@ -113,6 +113,6 @@ type RootStackParamList = StaticParamList<typeof RootStack>;
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList { }
+    interface RootParamList extends RootStackParamList {}
   }
 }
