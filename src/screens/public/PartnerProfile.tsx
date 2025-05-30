@@ -1,9 +1,15 @@
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useState } from 'react';
-import {  SobreContent } from './PartnerProfile/SobreContent';
+import { SobreContent } from './PartnerProfile/SobreContent';
 import { ServicosContent } from './PartnerProfile/ServicosContent';
 import { GaleriaContent } from './PartnerProfile/GaleriaContent';
 import { AvaliacoesContent } from './PartnerProfile/AvaliacoesContent';
@@ -34,22 +40,28 @@ type Disponibilidade = {
 const AGENDA_MOCK: Disponibilidade[] = (() => {
   const dates = [];
   const today = new Date();
-  
+
   for (let i = 1; i <= 3; i++) {
     const date = new Date(today);
     date.setDate(today.getDate() + i);
-    
+
     const dateString = date.toISOString().split('T')[0];
-    
+
     dates.push({
       data: dateString,
       horarios: [
-        '08:00', '09:00', '10:00', '11:00', 
-        '14:00', '15:00', '16:00', '17:00'
-      ]
+        '08:00',
+        '09:00',
+        '10:00',
+        '11:00',
+        '14:00',
+        '15:00',
+        '16:00',
+        '17:00',
+      ],
     });
   }
-  
+
   return dates;
 })();
 
@@ -58,22 +70,23 @@ const AVALIACOES_MOCK: Avaliacao[] = [
     id: '1',
     usuario: {
       nome: 'Carlos Silva',
-      foto: 'https://randomuser.me/api/portraits/men/1.jpg'
+      foto: 'https://randomuser.me/api/portraits/men/1.jpg',
     },
     nota: 4.5,
     titulo: 'Ótimo atendimento!',
-    descricao: 'O serviço foi excelente e o profissional muito atencioso. Recomendo!',
-    data: '2023-05-15'
+    descricao:
+      'O serviço foi excelente e o profissional muito atencioso. Recomendo!',
+    data: '2023-05-15',
   },
   {
     id: '2',
     usuario: {
       nome: 'Ana Oliveira',
-      foto: 'https://randomuser.me/api/portraits/women/1.jpg'
+      foto: 'https://randomuser.me/api/portraits/women/1.jpg',
     },
     nota: 5,
     descricao: 'Adorei o resultado, superou minhas expectativas!',
-    data: '2023-06-02'
+    data: '2023-06-02',
   },
 ];
 
@@ -84,8 +97,8 @@ const comodidades: Comodidade[] = [
   { id: '4', nome: 'Ar-condicionado' },
   { id: '5', nome: 'Estacionamento' },
   { id: '6', nome: 'Estacionamento gratuito' },
-  { id: '7', nome: 'Aceita animais' }
-]
+  { id: '7', nome: 'Aceita animais' },
+];
 
 const servicos = [
   { id: '1', nome: 'Corte Masculino', preco: 'R$ 30,00', duracao: '30 min' },
@@ -94,79 +107,95 @@ const servicos = [
 ];
 
 const parceiroDetalhes = {
-  descricao: 'Salão especializado em cortes masculinos e barba, com atendimento personalizado e ambiente climatizado. Possuimos os melhores profissionais da região',
-  comodidadesIds: ['1']
+  descricao:
+    'Salão especializado em cortes masculinos e barba, com atendimento personalizado e ambiente climatizado. Possuimos os melhores profissionais da região',
+  comodidadesIds: ['1'],
 };
 
 const GALLERY_IMAGE = [
-  { id: '1', url: 'https://media.gettyimages.com/id/872361244/pt/foto/man-getting-his-beard-trimmed-with-electric-razor.jpg?s=612x612&w=gi&k=20&c=nujcdPzm1iSEsvrqiN5SmhmSHPQJJwyDh9uDC8f6-yU=' },
-  { id: '2', url: 'https://st2.depositphotos.com/2931363/9695/i/450/depositphotos_96952024-stock-photo-young-handsome-man-in-barbershop.jpg' },
-  { id: '3', url: 'https://media.gettyimages.com/id/1472388969/pt/foto/smiling-barber-and-customer-in-the-barbershop-watching-a-video-on-a-smartphone.jpg?s=612x612&w=gi&k=20&c=WwgpsuDXob1aRLoEWgl0I_kpVvJGoeMlebLA4SfcCrM=' },
-  { id: '4', url: 'https://thumbs.dreamstime.com/b/cabelo-profissional-do-corte-do-barbeiro-de-seu-cliente-68910066.jpg' }
+  {
+    id: '1',
+    url: 'https://media.gettyimages.com/id/872361244/pt/foto/man-getting-his-beard-trimmed-with-electric-razor.jpg?s=612x612&w=gi&k=20&c=nujcdPzm1iSEsvrqiN5SmhmSHPQJJwyDh9uDC8f6-yU=',
+  },
+  {
+    id: '2',
+    url: 'https://st2.depositphotos.com/2931363/9695/i/450/depositphotos_96952024-stock-photo-young-handsome-man-in-barbershop.jpg',
+  },
+  {
+    id: '3',
+    url: 'https://media.gettyimages.com/id/1472388969/pt/foto/smiling-barber-and-customer-in-the-barbershop-watching-a-video-on-a-smartphone.jpg?s=612x612&w=gi&k=20&c=WwgpsuDXob1aRLoEWgl0I_kpVvJGoeMlebLA4SfcCrM=',
+  },
+  {
+    id: '4',
+    url: 'https://thumbs.dreamstime.com/b/cabelo-profissional-do-corte-do-barbeiro-de-seu-cliente-68910066.jpg',
+  },
 ];
 
 export function PartnerProfile() {
   const navigation = useNavigation();
-  
-  const [activeTab, setActiveTab] = useState<'sobre' | 'servicos' | 'galeria' | 'avaliacoes'>('sobre');
 
-    const renderContent = () => {
-    switch(activeTab) {
+  const [activeTab, setActiveTab] = useState<
+    'sobre' | 'servicos' | 'galeria' | 'avaliacoes'
+  >('sobre');
+
+  const renderContent = () => {
+    switch (activeTab) {
       case 'sobre':
-        return <SobreContent
-                 detalhes={parceiroDetalhes.descricao}
-                 comodidadesIds={parceiroDetalhes.comodidadesIds}
-                 todasComodidades={comodidades}
-                 />;
+        return (
+          <SobreContent
+            detalhes={parceiroDetalhes.descricao}
+            comodidadesIds={parceiroDetalhes.comodidadesIds}
+            todasComodidades={comodidades}
+          />
+        );
       case 'servicos':
-        return <ServicosContent 
-                 servicos={servicos}
-                 disponibilidades={AGENDA_MOCK}
-                />;
+        return (
+          <ServicosContent servicos={servicos} disponibilidades={AGENDA_MOCK} />
+        );
       case 'galeria':
         return <GaleriaContent imagens={GALLERY_IMAGE} />;
       case 'avaliacoes':
-        return <AvaliacoesContent avaliacoes={AVALIACOES_MOCK}/>;
+        return <AvaliacoesContent avaliacoes={AVALIACOES_MOCK} />;
       default:
-        return <SobreContent
-                 detalhes={parceiroDetalhes.descricao}
-                 comodidadesIds={parceiroDetalhes.comodidadesIds}
-                 todasComodidades={comodidades}
-               />;
-        
+        return (
+          <SobreContent
+            detalhes={parceiroDetalhes.descricao}
+            comodidadesIds={parceiroDetalhes.comodidadesIds}
+            todasComodidades={comodidades}
+          />
+        );
     }
   };
 
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={{ uri: 'https://www.shutterstock.com/image-photo/haircut-by-hairdresser-barbershop-barber-600nw-2484467169.jpg' }}
-        style={styles.headerImage}
-      >
+        source={{
+          uri: 'https://www.shutterstock.com/image-photo/haircut-by-hairdresser-barbershop-barber-600nw-2484467169.jpg',
+        }}
+        style={styles.headerImage}>
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.8)']}
-          style={styles.gradientOverlay}
-        >
+          style={styles.gradientOverlay}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
+            onPress={() => navigation.goBack()}>
             <MaterialIcons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
 
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>Jefferson Santos</Text>
             <View style={styles.ratingContainer}>
-            <Rating
-              type='star'
-              ratingCount={5}
-              imageSize={12}
-              readonly
-              startingValue={4.6}
-              fractions={1}
-              tintColor='black'
-              style={{ marginRight: 4 }}
-            />
+              <Rating
+                type="star"
+                ratingCount={5}
+                imageSize={12}
+                readonly
+                startingValue={4.6}
+                fractions={1}
+                tintColor="black"
+                style={{ marginRight: 4 }}
+              />
             </View>
           </View>
         </LinearGradient>
@@ -181,25 +210,37 @@ export function PartnerProfile() {
 
       <View style={styles.navTabs}>
         <TouchableOpacity onPress={() => setActiveTab('sobre')}>
-          <Text style={[styles.tab, activeTab === 'sobre' && styles.activeTab]}>Sobre</Text>
+          <Text style={[styles.tab, activeTab === 'sobre' && styles.activeTab]}>
+            Sobre
+          </Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity onPress={() => setActiveTab('servicos')}>
-          <Text style={[styles.tab, activeTab === 'servicos' && styles.activeTab]}>Serviços</Text>
+          <Text
+            style={[styles.tab, activeTab === 'servicos' && styles.activeTab]}>
+            Serviços
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => setActiveTab('galeria')}>
-          <Text style={[styles.tab, activeTab === 'galeria' && styles.activeTab]}>Galeria</Text>
+          <Text
+            style={[styles.tab, activeTab === 'galeria' && styles.activeTab]}>
+            Galeria
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => setActiveTab('avaliacoes')}>
-          <Text style={[styles.tab, activeTab === 'avaliacoes' && styles.activeTab]}>Avaliações</Text>
+          <Text
+            style={[
+              styles.tab,
+              activeTab === 'avaliacoes' && styles.activeTab,
+            ]}>
+            Avaliações
+          </Text>
         </TouchableOpacity>
-
       </View>
 
       {renderContent()}
-
     </View>
   );
 }
