@@ -7,7 +7,7 @@ import {
   Image,
   Dimensions,
   Text,
-  Modal
+  Modal,
 } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
@@ -34,10 +34,9 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
   };
 
   const renderItem = ({ item, index }: { item: Imagem; index: number }) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       onPress={() => openImageViewer(index)}
-      activeOpacity={0.8}
-    >
+      activeOpacity={0.8}>
       <Image
         source={{ uri: item.url }}
         style={{
@@ -51,11 +50,11 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
     </TouchableOpacity>
   );
 
-  const imagesForViewer = imagens.map(img => ({
+  const imagesForViewer = imagens.map((img) => ({
     url: img.url,
     props: {
-      source: { uri: img.url }
-    }
+      source: { uri: img.url },
+    },
   }));
 
   const safeIndex = Math.max(0, Math.min(currentIndex, imagens.length - 1));
@@ -87,8 +86,7 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
               renderHeader={() => (
                 <TouchableOpacity
                   style={styles.closeButton}
-                  onPress={() => setVisible(false)}
-                >
+                  onPress={() => setVisible(false)}>
                   <Text style={styles.closeButtonText}>✕</Text>
                 </TouchableOpacity>
               )}
