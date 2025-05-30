@@ -23,7 +23,6 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
   const [visible, setVisible] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const flatListRef = useRef<FlatList>(null);
-
   const numColumns = 3;
   const screenWidth = Dimensions.get('window').width;
   const imageSize = (screenWidth - 32) / numColumns;
@@ -71,7 +70,7 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
             ref={flatListRef}
             data={imagens}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item: Imagem) => item.id}
             numColumns={numColumns}
             contentContainerStyle={styles.galleryContainer}
           />
@@ -80,7 +79,9 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
               imageUrls={imagesForViewer}
               index={safeIndex}
               onSwipeDown={() => setVisible(false)}
-              onChange={(index) => setCurrentIndex(index || 0)}
+              onChange={(index: number | undefined) =>
+                setCurrentIndex(index || 0)
+              }
               enableSwipeDown={true}
               enablePreload={true}
               renderHeader={() => (
