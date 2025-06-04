@@ -11,7 +11,6 @@ import newspaper from '../assets/newspaper.png';
 import { Loading } from './LoadingScreen';
 import Home from './public/Home';
 import { Profile } from './Profile';
-import { Settings } from './Settings';
 import { Updates } from './Updates';
 import NotFound from './public/NotFound';
 import PhoneConfirmation from './public/PhoneConfirmation';
@@ -112,17 +111,6 @@ const RootStack = createNativeStackNavigator({
           user: (value: string) => `@${value}`,
         },
       },
-    },
-    Settings: {
-      screen: Settings,
-      options: ({ navigation }: { navigation: any }) => ({
-        presentation: 'modal',
-        headerRight: () => (
-          <HeaderButton onPress={navigation.goBack}>
-            <Text>Close</Text>
-          </HeaderButton>
-        ),
-      }),
     },
     PhoneConfirmation: {
       screen: PhoneConfirmation,
