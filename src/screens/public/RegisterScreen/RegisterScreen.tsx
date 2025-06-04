@@ -11,7 +11,7 @@ import {
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import CpfInput from '@components/CpfInput';
-import { DateInput } from '../../../lib/util/DateInput';
+import DateInput from '@components/DateInput';
 import { useLocation } from '../../../lib/util/LocationContext';
 import { styles } from './styles';
 
