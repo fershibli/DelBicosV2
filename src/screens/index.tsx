@@ -14,7 +14,7 @@ import { Updates } from './Updates';
 import NotFound from './public/NotFound';
 import PhoneConfirmation from './public/PhoneConfirmation';
 import ConfirmPhoneNumber from './public/ConfirmPhoneNumber';
-import { RegisterScreen } from './RegisterScreen';
+import RegisterScreen from './public/RegisterScreen';
 import PartnerProfile from './public/PartnerProfile';
 import ServiceStatusScreen from './public/ServicesStatus/ServiceStatusScreen ';
 
