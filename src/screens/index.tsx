@@ -1,12 +1,8 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   createStaticNavigation,
   StaticParamList,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Image } from 'react-native';
-import newspaper from '../assets/newspaper.png';
-import { Loading } from './LoadingScreen';
 import Home from './public/Home';
 import NotFound from './public/NotFound';
 import PhoneConfirmation from './public/PhoneConfirmation';
