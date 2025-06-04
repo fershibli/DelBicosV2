@@ -1,37 +1,40 @@
 {
   "expo": {
     "name": "DelBicos",
-    "slug": "DelBicos",
+    "slug": "delbicos",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "scheme": "delbicos",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ff7f00"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.satya164.reactnavigationtemplate"
+      "supportsTablet": false,
+      "bundleIdentifier": "com.delbicos.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Este aplicativo precisa acessar sua localização para mostrar serviços disponíveis na sua região.",
+        "NSLocationAlwaysUsageDescription": "Este aplicativo precisa acessar sua localização para mostrar serviços disponíveis na sua região."
+      }
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.satya164.reactnavigationtemplate"
+      "package": "com.delbicos.app",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-asset",
-      [
-        "expo-splash-screen",
-        {
-          "backgroundColor": "#ffffff",
-          "image": "./assets/splash-icon.png"
-        }
-      ],
-      "react-native-edge-to-edge"
-    ]
+    "description": "Aplicativo de delivery de serviços temporários (bicos).",
+    "scheme": "delbicos"
   }
 }
