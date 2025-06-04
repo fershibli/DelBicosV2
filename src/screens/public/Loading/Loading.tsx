@@ -1,10 +1,11 @@
 import React from 'react';
-import { ScrollView, Text, StyleSheet, Image } from 'react-native';
+import { ScrollView, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import LocationOptions from '../lib/util/LocationOptions';
-import { useLocation } from '../lib/util/LocationContext';
+import LocationOptions from '../../../lib/util/LocationOptions';
+import { useLocation } from '../../../lib/util/LocationContext';
+import { styles } from './styles';
 
-export function Loading() {
+function Loading() {
   const navigation = useNavigation();
   const { setLocation } = useLocation();
 
@@ -44,36 +45,4 @@ export function Loading() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ff7f00',
-  },
-  contentContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#ffffff',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#ffffff',
-    marginBottom: 20,
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 10,
-    fontSize: 12,
-    color: '#ffffff',
-  },
-});
+export default Loading;
