@@ -9,7 +9,7 @@ interface CodeInputProps {
   setFocusedIndex: (index: number) => void;
 }
 
-export const CodeInput: React.FC<CodeInputProps> = ({
+const CodeInput: React.FC<CodeInputProps> = ({
   verificationCode,
   setVerificationCode,
   focusedIndex,
@@ -60,3 +60,5 @@ export const CodeInput: React.FC<CodeInputProps> = ({
     </View>
   );
 };
+
+export default CodeInput;
