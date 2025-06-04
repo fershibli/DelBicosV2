@@ -30,6 +30,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     fontSize: 12,
+    alignSelf: 'center',
     color: '#ffffff',
   },
 });
