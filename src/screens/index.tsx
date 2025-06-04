@@ -10,8 +10,9 @@ import ConfirmPhoneNumber from './public/ConfirmPhoneNumber';
 import RegisterScreen from './public/RegisterScreen';
 import PartnerProfile from './public/PartnerProfile';
 import ServiceStatusScreen from './public/ServicesStatus';
+import { NavigationParams } from './types';
 
-const RootStack = createNativeStackNavigator({
+const RootStack = createNativeStackNavigator<NavigationParams>({
   screens: {
     Home: {
       // Alterado de 'Loading' para 'Home'
