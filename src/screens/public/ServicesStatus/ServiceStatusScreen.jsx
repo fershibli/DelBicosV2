@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import Header from '@components/header';
+import { View } from 'react-native';
+import Header from '@components/Header';
 import ProfessionalInfo from '@components/ProfessionalInfo';
 import BannerStatus from '@components/BannerStatus';
-import ServiceItems from '@components/ServiceItems';
+import ServiceItems from '@components/ServiceItems/ServiceItems';
 import PaymentInfo from '@components/PaymentInfo/PaymentInfo';
-import styles from '@components/styles';
+import { styles } from './styles';
 
 const mockServices = [
   {
@@ -14,7 +14,7 @@ const mockServices = [
     date: '5/12/2024',
     startTime: '14:30',
     endTime: '15:00',
-    price: 38.00,
+    price: 38.0,
     professional: 'Jefferson',
   },
   {
@@ -23,7 +23,7 @@ const mockServices = [
     date: '5/12/2024',
     startTime: '15:00',
     endTime: '15:45',
-    price: 45.00,
+    price: 45.0,
     professional: 'Jefferson',
   },
   {
@@ -32,26 +32,33 @@ const mockServices = [
     date: '5/12/2024',
     startTime: '16:00',
     endTime: '16:30',
-    price: 50.00,
+    price: 50.0,
     professional: 'Jefferson',
-  }
+  },
 ];
 
-
 const ServiceStatusScreen = () => {
-    const subtotal = mockServices.reduce((sum, service) => sum + service.price, 0);
+  const subtotal = mockServices.reduce(
+    (sum, service) => sum + service.price,
+    0,
+  );
   return (
     <View style={styles.container}>
       <Header />
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
         <ProfessionalInfo />
-        <BannerStatus  status="Executado"/>
-        </View>
+        <BannerStatus status="Executado" />
+      </View>
       <View style={styles.divider} />
       <ServiceItems items={mockServices} />
-      <PaymentInfo 
+      <PaymentInfo
         total={subtotal}
-        discount={40.00}
+        discount={40.0}
         couponCode="BARBEIRO40"
         paymentMethod="Cartão de Crédito"
         installments={6}
