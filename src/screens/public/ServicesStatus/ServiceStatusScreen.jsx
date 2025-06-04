@@ -3,8 +3,8 @@ import { View } from 'react-native';
 import Header from '@components/Header';
 import ProfessionalInfo from '@components/ProfessionalInfo';
 import BannerStatus from '@components/BannerStatus';
-import ServiceItems from '@components/ServiceItems/ServiceItems';
-import PaymentInfo from '@components/PaymentInfo/PaymentInfo';
+import ServiceItems from '@components/ServiceItems';
+import PaymentInfo from '@components/PaymentInfo';
 import { styles } from './styles';
 
 const mockServices = [
