@@ -72,27 +72,28 @@ const RootStack = createNativeStackNavigator({
           id: (value) => value,
         },
       },
+    },
     ServiceStatus: {
       screen: ServiceStatusScreen,
       linking: {
-        path: "service-status"
-      }
+        path: 'service-status',
+      },
     },
     Profile: {
       screen: Profile,
       linking: {
         path: ':user(@[a-zA-Z0-9-_]+)',
         parse: {
-          user: (value) => value.replace(/^@/, ''),
+          user: (value: string) => value.replace(/^@/, ''),
         },
         stringify: {
-          user: (value) => `@${value}`,
+          user: (value: string) => `@${value}`,
         },
       },
     },
     Settings: {
       screen: Settings,
-      options: ({ navigation }) => ({
+      options: ({ navigation }: { navigation: any }) => ({
         presentation: 'modal',
         headerRight: () => (
           <HeaderButton onPress={navigation.goBack}>
