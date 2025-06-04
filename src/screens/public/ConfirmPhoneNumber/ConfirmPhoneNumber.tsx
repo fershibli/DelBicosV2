@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { CodeInput } from '../../../lib/util/CodeInput';
+import CodeInput from '@components/CodeInput';
 import { styles } from './styles';
 
 interface ConfirmPhoneNumberRoute {
