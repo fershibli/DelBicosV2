@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { View, TextInput } from 'react-native';
+import { styles } from './styles';
 
 interface DateInputProps {
   value: string;
   onChangeText: (text: string) => void;
 }
 
-export const DateInput: React.FC<DateInputProps> = ({
-  value,
-  onChangeText,
-}) => {
+const DateInput: React.FC<DateInputProps> = ({ value, onChangeText }) => {
   const [formattedDate, setFormattedDate] = useState(value);
 
   const formatDate = (text: string) => {
@@ -48,16 +46,4 @@ export const DateInput: React.FC<DateInputProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    marginBottom: 10,
-  },
-  input: {
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    width: '100%',
-  },
-});
+export default DateInput;
