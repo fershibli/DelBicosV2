@@ -5,11 +5,7 @@ import * as React from 'react';
 import { Navigation } from './screens';
 import { LocationProvider } from '@lib/utils/LocationContext';
 
-Asset.loadAsync([
-  ...NavigationAssets,
-  require('./assets/newspaper.png'),
-  require('./assets/bell.png'),
-]);
+Asset.loadAsync([...NavigationAssets]);
 
 SplashScreen.preventAutoHideAsync();
 
@@ -19,10 +15,7 @@ export function App() {
       <Navigation
         linking={{
           enabled: 'auto',
-          prefixes: [
-            // Change the scheme to match your app's scheme defined in app.json
-            'helloworld://',
-          ],
+          prefixes: ['delbicos://'],
         }}
         onReady={() => {
           SplashScreen.hideAsync();
