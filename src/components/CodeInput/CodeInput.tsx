@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { View, TextInput } from 'react-native';
+import { styles } from './styles';
 
 interface CodeInputProps {
   verificationCode: string[];
@@ -59,21 +60,3 @@ export const CodeInput: React.FC<CodeInputProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  codeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '60%',
-    marginBottom: 20,
-  },
-  codeInput: {
-    width: 50,
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#003366',
-    borderRadius: 8,
-    textAlign: 'center',
-    fontSize: 20,
-  },
-});
