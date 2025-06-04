@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '400',
     color: '#DDE6F0',
-  },
-});
+  }
+  });
 
 export default styles;
