@@ -119,10 +119,7 @@ export function PartnerProfile() {
 
         <TouchableOpacity onPress={() => setActiveTab('servicos')}>
           <Text
-            style={[
-              styles.tab,
-              activeTab === 'servicos' && styles.activeTab,
-            ]}>
+            style={[styles.tab, activeTab === 'servicos' && styles.activeTab]}>
             Serviços
           </Text>
         </TouchableOpacity>
