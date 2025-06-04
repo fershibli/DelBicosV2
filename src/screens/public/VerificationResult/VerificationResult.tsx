@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 
 import { RouteProp } from '@react-navigation/native';
+import { styles } from './styles';
 
 type VerificationResultRouteProps = {
   params: {
@@ -9,7 +10,7 @@ type VerificationResultRouteProps = {
   };
 };
 
-export function VerificationResult({
+function VerificationResult({
   route,
 }: {
   route: RouteProp<VerificationResultRouteProps, 'params'>;
@@ -41,40 +42,4 @@ export function VerificationResult({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#e6f0fa',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  messageBox: {
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  message: {
-    fontSize: 18,
-    color: '#ffffff',
-    fontWeight: 'bold',
-  },
-  button: {
-    backgroundColor: '#ff7f00',
-    padding: 12,
-    borderRadius: 8,
-    width: '100%',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 10,
-    fontSize: 12,
-    color: '#003366',
-  },
-});
+export default VerificationResult;
