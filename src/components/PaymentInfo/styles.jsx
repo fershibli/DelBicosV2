@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   professionalContainer: {
     alignItems: 'flex-start',
     marginBottom: 15,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   professionalName: {
     fontWeight: '700',
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   itemDetails: {
     backgroundColor: '#FFE092',
     padding: 10,
-    marginBottom: 2
+    marginBottom: 2,
   },
   itemRow: {
     flexDirection: 'row',
@@ -282,28 +282,28 @@ const styles = StyleSheet.create({
     color: '#FC8200',
   },
   paymentContainer: {
-  marginBottom: 20,
-  backgroundColor: '#F5F5F5',
-  padding: 15,
-  borderRadius: 8,
-},
-paymentSummary: {
-  marginBottom: 15,
-},
-discountText: {
-  color: '#DC3545',
-},
-paymentMethod: {
-  backgroundColor: '#E9F5FF',
-  padding: 10,
-  borderRadius: 5,
-},
-paymentNote: {
-  marginTop: 10,
-  fontSize: 12,
-  color: '#22843B',
-  fontStyle: 'italic',
-}
+    marginBottom: 20,
+    backgroundColor: '#F5F5F5',
+    padding: 15,
+    borderRadius: 8,
+  },
+  paymentSummary: {
+    marginBottom: 15,
+  },
+  discountText: {
+    color: '#DC3545',
+  },
+  paymentMethod: {
+    backgroundColor: '#E9F5FF',
+    padding: 10,
+    borderRadius: 5,
+  },
+  paymentNote: {
+    marginTop: 10,
+    fontSize: 12,
+    color: '#22843B',
+    fontStyle: 'italic',
+  },
 });
 
 export default styles;
