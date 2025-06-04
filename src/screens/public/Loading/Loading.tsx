@@ -43,7 +43,7 @@ function Loading() {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}>
-        <Image source={require('../assets/logo.png')} style={styles.logo} />
+        <Image source={require('@assets/logo.png')} style={styles.logo} />
         <Text style={styles.title}>DelBicos</Text>
         <Text style={styles.subtitle}>Delivery de Bicos</Text>
 
