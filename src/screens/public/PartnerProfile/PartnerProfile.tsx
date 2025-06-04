@@ -9,16 +9,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SobreContent } from './PartnerProfile/SobreContent';
-import { ServicosContent } from './PartnerProfile/ServicosContent';
-import { GaleriaContent } from './PartnerProfile/GaleriaContent';
-import { AvaliacoesContent } from './PartnerProfile/AvaliacoesContent';
+import { SobreContent } from './SobreContent';
+import { ServicosContent } from './ServicosContent';
+import { GaleriaContent } from './GaleriaContent';
+import { AvaliacoesContent } from './AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
 
-import { parceiros } from './PartnerProfile/parceiros.mock';
-import { comodidades } from './PartnerProfile/comodidades';
+import { parceiros } from './parceiros.mock';
+import { comodidades } from './comodidades';
 
-export function PartnerProfile() {
+function PartnerProfileScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { id } = route.params as { id: string };
@@ -214,3 +214,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default PartnerProfileScreen;
