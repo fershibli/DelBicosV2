@@ -17,7 +17,8 @@ import { NotFound } from './NotFound';
 import { PhoneConfirmation } from './PhoneConfirmation';
 import { ConfirmPhoneNumber } from './ConfirmPhoneNumber';
 import { RegisterScreen } from './RegisterScreen';
-import ServiceStatusScreen from './public/ServicesStatus/ServiceStatusScreen';
+import { PartnerProfile } from './public/PartnerProfile';
+import ServiceStatusScreen from './public/ServicesStatus/ServiceStatusScreen ';
 
 const LoadingTabs = createNativeStackNavigator({
   screens: {
@@ -84,6 +85,18 @@ const RootStack = createNativeStackNavigator({
         headerShown: false,
       },
     },
+    PartnerProfile: {
+      screen: PartnerProfile,
+      linking: {
+        path: 'partner/:id',
+        parse: {
+          id: (value) => value,
+        },
+        stringify: {
+          id: (value) => value,
+        },
+      },
+    },
     ServiceStatus: {
       screen: ServiceStatusScreen,
       linking: {
@@ -95,16 +108,16 @@ const RootStack = createNativeStackNavigator({
       linking: {
         path: ':user(@[a-zA-Z0-9-_]+)',
         parse: {
-          user: (value) => value.replace(/^@/, ''),
+          user: (value: string) => value.replace(/^@/, ''),
         },
         stringify: {
-          user: (value) => `@${value}`,
+          user: (value: string) => `@${value}`,
         },
       },
     },
     Settings: {
       screen: Settings,
-      options: ({ navigation }) => ({
+      options: ({ navigation }: { navigation: any }) => ({
         presentation: 'modal',
         headerRight: () => (
           <HeaderButton onPress={navigation.goBack}>
