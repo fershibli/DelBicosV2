@@ -14,7 +14,7 @@ import { Profile } from './Profile';
 import { Settings } from './Settings';
 import { Updates } from './Updates';
 import { NotFound } from './NotFound';
-import { PhoneConfirmation } from './PhoneConfirmation';
+import PhoneConfirmation from './public/PhoneConfirmation';
 import ConfirmPhoneNumber from './public/ConfirmPhoneNumber';
 import { RegisterScreen } from './RegisterScreen';
 import { PartnerProfile } from './public/PartnerProfile';
