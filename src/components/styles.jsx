@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   professionalContainer: {
     alignItems: 'flex-start',
     marginBottom: 15,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   professionalName: {
     fontWeight: '700',
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   itemDetails: {
     backgroundColor: '#FFE092',
     padding: 10,
-    marginBottom: 2
+    marginBottom: 2,
   },
   itemRow: {
     flexDirection: 'row',
@@ -156,16 +156,6 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     color: '#000000',
   },
-  addressContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  addressText: {
-    fontSize: 15,
-    lineHeight: 18,
-    color: 'black',
-    textAlign: 'center',
-  },
   parnerLogo: {
     width: 50,
     height: 50,
@@ -185,8 +175,7 @@ const styles = StyleSheet.create({
   textContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
-  }
-
+  },
 });
 
 export default styles;
