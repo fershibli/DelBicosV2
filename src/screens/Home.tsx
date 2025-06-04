@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { useLocation } from '../lib/util/LocationContext';
 
 // Mock de dados para o feed de "bicos"
@@ -32,7 +31,6 @@ const bicos = [
 ];
 
 export function Home() {
-  const navigation = useNavigation();
   const { city, state } = useLocation();
 
   const handleBicoDetails = (bicoId: number) => {
