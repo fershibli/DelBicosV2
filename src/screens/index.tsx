@@ -13,7 +13,7 @@ import Home from './public/Home';
 import { Profile } from './Profile';
 import { Settings } from './Settings';
 import { Updates } from './Updates';
-import { NotFound } from './NotFound';
+import NotFound from './public/NotFound';
 import PhoneConfirmation from './public/PhoneConfirmation';
 import ConfirmPhoneNumber from './public/ConfirmPhoneNumber';
 import { RegisterScreen } from './RegisterScreen';
@@ -124,15 +124,6 @@ const RootStack = createNativeStackNavigator({
         ),
       }),
     },
-    NotFound: {
-      screen: NotFound,
-      options: {
-        title: '404',
-      },
-      linking: {
-        path: '*',
-      },
-    },
     PhoneConfirmation: {
       screen: PhoneConfirmation,
       options: {
@@ -158,6 +149,15 @@ const RootStack = createNativeStackNavigator({
         headerStyle: { backgroundColor: '#e6f0fa' },
         headerTintColor: '#003366',
         headerTitleStyle: { fontWeight: 'bold' },
+      },
+    },
+    NotFound: {
+      screen: NotFound,
+      options: {
+        title: '404',
+      },
+      linking: {
+        path: '*',
       },
     },
   },

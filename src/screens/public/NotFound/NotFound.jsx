@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styles from './styles';
 
-const ErrorScreen = () => {
+const NotFoundScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.errorText}>Erro!</Text>
@@ -16,5 +16,4 @@ const ErrorScreen = () => {
   );
 };
 
-export default ErrorScreen;
-
+export default NotFoundScreen;
