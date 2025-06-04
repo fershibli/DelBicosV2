@@ -6,20 +6,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#DDE6F0',
     paddingHorizontal: 15,
   },
-  header: {
-    marginTop: 20,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    justifyContent: 'flex-start',
-  },
-  headerText: {
-    fontWeight: '700',
-    fontSize: 15,
-    lineHeight: 18,
-    color: '#005A93',
-  },
   professionalContainer: {
     alignItems: 'flex-start',
     marginBottom: 15,
