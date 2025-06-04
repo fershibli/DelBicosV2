@@ -8,19 +8,36 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Image } from 'react-native';
 import bell from '../assets/bell.png';
 import newspaper from '../assets/newspaper.png';
-import { Home } from './Home';
+import { Loading } from './LoadingScreen';
+import { Home } from './Home'; // Adicionando a Home que foi criada anteriormente
 import { Profile } from './Profile';
 import { Settings } from './Settings';
 import { Updates } from './Updates';
 import { NotFound } from './NotFound';
-import ServiceStatusScreen from './public/ServicesStatus/ServiceStatusScreen ';
+import { PhoneConfirmation } from './PhoneConfirmation';
+import { ConfirmPhoneNumber } from './ConfirmPhoneNumber';
+import { RegisterScreen } from './RegisterScreen';
+import ServiceStatusScreen from './public/ServicesStatus/ServiceStatusScreen';
 
-const HomeTabs = createBottomTabNavigator({
+const LoadingTabs = createNativeStackNavigator({
+  screens: {
+    Loading: {
+      screen: Loading,
+      options: {
+        headerShown: false,
+      },
+    },
+  },
+});
+
+const TabNavigator = createBottomTabNavigator({
   screens: {
     Home: {
+      // Alterado de 'Loading' para 'Home'
       screen: Home,
       options: {
         title: 'Feed',
+        headerShown: false,
         tabBarIcon: ({ color, size }) => (
           <Image
             source={newspaper}
@@ -53,18 +70,25 @@ const HomeTabs = createBottomTabNavigator({
 
 const RootStack = createNativeStackNavigator({
   screens: {
-    HomeTabs: {
-      screen: HomeTabs,
+    LoadingTabs: {
+      screen: LoadingTabs,
       options: {
-        title: 'Home',
+        title: 'Loading',
+        headerShown: false,
+      },
+    },
+    Home: {
+      // Alterado de 'Loading' para 'Home' para refletir o fluxo correto
+      screen: TabNavigator,
+      options: {
         headerShown: false,
       },
     },
     ServiceStatus: {
       screen: ServiceStatusScreen,
       linking: {
-        path: "service-status"
-      }
+        path: 'service-status',
+      },
     },
     Profile: {
       screen: Profile,
@@ -96,6 +120,33 @@ const RootStack = createNativeStackNavigator({
       },
       linking: {
         path: '*',
+      },
+    },
+    PhoneConfirmation: {
+      screen: PhoneConfirmation,
+      options: {
+        title: 'Acesse sua conta',
+        headerStyle: { backgroundColor: '#e6f0fa' },
+        headerTintColor: '#003366',
+        headerTitleStyle: { fontWeight: 'bold' },
+      },
+    },
+    ConfirmPhoneNumber: {
+      screen: ConfirmPhoneNumber,
+      options: {
+        title: 'Confirme seu número',
+        headerStyle: { backgroundColor: '#e6f0fa' },
+        headerTintColor: '#003366',
+        headerTitleStyle: { fontWeight: 'bold' },
+      },
+    },
+    Register: {
+      screen: RegisterScreen,
+      options: {
+        title: 'Cadastre-se',
+        headerStyle: { backgroundColor: '#e6f0fa' },
+        headerTintColor: '#003366',
+        headerTitleStyle: { fontWeight: 'bold' },
       },
     },
   },
