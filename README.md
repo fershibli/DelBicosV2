@@ -8,7 +8,7 @@
 
 <p align="center">
 
-[About](#-about) | [Backlogs & User Stories](#-backlogs--user-stories) | [Tecnologies](#️-tecnologies) | [Project Structure](#-project-structure) | [Installation](#️-installation)
+[About](#-about) | [Backlogs & User Stories](#-backlogs--user-stories) | [Tecnologies](#️-tecnologies) | [Project Structure](#-project-structure) | [Installation](#️-installation) | [Backend do Projeto](https://github.com/fershibli/DelBicosBackend)
 
 </p>
 
