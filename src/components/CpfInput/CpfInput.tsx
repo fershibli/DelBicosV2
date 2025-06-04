@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Text, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Text, Alert } from 'react-native';
+import { styles } from './styles';
 
 interface CpfInputProps {
   value: string;
   onChangeText: (text: string) => void;
 }
 
-export const CpfInput: React.FC<CpfInputProps> = ({ value, onChangeText }) => {
+const CpfInput: React.FC<CpfInputProps> = ({ value, onChangeText }) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [formattedCpf, setFormattedCpf] = useState(value);
 
@@ -79,21 +80,4 @@ export const CpfInput: React.FC<CpfInputProps> = ({ value, onChangeText }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    marginBottom: 10,
-  },
-  input: {
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    width: '100%',
-  },
-  errorText: {
-    color: '#ff4444',
-    fontSize: 12,
-    marginTop: 5,
-  },
-});
+export default CpfInput;
