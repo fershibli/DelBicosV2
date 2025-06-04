@@ -5,18 +5,22 @@ import * as React from 'react';
 import { Navigation } from './screens';
 import { LocationProvider } from './lib/util/LocationContext';
 
-Asset.loadAsync([
-  ...NavigationAssets,
-  require('./assets/newspaper.png'),
-  require('./assets/bell.png'),
-]);
+Asset.loadAsync([...NavigationAssets]);
 
 SplashScreen.preventAutoHideAsync();
 
 export function App() {
   return (
     <LocationProvider>
-      <Navigation />
+      <Navigation
+        linking={{
+          enabled: 'auto',
+          prefixes: ['delbicos://'],
+        }}
+        onReady={() => {
+          SplashScreen.hideAsync();
+        }}
+      />
     </LocationProvider>
   );
 }
