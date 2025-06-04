@@ -17,12 +17,12 @@ import { styles } from './styles';
 
 function RegisterScreen() {
   const navigation = useNavigation();
-  const { setLocation } = useLocation();
+  const { setLocation: updateLocation } = useLocation();
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [cpf, setCpf] = useState('');
-  const [location, setLocationState] = useState('');
+  const [location] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
@@ -44,7 +44,11 @@ function RegisterScreen() {
     if (geocode.length > 0) {
       const { city, region } = geocode[0];
       const newLocation = `${city || ''}, ${region || ''}`;
-      setLocationState(newLocation);
+      const [newCity, newState] = newLocation
+        .split(', ')
+        .map((str) => str.trim());
+      updateLocation(newCity || 'Unknown City', newState || 'Unknown State');
+      updateLocation(city || 'Unknown City', region || 'Unknown State');
     }
   };
 
@@ -94,89 +98,90 @@ function RegisterScreen() {
   const handleRegister = () => {
     if (validateFields()) {
       const [city, state] = location.split(', ').map((str) => str.trim());
-      setLocation(city, state);
+      updateLocation(city, state);
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
       navigation.navigate('Home');
     }
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.title}>Cadastre-se</Text>
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.contentContainer}>
+        <Text style={styles.title}>Cadastre-se</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nome"
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Sobrenome"
-        value={surname}
-        onChangeText={setSurname}
-      />
-      <DateInput value={birthDate} onChangeText={setBirthDate} />
-      <CpfInput value={cpf} onChangeText={setCpf} />
-      <View style={styles.locationContainer}>
         <TextInput
-          style={[styles.input, styles.locationInput]}
-          placeholder="Localização"
-          value={location}
-          editable={false}
+          style={styles.input}
+          placeholder="Nome"
+          value={name}
+          onChangeText={setName}
         />
-        <TouchableOpacity
-          style={styles.locationButton}
-          onPress={handleUseLocation}>
-          <Text style={styles.buttonText}>📍</Text>
-        </TouchableOpacity>
-      </View>
-      <TextInput
-        style={styles.input}
-        placeholder="E-mail"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <View style={styles.passwordContainer}>
         <TextInput
-          style={[styles.input, styles.passwordInput]}
-          placeholder="Senha"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={!passwordVisible}
+          style={styles.input}
+          placeholder="Sobrenome"
+          value={surname}
+          onChangeText={setSurname}
+        />
+        <DateInput value={birthDate} onChangeText={setBirthDate} />
+        <CpfInput value={cpf} onChangeText={setCpf} />
+        <View style={styles.locationContainer}>
+          <TextInput
+            style={[styles.input, styles.locationInput]}
+            placeholder="Localização"
+            value={location}
+            editable={false}
+          />
+          <TouchableOpacity
+            style={styles.locationButton}
+            onPress={handleUseLocation}>
+            <Text style={styles.buttonText}>📍</Text>
+          </TouchableOpacity>
+        </View>
+        <TextInput
+          style={styles.input}
+          placeholder="E-mail"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
           autoCapitalize="none"
         />
-        <TouchableOpacity
-          style={styles.eyeButton}
-          onPress={() => setPasswordVisible(!passwordVisible)}>
-          <Text style={styles.eyeIcon}>{passwordVisible ? '👁️' : '👁️‍🗨️'}</Text>
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={[styles.input, styles.passwordInput]}
+            placeholder="Senha"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!passwordVisible}
+            autoCapitalize="none"
+          />
+          <TouchableOpacity
+            style={styles.eyeButton}
+            onPress={() => setPasswordVisible(!passwordVisible)}>
+            <Text style={styles.eyeIcon}>{passwordVisible ? '👁️' : '👁️‍🗨️'}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.termsContainer}>
+          <Switch
+            value={acceptTerms}
+            onValueChange={setAcceptTerms}
+            trackColor={{ false: '#767577', true: '#003366' }}
+            thumbColor={acceptTerms ? '#ffffff' : '#f4f3f4'}
+          />
+          <Text style={styles.termsText}>
+            Aceito os termos de uso e condições
+          </Text>
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>Cadastrar</Text>
         </TouchableOpacity>
-      </View>
-
-      <View style={styles.termsContainer}>
-        <Switch
-          value={acceptTerms}
-          onValueChange={setAcceptTerms}
-          trackColor={{ false: '#767577', true: '#003366' }}
-          thumbColor={acceptTerms ? '#ffffff' : '#f4f3f4'}
-        />
-        <Text style={styles.termsText}>
-          Aceito os termos de uso e condições
-        </Text>
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Cadastrar</Text>
-      </TouchableOpacity>
-
+      </ScrollView>
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
-    </ScrollView>
+    </View>
   );
 }
 

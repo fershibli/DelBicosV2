@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, Modal } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import CodeInput from '@components/CodeInput';
 import { styles } from './styles';
 
-interface ConfirmPhoneNumberRoute {
-  params?: {
-    code?: string;
-  };
-}
+type ConfirmPhoneNumberRouteProp = RouteProp<
+  { params: { code: string } },
+  'params'
+>;
 
 function ConfirmPhoneNumberScreen({
   route,
 }: {
-  route: ConfirmPhoneNumberRoute;
+  route: ConfirmPhoneNumberRouteProp;
 }) {
   const navigation = useNavigation();
   const { code: sentCode = '1234' } = route.params || {};
@@ -40,23 +39,25 @@ function ConfirmPhoneNumberScreen({
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.title}>Confirme seu número</Text>
-      <Text style={styles.subtitle}>
-        Insira o código de acesso de 4 dígitos que você recebeu para o número
-        (+55) 1622
-      </Text>
-      <CodeInput
-        verificationCode={verificationCode}
-        setVerificationCode={setVerificationCode}
-        focusedIndex={focusedIndex}
-        setFocusedIndex={setFocusedIndex}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleContinue}>
-        <Text style={styles.buttonText}>Continuar</Text>
-      </TouchableOpacity>
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.contentContainer}>
+        <Text style={styles.title}>Confirme seu número</Text>
+        <Text style={styles.subtitle}>
+          Insira o código de acesso de 4 dígitos que você recebeu para o número
+          (+55) 1622
+        </Text>
+        <CodeInput
+          verificationCode={verificationCode}
+          setVerificationCode={setVerificationCode}
+          focusedIndex={focusedIndex}
+          setFocusedIndex={setFocusedIndex}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleContinue}>
+          <Text style={styles.buttonText}>Continuar</Text>
+        </TouchableOpacity>
+      </ScrollView>
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
@@ -83,7 +84,7 @@ function ConfirmPhoneNumberScreen({
           </View>
         </View>
       </Modal>
-    </ScrollView>
+    </View>
   );
 }
 

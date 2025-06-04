@@ -5,12 +5,17 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  View,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { NavigationParams } from '../../types';
+
+type NavigationProp = NativeStackNavigationProp<NavigationParams>;
 
 function PhoneConfirmationScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const mockSendSMS = () => {
@@ -31,28 +36,30 @@ function PhoneConfirmationScreen() {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.title}>Acesse sua conta</Text>
-      <Text style={styles.subtitle}>
-        Insira seu celular para entrar. Você receberá um código SMS para
-        confirmar seu telefone
-      </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="DDD + CELULAR"
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        keyboardType="phone-pad"
-      />
-      <TouchableOpacity style={styles.button} onPress={handleContinue}>
-        <Text style={styles.buttonText}>Continuar</Text>
-      </TouchableOpacity>
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.contentContainer}>
+        <Text style={styles.title}>Acesse sua conta</Text>
+        <Text style={styles.subtitle}>
+          Insira seu celular para entrar. Você receberá um código SMS para
+          confirmar seu telefone
+        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="DDD + CELULAR"
+          value={phoneNumber}
+          onChangeText={setPhoneNumber}
+          keyboardType="phone-pad"
+        />
+        <TouchableOpacity style={styles.button} onPress={handleContinue}>
+          <Text style={styles.buttonText}>Continuar</Text>
+        </TouchableOpacity>
+      </ScrollView>
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
-    </ScrollView>
+    </View>
   );
 }
 
