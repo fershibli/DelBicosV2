@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Alert,
-} from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
 import * as Location from 'expo-location';
+import { styles } from './styles';
 
 interface Props {
   onLocationRetrieved: (city: string, country: string) => void;
@@ -80,30 +74,3 @@ const LocationOptions: React.FC<Props> = ({
 };
 
 export default LocationOptions;
-
-const styles = StyleSheet.create({
-  wrapper: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  input: {
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    width: '100%',
-    marginVertical: 10,
-  },
-  button: {
-    backgroundColor: '#003366',
-    padding: 12,
-    borderRadius: 8,
-    marginVertical: 5,
-    width: '100%',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
-  },
-});

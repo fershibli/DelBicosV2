@@ -1,8 +1,8 @@
 import React from 'react';
 import { ScrollView, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import LocationOptions from '../../../lib/util/LocationOptions';
-import { useLocation } from '../../../lib/util/LocationContext';
+import LocationOptions from '@components/LocationOptions';
+import { useLocation } from '@lib/util/LocationContext';
 import { styles } from './styles';
 
 function Loading() {
