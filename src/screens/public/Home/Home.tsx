@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
-import { useLocation } from '../../../lib/util/LocationContext';
+import { useLocation } from '@lib/util/LocationContext';
 import { styles } from './styles';
 
 // Mock de dados para o feed de "bicos"
@@ -54,11 +54,10 @@ function HomeScreen() {
             </TouchableOpacity>
           </View>
         ))}
-
-        <Text style={styles.footer}>
-          © DelBicos - 2025 – Todos os direitos reservados.
-        </Text>
       </ScrollView>
+      <Text style={styles.footer}>
+        © DelBicos - 2025 – Todos os direitos reservados.
+      </Text>
     </View>
   );
 }
