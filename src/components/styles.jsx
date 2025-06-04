@@ -6,30 +6,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#DDE6F0',
     paddingHorizontal: 15,
   },
-  professionalContainer: {
-    alignItems: 'flex-start',
-    marginBottom: 15,
-    paddingHorizontal: 15,
-  },
-  professionalName: {
-    fontWeight: '700',
-    fontSize: 15,
-    lineHeight: 18,
-    color: '#000000',
-    marginBottom: 5,
-  },
-  serviceInfo: {
-    fontWeight: '300',
-    fontSize: 12,
-    color: '#000000',
-    marginBottom: 5,
-  },
-  viewProfessionalText: {
-    fontWeight: '300',
-    fontSize: 9,
-    lineHeight: 11,
-    color: '#005A93',
-  },
   divider: {
     height: 2,
     backgroundColor: '#D9D9D9',
@@ -113,26 +89,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 18,
     color: '#000000',
-  },
-  parnerLogo: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  professionalInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  partnerLogo: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  textContainer: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
   },
 });
 
