@@ -1,16 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#DDE6F0',
-    paddingHorizontal: 15,
-  },
-  divider: {
-    height: 2,
-    backgroundColor: '#D9D9D9',
-    marginVertical: 15,
-  },
+export const styles = StyleSheet.create({
   itemsContainer: {
     borderWidth: 0.3,
     borderColor: '#000000',
@@ -70,26 +60,4 @@ const styles = StyleSheet.create({
     color: '#000000',
     marginTop: 5,
   },
-  paymentContainer: {
-    marginBottom: 20,
-  },
-  paymentTitle: {
-    fontWeight: '700',
-    fontSize: 15,
-    lineHeight: 18,
-    color: '#000000',
-    marginBottom: 5,
-  },
-  paymentMethod: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  paymentMethodText: {
-    fontWeight: '300',
-    fontSize: 15,
-    lineHeight: 18,
-    color: '#000000',
-  },
 });
-
-export default styles;

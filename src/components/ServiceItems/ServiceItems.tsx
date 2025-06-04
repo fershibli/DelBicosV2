@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import styles from './styles';
+import { styles } from './styles';
 
 interface ServiceItemsProps {
   items: {
@@ -28,7 +28,7 @@ const ServiceItems: React.FC<ServiceItemsProps> = ({ items }) => {
       <View style={styles.itemsHeader}>
         <Text style={styles.itemsHeaderText}>Itens</Text>
       </View>
-      
+
       {items.map((item) => (
         <View key={item.id} style={styles.itemDetails}>
           <View style={styles.itemRow}>
@@ -36,10 +36,15 @@ const ServiceItems: React.FC<ServiceItemsProps> = ({ items }) => {
             <Text style={styles.itemDate}>{formatDate(item.date)}</Text>
           </View>
           <View style={styles.itemRow}>
-            <Text style={styles.itemTime}>{`${item.startTime} - ${item.endTime}`}</Text>
+            <Text
+              style={
+                styles.itemTime
+              }>{`${item.startTime} - ${item.endTime}`}</Text>
             <Text style={styles.itemPrice}>{formatPrice(item.price)}</Text>
           </View>
-          <Text style={styles.professionalText}>Profissional: {item.professional}</Text>
+          <Text style={styles.professionalText}>
+            Profissional: {item.professional}
+          </Text>
         </View>
       ))}
     </View>
