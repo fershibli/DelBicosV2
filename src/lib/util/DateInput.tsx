@@ -6,7 +6,10 @@ interface DateInputProps {
   onChangeText: (text: string) => void;
 }
 
-export const DateInput: React.FC<DateInputProps> = ({ value, onChangeText }) => {
+export const DateInput: React.FC<DateInputProps> = ({
+  value,
+  onChangeText,
+}) => {
   const [formattedDate, setFormattedDate] = useState(value);
 
   const formatDate = (text: string) => {
