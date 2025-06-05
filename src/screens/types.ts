@@ -1,6 +1,6 @@
 export type NavigationParams = {
   Home: undefined;
-  Loading: undefined;
+  Feed: undefined;
   PartnerProfile: { id: string };
   ServiceStatus: undefined;
   PhoneConfirmation: undefined;
