@@ -18,6 +18,8 @@ const Header = () => {
         />
       </View>
 
+      <View style={styles.divider} />
+
     </View>
   );
 };
