@@ -2,7 +2,11 @@ import React from 'react';
 import { View, Image, Text } from 'react-native';
 import { styles } from './styles';
 
-const Header = ({ isAuthenticated = false }) => {
+type Props = {
+  isAuthenticated: boolean;
+};
+
+const Header = ({ isAuthenticated }: Props) => {
 
   return (
     <View style={styles.container}>
