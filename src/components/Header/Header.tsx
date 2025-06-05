@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Image, Text } from 'react-native';
+import { View, Image, Text, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import NavItem from './styles';
 
 type Props = {
   isAuthenticated: boolean;
@@ -33,20 +35,31 @@ const Header = ({ isAuthenticated }: Props) => {
 
 const AuthenticatedNav = () => (
   <View style={styles.navItems}>
-    <Text style={styles.navItem}>Página Inicial</Text>
-    <Text style={styles.navItem}>Categorias</Text>
-    <Text style={styles.navItem}>Ajuda</Text>
-    <Text style={styles.navItem}>Meus Agendamentos</Text>
-    <Text style={styles.navItem}>Portal do Parceiro</Text>
+    <NavItem>Página Inicial</NavItem>
+    <NavItem>Categorias</NavItem>
+    <NavItem>Ajuda</NavItem>
+    <NavItem>Meus Agendamentos</NavItem>
+    <NavItem>Portal do Parceiro</NavItem>
+    <View style={styles.locationContainer}>
+      <Text style={styles.locationLabel}>Estou em:</Text>
+        <TouchableOpacity style={styles.locationBox}>
+          <Text style={styles.locationText}>Sorocaba, São Paulo</Text>
+          <Icon name="keyboard-arrow-down" size={18} color="#FFF" style={styles.arrowIcon} />
+        </TouchableOpacity>
+      </View>
+    <View style={styles.userContainer}>
+     <Image source={require('../../assets/logo.png')} style={styles.profileImage} />
+     <Text style={styles.userName}>Douglas</Text>
+    </View>
   </View>
 );
 
 const UnauthenticatedNav = () => (
   <View style={styles.navItems}>
-    <Text style={styles.navItem}>Página Inicial</Text>
-    <Text style={styles.navItem}>Categorias</Text>
-    <Text style={styles.navItem}>Ajuda</Text>
-    <Text style={styles.navItem}>Portal do Parceiro</Text>
+    <NavItem>Página Inicial</NavItem>
+    <NavItem>Categorias</NavItem>
+    <NavItem>Ajuda</NavItem>
+    <NavItem>Portal do Parceiro</NavItem>
     
     <View style={styles.authButtons}>
       <Text style={styles.registerText}>Cadastre-se</Text>
