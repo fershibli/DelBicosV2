@@ -13,4 +13,8 @@ export const styles = StyleSheet.create({
     width: 476,
     height: 145,
   },
+  divider: {
+    height: 2,
+    backgroundColor: 'black',
+  },
 });
