@@ -111,9 +111,6 @@ export const styles = StyleSheet.create({
   arrowIcon: {
     marginTop: 2,
   },
-  userContainer: {
-    alignItems: 'center',
-  },
   profileImage: {
     width: 37,
     height: 37,
@@ -128,6 +125,13 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 16,
     color: '#000',
+  },
+  userContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
   }, 
 });
 
