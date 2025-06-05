@@ -4,18 +4,22 @@ export const styles = StyleSheet.create({
   container: {
     width: '100%',
     backgroundColor: '#FFFFFF',
+    paddingTop: 25,
   },
   topSection: {
-    paddingVertical: 20,
+    height: 170,
+    justifyContent: 'center',
     paddingLeft: 20,
   },
   logo: {
-    width: 476,
+    width: '60%',
+    maxWidth: 476,
     height: 145,
   },
   divider: {
     height: 2,
     backgroundColor: 'black',
+    marginTop: 10,
   },
   navbar: {
     paddingVertical: 10,
@@ -29,7 +33,7 @@ export const styles = StyleSheet.create({
   navItem: {
     fontSize: 20,
     color: '#000000',
-    marginRight: 30,
+    marginRight: 60,
     marginVertical: 5,
   },
   authButtons: {
