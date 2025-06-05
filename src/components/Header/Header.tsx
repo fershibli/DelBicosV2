@@ -47,11 +47,16 @@ const AuthenticatedNav = () => (
           <Icon name="keyboard-arrow-down" size={18} color="#FFF" style={styles.arrowIcon} />
         </TouchableOpacity>
       </View>
-    <View style={styles.userContainer}>
-     <Image source={require('../../assets/logo.png')} style={styles.profileImage} />
-     <Text style={styles.userName}>Douglas</Text>
+      <TouchableOpacity
+        style={styles.userContainer}
+        activeOpacity={0.7}>
+        <Image
+          source={require('../../assets/logo.png')}
+          style={styles.profileImage}
+        />
+        <Text style={styles.userName}>Douglas</Text>
+      </TouchableOpacity>
     </View>
-  </View>
 );
 
 const UnauthenticatedNav = () => (
