@@ -52,4 +52,9 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     color: '#FFFFFF',
   },
+  blueBar: {
+    height: 41,
+    backgroundColor: '#005A93',
+    width: '100%',
+  }
 });
