@@ -17,4 +17,8 @@ export const styles = StyleSheet.create({
     height: 2,
     backgroundColor: 'black',
   },
+  navbar: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
 });
