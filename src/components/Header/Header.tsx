@@ -21,6 +21,8 @@ const Header = ({ isAuthenticated = false }) => {
         {isAuthenticated ? <AuthenticatedNav /> : <UnauthenticatedNav />}
       </View>
 
+      <View style={styles.blueBar} />
+
     </View>
   );
 };
