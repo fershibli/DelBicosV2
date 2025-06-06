@@ -3,23 +3,29 @@ import { View, Image, Text, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import NavItem from './styles';
+import { useNavigation } from '@react-navigation/native';
+
 
 type Props = {
   isAuthenticated: boolean;
 };
 
+
+
 const Header = ({ isAuthenticated }: Props) => {
+
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
 
-      <View style={styles.topSection}>
+      <TouchableOpacity style={styles.topSection} onPress={() => navigation.navigate('Home')}>
         <Image 
           source={require('../../assets/DelBicos_LogoH.png')} 
           style={styles.logo} 
           resizeMode="contain"
         />
-      </View>
+      </TouchableOpacity>
 
       <View style={styles.divider} />
 
