@@ -6,7 +6,7 @@ const NavItem = styled(Button)({
   fontSize: '20px',
   color: '#000000',
   marginRight: '7%',
-  marginVertical: '5px',
+  marginVertical: '25px',
   textTransform: 'none',
   borderRadius: '20px',
   padding: '8px 16px',
@@ -19,27 +19,29 @@ const NavItem = styled(Button)({
 export const styles = StyleSheet.create({
   container: {
     width: '100%',
+    maxHeight: 220,
     backgroundColor: '#FFFFFF',
     paddingTop: 25,
   },
   topSection: {
-    height: 170,
+    height: '20%',
     justifyContent: 'center',
     paddingLeft: 20,
   },
   logo: {
-    width: '60%',
+    width: '15%',
+    marginTop: 15,
     maxWidth: 476,
-    height: 145,
+    height: 90,
   },
   divider: {
-    height: 2,
+    height: '2%',
     backgroundColor: 'black',
-    marginTop: 10,
+    marginTop: 45,
   },
   navbar: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: -30,
+    paddingHorizontal: 25,
   },
   navItems: {
     flexDirection: 'row',
@@ -51,7 +53,9 @@ export const styles = StyleSheet.create({
   authButtons: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: '27%',
+    paddingHorizontal: 55,
+    paddingVertical: 12,
+    borderRadius: 12,
   },
   registerText: {
     fontSize: 20,
@@ -69,7 +73,7 @@ export const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   blueBar: {
-    height: 41,
+    height: 42,
     backgroundColor: '#005A93',
     width: '100%',
   },
@@ -132,7 +136,31 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-  }, 
+  },
+  navItemOutlined: {
+    borderWidth: 1,
+    borderColor: '#FC8200',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginRight: 10,
+  },
+  navItemFilled: {
+    backgroundColor: '#FC8200',
+    borderRadius: 7,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  navItemText: {
+    fontSize: 18,
+    color: '#000',
+    textAlign: 'center',
+  },
+  navItemTextFilled: {
+    fontSize: 18,
+    color: '#FFF',
+    textAlign: 'center',
+  },
 });
 
 export default NavItem;
