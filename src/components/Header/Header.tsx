@@ -65,12 +65,14 @@ const UnauthenticatedNav = () => (
     <NavItem>Categorias</NavItem>
     <NavItem>Ajuda</NavItem>
     <NavItem>Portal do Parceiro</NavItem>
-    
+
     <View style={styles.authButtons}>
-      <Text style={styles.registerText}>Cadastre-se</Text>
-      <View style={styles.loginButton}>
-        <Text style={styles.loginText}>Fazer login</Text>
-      </View>
+      <TouchableOpacity style={styles.navItemOutlined}>
+        <Text style={styles.navItemText}>Cadastre-se</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.navItemFilled}>
+        <Text style={styles.navItemTextFilled}>Fazer login</Text>
+      </TouchableOpacity>
     </View>
   </View>
 );
