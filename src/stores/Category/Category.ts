@@ -47,7 +47,9 @@ export const useCategoryStore = create(
           },
         ];
 
-        set({ categories: data });
+        setTimeout(() => {
+          set({ categories: data });
+        }, 1000);
       } catch (error) {
         console.error('Failed to fetch categories:', error);
       }
