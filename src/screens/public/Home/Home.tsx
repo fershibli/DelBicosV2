@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
-import { useLocation } from '@lib/util/LocationContext';
+import { useLocation } from '@lib/utils/LocationContext';
 import { styles } from './styles';
 
 // Mock de dados para o feed de "bicos"
