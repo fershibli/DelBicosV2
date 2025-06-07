@@ -1,62 +1,46 @@
-import React from 'react';
-import { ScrollView, Text, Image, View } from 'react-native';
+import { ScrollView, Text, Image } from 'react-native';
+import { styles } from './../Loading/styles';
 import { useNavigation } from '@react-navigation/native';
-import LocationOptions from '@components/LocationOptions';
-import { useLocation } from '@lib/util/LocationContext';
-import { styles } from './styles';
+import LocationOptions from '@lib/utils/LocationOptions';
+import { useLocation } from '@lib/utils/LocationContext';
 
-function Loading() {
+export function Loading() {
   const navigation = useNavigation();
   const { setLocation } = useLocation();
 
   const handleLocation = (city: string, country: string) => {
-    console.log('handleLocation chamado com:', city, country);
+    // Assume que 'country' pode ser o estado ou um placeholder
     setLocation(city, country);
-    if (city && country) {
-      console.log('Localização definida, navegando para Home');
-      navigation.navigate('Home');
-    } else {
-      console.log('Falha ao definir localização, navegando não realizado');
-    }
+    navigation.navigate('Home');
   };
 
   const handleCep = (city: string, state: string) => {
-    console.log('handleCep chamado com:', city, state);
     setLocation(city, state);
-    if (city && state) {
-      console.log('Localização via CEP definida, navegando para Home');
-      navigation.navigate('Home');
-    } else {
-      console.log(
-        'Falha ao definir localização via CEP, navegando não realizado',
-      );
-    }
+    navigation.navigate('Home');
   };
 
   const onLoginPress = () => {
-    console.log('Navegando para PhoneConfirmation');
     navigation.navigate('PhoneConfirmation');
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}>
-        <Image source={require('../assets/logo.png')} style={styles.logo} />
-        <Text style={styles.title}>DelBicos</Text>
-        <Text style={styles.subtitle}>Delivery de Bicos</Text>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}>
+      <Image source={require('../assets/logo.png')} style={styles.logo} />
+      <Text style={styles.title}>DelBicos</Text>
+      <Text style={styles.subtitle}>Delivery de Bicos</Text>
 
-        <LocationOptions
-          onLocationRetrieved={handleLocation}
-          onCepRetrieved={handleCep}
-          onLoginPress={onLoginPress}
-        />
-      </ScrollView>
+      <LocationOptions
+        onLocationRetrieved={handleLocation}
+        onCepRetrieved={handleCep}
+        onLoginPress={onLoginPress}
+      />
+
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
-    </View>
+    </ScrollView>
   );
 }
 
