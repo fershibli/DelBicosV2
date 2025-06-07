@@ -1,59 +1,62 @@
 import React from 'react';
+<<<<<<< HEAD
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import { useLocation } from '@lib/utils/LocationContext';
+=======
+import { ScrollView, Text, Image, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import LocationOptions from '@components/LocationOptions';
+import { useLocation } from '@lib/util/LocationContext';
+>>>>>>> e5e1d1c02775697379345edf426f345b0166c00e
 import { styles } from './styles';
 
-// Mock de dados para o feed de "bicos"
-const bicos = [
-  {
-    id: 1,
-    title: 'Entrega de Pacote',
-    description: 'Entregar um pacote pequeno no centro da cidade.',
-    location: 'São Paulo, SP',
-  },
-  {
-    id: 2,
-    title: 'Limpeza Residencial',
-    description: 'Limpeza de apartamento de 2 quartos.',
-    location: 'Rio de Janeiro, RJ',
-  },
-  {
-    id: 3,
-    title: 'Montagem de Móveis',
-    description: 'Montar uma estante IKEA na casa do cliente.',
-    location: 'Curitiba, PR',
-  },
-];
-
 function HomeScreen() {
-  const { city, state } = useLocation();
+  const navigation = useNavigation();
+  const { setLocation } = useLocation();
 
-  const handleBicoDetails = (bicoId: number) => {
-    console.log(`Navegando para detalhes do bico ${bicoId}`);
+  const handleLocation = (city: string, country: string) => {
+    console.log('handleLocation chamado com:', city, country);
+    setLocation(city, country);
+    if (city && country) {
+      console.log('Localização definida, navegando para Feed');
+      navigation.navigate('Feed');
+    } else {
+      console.log('Falha ao definir localização, navegando não realizado');
+    }
+  };
+
+  const handleCep = (city: string, state: string) => {
+    console.log('handleCep chamado com:', city, state);
+    setLocation(city, state);
+    if (city && state) {
+      console.log('Localização via CEP definida, navegando para Feed');
+      navigation.navigate('Feed');
+    } else {
+      console.log(
+        'Falha ao definir localização via CEP, navegando não realizado',
+      );
+    }
+  };
+
+  const onLoginPress = () => {
+    console.log('Navegando para PhoneConfirmation');
+    navigation.navigate('PhoneConfirmation');
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>
-          📍 {city && state ? `${city}, ${state}` : 'Localização não definida'}
-        </Text>
-      </View>
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>Feed de Bicos</Text>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}>
+        <Image source={require('@assets/logo.png')} style={styles.logo} />
+        <Text style={styles.title}>DelBicos</Text>
+        <Text style={styles.subtitle}>Delivery de Bicos</Text>
 
-        {bicos.map((bico) => (
-          <View key={bico.id} style={styles.card}>
-            <Text style={styles.cardTitle}>{bico.title}</Text>
-            <Text style={styles.cardDescription}>{bico.description}</Text>
-            <Text style={styles.cardLocation}>📍 {bico.location}</Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => handleBicoDetails(bico.id)}>
-              <Text style={styles.buttonText}>Ver Detalhes</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
+        <LocationOptions
+          onLocationRetrieved={handleLocation}
+          onCepRetrieved={handleCep}
+          onLoginPress={onLoginPress}
+        />
       </ScrollView>
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.

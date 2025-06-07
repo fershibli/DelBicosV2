@@ -3,7 +3,7 @@ import {
   StaticParamList,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Home from './public/Home';
+import Feed from './public/Feed';
 import NotFound from './public/NotFound';
 import PhoneConfirmation from './public/PhoneConfirmation';
 import ConfirmPhoneNumber from './public/ConfirmPhoneNumber';
@@ -11,12 +11,22 @@ import RegisterScreen from './public/RegisterScreen';
 import PartnerProfile from './public/PartnerProfile';
 import ServiceStatusScreen from './public/ServicesStatus';
 import { NavigationParams } from './types';
+import Home from './public/Home';
 
 const RootStack = createNativeStackNavigator<NavigationParams>({
   screens: {
     Home: {
       // Alterado de 'Loading' para 'Home'
       screen: Home,
+      options: {
+        headerShown: false,
+      },
+    },
+    Feed: {
+      screen: Feed,
+      linking: {
+        path: 'feed',
+      },
       options: {
         headerShown: false,
       },
@@ -59,6 +69,9 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
     },
     Register: {
       screen: RegisterScreen,
+      linking: {
+        path: 'register',
+      },
       options: {
         title: 'Cadastre-se',
         headerStyle: { backgroundColor: '#e6f0fa' },
