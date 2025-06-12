@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   categoryCard: {
     flexDirection: 'row',
     minWidth: 200,
-    maxWidth: 210,
+    maxWidth: 220,
     height: 126,
     margin: 10,
     padding: 10,
