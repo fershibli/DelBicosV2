@@ -35,6 +35,9 @@
       "favicon": "./assets/favicon.png"
     },
     "description": "Aplicativo de delivery de serviços temporários (bicos).",
-    "scheme": "delbicos"
+    "scheme": "delbicos",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
