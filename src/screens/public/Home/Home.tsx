@@ -43,9 +43,7 @@ function HomeScreen() {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}>
-        <Image source={require('@assets/logo.png')} style={styles.logo} />
-        <Text style={styles.title}>DelBicos</Text>
-        <Text style={styles.subtitle}>Delivery de Bicos</Text>
+        <Image source={require('@assets/LogoV3.png')} style={styles.logo} />
 
         <LocationOptions
           onLocationRetrieved={handleLocation}
