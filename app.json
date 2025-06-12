@@ -39,7 +39,10 @@
             "./assets/fonts/CenturyGothic/Century Gothic Bold Italic.otf",
             "./assets/fonts/CenturyGothic/Century-Gothic-Bold.otf",
             "./assets/fonts/CenturyGothic/Century-Gothic-Italic.otf",
-            "./assets/fonts/CenturyGothic/Century-Gothic.otf"
+            "./assets/fonts/CenturyGothic/Century-Gothic.otf",
+            "./assets/fonts/Afacad/Afacad-Bold.otf",
+            "./assets/fonts/Afacad/Afacad-Regular.otf",
+            "./assets/fonts/Afacad/Afacad-SemiBold.otf"
           ]
         }
       ]
