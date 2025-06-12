@@ -2,6 +2,7 @@ import React from 'react';
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
+import CategoryList from '@components/CategoryList';
 
 // Mock de dados para o feed de "bicos"
 const bicos = [
@@ -34,6 +35,7 @@ function FeedScreen() {
 
   return (
     <View style={styles.container}>
+      <CategoryList />
       <View style={styles.header}>
         <Text style={styles.headerText}>
           📍 {city && state ? `${city}, ${state}` : 'Localização não definida'}
