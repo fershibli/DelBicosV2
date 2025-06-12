@@ -1,13 +1,8 @@
 import React from 'react';
-<<<<<<< HEAD
-import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
-import { useLocation } from '@lib/utils/LocationContext';
-=======
 import { ScrollView, Text, Image, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LocationOptions from '@components/LocationOptions';
-import { useLocation } from '@lib/util/LocationContext';
->>>>>>> e5e1d1c02775697379345edf426f345b0166c00e
+import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
 
 function HomeScreen() {
