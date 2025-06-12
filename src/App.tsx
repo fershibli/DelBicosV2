@@ -3,7 +3,7 @@ import { Asset } from 'expo-asset';
 import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
 import { Navigation } from '@screens/NavigationStack';
-import { LocationProvider } from '@lib/util/LocationContext';
+import { LocationProvider } from '@lib/hooks/LocationContext';
 
 Asset.loadAsync([...NavigationAssets]);
 

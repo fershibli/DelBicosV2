@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, Text, Image, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LocationOptions from '@components/LocationOptions';
-import { useLocation } from '@lib/util/LocationContext';
+import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
 
 function HomeScreen() {
