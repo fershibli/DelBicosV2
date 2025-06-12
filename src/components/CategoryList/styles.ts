@@ -12,9 +12,12 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   categoryCard: {
-    width: 200,
+    flexDirection: 'row',
+    minWidth: 200,
+    maxWidth: 210,
     height: 126,
-    margin: 14,
+    margin: 10,
+    padding: 10,
     borderRadius: 10,
     shadowColor: colors.primaryBlack,
     shadowOffset: {
@@ -25,5 +28,13 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5, // Android shadow
     backgroundColor: colors.secondaryBeige,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  categoryTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.primaryOrange,
+    textAlign: 'center',
   },
 });
