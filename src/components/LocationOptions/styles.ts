@@ -2,9 +2,13 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   wrapper: {
-    width: '100%',
+    width: '30%',
+    display: 'flex',
+    justifyContent: 'center',
     alignItems: 'center',
+    flexWrap: 'wrap',
   },
+
   input: {
     backgroundColor: '#ffffff',
     borderRadius: 8,
@@ -13,6 +17,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     marginVertical: 10,
   },
+
   button: {
     backgroundColor: '#003366',
     padding: 12,
@@ -21,6 +26,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
+
   buttonText: {
     color: '#ffffff',
     fontWeight: 'bold',
