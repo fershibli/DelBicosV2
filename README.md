@@ -33,6 +33,13 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 ## 🎯 Backlogs & User Stories
 
+<image src="assets/backlogP.png" alt="Backlog de Produtos do projeto DelBicos" width="60%">
+<image src="assets/backlogS.png" alt="Backlog de Sprints do projeto DelBicos" width="60%">
+
+<br>
+
+## 💡 Requisitos Funcionais
+
 - **_Requisitos Funcionais - Cliente_**
 
 | Número do Requisito | Nome                                      | Descrição                                                                                              |
@@ -47,6 +54,8 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 |        RFC08        | Efetuar Pagamento                         | O cliente pode realizar o pagamento dos serviços.                                                      |
 |        RFC09        | Consultar Serviços Agendados              | O cliente pode consultar os serviços já agendados.                                                     |
 
+<p>
+
 - **_Requisitos Funcionais - Profissional_**
 
 | Número do Requisito | Nome                                | Descrição                                                            |
@@ -57,6 +66,8 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 |        RFP04        | Verificar Serviços Agendados        | O profissional pode verificar os serviços já agendados por clientes. |
 |        RFP05        | Alterar Tabela de Valores           | O profissional pode alterar a tabela de valores de seus serviços.    |
 |        RFP06        | Alterar Disponibilidade de Horários | O profissional pode alterar sua disponibilidade de horários.         |
+
+<p>
 
 - **_Requisitos Funcionais - Administrador_**
 
