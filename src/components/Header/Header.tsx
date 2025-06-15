@@ -4,7 +4,7 @@ import { styles } from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import NavItem from './styles';
 import { useNavigation } from '@react-navigation/native';
-
+import { useUserStore } from '@stores/userStore'; 
 
 type Props = {
   isAuthenticated: boolean;
@@ -39,7 +39,10 @@ const Header = ({ isAuthenticated }: Props) => {
   );
 };
 
-const AuthenticatedNav = () => (
+const AuthenticatedNav = () => {
+  const user = useUserStore((state) => state.user);
+
+  return (
   <View style={styles.navItems}>
     <NavItem>Página Inicial</NavItem>
     <NavItem>Categorias</NavItem>
@@ -49,7 +52,7 @@ const AuthenticatedNav = () => (
     <View style={styles.locationContainer}>
       <Text style={styles.locationLabel}>Estou em:</Text>
         <TouchableOpacity style={styles.locationBox}>
-          <Text style={styles.locationText}>Sorocaba, São Paulo</Text>
+            {user?.location ?? 'Localização não definida'}
           <Icon name="keyboard-arrow-down" size={18} color="#FFF" style={styles.arrowIcon} />
         </TouchableOpacity>
       </View>
@@ -63,7 +66,8 @@ const AuthenticatedNav = () => (
         <Text style={styles.userName}>Douglas</Text>
       </TouchableOpacity>
     </View>
-);
+)
+};
 
 const UnauthenticatedNav = () => (
   <View style={styles.navItems}>
