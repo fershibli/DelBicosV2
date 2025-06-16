@@ -63,7 +63,7 @@ const AuthenticatedNav = () => {
           source={require('../../assets/logo.png')}
           style={styles.profileImage}
         />
-        <Text style={styles.userName}>{user?.name ?? 'Usuário'}</Text>
+        <Text style={styles.userName}>Douglas</Text>
       </TouchableOpacity>
     </View>
 )
