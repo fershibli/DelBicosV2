@@ -1,15 +1,5 @@
 import { create } from 'zustand';
-
-type User = {
-  name: string;
-  location: string;
-};
-
-type UserStore = {
-  user: User | null;
-  setUser: (user: User) => void;
-  logout: () => void;
-};
+import { UserStore } from './types';
 
 export const useUserStore = create<UserStore>((set) => ({
   user: null,
