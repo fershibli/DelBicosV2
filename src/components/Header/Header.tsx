@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import NavItem from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
+import DelBicosLogo from '@assets/DelBicos_LogoH.png';
 
 
 const Header = () => {
@@ -17,7 +18,7 @@ const Header = () => {
         style={styles.topSection}
         onPress={() => navigation.navigate('Home')}>
         <Image
-          source={require('../../assets/DelBicos_LogoH.png')}
+          source={DelBicosLogo}
           style={styles.logo}
           resizeMode="contain"
         />
