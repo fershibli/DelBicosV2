@@ -6,11 +6,9 @@ import NavItem from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
 
-type Props = {
-  isAuthenticated: boolean;
-};
 
-const Header = ({ isAuthenticated }: Props) => {
+const Header = () => {
+  const isAuthenticated = useUserStore((state) => !!state.user);
   const navigation = useNavigation();
 
   return (
