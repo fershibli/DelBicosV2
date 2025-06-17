@@ -8,7 +8,7 @@
 
 <p align="center">
 
-[About](#-about) | [Backlogs & User Stories](#-backlogs--user-stories) | [Prototype & Documentation](#-prototype-documentation) | [Tecnologies](#️-tecnologies) | [Team](#-team) | [Project Structure](#-project-structure) | [Installation](#️-installation) | [Backend Project](https://github.com/fershibli/DelBicosBackend)
+[About](#-about) | [Backlogs & User Stories](#-backlogs--user-stories) | [Tecnologies](#️-tecnologies) | [Team](#-team) | [Project Structure](#-project-structure) | [Installation](#️-installation) | [Backend Project](https://github.com/fershibli/DelBicosBackend)
 
 </p>
 
@@ -25,22 +25,11 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 - a integração de indivíduos no ciclo de consumo de serviços locais, levando à melhora na qualidade de vida;
 - o acompanhamento das atividades e avaliações, levando a melhor confiabilidade e segurança.
 
-Os dois grupos destacados no problema descrito, compõem o público-alvo deste projeto.
->
- ### Repositórios do Projeto
-- [Backend do DelBicos](https://git@github.com:fershibli/DelBicosBackend.git)  
-- [Frontend do DelBicos](https://git@github.com:fershibli/DelBicosV2.git)  
-- [Documentação Oficial](https://)
+> Os dois grupos destacados no problema descrito, compõem o público-alvo deste projeto.
 
- 📌 **Status:** _Em desenvolvimento_
+> > 📌 **Status:** _Em desenvolvimento_
 
- ### 🏁 Entregas de Sprints
-Cada entrega possui uma branch neste repositório com um relatório completo de tudo o que foi desenvolvido naquela sprint. Observe a relação a seguir:
-| Sprint | Ínício | Fim | Status | Histórico |
-|:--:|:----------:|:----------:|:---------------:|:-------------------------------------------------:|
-| 01 | 17/03/2025 | 01/05/2025 |✔️ Concluída    | [ver relatório]() |
-| 02 | 01/04/2025 | 16/05/2025 |🔄 Em Andamento    | [ver relatório]() |
-
+<br>
 
 ## 🎯 Backlogs & User Stories
 
@@ -92,16 +81,6 @@ Cada entrega possui uma branch neste repositório com um relatório completo de 
 |        RFA06        | Aprovar/Desaprovar Estornos               | O administrador pode aprovar ou desaprovar pedidos de estorno.                        |
 
 <br>
-
-## Prototype & Documentation
-
-#### Protótipo
-O protótipo do projeto foi desenvolvido na ferramenta Figma, trabalhando padronização de componentes e cores, disponível em:
-- [Link para o protótipo do projeto](https://www.figma.com).
-
-  #### Documentação
-Para a documentação, utilizamos várias ferramentas para criação de diagramas e de texto. Como Microsoft Word, Excel, Astah e Photopea. A documentação está disponível em:
-- [Link para a documentação delBicos](https://)
 
 ## 🛠️ Tecnologies
 
