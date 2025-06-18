@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
 
   input: {
     backgroundColor: '#ffffff',
-    borderRadius: 8,
+    borderRadius: 60,
     paddingHorizontal: 10,
     paddingVertical: 8,
     width: '100%',
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
   button: {
     backgroundColor: '#003366',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 60,
     marginVertical: 5,
     width: '100%',
     alignItems: 'center',
