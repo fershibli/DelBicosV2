@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
   container: {
     //background
     flex: 1,
-    backgroundColor: '#ff7f00',
+    backgroundColor: '#FC8200',
   },
 
   contentContainer: {
