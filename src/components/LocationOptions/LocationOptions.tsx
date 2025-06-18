@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  Alert,
+  Image,
+} from 'react-native';
 import * as Location from 'expo-location';
 import { styles } from './styles';
+// @ts-ignore
+import IconPin from '@assets/Local.svg';
 
 interface Props {
   onLocationRetrieved: (city: string, country: string) => void;
@@ -51,7 +60,8 @@ const LocationOptions: React.FC<Props> = ({
   return (
     <View style={styles.wrapper}>
       <TouchableOpacity style={styles.button} onPress={handleUseLocation}>
-        <Text style={styles.buttonText}>📍 Usar minha localização</Text>
+        <Image source={IconPin} width={21} height={29} />
+        <Text style={styles.buttonText}>Usar minha localização</Text>
       </TouchableOpacity>
 
       <TextInput
