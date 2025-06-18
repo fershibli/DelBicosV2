@@ -22,7 +22,7 @@ const AppointmentCard =  ({ appointment = {} as Appointment }: { appointment?: A
     address= '', 
     serviceName = '', 
     dateTime = '', 
-    status = 'Pendente', 
+    status = '', 
     partnerImage = '', 
   } = appointment || {};
 
