@@ -12,8 +12,8 @@ export const styles = StyleSheet.create({
   input: {
     backgroundColor: '#ffffff',
     borderRadius: 60,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     width: '100%',
     marginVertical: 10,
   },
@@ -39,9 +39,24 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  logoLocal: {
-    width: 24,
-    height: 24,
-    marginRight: 8, // Espaçamento entre o ícone e o texto
+  buttonLogin: {
+    gap: 10,
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 12,
+    paddingTop: 4,
+    paddingBottom: 7,
+    borderRadius: 60,
+    marginVertical: 50,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  buttonLoginText: {
+    color: '#000000',
+    fontSize: 32,
+    fontFamily: 'Afacad',
+    textAlign: 'center',
   },
 });
