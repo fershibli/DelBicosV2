@@ -5,6 +5,8 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#DDE6F0',
     padding: 15,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   title: {
     fontSize: 24,
@@ -18,7 +20,8 @@ export const styles = StyleSheet.create({
   },
   columnWrapper: {
     justifyContent: 'space-between',
-    marginBottom: 15,
+    marginBottom: 5,
+    alignItems: 'center',
   },
   cardWrapper: {
     width: '48%',
