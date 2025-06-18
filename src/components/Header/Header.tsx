@@ -2,32 +2,66 @@ import React from 'react';
 import { View, Image, Text, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import NavItem from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
 import DelBicosLogo from '@assets/DelBicos_LogoH.png';
-
+import { Button, ButtonProps } from '@components/Button';
+import { NavigationParams } from '@screens/types';
 
 const Header = () => {
-  const isAuthenticated = useUserStore((state) => !!state.user);
+  const { user } = useUserStore();
   const navigation = useNavigation();
+
+  const navigateTo = (screen?: keyof NavigationParams) => {
+    if (!screen) return; // remove this later, when all screens are defined
+    navigation.navigate(screen);
+  };
+
+  interface NavbarButtonProps extends Partial<ButtonProps> {
+    screen?: keyof NavigationParams;
+    children: React.ReactNode;
+  }
+
+  const NavbarButton = ({ screen, children, ...props }: NavbarButtonProps) => (
+    <Button
+      onClick={() => navigateTo(screen)}
+      size="large"
+      variant="primaryWhite"
+      {...props}>
+      {children}
+    </Button>
+  );
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.topSection}
-        onPress={() => navigation.navigate('Home')}>
-        <Image
-          source={DelBicosLogo}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        onPress={() => navigateTo('Feed')}>
+        <Image source={DelBicosLogo} style={styles.logo} resizeMode="contain" />
       </TouchableOpacity>
 
       <View style={styles.divider} />
 
       <View style={styles.navbar}>
-        {isAuthenticated ? <AuthenticatedNav /> : <UnauthenticatedNav />}
+        <View style={styles.navItems}>
+          <View style={styles.authButtons}>
+            <NavbarButton screen={'Feed'}>Página Inicial</NavbarButton>
+            <NavbarButton>Categorias</NavbarButton>
+            <NavbarButton>Ajuda</NavbarButton>
+            <NavbarButton>Meus Agendamentos</NavbarButton>
+            <NavbarButton>Portal do Parceiro</NavbarButton>
+          </View>
+          {!!user ? (
+            <AuthenticatedNav />
+          ) : (
+            <View style={styles.authButtons}>
+              <NavbarButton screen="Register">Cadastre-se</NavbarButton>
+              <NavbarButton screen="Home" variant="secondary">
+                Fazer login
+              </NavbarButton>
+            </View>
+          )}
+        </View>
       </View>
 
       <View style={styles.blueBar} />
@@ -39,12 +73,7 @@ const AuthenticatedNav = () => {
   const user = useUserStore((state) => state.user);
 
   return (
-    <View style={styles.navItems}>
-      <NavItem>Página Inicial</NavItem>
-      <NavItem>Categorias</NavItem>
-      <NavItem>Ajuda</NavItem>
-      <NavItem>Meus Agendamentos</NavItem>
-      <NavItem>Portal do Parceiro</NavItem>
+    <>
       <View style={styles.locationContainer}>
         <Text style={styles.locationLabel}>Estou em:</Text>
         <TouchableOpacity style={styles.locationBox}>
@@ -64,17 +93,12 @@ const AuthenticatedNav = () => {
         />
         <Text style={styles.userName}>Douglas</Text>
       </TouchableOpacity>
-    </View>
+    </>
   );
 };
 
 const UnauthenticatedNav = () => (
-  <View style={styles.navItems}>
-    <NavItem>Página Inicial</NavItem>
-    <NavItem>Categorias</NavItem>
-    <NavItem>Ajuda</NavItem>
-    <NavItem>Portal do Parceiro</NavItem>
-
+  <>
     <View style={styles.authButtons}>
       <TouchableOpacity style={styles.navItemOutlined}>
         <Text style={styles.navItemText}>Cadastre-se</Text>
@@ -83,7 +107,7 @@ const UnauthenticatedNav = () => (
         <Text style={styles.navItemTextFilled}>Fazer login</Text>
       </TouchableOpacity>
     </View>
-  </View>
+  </>
 );
 
 export default Header;

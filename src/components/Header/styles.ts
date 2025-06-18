@@ -1,20 +1,4 @@
 import { StyleSheet } from 'react-native';
-import Alata from '@expo-google-fonts/alata';
-import { Button, styled } from '@mui/material';
-
-const NavItem = styled(Button)({
-  fontSize: '20px',
-  color: '#000000',
-  marginRight: '7%',
-  marginVertical: '25px',
-  textTransform: 'none',
-  borderRadius: '20px',
-  padding: '8px 16px',
-  '&:hover': {
-    backgroundColor: '#FC8200',
-    color: '#fff',
-  },
-});
 
 export const styles = StyleSheet.create({
   container: {
@@ -162,5 +146,3 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-export default NavItem;
