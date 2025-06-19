@@ -8,7 +8,7 @@
 
 <p align="center">
 
-[About](#-about) | [Backlogs & User Stories](#-backlogs--user-stories) | [Prototype & Documentation](#-prototype-documentation) | [Tecnologies](#️-tecnologies) | [Team](#-team) | [Project Structure](#-project-structure) | [Installation](#️-installation) | [Backend Project](https://github.com/fershibli/DelBicosBackend)
+[About](#-about) | [Backlogs & User Stories](#-backlogs--user-stories) | [Tecnologies](#️-tecnologies) | [Team](#-team) | [Project Structure](#-project-structure) | [Installation](#️-installation) | [Backend Project](https://github.com/fershibli/DelBicosBackend)
 
 </p>
 
@@ -25,22 +25,11 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 - a integração de indivíduos no ciclo de consumo de serviços locais, levando à melhora na qualidade de vida;
 - o acompanhamento das atividades e avaliações, levando a melhor confiabilidade e segurança.
 
-Os dois grupos destacados no problema descrito, compõem o público-alvo deste projeto.
->
- ### Repositórios do Projeto
-- [Backend do DelBicos](https://git@github.com:fershibli/DelBicosBackend.git)  
-- [Frontend do DelBicos](https://git@github.com:fershibli/DelBicosV2.git)  
-- [Documentação Oficial](https://)
+> Os dois grupos destacados no problema descrito, compõem o público-alvo deste projeto.
 
- 📌 **Status:** _Em desenvolvimento_
+> > 📌 **Status:** _Em desenvolvimento_
 
- ### 🏁 Entregas de Sprints
-Cada entrega possui uma branch neste repositório com um relatório completo de tudo o que foi desenvolvido naquela sprint. Observe a relação a seguir:
-| Sprint | Ínício | Fim | Status | Histórico |
-|:--:|:----------:|:----------:|:---------------:|:-------------------------------------------------:|
-| 01 | 17/03/2025 | 01/05/2025 |✔️ Concluída    | [ver relatório]() |
-| 02 | 01/04/2025 | 16/05/2025 |🔄 Em Andamento    | [ver relatório]() |
-
+<br>
 
 ## 🎯 Backlogs & User Stories
 
@@ -93,16 +82,6 @@ Cada entrega possui uma branch neste repositório com um relatório completo de 
 
 <br>
 
-## Prototype & Documentation
-
-#### Protótipo
-O protótipo do projeto foi desenvolvido na ferramenta Figma, trabalhando padronização de componentes e cores, disponível em:
-- [Link para o protótipo do projeto](https://www.figma.com).
-
-  #### Documentação
-Para a documentação, utilizamos várias ferramentas para criação de diagramas e de texto. Como Microsoft Word, Excel, Astah e Photopea. A documentação está disponível em:
-- [Link para a documentação delBicos](https://)
-
 ## 🛠️ Tecnologies
 
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![Javascript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![Git](https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white) ![Typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) ![Swift](https://img.shields.io/badge/swift-F54A2A?style=for-the-badge&logo=swift&logoColor=white) ![Objective-C](https://img.shields.io/badge/OBJECTIVE--C-%233A95E3.svg?style=for-the-badge&logo=apple&logoColor=white) ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white) ![Kotlin](https://img.shields.io/badge/Kotlin-0095D5?&style=for-the-badge&logo=kotlin&logoColor=white) ![Express](https://img.shields.io/badge/Express%20js-000000?style=for-the-badge&logo=express&logoColor=white) ![MaterialUI](https://img.shields.io/badge/Material%20UI-007FFF?style=for-the-badge&logo=mui&logoColor=white) ![Node](https://img.shields.io/badge/Node%20js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white) ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=Postman&logoColor=white) ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![Zustand](https://img.shields.io/badge/Zustand-007ACC?style=for-the-badge&logo=React&logoColor=white) ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white) ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white) ![Penpot](https://img.shields.io/badge/Penpot-000000?style=for-the-badge&logo=penpot&logoColor=white) ![Gimp](https://img.shields.io/badge/gimp-5C5543?style=for-the-badge&logo=gimp&logoColor=white) ![Inkscape](https://img.shields.io/badge/Inkscape-000000?style=for-the-badge&logo=Inkscape&logoColor=white) ![Vscode](https://img.shields.io/badge/Vscode-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white) ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white) ![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=ios&logoColor=white)
@@ -111,13 +90,12 @@ Para a documentação, utilizamos várias ferramentas para criação de diagrama
 
 ## 👥 Team
 
-|       Nome       | Função           |
-| :--------------: | ---------------- |
-| Fernando Chibli  | _Product Owner_  |
-|  Douglas Wenzel  | _Scrum Master_   |
-| Andreza Oliveira | _Desenvolvedora_ |
-| Gustavo Ferreira | _Desenvolvedor_  |
-|   Isabel Maito   | _Desenvolvedora_ |
+|                        Nome                        | Função           |
+| :------------------------------------------------: | ---------------- |
+|  [Fernando Chibli](https://github.com/fershibli)   | _Product Owner_  |
+| [Douglas Wenzel](https://github.com/douglaswenzel) | _Scrum Master_   |
+|  [Gustavo Ferreira](https://github.com/Gspedine)   | _Desenvolvedor_  |
+|   [Isabel Maito](https://github.com/isabelmaito)   | _Desenvolvedora_ |
 
 <br>
 
