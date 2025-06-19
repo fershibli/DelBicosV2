@@ -7,9 +7,15 @@
 </p>
 
 <p align="center">
-
-[About](#-about) | [Backlogs](#-backlogs) | [User Stories](#-user-stories) | [Functional Requirements](#-functional-requirements) | [Tecnologies](#️-tecnologies) | [Team](#-team) | [Project Structure](#-project-structure) | [Installation](#️-installation) | [Backend Project](https://github.com/fershibli/DelBicosBackend)
-
+  <a href="#-about">About</a> |
+  <a href="#-backlogs">Backlogs</a> |
+  <a href="#-user-stories">User Stories</a> |
+  <a href="#-functional-requirements">Functional Requirements</a> |
+  <a href="#️-tecnologies">Tecnologies</a> |
+  <a href="#-team">Team</a> |
+  <a href="#-project-structure">Project Structure</a> |
+  <a href="#️-installation">Installation</a> |
+  <a href="https://github.com/fershibli/DelBicosBackend">Backend Project</a>
 </p>
 
 # 💻 About
@@ -94,6 +100,8 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 |        RFA06        | Aprovar/Desaprovar Estornos               | O administrador pode aprovar ou desaprovar pedidos de estorno.                        |
 
 <br>
+
+## Prototype
 
 ## 🛠️ Tecnologies
 
