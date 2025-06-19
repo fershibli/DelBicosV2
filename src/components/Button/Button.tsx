@@ -5,9 +5,11 @@ import {
   ButtonColorVariantsKeys,
   ButtonSizeVariantsKeys,
 } from './variants';
+import { ButtonProps as MUIButtonProps } from '@mui/material';
+
 import { Styled } from './styled';
 
-export interface ButtonProps {
+export interface ButtonProps extends MUIButtonProps {
   children?: React.ReactNode;
   onClick: () => void;
   variant?: ButtonColorVariantsKeys;
@@ -25,6 +27,7 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
   disabled = false,
   selected = false,
   style = {},
+  ...muiProps
 }) => {
   const buttonColor = buttonColorVariants[variant];
   const buttonSize = buttonSizeVariants[size];
@@ -46,7 +49,8 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
       disabledColors={disabledColors}
       style={{
         ...style,
-      }}>
+      }}
+      {...muiProps}>
       {children}
     </Styled.Button>
   );
