@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   Switch,
+  Image,
 } from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
@@ -14,6 +15,7 @@ import CpfInput from '@components/CpfInput';
 import DateInput from '@components/DateInput';
 import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
+import logo from '../../../assets/logo.png'; // Importação tipada de logo
 
 function RegisterScreen() {
   const navigation = useNavigation();
@@ -22,7 +24,7 @@ function RegisterScreen() {
   const [surname, setSurname] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [cpf, setCpf] = useState('');
-  const [location] = useState('');
+  const [location, setLocation] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
@@ -47,8 +49,8 @@ function RegisterScreen() {
       const [newCity, newState] = newLocation
         .split(', ')
         .map((str) => str.trim());
+      setLocation(newLocation);
       updateLocation(newCity || 'Unknown City', newState || 'Unknown State');
-      updateLocation(city || 'Unknown City', region || 'Unknown State');
     }
   };
 
@@ -105,20 +107,27 @@ function RegisterScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.containerweb}>
       <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>Cadastre-se</Text>
+        <View style={styles.header}>
+          <View style={styles.logo}>
+            <Image source={logo} style={styles.logoImage} />
+            <Text style={styles.logoText}>delivery de bicos</Text>
+          </View>
+        </View>
+
+        <Text style={styles.titleweb}>Cadastre-se</Text>
 
         <TextInput
-          style={styles.input}
+          style={styles.inputweb}
           placeholder="Nome"
           value={name}
           onChangeText={setName}
         />
         <TextInput
-          style={styles.input}
+          style={styles.inputweb}
           placeholder="Sobrenome"
           value={surname}
           onChangeText={setSurname}
@@ -127,19 +136,19 @@ function RegisterScreen() {
         <CpfInput value={cpf} onChangeText={setCpf} />
         <View style={styles.locationContainer}>
           <TextInput
-            style={[styles.input, styles.locationInput]}
+            style={[styles.inputweb, styles.locationInput]}
             placeholder="Localização"
             value={location}
             editable={false}
           />
           <TouchableOpacity
-            style={styles.locationButton}
+            style={styles.locationButtonweb}
             onPress={handleUseLocation}>
             <Text style={styles.buttonText}>📍</Text>
           </TouchableOpacity>
         </View>
         <TextInput
-          style={styles.input}
+          style={styles.inputweb}
           placeholder="E-mail"
           value={email}
           onChangeText={setEmail}
@@ -148,7 +157,7 @@ function RegisterScreen() {
         />
         <View style={styles.passwordContainer}>
           <TextInput
-            style={[styles.input, styles.passwordInput]}
+            style={[styles.inputweb, styles.passwordInput]}
             placeholder="Senha"
             value={password}
             onChangeText={setPassword}
@@ -169,8 +178,13 @@ function RegisterScreen() {
             trackColor={{ false: '#767577', true: '#003366' }}
             thumbColor={acceptTerms ? '#ffffff' : '#f4f3f4'}
           />
-          <Text style={styles.termsText}>
-            Aceito os termos de uso e condições
+          <Text style={styles.termsLabel}>
+            Aceito os{' '}
+            <Text
+              style={styles.termsLink}
+              onPress={() => Alert.alert('Termos de uso')}>
+              termos de uso e condições
+            </Text>
           </Text>
         </View>
 
@@ -178,7 +192,7 @@ function RegisterScreen() {
           <Text style={styles.buttonText}>Cadastrar</Text>
         </TouchableOpacity>
       </ScrollView>
-      <Text style={styles.footer}>
+      <Text style={styles.footerweb}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
     </View>
