@@ -8,7 +8,7 @@
 
 <p align="center">
 
-[About](#-about) | [Backlogs & User Stories](#-backlogs--user-stories) | [Tecnologies](#️-tecnologies) | [Team](#-team) | [Project Structure](#-project-structure) | [Installation](#️-installation) | [Backend Project](https://github.com/fershibli/DelBicosBackend)
+[About](#-about) | [Backlogs](#-backlogs) | [User Stories](#-user-stories) | [Functional Requirements](#-functional-requirements) | [Tecnologies](#️-tecnologies) | [Team](#-team) | [Project Structure](#-project-structure) | [Installation](#️-installation) | [Backend Project](https://github.com/fershibli/DelBicosBackend)
 
 </p>
 
@@ -20,10 +20,10 @@ Profissionais informais, de diversas vertentes, têm muita dificuldade para adqu
 
 Ao solucionar esse problema, notaria-se também os seguintes benefícios para a sociedade:
 
-- a diminuição do translado entre cliente e profissional, que causaria a redução da emissão de gases do efeito estufa nesta atividade;
-- o aumento de demanda para profissionais de diversas comunidades, contribuindo com a redução da desigualdade social;
-- a integração de indivíduos no ciclo de consumo de serviços locais, levando à melhora na qualidade de vida;
-- o acompanhamento das atividades e avaliações, levando a melhor confiabilidade e segurança.
+- A diminuição do translado entre cliente e profissional, que causaria a redução da emissão de gases do efeito estufa nesta atividade;
+- O aumento de demanda para profissionais de diversas comunidades, contribuindo com a redução da desigualdade social;
+- A integração de indivíduos no ciclo de consumo de serviços locais, levando à melhora na qualidade de vida;
+- O acompanhamento das atividades e avaliações, levando a melhor confiabilidade e segurança.
 
 > Os dois grupos destacados no problema descrito, compõem o público-alvo deste projeto.
 
@@ -31,14 +31,27 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 <br>
 
-## 🎯 Backlogs & User Stories
+## 🎯 Backlogs
 
 <image src="assets/backlogP.png" alt="Backlog de Produtos do projeto DelBicos" width="60%">
 <image src="assets/backlogS.png" alt="Backlog de Sprints do projeto DelBicos" width="60%">
 
 <br>
 
-## 💡 Requisitos Funcionais
+## 🎥 User Stories
+
+<image src="assets/sprint01-1.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint01-2.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint01-3.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint02-1.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint02-2.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint03-1.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint03-2.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint04.png" alt="User Stories do projeto DelBicos" width="60%">
+
+<br>
+
+## 💡 Functional Requirements
 
 - **_Requisitos Funcionais - Cliente_**
 
@@ -90,12 +103,12 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 ## 👥 Team
 
-|                        Nome                        | Função           |
-| :------------------------------------------------: | ---------------- |
-|  [Fernando Chibli](https://github.com/fershibli)   | _Product Owner_  |
-| [Douglas Wenzel](https://github.com/douglaswenzel) | _Scrum Master_   |
-|  [Gustavo Ferreira](https://github.com/Gspedine)   | _Desenvolvedor_  |
-|   [Isabel Maito](https://github.com/isabelmaito)   | _Desenvolvedora_ |
+|                        Nome                        | Função                      |
+| :------------------------------------------------: | --------------------------- |
+|  [Fernando Chibli](https://github.com/fershibli)   | _Product Owner & FullStack_ |
+| [Douglas Wenzel](https://github.com/douglaswenzel) | _Scrum Master & FullStack_  |
+|  [Gustavo Ferreira](https://github.com/Gspedine)   | _Desenvolvedor FullStack_   |
+|   [Isabel Maito](https://github.com/isabelmaito)   | _Desenvolvedora FullStack_  |
 
 <br>
 
