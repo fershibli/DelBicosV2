@@ -82,7 +82,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
           ) : (
             <>
               <NavbarButton screen="Register">Cadastre-se</NavbarButton>
-              <NavbarButton screen="Home" colorVariant="secondary">
+              <NavbarButton screen="Login" colorVariant="secondary">
                 Fazer login
               </NavbarButton>
             </>

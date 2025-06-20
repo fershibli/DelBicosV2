@@ -11,7 +11,7 @@ import RegisterScreen from './public/RegisterScreen';
 import PartnerProfile from './public/PartnerProfile';
 import ServiceStatusScreen from './public/ServicesStatus';
 import { NavigationParams } from './types';
-import Home from './public/Home';
+import Login from './public/Login';
 import Header from '@components/Header';
 
 const RootStack = createNativeStackNavigator<NavigationParams>({
@@ -20,8 +20,13 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
   },
   screens: {
     Home: {
-      // Alterado de 'Loading' para 'Home'
-      screen: Home,
+      screen: Feed,
+    },
+    Login: {
+      screen: Login,
+      linking: {
+        path: 'login',
+      },
     },
     Feed: {
       screen: Feed,
