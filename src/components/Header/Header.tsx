@@ -7,6 +7,7 @@ import DelBicosLogo from '@assets/DelBicos_LogoH.png';
 import { Button, ButtonProps } from '@components/Button';
 import { NavigationParams } from '@screens/types';
 import SouthIcon from '@mui/icons-material/South';
+import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 
 const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const { user } = useUserStore();
