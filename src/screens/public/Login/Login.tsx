@@ -5,7 +5,7 @@ import LocationOptions from '@components/LocationOptions';
 import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
 
-function HomeScreen() {
+function LoginScreen() {
   const navigation = useNavigation();
   const { setLocation } = useLocation();
 
@@ -58,4 +58,4 @@ function HomeScreen() {
   );
 }
 
-export default HomeScreen;
+export default LoginScreen;
