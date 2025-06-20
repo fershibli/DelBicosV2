@@ -16,7 +16,7 @@ type NavigationProp = NativeStackNavigationProp<NavigationParams>;
 
 function PhoneConfirmationScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('(__) _____-____');
 
   const mockSendSMS = () => {
     const mockCode = '1234';
@@ -24,8 +24,24 @@ function PhoneConfirmationScreen() {
     Alert.alert('Simulação', 'Código 1234 enviado com sucesso!');
   };
 
+  const handlePhoneNumberChange = (text: string) => {
+    const cleanedText = text.replace(/\D/g, '').slice(2);
+    console.log('Número de telefone digitado:', cleanedText);
+    if (cleanedText.length <= 11) {
+      let formatedText = '(__) _____-____';
+      for (let i = 0; i < cleanedText.length; i++) {
+        formatedText = formatedText.replace('_', cleanedText[i]);
+      }
+      console.log('Número de telefone formatado:', formatedText);
+      setPhoneNumber(formatedText);
+    }
+  };
+
   const handleContinue = () => {
-    if (phoneNumber && phoneNumber.match(/^\+\d{2}\s\(\d{2}\)\s\d{5}-\d{4}$/)) {
+    if (
+      phoneNumber &&
+      ('+55 ' + phoneNumber).match(/^\+\d{2}\s\(\d{2}\)\s\d{5}-\d{4}$/)
+    ) {
       mockSendSMS();
     } else {
       Alert.alert(
@@ -48,8 +64,8 @@ function PhoneConfirmationScreen() {
         <TextInput
           style={styles.input}
           placeholder="DDD + CELULAR"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
+          value={'+55 ' + phoneNumber}
+          onChangeText={handlePhoneNumberChange}
           keyboardType="phone-pad"
         />
         <TouchableOpacity style={styles.button} onPress={handleContinue}>
