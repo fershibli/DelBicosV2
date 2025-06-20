@@ -8,7 +8,7 @@ import { Button, ButtonProps } from '@components/Button';
 import { NavigationParams } from '@screens/types';
 import SouthIcon from '@mui/icons-material/South';
 
-const Header = () => {
+const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const { user } = useUserStore();
   const navigation = useNavigation();
 
