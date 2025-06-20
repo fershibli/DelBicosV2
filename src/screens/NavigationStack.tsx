@@ -21,7 +21,7 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
   screens: {
     Home: {
       // Alterado de 'Loading' para 'Home'
-      screen: Home
+      screen: Home,
     },
     Feed: {
       screen: Feed,
