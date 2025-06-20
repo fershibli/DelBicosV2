@@ -86,23 +86,25 @@ function CategoryList() {
   const { categories, fetchCategories } = useCategoryStore();
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchCategories();
-      setIsLoading(false);
-    };
     if (!categories?.length) {
       setIsLoading(true);
-      fetchData();
+      fetchCategories().then(() => {
+        setIsLoading(false);
+      });
     }
   }, [categories, fetchCategories]);
 
   if (isLoading) {
-    return <ActivityIndicator size="large" color={colors.primaryBlue} />;
+    return (
+      <View style={styles.externalContainer}>
+        <ActivityIndicator size="large" color={colors.primaryBlue} />
+      </View>
+    );
   }
 
   if (!categories || categories.length === 0) {
     return (
-      <View>
+      <View style={styles.externalContainer}>
         <Text>No categories available</Text>
       </View>
     );

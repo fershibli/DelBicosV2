@@ -5,6 +5,9 @@ export const styles = StyleSheet.create({
   externalContainer: {
     backgroundColor: colors.secondaryGray,
     width: '100%',
+    minHeight: 146,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   flatList: {
     flexGrow: 1,
