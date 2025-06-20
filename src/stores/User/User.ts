@@ -3,7 +3,7 @@ import { UserStore } from './types';
 
 export const useUserStore = create<UserStore>((set) => ({
   user: null,
-  login: () => {
+  signIn: () => {
     try {
       const mockedUser = {
         name: 'Douglas W.',
@@ -15,5 +15,5 @@ export const useUserStore = create<UserStore>((set) => ({
       return;
     }
   },
-  logout: () => set({ user: null }),
+  signOut: () => set({ user: null }),
 }));
