@@ -12,8 +12,8 @@ import { Styled } from './styled';
 export interface ButtonProps extends MUIButtonProps {
   children?: React.ReactNode;
   onClick: () => void;
-  variant?: ButtonColorVariantsKeys;
-  size?: ButtonSizeVariantsKeys;
+  colorVariant?: ButtonColorVariantsKeys;
+  sizeVariant?: ButtonSizeVariantsKeys;
   disabled?: boolean;
   selected?: boolean;
   style?: React.CSSProperties;
@@ -22,15 +22,15 @@ export interface ButtonProps extends MUIButtonProps {
 export const ButtonComponent: React.FC<ButtonProps> = ({
   children,
   onClick,
-  variant = 'primary',
-  size = 'medium',
+  colorVariant = 'primary',
+  sizeVariant = 'medium',
   disabled = false,
   selected = false,
   style = {},
   ...muiProps
 }) => {
-  const buttonColor = buttonColorVariants[variant];
-  const buttonSize = buttonSizeVariants[size];
+  const buttonColor = buttonColorVariants[colorVariant];
+  const buttonSize = buttonSizeVariants[sizeVariant];
 
   const hoverColors = buttonColor.hover;
   const disabledColors = buttonColor.disabled;
