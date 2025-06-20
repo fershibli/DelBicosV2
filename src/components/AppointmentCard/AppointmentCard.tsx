@@ -10,7 +10,7 @@ interface Appointment {
   address: string;
   serviceName: string;
   dateTime: string;
-  status: 'Confirmado' | 'Pendente' | 'Cancelado';
+  status: string;
   partnerImage: string;
 }
 
