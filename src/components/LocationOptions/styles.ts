@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
   buttonText: {
     color: '#ffffff',
     fontSize: 32,
-    fontFamily: 'Afacad',
+    fontFamily: 'Afacad-Regular',
     textAlign: 'center',
   },
 
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
   buttonLoginText: {
     color: '#000000',
     fontSize: 32,
-    fontFamily: 'Afacad',
+    fontFamily: 'Afacad-Regular',
     textAlign: 'center',
   },
 });
