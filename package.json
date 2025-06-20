@@ -31,7 +31,7 @@
     "expo-linear-gradient": "^14.1.4",
     "expo-location": "^18.1.5",
     "expo-sms": "^13.1.4",
-    "expo-splash-screen": "~0.30.7",
+    "expo-splash-screen": "~0.30.9",
     "expo-system-ui": "~5.0.6",
     "import": "^0.0.6",
     "react": "19.0.0",
