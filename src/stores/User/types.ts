@@ -1,4 +1,3 @@
-
 export type User = {
   name: string;
   location: string;
@@ -6,6 +5,6 @@ export type User = {
 
 export type UserStore = {
   user: User | null;
-  setUser: (user: User) => void;
+  login: () => void;
   logout: () => void;
 };
