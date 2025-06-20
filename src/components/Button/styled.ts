@@ -5,11 +5,14 @@ interface ButtonProps {
     backgroundColor: string;
     color: string;
   };
+  defaultFont: {
+    fontSize: number;
+    fontFamily: string;
+  };
   defaultSize: {
     borderRadius: number;
     paddingVertical: number;
     paddingHorizontal: number;
-    fontSize: number;
   };
   hoverColors?: {
     backgroundColor: string;
@@ -19,17 +22,27 @@ interface ButtonProps {
     backgroundColor: string;
     color: string;
   };
+  noWrap?: boolean;
 }
 
 export const Styled = {
   Button: styled(Button)<ButtonProps>(
-    ({ defaultColors, defaultSize, hoverColors, disabledColors }) => ({
+    ({
+      defaultColors,
+      defaultSize,
+      defaultFont,
+      hoverColors,
+      disabledColors,
+      noWrap,
+    }) => ({
       backgroundColor: defaultColors.backgroundColor,
       color: defaultColors.color,
       borderRadius: defaultSize.borderRadius,
       padding: `${defaultSize.paddingVertical}px ${defaultSize.paddingHorizontal}px`,
-      fontSize: defaultSize.fontSize,
+      fontSize: defaultFont.fontSize,
+      fontFamily: defaultFont.fontFamily,
       textTransform: 'none',
+      whiteSpace: noWrap ? 'nowrap' : 'normal',
       '&:hover': {
         backgroundColor:
           hoverColors?.backgroundColor || defaultColors.backgroundColor,

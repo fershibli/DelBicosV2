@@ -1,27 +1,34 @@
+export const buttonFontVariants = {
+  AfacadRegular32: {
+    fontFamily: 'Afacad-Regular',
+    fontSize: 32,
+  },
+  AfacadRegular20: {
+    fontFamily: 'Afacad-Regular',
+    fontSize: 20,
+  },
+};
+
 export const buttonSizeVariants = {
   medium: {
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 10,
-    fontSize: 10,
   },
   large: {
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    fontSize: 14,
   },
   xLarge: {
     borderRadius: 14,
     paddingVertical: 16,
     paddingHorizontal: 20,
-    fontSize: 18,
   },
   smallPill: {
     borderRadius: 50,
     paddingVertical: 5,
     paddingHorizontal: 10,
-    fontSize: 15,
   },
 };
 
@@ -64,7 +71,9 @@ export const buttonColorVariants = {
   },
 };
 
+export type ButtonFontVariantsType = typeof buttonFontVariants;
 export type ButtonColorVariantsType = typeof buttonColorVariants;
 export type ButtonSizeVariantsType = typeof buttonSizeVariants;
+export type ButtonFontVariantsKeys = keyof ButtonFontVariantsType;
 export type ButtonColorVariantsKeys = keyof ButtonColorVariantsType;
 export type ButtonSizeVariantsKeys = keyof ButtonSizeVariantsType;

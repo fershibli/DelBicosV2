@@ -4,6 +4,8 @@ import {
   buttonSizeVariants,
   ButtonColorVariantsKeys,
   ButtonSizeVariantsKeys,
+  ButtonFontVariantsKeys,
+  buttonFontVariants,
 } from './variants';
 import { ButtonProps as MUIButtonProps } from '@mui/material';
 
@@ -14,8 +16,10 @@ export interface ButtonProps extends MUIButtonProps {
   onClick: () => void;
   colorVariant?: ButtonColorVariantsKeys;
   sizeVariant?: ButtonSizeVariantsKeys;
+  fontVariant?: ButtonFontVariantsKeys;
   disabled?: boolean;
   selected?: boolean;
+  noWrap?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -24,13 +28,16 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
   onClick,
   colorVariant = 'primary',
   sizeVariant = 'medium',
+  fontVariant = 'AfacadRegular20',
   disabled = false,
   selected = false,
+  noWrap = false,
   style = {},
   ...muiProps
 }) => {
   const buttonColor = buttonColorVariants[colorVariant];
   const buttonSize = buttonSizeVariants[sizeVariant];
+  const buttonFont = buttonFontVariants[fontVariant];
 
   const hoverColors = buttonColor.hover;
   const disabledColors = buttonColor.disabled;
@@ -45,8 +52,10 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
       disabled={disabled}
       defaultColors={defaultColors}
       defaultSize={buttonSize}
+      defaultFont={buttonFont}
       hoverColors={buttonColor.hover ? hoverColors : undefined}
       disabledColors={disabledColors}
+      noWrap={noWrap}
       style={{
         ...style,
       }}
