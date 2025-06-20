@@ -76,7 +76,7 @@ const Header = () => {
                 source={require('../../assets/logo.png')}
                 style={styles.profileImage}
               />
-              <Text style={styles.userName}>Douglas</Text>
+              <Text style={styles.userName}>{user.name}</Text>
             </TouchableOpacity>
           ) : (
             <>
