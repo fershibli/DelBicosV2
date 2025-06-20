@@ -35,6 +35,13 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 > > 📌 **Status:** _Em desenvolvimento_
 
+Documentações das disciplinas do projeto:
+
+- Banco de Dados - Relacional:
+- Desenvolvimento Web III:
+- Gestão Ágil de Projetos de Software:
+- Interação Humano-Computador:
+
 <br>
 
 ## 🎯 Backlogs
@@ -101,7 +108,11 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 <br>
 
-## Prototype
+## 🎨 Prototype
+
+O protótipo no Figma demonstra as funcionalidades essenciais do sistema, começando pela página inicial e a navegação de pesquisa por profissionais. Ele inclui os fluxos completos para cadastro de novos usuários, login, agendamentos de serviços e o processo de pagamentos. Embora a página do administrador já esteja presente, as páginas dedicadas ao cliente e ao profissional ainda precisam ser finalizadas, o que significa que o protótipo foca nas interações centrais antes de expandir para as visualizações completas de cada perfil.
+
+<!-- [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/1xZfYHmDwbr9aaqoh5ddxN/DelBicosV2?node-id=1564-1564&t=IwxsvEhuwBR00Rqn-1) -->
 
 ## 🛠️ Tecnologies
 
