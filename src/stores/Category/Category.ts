@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { Category, CategoryStore } from './types';
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const useCategoryStore = create<CategoryStore>()((set) => ({
   categories: [],
 
@@ -45,9 +47,9 @@ export const useCategoryStore = create<CategoryStore>()((set) => ({
         },
       ];
 
-      setTimeout(() => {
-        set({ categories: data });
-      }, 1000);
+      await sleep(1000); // Simulate network delay
+
+      set({ categories: data });
     } catch (error) {
       console.error('Failed to fetch categories:', error);
     }
