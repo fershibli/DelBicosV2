@@ -7,6 +7,10 @@ export const buttonFontVariants = {
     fontFamily: 'Afacad-Regular',
     fontSize: 20,
   },
+  AfacadRegular15: {
+    fontFamily: 'Afacad-Regular',
+    fontSize: 15,
+  },
 };
 
 export const buttonSizeVariants = {
@@ -27,7 +31,7 @@ export const buttonSizeVariants = {
   },
   smallPill: {
     borderRadius: 50,
-    paddingVertical: 5,
+    paddingVertical: 0,
     paddingHorizontal: 10,
   },
 };
