@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Image, Text, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
 import DelBicosLogo from '@assets/DelBicos_LogoH.png';
 import { Button, ButtonProps } from '@components/Button';
 import { NavigationParams } from '@screens/types';
+import SouthIcon from '@mui/icons-material/South';
 
 const Header = () => {
   const { user } = useUserStore();
@@ -25,8 +25,8 @@ const Header = () => {
   const NavbarButton = ({ screen, children, ...props }: NavbarButtonProps) => (
     <Button
       onClick={() => navigateTo(screen)}
-      size="large"
-      variant="primaryWhite"
+      sizeVariant="large"
+      colorVariant="primaryWhite"
       {...props}>
       {children}
     </Button>
@@ -56,7 +56,7 @@ const Header = () => {
           ) : (
             <View style={styles.authButtons}>
               <NavbarButton screen="Register">Cadastre-se</NavbarButton>
-              <NavbarButton screen="Home" variant="secondary">
+              <NavbarButton screen="Home" colorVariant="secondary">
                 Fazer login
               </NavbarButton>
             </View>
@@ -76,15 +76,13 @@ const AuthenticatedNav = () => {
     <>
       <View style={styles.locationContainer}>
         <Text style={styles.locationLabel}>Estou em:</Text>
-        <TouchableOpacity style={styles.locationBox}>
+        <Button
+          colorVariant="secondary"
+          sizeVariant="smallPill"
+          onClick={() => {}}
+          endIcon={<SouthIcon />}>
           {user?.location ?? 'Localização não definida'}
-          <Icon
-            name="keyboard-arrow-down"
-            size={18}
-            color="#FFF"
-            style={styles.arrowIcon}
-          />
-        </TouchableOpacity>
+        </Button>
       </View>
       <TouchableOpacity style={styles.userContainer} activeOpacity={0.7}>
         <Image
