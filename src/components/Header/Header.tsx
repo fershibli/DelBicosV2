@@ -27,39 +27,64 @@ const Header = () => {
       onClick={() => navigateTo(screen)}
       sizeVariant="large"
       colorVariant="primaryWhite"
+      noWrap
       {...props}>
       {children}
     </Button>
   );
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.topSection}
-        onPress={() => navigateTo('Feed')}>
-        <Image source={DelBicosLogo} style={styles.logo} resizeMode="contain" />
+    <View style={styles.headerContainer}>
+      <TouchableOpacity onPress={() => navigateTo('Feed')}>
+        <Image
+          source={DelBicosLogo}
+          resizeMode="contain"
+          style={styles.logoImage}
+        />
       </TouchableOpacity>
 
       <View style={styles.divider} />
 
-      <View style={styles.navbar}>
-        <View style={styles.navItems}>
-          <View style={styles.authButtons}>
-            <NavbarButton screen={'Feed'}>Página Inicial</NavbarButton>
-            <NavbarButton>Categorias</NavbarButton>
-            <NavbarButton>Ajuda</NavbarButton>
-            <NavbarButton>Meus Agendamentos</NavbarButton>
-            <NavbarButton>Portal do Parceiro</NavbarButton>
+      <View style={styles.navContainer}>
+        <View style={styles.navButtonsContainer}>
+          <NavbarButton screen={'Feed'}>Página Inicial</NavbarButton>
+          <NavbarButton>Categorias</NavbarButton>
+          <NavbarButton>Ajuda</NavbarButton>
+          {!!user && (
+            <>
+              <NavbarButton>Meus Agendamentos</NavbarButton>
+              <NavbarButton>Portal do Parceiro</NavbarButton>
+            </>
+          )}
+        </View>
+
+        <View style={styles.navButtonsContainer}>
+          <View style={styles.locationContainer}>
+            <Text style={styles.locationLabel}>Estou em:</Text>
+            <Button
+              colorVariant="secondary"
+              sizeVariant="smallPill"
+              fontVariant="AfacadRegular15"
+              onClick={() => {}}
+              endIcon={<SouthIcon />}>
+              {user?.location ?? 'Localização não definida'}
+            </Button>
           </View>
           {!!user ? (
-            <AuthenticatedNav />
+            <TouchableOpacity style={styles.userContainer} activeOpacity={0.7}>
+              <Image
+                source={require('../../assets/logo.png')}
+                style={styles.profileImage}
+              />
+              <Text style={styles.userName}>Douglas</Text>
+            </TouchableOpacity>
           ) : (
-            <View style={styles.authButtons}>
+            <>
               <NavbarButton screen="Register">Cadastre-se</NavbarButton>
               <NavbarButton screen="Home" colorVariant="secondary">
                 Fazer login
               </NavbarButton>
-            </View>
+            </>
           )}
         </View>
       </View>
@@ -68,44 +93,5 @@ const Header = () => {
     </View>
   );
 };
-
-const AuthenticatedNav = () => {
-  const user = useUserStore((state) => state.user);
-
-  return (
-    <>
-      <View style={styles.locationContainer}>
-        <Text style={styles.locationLabel}>Estou em:</Text>
-        <Button
-          colorVariant="secondary"
-          sizeVariant="smallPill"
-          onClick={() => {}}
-          endIcon={<SouthIcon />}>
-          {user?.location ?? 'Localização não definida'}
-        </Button>
-      </View>
-      <TouchableOpacity style={styles.userContainer} activeOpacity={0.7}>
-        <Image
-          source={require('../../assets/logo.png')}
-          style={styles.profileImage}
-        />
-        <Text style={styles.userName}>Douglas</Text>
-      </TouchableOpacity>
-    </>
-  );
-};
-
-const UnauthenticatedNav = () => (
-  <>
-    <View style={styles.authButtons}>
-      <TouchableOpacity style={styles.navItemOutlined}>
-        <Text style={styles.navItemText}>Cadastre-se</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.navItemFilled}>
-        <Text style={styles.navItemTextFilled}>Fazer login</Text>
-      </TouchableOpacity>
-    </View>
-  </>
-);
 
 export default Header;

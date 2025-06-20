@@ -1,6 +1,39 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
+  headerContainer: {
+    flexShrink: 1,
+    backgroundColor: '#FFFFFF',
+    padding: 0,
+    margin: 0,
+  },
+  navContainer: {
+    flexShrink: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 16,
+    marginVertical: 8,
+  },
+  navButtonsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  divider: {
+    height: 2,
+    backgroundColor: '#000000',
+  },
+  logoImage: {
+    width: 476,
+    height: 145,
+    marginTop: 24,
+    marginLeft: 32,
+    marginBottom: 12,
+  },
+  /* OLD: */
   container: {
     width: '100%',
     maxHeight: 220,
@@ -17,11 +50,6 @@ export const styles = StyleSheet.create({
     marginTop: 15,
     maxWidth: 476,
     height: 90,
-  },
-  divider: {
-    height: '2%',
-    backgroundColor: 'black',
-    marginTop: 45,
   },
   navbar: {
     paddingVertical: -30,
@@ -61,7 +89,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#005A93',
     width: '100%',
   },
-  headerContainer: {
+  headerContainerOld: {
     width: '100%',
     height: 80,
     backgroundColor: '#FFF',
@@ -74,12 +102,13 @@ export const styles = StyleSheet.create({
   locationContainer: {
     flexDirection: 'column',
     alignItems: 'center',
-    marginRight: '5%',
+    marginRight: 5,
   },
   locationLabel: {
+    fontFamily: 'Afacad-Regular',
     fontSize: 18,
     color: '#000',
-    marginBottom: 4,
+    marginBottom: 0,
   },
   locationBox: {
     flexDirection: 'row',
