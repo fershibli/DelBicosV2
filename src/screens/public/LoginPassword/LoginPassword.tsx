@@ -53,12 +53,6 @@ export const LoginPassword = () => {
             onChangeText={setPassword}
           />
 
-          {/* <TouchableOpacity
-            style={styles.buttonLogin}
-            onPress={() => onLoginPress(email, password)}>
-            <Image source={IconPerson} width={21} height={29} />
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity> */}
           <Button
             colorVariant="primary"
             sizeVariant="largePill"
