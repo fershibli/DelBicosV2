@@ -1,38 +1,41 @@
-//create a login screen with a password input and a login button
-// use the same structure as the LocationOptions component
-// use the same styles as the LocationOptions component
-// provide a callback for the login button press
-// create a password input with a placeholder "Enter your password"
-// create a login button with the text "Login"
-// create a login input with a placeholder "Email Login"
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, Image } from 'react-native';
 import { styles } from './styles';
 
-interface LoginPasswordProps {
-  onLoginPress: (password: string) => void;
-  onEmailLoginPress: (email: string) => void;
-}
+// @ts-ignore
+import IconPerson from '@assets/person.svg';
+import { useUserStore } from '@stores/User';
 
-export const LoginPassword: React.FC<LoginPasswordProps> = ({
-  onLoginPress,
-  onEmailLoginPress,
-}) => {
+export const LoginPassword = () => {
+  //navigation
+  const navigation = useNavigation();
+  const { signIn } = useUserStore();
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+
+  const onLoginPress = (email: string, password: string) => {
+    signIn();
+    navigation.navigate('Feed');
+    // if (email && password) {
+    //   signIn(email, password);
+    // } else {
+    //   console.warn('Please enter both email and password');
+    // }
+  };
 
   return (
     <View style={styles.wrapper}>
       <TextInput
         style={styles.input}
-        placeholder="Email Login"
+        placeholder="E-mail"
         value={email}
         onChangeText={setEmail}
       />
 
       <TextInput
         style={styles.input}
-        placeholder="Enter your password"
+        placeholder="Senha"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -40,7 +43,8 @@ export const LoginPassword: React.FC<LoginPasswordProps> = ({
 
       <TouchableOpacity
         style={styles.buttonLogin}
-        onPress={() => onLoginPress(password)}>
+        onPress={() => onLoginPress(email, password)}>
+        <Image source={IconPerson} width={21} height={29} />
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
     </View>
