@@ -2,11 +2,35 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   wrapper: {
-    width: '30%',
+    width: '100%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexWrap: 'wrap',
+    backgroundColor: '#FC8200',
+    flex: 1,
+    paddingTop: 20,
+  },
+  scrollContainer: {
+    flex: 1,
+    backgroundColor: '#FC8200',
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+
+  logo: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+    marginBottom: 30,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 1.3,
+    elevation: 6,
   },
 
   input: {
@@ -16,22 +40,15 @@ export const styles = StyleSheet.create({
     borderColor: '#005A93',
     paddingHorizontal: 12,
     paddingVertical: 10,
-    width: '100%',
     marginVertical: 10,
+    width: 302,
   },
 
   buttonLogin: {
-    gap: 10,
-    flexDirection: 'row',
-    backgroundColor: '#005A93',
-    paddingHorizontal: 12,
+    paddingLeft: 30,
+    paddingRight: 30,
     paddingTop: 4,
     paddingBottom: 7,
-    borderRadius: 60,
-    marginVertical: 5,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 
   buttonText: {
@@ -39,5 +56,13 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Afacad',
     textAlign: 'center',
+  },
+
+  footer: {
+    position: 'absolute',
+    bottom: 10,
+    fontSize: 12,
+    alignSelf: 'center',
+    color: '#ffffff',
   },
 });

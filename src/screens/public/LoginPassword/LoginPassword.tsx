@@ -1,11 +1,20 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, Image } from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  Image,
+  ScrollView,
+} from 'react-native';
 import { styles } from './styles';
 
 // @ts-ignore
 import IconPerson from '@assets/person.svg';
 import { useUserStore } from '@stores/User';
+import LogoV3 from '@assets/LogoV3.png';
+import { Button } from '@components/Button';
 
 export const LoginPassword = () => {
   //navigation
@@ -26,27 +35,44 @@ export const LoginPassword = () => {
 
   return (
     <View style={styles.wrapper}>
-      <TextInput
-        style={styles.input}
-        placeholder="E-mail"
-        value={email}
-        onChangeText={setEmail}
-      />
+      <ScrollView style={styles.scrollContainer}>
+        <View style={styles.wrapper}>
+          <Image source={LogoV3} style={styles.logo} />
+          <TextInput
+            style={styles.input}
+            placeholder="E-mail"
+            value={email}
+            onChangeText={setEmail}
+          />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
 
-      <TouchableOpacity
-        style={styles.buttonLogin}
-        onPress={() => onLoginPress(email, password)}>
-        <Image source={IconPerson} width={21} height={29} />
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
+          {/* <TouchableOpacity
+            style={styles.buttonLogin}
+            onPress={() => onLoginPress(email, password)}>
+            <Image source={IconPerson} width={21} height={29} />
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity> */}
+          <Button
+            colorVariant="primary"
+            sizeVariant="largePill"
+            fontVariant="AfacadRegular20"
+            onClick={() => onLoginPress(email, password)}
+            style={styles.buttonLogin}
+            startIcon={<Image source={IconPerson} width={21} height={29} />}>
+            Login
+          </Button>
+        </View>
+      </ScrollView>
+      <Text style={styles.footer}>
+        © DelBicos - 2025 – Todos os direitos reservados.
+      </Text>
     </View>
   );
 };
