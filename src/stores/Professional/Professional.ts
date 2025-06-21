@@ -13,7 +13,7 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
       for (let i = 1; i <= limit; i++) {
         mockedData.push({
           id: i,
-          name: `Professional ${i}`,
+          name: `Professional ${i + (page - 1) * limit}`,
           category: 'Category',
           rating: Math.random() * 5,
           ratingsCount: Math.floor(Math.random() * 100),
