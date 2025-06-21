@@ -6,5 +6,6 @@ export type User = {
 export type UserStore = {
   user: User | null;
   signIn: () => void;
+  signInPassword: (email: string, password: string) => void;
   signOut: () => void;
 };
