@@ -13,6 +13,13 @@ import ServiceStatusScreen from './public/ServicesStatus';
 import { NavigationParams } from './types';
 import Login from './public/Login';
 import Header from '@components/Header';
+import { useUserStore } from '@stores/User';
+
+// If logged in Home = Feed, otherwise Home = Login
+const Home = () => {
+  const { user } = useUserStore();
+  return user ? <Feed /> : <Login />;
+};
 
 const RootStack = createNativeStackNavigator<NavigationParams>({
   screenOptions: {
@@ -20,7 +27,7 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
   },
   screens: {
     Home: {
-      screen: Feed,
+      screen: Home,
     },
     Login: {
       screen: Login,
