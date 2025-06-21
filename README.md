@@ -35,7 +35,7 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 > > 📌 **Status:** _Em desenvolvimento_
 
-Documentações das disciplinas do projeto:
+🔗 **Documentações das disciplinas do projeto**
 
 - Banco de Dados - Relacional:
 - Desenvolvimento Web III:
