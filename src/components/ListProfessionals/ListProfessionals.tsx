@@ -12,7 +12,7 @@ export interface ListProfessionalsProps {
 const SIZE_LIMIT = 30;
 
 const ListProfessionals = () => {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [professionals, setProfessionals] = useState<ListedProfessional[]>([]);
   const [loading, setLoading] = useState(true);
 
