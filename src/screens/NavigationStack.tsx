@@ -11,8 +11,15 @@ import RegisterScreen from './public/RegisterScreen';
 import PartnerProfile from './public/PartnerProfile';
 import ServiceStatusScreen from './public/ServicesStatus';
 import { NavigationParams } from './types';
-import Home from './public/Home';
+import Login from './public/Login';
 import Header from '@components/Header';
+import { useUserStore } from '@stores/User';
+
+// If logged in Home = Feed, otherwise Home = Login
+const Home = () => {
+  const { user } = useUserStore();
+  return user ? <Feed /> : <Login />;
+};
 
 const RootStack = createNativeStackNavigator<NavigationParams>({
   screenOptions: {
@@ -20,8 +27,13 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
   },
   screens: {
     Home: {
-      // Alterado de 'Loading' para 'Home'
-      screen: Home
+      screen: Home,
+    },
+    Login: {
+      screen: Login,
+      linking: {
+        path: 'login',
+      },
     },
     Feed: {
       screen: Feed,

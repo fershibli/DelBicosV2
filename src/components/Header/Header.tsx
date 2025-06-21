@@ -7,8 +7,9 @@ import DelBicosLogo from '@assets/DelBicos_LogoH.png';
 import { Button, ButtonProps } from '@components/Button';
 import { NavigationParams } from '@screens/types';
 import SouthIcon from '@mui/icons-material/South';
+import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 
-const Header = () => {
+const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const { user } = useUserStore();
   const navigation = useNavigation();
 
@@ -81,7 +82,7 @@ const Header = () => {
           ) : (
             <>
               <NavbarButton screen="Register">Cadastre-se</NavbarButton>
-              <NavbarButton screen="Home" colorVariant="secondary">
+              <NavbarButton screen="Login" colorVariant="secondary">
                 Fazer login
               </NavbarButton>
             </>
