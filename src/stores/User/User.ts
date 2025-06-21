@@ -8,10 +8,14 @@ export const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
       user: null,
+      token: null,
       signIn: () => {
         try {
           const mockedUser = {
+            id: '1',
             name: 'Douglas W.',
+            email: 'douglas@delbicos.com',
+            phone: '+55 11 99999-9999',
             location: 'São Paulo, SP',
           };
           set({ user: mockedUser });
@@ -22,7 +26,7 @@ export const useUserStore = create<UserStore>()(
       },
       signInPassword: async (email: string, password: string) => {
         try {
-          const response = await backendHttpClient.get('/user/login', {
+          const response = await backendHttpClient.post('/api/user/login', {
             params: {
               email,
               password,
@@ -30,8 +34,13 @@ export const useUserStore = create<UserStore>()(
           });
 
           if (response.status === 200) {
-            const user = response.data;
-            set({ user });
+            const { token, user } = response.data;
+            if (token) {
+              set({ user, token });
+            } else {
+              console.error('No token received from the server');
+              return;
+            }
           } else {
             console.error('Login failed:', response.statusText);
           }
