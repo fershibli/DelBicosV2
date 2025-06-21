@@ -35,11 +35,17 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       linking: {
         path: 'login',
       },
+      options: {
+        headerShown: false,
+      },
     },
     LoginPassword: {
       screen: LoginPassword,
       linking: {
         path: 'login-password',
+      },
+      options: {
+        headerShown: false,
       },
     },
     Feed: {
@@ -68,14 +74,23 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
     },
     PhoneConfirmation: {
       screen: PhoneConfirmation,
+      options: {
+        headerShown: false,
+      },
     },
     ConfirmPhoneNumber: {
       screen: ConfirmPhoneNumber,
+      options: {
+        headerShown: false,
+      },
     },
     Register: {
       screen: RegisterScreen,
       linking: {
         path: 'register',
+      },
+      options: {
+        headerShown: false,
       },
     },
     NotFound: {
