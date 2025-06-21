@@ -9,7 +9,7 @@ export interface ListProfessionalsProps {
   filter?: string;
 }
 
-const SIZE_LIMIT = 10;
+const SIZE_LIMIT = 30;
 
 const ListProfessionals = () => {
   const [page, setPage] = useState(1);
