@@ -10,6 +10,7 @@ import ConfirmPhoneNumber from './public/ConfirmPhoneNumber';
 import RegisterScreen from './public/RegisterScreen';
 import PartnerProfile from './public/PartnerProfile';
 import ServiceStatusScreen from './public/ServicesStatus';
+import MyAppointments from './public/MyAppointments';
 import { NavigationParams } from './types';
 import Home from './public/Home';
 import Header from '@components/Header';
@@ -39,6 +40,12 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
         stringify: {
           id: (value) => value,
         },
+      },
+    },
+    MyAppointments: {
+      screen: MyAppointments,
+      linking: {
+        path: 'my-appointments',
       },
     },
     ServiceStatus: {

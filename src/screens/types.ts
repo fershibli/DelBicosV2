@@ -1,5 +1,6 @@
 export type NavigationParams = {
   Home: undefined;
+  MyAppointments: undefined;
   Feed: undefined;
   PartnerProfile: { id: string };
   ServiceStatus: undefined;
