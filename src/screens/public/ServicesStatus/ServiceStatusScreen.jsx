@@ -1,6 +1,5 @@
 import React from 'react';
 import { View } from 'react-native';
-import Header from '@components/Header';
 import ProfessionalInfo from '@components/ProfessionalInfo';
 import BannerStatus from '@components/BannerStatus';
 import ServiceItems from '@components/ServiceItems';
@@ -44,7 +43,6 @@ const ServiceStatusScreen = () => {
   );
   return (
     <View style={styles.container}>
-      <Header />
       <View
         style={{
           flexDirection: 'row',
