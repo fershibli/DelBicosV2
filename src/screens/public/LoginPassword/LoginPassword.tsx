@@ -19,18 +19,17 @@ import { Button } from '@components/Button';
 export const LoginPassword = () => {
   //navigation
   const navigation = useNavigation();
-  const { signIn } = useUserStore();
+  const { signInPassword } = useUserStore();
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
-  const onLoginPress = (email: string, password: string) => {
-    signIn();
-    navigation.navigate('Feed');
-    // if (email && password) {
-    //   signIn(email, password);
-    // } else {
-    //   console.warn('Please enter both email and password');
-    // }
+  const onLoginPress = async (email: string, password: string) => {
+    if (email && password) {
+      await signInPassword(email, password);
+      navigation.navigate('Feed');
+    } else {
+      console.warn('Please enter both email and password');
+    }
   };
 
   return (
