@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'expo-zustand-persist';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserStore } from './types';
 
 export const useUserStore = create<UserStore>()(
@@ -22,7 +23,8 @@ export const useUserStore = create<UserStore>()(
     }),
     {
       name: 'user-storage',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => AsyncStorage),
+      //@ts-ignore
       partialize: (state) => ({ user: state.user }),
     },
   ),
