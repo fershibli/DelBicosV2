@@ -11,24 +11,34 @@ import RegisterScreen from './public/RegisterScreen';
 import PartnerProfile from './public/PartnerProfile';
 import ServiceStatusScreen from './public/ServicesStatus';
 import { NavigationParams } from './types';
-import Home from './public/Home';
+import Login from './public/Login';
+import Header from '@components/Header';
+import { useUserStore } from '@stores/User';
+
+// If logged in Home = Feed, otherwise Home = Login
+const Home = () => {
+  const { user } = useUserStore();
+  return user ? <Feed /> : <Login />;
+};
 
 const RootStack = createNativeStackNavigator<NavigationParams>({
+  screenOptions: {
+    header: (props) => <Header {...props} />,
+  },
   screens: {
     Home: {
-      // Alterado de 'Loading' para 'Home'
       screen: Home,
-      options: {
-        headerShown: false,
+    },
+    Login: {
+      screen: Login,
+      linking: {
+        path: 'login',
       },
     },
     Feed: {
       screen: Feed,
       linking: {
         path: 'feed',
-      },
-      options: {
-        headerShown: false,
       },
     },
     PartnerProfile: {
@@ -51,39 +61,18 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
     },
     PhoneConfirmation: {
       screen: PhoneConfirmation,
-      options: {
-        title: 'Acesse sua conta',
-        headerStyle: { backgroundColor: '#e6f0fa' },
-        headerTintColor: '#003366',
-        headerTitleStyle: { fontWeight: 'bold' },
-      },
     },
     ConfirmPhoneNumber: {
       screen: ConfirmPhoneNumber,
-      options: {
-        title: 'Confirme seu número',
-        headerStyle: { backgroundColor: '#e6f0fa' },
-        headerTintColor: '#003366',
-        headerTitleStyle: { fontWeight: 'bold' },
-      },
     },
     Register: {
       screen: RegisterScreen,
       linking: {
         path: 'register',
       },
-      options: {
-        title: 'Cadastre-se',
-        headerStyle: { backgroundColor: '#e6f0fa' },
-        headerTintColor: '#003366',
-        headerTitleStyle: { fontWeight: 'bold' },
-      },
     },
     NotFound: {
       screen: NotFound,
-      options: {
-        title: '404',
-      },
       linking: {
         path: '*',
       },

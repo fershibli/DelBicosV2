@@ -2,6 +2,7 @@ import { Assets as NavigationAssets } from '@react-navigation/elements';
 import { Asset } from 'expo-asset';
 import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
+import { useFonts } from 'expo-font';
 import { Navigation } from '@screens/NavigationStack';
 import { LocationProvider } from '@lib/hooks/LocationContext';
 
@@ -10,6 +11,26 @@ Asset.loadAsync([...NavigationAssets]);
 SplashScreen.preventAutoHideAsync();
 
 export function App() {
+  const [loaded, error] = useFonts({
+    'Afacad-Regular': require('@assets/fonts/Afacad/Afacad-Regular.otf'),
+    'Afacad-SemiBold': require('@assets/fonts/Afacad/Afacad-SemiBold.otf'),
+    'Afacad-Bold': require('@assets/fonts/Afacad/Afacad-Bold.otf'),
+    'CenturyGothic-Regular': require('@assets/fonts/CenturyGothic/Century-Gothic.otf'),
+    'CenturyGothic-Bold': require('@assets/fonts/CenturyGothic/Century-Gothic-Bold.otf'),
+    'CenturyGothic-BoldItalic': require('@assets/fonts/CenturyGothic/Century-Gothic-Bold-Italic.otf'),
+    'CenturyGothic-Italic': require('@assets/fonts/CenturyGothic/Century-Gothic-Italic.otf'),
+  });
+
+  React.useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  if (!loaded || error) {
+    return null;
+  }
+
   return (
     <LocationProvider>
       <Navigation
