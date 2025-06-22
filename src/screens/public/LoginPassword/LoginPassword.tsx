@@ -77,7 +77,7 @@ export const LoginPassword = () => {
             colorVariant="primaryWhite"
             sizeVariant="largePill"
             fontVariant="AfacadRegular20"
-            onClick={() => navigation.navigate('Login')}
+            onClick={() => navigation.navigate('PhoneConfirmation')}
             style={styles.buttonLogin}
             startIcon={<IconPhone width={21} height={29} stroke="#000000" />}>
             Login por Telefone
