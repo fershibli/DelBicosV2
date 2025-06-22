@@ -66,14 +66,13 @@ function CategoryCard({ category, imageUrl, onPress }: CategoryCardProps) {
   const image = getCategoryImagesById(category.id);
   return (
     <View style={styles.categoryCard}>
-      <Image
-        source={image.src}
+      <image.src
         style={{
           width: image.width,
           height: image.height,
           resizeMode: 'contain',
         }}
-        tintColor={colors.primaryOrange}
+        color={colors.primaryOrange}
       />
       <Text style={styles.categoryTitle}>{category.title}</Text>
     </View>
