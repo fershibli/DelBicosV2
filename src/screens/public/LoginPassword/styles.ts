@@ -1,3 +1,4 @@
+import colors from '@theme/colors';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -64,5 +65,36 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     alignSelf: 'center',
     color: '#ffffff',
+  },
+
+  modalContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 32,
+    fontFamily: 'Afacad-Bold',
+    color: colors.primaryOrange,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  modalText: {
+    marginTop: 10,
+    fontSize: 20,
+    fontFamily: 'Afacad-SemiBold',
+    color: colors.primaryBlack,
+    textAlign: 'center',
+  },
+  modalActions: {
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 10,
   },
 });

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Modal } from '@mui/material';
 
 import { Button } from '@components/Button';
 import { useUserStore } from '@stores/User';
@@ -18,6 +19,7 @@ export const LoginPassword = () => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const onLoginPress = async (email: string, password: string) => {
     setIsLoading(true);
@@ -27,7 +29,7 @@ export const LoginPassword = () => {
       navigation.navigate('Feed');
     } else {
       setIsLoading(false);
-      console.warn('Please enter both email and password');
+      setError('Por favor, preencha todos os campos.');
     }
   };
 
@@ -66,6 +68,29 @@ export const LoginPassword = () => {
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
+      <Modal
+        open={!!error}
+        onClose={() => setError(null)}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+        style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <Text id="modal-title" style={styles.modalTitle}>
+            Erro
+          </Text>
+          <Text id="modal-description" style={styles.modalText}>
+            {error || 'Ocorreu um erro ao tentar fazer login.'}
+          </Text>
+          <View style={styles.modalActions}>
+            <Button
+              colorVariant="primary"
+              sizeVariant="medium"
+              onClick={() => setError(null)}>
+              Fechar
+            </Button>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
