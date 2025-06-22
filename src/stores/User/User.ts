@@ -97,7 +97,11 @@ export const useUserStore = create<UserStore>()(
       name: 'user-storage',
       storage: createJSONStorage(() => AsyncStorage),
       //@ts-ignore
-      partialize: (state) => ({ user: state.user }),
+      partialize: (state) => ({
+        user: state.user,
+        address: state.address,
+        token: state.token,
+      }),
     },
   ),
 );
