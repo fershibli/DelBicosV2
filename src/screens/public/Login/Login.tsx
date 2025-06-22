@@ -35,7 +35,7 @@ function LoginScreen() {
 
   const onLoginPress = () => {
     console.log('Navegando para PhoneConfirmation');
-    navigation.navigate('PhoneConfirmation');
+    navigation.navigate('LoginPassword');
   };
 
   return (
