@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from 'expo-zustand-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserStore } from './types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
+import { AxiosError } from 'node_modules/axios/index.cjs';
 
 export const useUserStore = create<UserStore>()(
   persist(
@@ -10,6 +11,7 @@ export const useUserStore = create<UserStore>()(
       user: null,
       address: null,
       token: null,
+
       signIn: () => {
         try {
           const mockedUser = {
@@ -47,14 +49,6 @@ export const useUserStore = create<UserStore>()(
           });
 
           if (!response.status.toString().startsWith('2')) {
-            if (response.status.toString().startsWith('4')) {
-              console.error('Client error during login');
-              // TODO: implementar uma lógica de tratamento de erro que retorne uma mensagem amigável ao usuário
-            }
-            if (response.status.toString().startsWith('5')) {
-              console.error('Server error during login');
-            }
-            return;
           }
 
           const { token, user } = response.data;
@@ -86,9 +80,20 @@ export const useUserStore = create<UserStore>()(
           set({ user: userData, address: addressData, token });
           console.log('Login successful:', userData);
           return;
-        } catch (error) {
-          console.error('Error during login with password:', error);
-          return;
+        } catch (error: any | AxiosError) {
+          if (error instanceof AxiosError && error.status) {
+            if (error.status.toString().startsWith('4')) {
+              throw new Error(
+                'Credenciais inválidas. Por favor, tente novamente.',
+              );
+            }
+            if (error.status.toString().startsWith('5')) {
+              throw new Error(
+                'Erro interno do servidor. Por favor, tente novamente mais tarde.',
+              );
+            }
+          }
+          throw new Error('Erro ao fazer login. Por favor, tente novamente.');
         }
       },
       signOut: () => set({ user: null }),
