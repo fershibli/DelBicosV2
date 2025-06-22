@@ -1,20 +1,15 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  Text,
-  Image,
-  ScrollView,
-} from 'react-native';
-import { styles } from './styles';
+import { View, TextInput, Text, Image, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+import { Button } from '@components/Button';
+import { useUserStore } from '@stores/User';
 
 // @ts-ignore
 import IconPerson from '@assets/person.svg';
-import { useUserStore } from '@stores/User';
 import LogoV3 from '@assets/LogoV3.png';
-import { Button } from '@components/Button';
+
+import { styles } from './styles';
 
 export const LoginPassword = () => {
   //navigation
@@ -58,7 +53,7 @@ export const LoginPassword = () => {
             fontVariant="AfacadRegular20"
             onClick={() => onLoginPress(email, password)}
             style={styles.buttonLogin}
-            startIcon={<Image source={IconPerson} width={21} height={29} />}>
+            startIcon={<IconPerson width={21} height={29} color="#ffffff" />}>
             Login
           </Button>
         </View>
