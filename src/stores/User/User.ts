@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from 'expo-zustand-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserStore } from './types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
-import { AxiosError } from 'node_modules/axios/index.cjs';
+import { AxiosError } from 'axios';
 
 export const useUserStore = create<UserStore>()(
   persist(
