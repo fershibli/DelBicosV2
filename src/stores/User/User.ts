@@ -8,17 +8,32 @@ export const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
       user: null,
+      address: null,
       token: null,
       signIn: () => {
         try {
           const mockedUser = {
-            id: '1',
+            id: 1,
+            clientId: 1,
             name: 'Douglas W.',
             email: 'douglas@delbicos.com',
             phone: '+55 11 99999-9999',
-            location: 'São Paulo, SP',
+            cpf: '123.456.789-00',
           };
-          set({ user: mockedUser });
+          const mockedAddress = {
+            id: 2,
+            lat: '-22.90684700',
+            lng: '-43.17289600',
+            street: 'Rua B',
+            number: '456',
+            complement: 'Casa 2',
+            neighborhood: 'Bairro B',
+            city: 'Cidade B',
+            state: 'RJ',
+            country_iso: 'BR',
+            postal_code: '23456789',
+          };
+          set({ user: mockedUser, address: mockedAddress });
         } catch (error) {
           console.error('Error during login:', error);
           return;
