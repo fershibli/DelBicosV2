@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Modal } from '@mui/material';
@@ -24,9 +24,17 @@ export const LoginPassword = () => {
   const onLoginPress = async (email: string, password: string) => {
     setIsLoading(true);
     if (email && password) {
-      await signInPassword(email, password);
+      await signInPassword(email, password)
+        .then(() => {
+          setEmail('');
+          setPassword('');
+          setError(null);
+          navigation.navigate('Feed');
+        })
+        .catch((error) => {
+          setError(error.message);
+        });
       setIsLoading(false);
-      navigation.navigate('Feed');
     } else {
       setIsLoading(false);
       setError('Por favor, preencha todos os campos.');
