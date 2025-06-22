@@ -80,18 +80,15 @@ function CategoryCard({ category, imageUrl, onPress }: CategoryCardProps) {
 }
 
 function CategoryList() {
-  const [isLoading, setIsLoading] = useState(true);
-
   const { categories, fetchCategories } = useCategoryStore();
 
+  const [isLoading, setIsLoading] = useState(!categories?.length);
+
   useEffect(() => {
-    if (!categories?.length) {
-      setIsLoading(true);
-      fetchCategories().then(() => {
-        setIsLoading(false);
-      });
-    }
-  }, [categories, fetchCategories]);
+    fetchCategories().then(() => {
+      setIsLoading(false);
+    });
+  }, [fetchCategories]);
 
   if (isLoading) {
     return (
