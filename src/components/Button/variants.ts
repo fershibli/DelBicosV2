@@ -34,6 +34,11 @@ export const buttonSizeVariants = {
     paddingVertical: 0,
     paddingHorizontal: 10,
   },
+  largePill: {
+    borderRadius: 50,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
 };
 
 export const buttonColorVariants = {
