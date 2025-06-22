@@ -26,6 +26,6 @@ export type UserStore = {
   address: Address | null;
   token: string | null;
   signIn: () => void;
-  signInPassword: (email: string, password: string) => void;
+  signInPassword: (email: string, password: string) => Promise<void>;
   signOut: () => void;
 };
