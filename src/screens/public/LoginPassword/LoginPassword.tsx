@@ -17,12 +17,16 @@ export const LoginPassword = () => {
   const { signInPassword } = useUserStore();
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const onLoginPress = async (email: string, password: string) => {
+    setIsLoading(true);
     if (email && password) {
       await signInPassword(email, password);
+      setIsLoading(false);
       navigation.navigate('Feed');
     } else {
+      setIsLoading(false);
       console.warn('Please enter both email and password');
     }
   };
@@ -53,6 +57,7 @@ export const LoginPassword = () => {
             fontVariant="AfacadRegular20"
             onClick={() => onLoginPress(email, password)}
             style={styles.buttonLogin}
+            loading={isLoading}
             startIcon={<IconPerson width={21} height={29} color="#ffffff" />}>
             Login
           </Button>
