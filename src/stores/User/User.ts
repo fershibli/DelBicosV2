@@ -27,10 +27,8 @@ export const useUserStore = create<UserStore>()(
       signInPassword: async (email: string, password: string) => {
         try {
           const response = await backendHttpClient.post('/api/user/login', {
-            params: {
-              email,
-              password,
-            },
+            email,
+            password,
           });
 
           if (response.status === 200) {
