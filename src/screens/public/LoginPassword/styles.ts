@@ -50,6 +50,7 @@ export const styles = StyleSheet.create({
     paddingRight: 30,
     paddingTop: 4,
     paddingBottom: 7,
+    marginTop: 20,
   },
 
   buttonText: {

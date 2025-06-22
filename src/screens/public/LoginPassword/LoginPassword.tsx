@@ -8,6 +8,8 @@ import { useUserStore } from '@stores/User';
 
 // @ts-ignore
 import IconPerson from '@assets/person.svg';
+// @ts-ignore
+import IconPhone from '@assets/phone.svg';
 import LogoV3 from '@assets/LogoV3.png';
 
 import { styles } from './styles';
@@ -70,6 +72,15 @@ export const LoginPassword = () => {
             loading={isLoading}
             startIcon={<IconPerson width={21} height={29} color="#ffffff" />}>
             Login
+          </Button>
+          <Button
+            colorVariant="primaryWhite"
+            sizeVariant="largePill"
+            fontVariant="AfacadRegular20"
+            onClick={() => navigation.navigate('Login')}
+            style={styles.buttonLogin}
+            startIcon={<IconPhone width={21} height={29} stroke="#000000" />}>
+            Login por Telefone
           </Button>
         </View>
       </ScrollView>
