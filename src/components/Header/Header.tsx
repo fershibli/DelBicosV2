@@ -10,7 +10,7 @@ import SouthIcon from '@mui/icons-material/South';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 
 const Header: React.FC<NativeStackHeaderProps> = (props) => {
-  const { user } = useUserStore();
+  const { user, address } = useUserStore();
   const navigation = useNavigation();
 
   const navigateTo = (screen?: keyof NavigationParams) => {
@@ -68,7 +68,9 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
               fontVariant="AfacadRegular15"
               onClick={() => {}}
               endIcon={<SouthIcon />}>
-              {user?.location ?? 'Localização não definida'}
+              {!!address
+                ? `${address.street}, ${address.city} - ${address.state}`
+                : 'Localização não definida'}
             </Button>
           </View>
           {!!user ? (

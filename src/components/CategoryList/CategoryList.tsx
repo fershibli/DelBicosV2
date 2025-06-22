@@ -18,35 +18,35 @@ import petsSVG from '@assets/categories/pets.svg';
 // @ts-ignore
 import repairSVG from '@assets/categories/repair.svg';
 
-// {src, width, height}
+// {IconComponent, width, height}
 const categoryImagesById: Record<number, any> = {
   1: {
-    src: healthSVG,
+    IconComponent: healthSVG,
     width: 72,
     height: 70,
   },
   2: {
-    src: beautySVG,
+    IconComponent: beautySVG,
     width: 63,
     height: 87,
   },
   3: {
-    src: repairSVG,
+    IconComponent: repairSVG,
     width: 70,
     height: 75,
   },
   4: {
-    src: miscSVG,
+    IconComponent: miscSVG,
     width: 51,
     height: 69,
   },
   5: {
-    src: homeSVG,
+    IconComponent: homeSVG,
     width: 61,
     height: 50,
   },
   6: {
-    src: petsSVG,
+    IconComponent: petsSVG,
     width: 74,
     height: 74,
   },
@@ -66,14 +66,13 @@ function CategoryCard({ category, imageUrl, onPress }: CategoryCardProps) {
   const image = getCategoryImagesById(category.id);
   return (
     <View style={styles.categoryCard}>
-      <Image
-        source={image.src}
+      <image.IconComponent
         style={{
           width: image.width,
           height: image.height,
           resizeMode: 'contain',
         }}
-        tintColor={colors.primaryOrange}
+        color={colors.primaryOrange}
       />
       <Text style={styles.categoryTitle}>{category.title}</Text>
     </View>

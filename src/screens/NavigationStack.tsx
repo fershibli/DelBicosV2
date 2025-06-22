@@ -14,6 +14,7 @@ import { NavigationParams } from './types';
 import Login from './public/Login';
 import Header from '@components/Header';
 import { useUserStore } from '@stores/User';
+import { LoginPassword } from './public/LoginPassword';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -33,6 +34,18 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: Login,
       linking: {
         path: 'login',
+      },
+      options: {
+        headerShown: false,
+      },
+    },
+    LoginPassword: {
+      screen: LoginPassword,
+      linking: {
+        path: 'login-password',
+      },
+      options: {
+        headerShown: false,
       },
     },
     Feed: {
@@ -61,14 +74,23 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
     },
     PhoneConfirmation: {
       screen: PhoneConfirmation,
+      options: {
+        headerShown: false,
+      },
     },
     ConfirmPhoneNumber: {
       screen: ConfirmPhoneNumber,
+      options: {
+        headerShown: false,
+      },
     },
     Register: {
       screen: RegisterScreen,
       linking: {
         path: 'register',
+      },
+      options: {
+        headerShown: false,
       },
     },
     NotFound: {
