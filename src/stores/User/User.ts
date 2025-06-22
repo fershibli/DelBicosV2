@@ -46,17 +46,46 @@ export const useUserStore = create<UserStore>()(
             password,
           });
 
-          if (response.status === 200) {
-            const { token, user } = response.data;
-            if (token) {
-              set({ user, token });
-            } else {
-              console.error('No token received from the server');
-              return;
+          if (!response.status.toString().startsWith('2')) {
+            if (response.status.toString().startsWith('4')) {
+              console.error('Client error during login');
+              // TODO: implementar uma lógica de tratamento de erro que retorne uma mensagem amigável ao usuário
             }
-          } else {
-            console.error('Login failed:', response.statusText);
+            if (response.status.toString().startsWith('5')) {
+              console.error('Server error during login');
+            }
+            return;
           }
+
+          const { token, user } = response.data;
+          if (!token) {
+            console.error('No token received from the server');
+            return;
+          }
+          const userData = {
+            id: user.id,
+            clientId: user.clientId,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            cpf: user.cpf,
+          };
+          const addressData = {
+            id: user.address.id,
+            lat: user.address.lat,
+            lng: user.address.lng,
+            street: user.address.street,
+            number: user.address.number,
+            complement: user.address.complement,
+            neighborhood: user.address.neighborhood,
+            city: user.address.city,
+            state: user.address.state,
+            country_iso: user.address.country_iso,
+            postal_code: user.address.postal_code,
+          };
+          set({ user: userData, address: addressData, token });
+          console.log('Login successful:', userData);
+          return;
         } catch (error) {
           console.error('Error during login with password:', error);
           return;
