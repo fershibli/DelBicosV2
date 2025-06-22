@@ -14,7 +14,7 @@ export const useUserStore = create<UserStore>()(
         try {
           const mockedUser = {
             id: 1,
-            clientId: 1,
+            client_id: 1,
             name: 'Douglas W.',
             email: 'douglas@delbicos.com',
             phone: '+55 11 99999-9999',
@@ -64,7 +64,7 @@ export const useUserStore = create<UserStore>()(
           }
           const userData = {
             id: user.id,
-            clientId: user.clientId,
+            client_id: user.client_id,
             name: user.name,
             email: user.email,
             phone: user.phone,
