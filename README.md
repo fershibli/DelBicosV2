@@ -33,7 +33,7 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 > Os dois grupos destacados no problema descrito, compõem o público-alvo deste projeto.
 
-> > 📌 **Status:** _Em desenvolvimento_
+> > 📌 **Status:** $\color{Apricot}{Em\ desenvolvimento}$
 
 🔗 **Documentações das disciplinas do projeto**
 
@@ -110,9 +110,9 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 ## 🎨 Prototype
 
-O protótipo no Figma demonstra as funcionalidades essenciais do sistema, começando pela página inicial e a navegação de pesquisa por profissionais. Ele inclui os fluxos completos para cadastro de novos usuários, login, agendamentos de serviços e o processo de pagamentos. Embora a página do administrador já esteja presente, as páginas dedicadas ao cliente e ao profissional ainda precisam ser finalizadas, o que significa que o protótipo foca nas interações centrais antes de expandir para as visualizações completas de cada perfil.
+O protótipo do DelBicos no Figma serve como uma demonstração visual interativa das funcionalidades centrais do sistema. Ele apresenta a página inicial, a navegação para pesquisa de profissionais, os fluxos de cadastro e login de usuários, além das interações de agendamento de serviços e pagamentos. Embora a página do administrador esteja desenvolvida, as áreas dedicadas aos perfis de cliente e profissional ainda estão em fase de finalização.
 
-<!-- [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/1xZfYHmDwbr9aaqoh5ddxN/DelBicosV2?node-id=1564-1564&t=IwxsvEhuwBR00Rqn-1) -->
+🔗 👉 [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/proto/1xZfYHmDwbr9aaqoh5ddxN/DelBicosV2?node-id=1364-969&t=tZpzceJg13szkrPk-1)
 
 ## 🛠️ Tecnologies
 
