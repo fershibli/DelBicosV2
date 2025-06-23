@@ -1,65 +1,75 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, ActivityIndicator } from 'react-native';
+import axios from 'axios';
 import ProfessionalInfo from '@components/ProfessionalInfo';
 import BannerStatus from '@components/BannerStatus';
 import ServiceItems from '@components/ServiceItems';
 import PaymentInfo from '@components/PaymentInfo';
 import { styles } from './styles';
 
-const mockServices = [
-  {
-    id: '1',
-    name: 'Barba',
-    date: '5/12/2024',
-    startTime: '14:30',
-    endTime: '15:00',
-    price: 38.0,
-    professional: 'Jefferson',
-  },
-  {
-    id: '2',
-    name: 'Corte de Cabelo',
-    date: '5/12/2024',
-    startTime: '15:00',
-    endTime: '15:45',
-    price: 45.0,
-    professional: 'Jefferson',
-  },
-  {
-    id: '3',
-    name: 'Limpeza de Pele',
-    date: '5/12/2024',
-    startTime: '16:00',
-    endTime: '16:30',
-    price: 50.0,
-    professional: 'Jefferson',
-  },
-];
+const ServiceStatusScreen = ({ route }) => {
+  const [services, setServices] = useState([]);
+  const [professional, setProfessional] = useState(null);
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(true);
 
-const ServiceStatusScreen = () => {
-  const subtotal = mockServices.reduce(
-    (sum, service) => sum + service.price,
-    0,
-  );
+  const appointmentId = route?.params?.appointmentId || 1;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data: appointment } = await axios.get(`http://localhost:3000/api/appointments/${appointmentId}`);
+
+        setStatus(appointment.status);
+
+        const { data: service } = await axios.get(`http://localhost:3000/api/services/${appointment.service_id}`);
+
+        const { data: professional } = await axios.get(`http://localhost:3000/api/professionals/${appointment.professional_id}`);
+
+        const { data: user } = await axios.get(`http://localhost:3000/api/user/${professional.user_id}`);
+
+        const formattedService = {
+          id: service.id,
+          name: service.title,
+          date: new Date(appointment.start_time).toLocaleDateString(),
+          startTime: new Date(appointment.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          endTime: new Date(appointment.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          price: Number(service.price),
+          professional: user.name,
+        };
+
+        setServices([formattedService]);
+        setProfessional(user);
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [appointmentId]);
+
+  const subtotal = services.reduce((sum, s) => sum + s.price, 0);
+
+  if (loading) {
+    return <ActivityIndicator size="large" />;
+  }
+
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        <ProfessionalInfo />
-        <BannerStatus status="Executado" />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <ProfessionalInfo professional={professional} />
+        <BannerStatus status={status} />
       </View>
       <View style={styles.divider} />
-      <ServiceItems items={mockServices} />
+      <ServiceItems items={services} />
       <PaymentInfo
         total={subtotal}
-        discount={40.0}
-        couponCode="BARBEIRO40"
+        discount={0}
+        couponCode={null}
         paymentMethod="Cartão de Crédito"
-        installments={6}
+        installments={1}
       />
     </View>
   );
