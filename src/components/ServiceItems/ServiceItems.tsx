@@ -15,9 +15,12 @@ interface ServiceItemsProps {
 }
 
 const ServiceItems: React.FC<ServiceItemsProps> = ({ items }) => {
-  const formatPrice = (price: number) => {
-    return `R$${price.toFixed(2).replace('.', ',')}`;
-  };
+  function formatPrice(price: number | string): string {
+    const value = typeof price === 'string' ? parseFloat(price) : price;
+    if (isNaN(value)) return 'R$ 0,00';
+
+    return value.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
 
   const formatDate = (dateString: string) => {
     return `(${dateString})`;
