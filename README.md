@@ -38,10 +38,8 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 🔗 **Documentações das disciplinas do projeto**
 
-- Banco de Dados - Relacional:
-- Desenvolvimento Web III:
-- Gestão Ágil de Projetos de Software:
-- Interação Humano-Computador:
+- <a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf"> Gestão Ágil de Projetos de Software </a>
+- <a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf"> Interação Humano-Computador </a>
 
 <br>
 
@@ -58,15 +56,8 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 ### 🎬 Apresentação Final
 
-- Feed
-  <a href="assets/feed.mov" target="_blank">
-  <img src="assets/feed.png" alt="Feed do projeto DelBicos" width="60%" style="border-radius: 10px;"  />
-  </a>
-
 - Login
-  <a href="assets/login.mov" target="_blank">
-  <img src="assets/login.png" alt="Login do projeto DelBicos" width="60%" style="border-radius: 10px;" />
-  </a>
+  <a href="assets/login01.mp4" target="_blank"> </a>
 
 <br>
 
