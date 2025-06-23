@@ -45,7 +45,7 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 <br>
 
-🏁 Entregas de Sprints
+### 🏁 Entregas de Sprints
 
 | Sprint |    Período    | Entregas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |    Status    |
 | :----: | :-----------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------: |
@@ -56,7 +56,19 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 <br>
 
-🎬 Apresentação Final
+### 🎬 Apresentação Final
+
+- Feed
+  <a href="assets/feed.mov" target="_blank">
+  <img src="assets/feed.png" alt="Feed do projeto DelBicos" width="60%" style="border-radius: 10px;"  />
+  </a>
+
+- Login
+  <a href="assets/login.mov" target="_blank">
+  <img src="assets/login.png" alt="Login do projeto DelBicos" width="60%" style="border-radius: 10px;" />
+  </a>
+
+<br>
 
 ## 🎯 Backlogs
 
