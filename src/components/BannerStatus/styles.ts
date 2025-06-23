@@ -3,6 +3,9 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   statusContainer: {
     marginBottom: 20,
+    width: '20%',
+    marginRight: 10,
+    alignItems: 'center',
   },
   statusBanner: {
     backgroundColor: '#22843B',
@@ -10,6 +13,8 @@ export const styles = StyleSheet.create({
     borderColor: '#22843B',
     borderRadius: 3,
     width: '40%',
+    marginTop: 25,
+    marginLeft: 270,
     paddingVertical: 10,
     alignItems: 'center',
     marginBottom: 10,
