@@ -8,6 +8,7 @@
 
 <p align="center">
   <a href="#-about">About</a> |
+  <a href="#-entregas-de-sprints">Sprints</a> |
   <a href="#-backlogs">Backlogs</a> |
   <a href="#-user-stories">User Stories</a> |
   <a href="#-functional-requirements">Functional Requirements</a> |
@@ -43,7 +44,7 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 <br>
 
-### 🏁 Entregas de Sprints
+## 🏁 Entregas de Sprints
 
 | Sprint |    Período    | Entregas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |    Status    |
 | :----: | :-----------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------: |
@@ -54,7 +55,7 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 <br>
 
-### 🎬 Apresentação Final
+### 🎬 Apresentação
 
 - Login
   <a href="assets/login01.mp4" target="_blank"> Tela de Login </a>
