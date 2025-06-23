@@ -37,8 +37,13 @@ const BannerStatus: React.FC<BannerStatusProps> = ({ status }) => {
     },
   };
 
-  const currentStatus = statusConfig[status];
-
+  const currentStatus = statusConfig[status] || {
+    backgroundColor: '#CCCCCC',
+    borderColor: '#999999',
+    textColor: '#333333',
+    message: 'Status Desconhecido',
+  };
+  
   return (
     <View style={styles.statusContainer}>
       <View
