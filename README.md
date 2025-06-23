@@ -11,6 +11,7 @@
   <a href="#-backlogs">Backlogs</a> |
   <a href="#-user-stories">User Stories</a> |
   <a href="#-functional-requirements">Functional Requirements</a> |
+  <a href="#-prototype">Prototype</a> |
   <a href="#️-tecnologies">Tecnologies</a> |
   <a href="#-team">Team</a> |
   <a href="#-project-structure">Project Structure</a> |
@@ -113,6 +114,8 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 O protótipo do DelBicos no Figma serve como uma demonstração visual interativa das funcionalidades centrais do sistema. Ele apresenta a página inicial, a navegação para pesquisa de profissionais, os fluxos de cadastro e login de usuários, além das interações de agendamento de serviços e pagamentos. Embora a página do administrador esteja desenvolvida, as áreas dedicadas aos perfis de cliente e profissional ainda estão em fase de finalização.
 
 🔗 👉 [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/proto/1xZfYHmDwbr9aaqoh5ddxN/DelBicosV2?node-id=1364-969&t=tZpzceJg13szkrPk-1)
+
+<br>
 
 ## 🛠️ Tecnologies
 
