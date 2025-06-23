@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 
-type StatusType = 'confirmed' | 'Executado' | 'Cancelado';
+type StatusType = 'pending' | 'confirmed' | 'completed' | 'canceled';
 
 interface StatusConfig {
   backgroundColor: string;
@@ -17,19 +17,25 @@ interface BannerStatusProps {
 
 const BannerStatus: React.FC<BannerStatusProps> = ({ status }) => {
   const statusConfig: Record<StatusType, StatusConfig> = {
+    pending: {
+      backgroundColor: '#FFE092',
+      borderColor: '#FC8200',
+      textColor: '#000000',
+      message: 'Aguardando aprovação do profissional',
+    },
     confirmed: {
       backgroundColor: '#FFE092',
       borderColor: '#FC8200',
       textColor: '#000000',
       message: 'Serviço Agendado',
     },
-    Executado: {
+    completed: {
       backgroundColor: '#22843B',
       borderColor: '#22843B',
       textColor: '#FFFFFF',
       message: 'Serviço Executado',
     },
-    Cancelado: {
+    canceled: {
       backgroundColor: '#F8D7DA',
       borderColor: '#DC3545',
       textColor: '#721C24',
