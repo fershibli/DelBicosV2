@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 
-type StatusType = 'Agendado' | 'Executado' | 'Cancelado';
+type StatusType = 'confirmed' | 'Executado' | 'Cancelado';
 
 interface StatusConfig {
   backgroundColor: string;
@@ -17,7 +17,7 @@ interface BannerStatusProps {
 
 const BannerStatus: React.FC<BannerStatusProps> = ({ status }) => {
   const statusConfig: Record<StatusType, StatusConfig> = {
-    Agendado: {
+    confirmed: {
       backgroundColor: '#FFE092',
       borderColor: '#FC8200',
       textColor: '#000000',
@@ -58,7 +58,7 @@ const BannerStatus: React.FC<BannerStatusProps> = ({ status }) => {
           {currentStatus.message}
         </Text>
       </View>
-      {status === 'Agendado' && (
+      {status === 'confirmed' && (
         <TouchableOpacity style={styles.reminderButton}>
           <Text style={styles.reminderText}>Criar lembrete</Text>
         </TouchableOpacity>
