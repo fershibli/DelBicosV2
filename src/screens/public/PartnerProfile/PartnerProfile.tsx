@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import {
+  Image,
   ImageBackground,
   StyleSheet,
   Text,
@@ -14,9 +15,9 @@ import { ServicosContent } from './ServicosContent';
 import { GaleriaContent } from './GaleriaContent';
 import { AvaliacoesContent } from './AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
-
-import { parceiros } from './parceiros.mock';
 import { comodidades } from './comodidades';
+import axios from 'axios';
+
 
 function PartnerProfileScreen() {
   const navigation = useNavigation();
@@ -27,16 +28,25 @@ function PartnerProfileScreen() {
     'sobre' | 'servicos' | 'galeria' | 'avaliacoes'
   >('sobre');
 
-  const parceiro = parceiros.find((p) => p.id === id);
+  const [parceiro, setParceiro] = useState<any>(null);
 
-  if (!parceiro) {
-    return (
-      <View style={styles.container}>
-        <Text style={{ margin: 20, fontSize: 16 }}>
-          Parceiro não encontrado.
-        </Text>
-      </View>
-    );
+
+  useEffect(() => {
+  const fetchProfessionalData = async () => {
+    try {
+      const { data: prof } = await axios.get(`http://localhost:3000/api/professional_dto/${id}`);
+      setParceiro(prof);
+    } catch (error) {
+      console.error('Erro ao buscar parceiro:', error);
+    }
+  };
+
+    fetchProfessionalData();
+  }, [id]);
+
+
+  if (!parceiro || !parceiro.address) {
+    return <Text>Carregando...</Text>;
   }
 
   const renderContent = () => {
@@ -45,7 +55,7 @@ function PartnerProfileScreen() {
         return (
           <SobreContent
             detalhes={parceiro.descricao}
-            comodidadesIds={parceiro.comodidadesIds}
+            comodidadesIds={parceiro.comodidadesIds ?? []}
             todasComodidades={comodidades}
           />
         );
@@ -71,11 +81,19 @@ function PartnerProfileScreen() {
     }
   };
 
+  const endereco = parceiro.address || {};
+  const usuario = parceiro.User || {};
+
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={{ uri: parceiro.imagemCapa }}
-        style={styles.headerImage}>
+    <ImageBackground
+      source={{
+        uri: parceiro?.User.bannerImg
+          ? parceiro.User.bannerImg
+          : 'https://media.istockphoto.com/id/1412131208/pt/vetorial/abstract-orange-and-red-gradient-geometric-shape-circle-background-modern-futuristic.jpg?s=612x612&w=0&k=20&c=5Yd7MWfUtp6iOFYsYmuMCmNFBpBW67gwO0yE_zbnLq8=',
+         }}
+        style={styles.headerImage}
+        >
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.8)']}
           style={styles.gradientOverlay}>
@@ -86,7 +104,13 @@ function PartnerProfileScreen() {
           </TouchableOpacity>
 
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{parceiro.nome}</Text>
+            <View style={{ alignItems: 'flex-start', marginBottom: 8 }}>
+              <Image
+                source={{ uri: parceiro.User.avatarImg }}
+                style={styles.avatarImage}
+              />
+            </View>
+            <Text style={styles.profileName}>{parceiro.User.name}</Text>
             <View style={styles.ratingContainer}>
               <Rating
                 type="star"
@@ -96,7 +120,7 @@ function PartnerProfileScreen() {
                 startingValue={parceiro.avaliacaoMedia}
                 fractions={1}
                 tintColor="black"
-                style={{ marginRight: 4 }}
+                style={{ marginRight: 4, backgroundColor: 'transparent' }}
               />
             </View>
           </View>
@@ -106,7 +130,7 @@ function PartnerProfileScreen() {
       <View style={styles.addressContainer}>
         <MaterialCommunityIcons name="map-marker" size={16} color="#000" />
         <Text style={styles.addressText}>
-          {`${parceiro.endereco.rua} - ${parceiro.endereco.cep} - ${parceiro.endereco.bairro} - ${parceiro.endereco.cidade} / ${parceiro.endereco.estado}`}
+          {`${endereco.street || ''} ${endereco.number || ''} - ${endereco.postal_code || ''} - ${endereco.neighborhood || ''} - ${endereco.city || ''} / ${endereco.state || ''}`}
         </Text>
       </View>
 
@@ -185,7 +209,7 @@ const styles = StyleSheet.create({
   ratingText: {
     color: 'white',
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: 'bold', 
   },
   addressContainer: {
     flexDirection: 'row',
@@ -212,6 +236,13 @@ const styles = StyleSheet.create({
   activeTab: {
     color: '#FC8200',
     fontWeight: 'bold',
+  },
+  avatarImage: {
+  width: 72,
+  height: 72,
+  borderRadius: 36,
+  borderWidth: 2,
+  borderColor: 'white',
   },
 });
 
