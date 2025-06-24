@@ -29,7 +29,13 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
     setVisible(true);
   };
 
-  const renderItem = ({ item, index }: { item: GalleryImage; index: number }) => (
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: GalleryImage;
+    index: number;
+  }) => (
     <TouchableOpacity
       onPress={() => openImageViewer(index)}
       activeOpacity={0.8}>

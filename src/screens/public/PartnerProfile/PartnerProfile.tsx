@@ -35,7 +35,9 @@ function PartnerProfileScreen() {
     const fetchProfessionalData = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(`http://localhost:3000/api/professional_dto/${id}`);
+        const { data } = await axios.get(
+          `http://localhost:3000/api/professional_dto/${id}`,
+        );
         setParceiro(data);
       } catch (err) {
         console.error('Erro ao buscar parceiro:', err);
@@ -81,7 +83,11 @@ function PartnerProfileScreen() {
         return (
           <ServicosContent
             servicos={parceiro.services}
-            availability={parceiro.availabilities} professionalId={1} clientId={1} addressId={1}          />
+            availability={parceiro.availabilities}
+            professionalId={1}
+            clientId={1}
+            addressId={1}
+          />
         );
       case 'galeria':
         return <GaleriaContent imagens={parceiro.gallery} />;
@@ -104,10 +110,11 @@ function PartnerProfileScreen() {
     <View style={styles.container}>
       <ImageBackground
         source={{
-          uri: usuario.bannerImg || 'https://media.istockphoto.com/id/1412131208/pt/vetorial/abstract-orange-and-red-gradient-geometric-shape-circle-background-modern-futuristic.jpg?s=612x612&w=0&k=20&c=5Yd7MWfUtp6iOFYsYmuMCmNFBpBW67gwO0yE_zbnLq8=',
+          uri:
+            usuario.bannerImg ||
+            'https://media.istockphoto.com/id/1412131208/pt/vetorial/abstract-orange-and-red-gradient-geometric-shape-circle-background-modern-futuristic.jpg?s=612x612&w=0&k=20&c=5Yd7MWfUtp6iOFYsYmuMCmNFBpBW67gwO0yE_zbnLq8=',
         }}
-        style={styles.headerImage}
-      >
+        style={styles.headerImage}>
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.8)']}
           style={styles.gradientOverlay}>
@@ -120,7 +127,11 @@ function PartnerProfileScreen() {
           <View style={styles.profileInfo}>
             <View style={{ alignItems: 'flex-start', marginBottom: 8 }}>
               <Image
-                source={{ uri: usuario.avatarImg || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
+                source={{
+                  uri:
+                    usuario.avatarImg ||
+                    'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+                }}
                 style={styles.avatarImage}
               />
             </View>
@@ -225,7 +236,7 @@ const styles = StyleSheet.create({
   ratingText: {
     color: 'white',
     fontSize: 10,
-    fontWeight: 'bold', 
+    fontWeight: 'bold',
   },
   addressContainer: {
     flexDirection: 'row',

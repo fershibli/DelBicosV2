@@ -49,7 +49,7 @@ const BannerStatus: React.FC<BannerStatusProps> = ({ status }) => {
     textColor: '#333333',
     message: 'Status Desconhecido',
   };
-  
+
   return (
     <View style={styles.statusContainer}>
       <View

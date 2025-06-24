@@ -8,7 +8,7 @@ import {
   Modal,
   Pressable,
   Image,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { generateAvailableDates } from '../../../utils/availabilityHelpers';
 import axios from 'axios';
@@ -51,13 +51,15 @@ export function ServicosContent({
   professionalId,
   clientId,
   addressId,
-  loading = false
+  loading = false,
 }: ServicosContentProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedServico, setSelectedServico] = useState<Servico | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [disponibilidades, setDisponibilidades] = useState<{date: string; times: string[]}[]>([]);
+  const [disponibilidades, setDisponibilidades] = useState<
+    { date: string; times: string[] }[]
+  >([]);
 
   useEffect(() => {
     if (availability && availability.length > 0) {
@@ -71,7 +73,7 @@ export function ServicosContent({
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     }).format(value);
   };
 
@@ -105,51 +107,57 @@ export function ServicosContent({
   console.log('selectedDate:', selectedDate);
   console.log('selectedTime:', selectedTime);
 
-
-const handleConfirm = async () => {
-  if (!selectedServico || !selectedDate || !selectedTime) {
-    alert('Por favor, selecione uma data e horário');
-    return;
-  }
-
-  try {
-    // Extrai horas e minutos do horário selecionado
-    const [hours, minutes] = selectedTime.split(':').map(Number);
-    const startDate = new Date(selectedDate);
-    startDate.setHours(hours, minutes, 0, 0);
-
-    if (isNaN(startDate.getTime())) {
-      throw new Error('Data/horário inválidos');
+  const handleConfirm = async () => {
+    if (!selectedServico || !selectedDate || !selectedTime) {
+      alert('Por favor, selecione uma data e horário');
+      return;
     }
 
-    const endDate = new Date(startDate.getTime() + selectedServico.duration * 60000);
+    try {
+      // Extrai horas e minutos do horário selecionado
+      const [hours, minutes] = selectedTime.split(':').map(Number);
+      const startDate = new Date(selectedDate);
+      startDate.setHours(hours, minutes, 0, 0);
 
-    const appointmentData = {
-      professional_id: professionalId,
-      client_id: clientId,
-      service_id: selectedServico.id,
-      address_id: addressId,
-      start_time: startDate.toISOString(),
-      end_time: endDate.toISOString(),
-      status: 'pending',
-    };
+      if (isNaN(startDate.getTime())) {
+        throw new Error('Data/horário inválidos');
+      }
 
-    const response = await axios.post('http://localhost:3000/api/appointments', appointmentData);
+      const endDate = new Date(
+        startDate.getTime() + selectedServico.duration * 60000,
+      );
 
-    if (response.status === 201 || response.status === 200) {
-      alert('Agendamento criado com sucesso!');
-      setModalVisible(false);
-      setSelectedDate(null);
-      setSelectedTime(null);
-      setSelectedServico(null);
-    } else {
-      alert('Erro ao criar agendamento. Tente novamente.');
+      const appointmentData = {
+        professional_id: professionalId,
+        client_id: clientId,
+        service_id: selectedServico.id,
+        address_id: addressId,
+        start_time: startDate.toISOString(),
+        end_time: endDate.toISOString(),
+        status: 'pending',
+      };
+
+      const response = await axios.post(
+        'http://localhost:3000/api/appointments',
+        appointmentData,
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        alert('Agendamento criado com sucesso!');
+        setModalVisible(false);
+        setSelectedDate(null);
+        setSelectedTime(null);
+        setSelectedServico(null);
+      } else {
+        alert('Erro ao criar agendamento. Tente novamente.');
+      }
+    } catch (error) {
+      console.error('Erro ao criar agendamento:', error);
+      alert(
+        'Ocorreu um erro ao criar o agendamento. Veja o console para mais detalhes.',
+      );
     }
-  } catch (error) {
-    console.error('Erro ao criar agendamento:', error);
-    alert('Ocorreu um erro ao criar o agendamento. Veja o console para mais detalhes.');
-  }
-};
+  };
 
   if (loading) {
     return (
@@ -198,10 +206,11 @@ const handleConfirm = async () => {
                 style={styles.bookButton}
                 onPress={() => openAgendamento(item)}
                 disabled={disponibilidades.length === 0}>
-                <Text style={[
-                  styles.bookButtonText,
-                  disponibilidades.length === 0 && styles.disabledButtonText
-                ]}>
+                <Text
+                  style={[
+                    styles.bookButtonText,
+                    disponibilidades.length === 0 && styles.disabledButtonText,
+                  ]}>
                   {disponibilidades.length === 0 ? 'Indisponível' : 'Agendar'}
                 </Text>
               </TouchableOpacity>
@@ -221,12 +230,15 @@ const handleConfirm = async () => {
               Agendar {selectedServico?.title}
             </Text>
             <Text style={styles.serviceModalPrice}>
-              {selectedServico && formatCurrency(selectedServico.price)} • {selectedServico && formatDuration(selectedServico.duration)}
+              {selectedServico && formatCurrency(selectedServico.price)} •{' '}
+              {selectedServico && formatDuration(selectedServico.duration)}
             </Text>
 
             <Text style={styles.sectionTitle}>Selecione a data:</Text>
             {disponibilidades.length === 0 ? (
-              <Text style={styles.noAvailabilityText}>Nenhuma disponibilidade neste período</Text>
+              <Text style={styles.noAvailabilityText}>
+                Nenhuma disponibilidade neste período
+              </Text>
             ) : (
               <>
                 <FlatList
@@ -258,7 +270,9 @@ const handleConfirm = async () => {
 
                 {selectedDate && (
                   <>
-                    <Text style={styles.sectionTitle}>Horários disponíveis:</Text>
+                    <Text style={styles.sectionTitle}>
+                      Horários disponíveis:
+                    </Text>
                     <View style={styles.timesContainer}>
                       {disponibilidades
                         .find((d) => d.date === selectedDate)
@@ -267,13 +281,15 @@ const handleConfirm = async () => {
                             key={time}
                             style={[
                               styles.timeButton,
-                              selectedTime === time && styles.selectedTimeButton,
+                              selectedTime === time &&
+                                styles.selectedTimeButton,
                             ]}
                             onPress={() => setSelectedTime(time)}>
                             <Text
                               style={[
                                 styles.timeText,
-                                selectedTime === time && styles.selectedTimeText,
+                                selectedTime === time &&
+                                  styles.selectedTimeText,
                               ]}>
                               {time}
                             </Text>
@@ -298,9 +314,10 @@ const handleConfirm = async () => {
                   (!selectedDate || !selectedTime) && styles.disabledButton,
                 ]}
                 onPress={handleConfirm}
-                disabled={!selectedDate || !selectedTime}
-              >
-                <Text style={styles.confirmButtonText}>Confirmar Agendamento</Text>
+                disabled={!selectedDate || !selectedTime}>
+                <Text style={styles.confirmButtonText}>
+                  Confirmar Agendamento
+                </Text>
               </Pressable>
             </View>
           </View>

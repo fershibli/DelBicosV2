@@ -19,7 +19,10 @@ const ServiceItems: React.FC<ServiceItemsProps> = ({ items }) => {
     const value = typeof price === 'string' ? parseFloat(price) : price;
     if (isNaN(value)) return 'R$ 0,00';
 
-    return value.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return value
+      .toFixed(2)
+      .replace('.', ',')
+      .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
 
   const formatDate = (dateString: string) => {

@@ -17,41 +17,58 @@ const ServiceStatusScreen = ({ route }) => {
   const [appointmentDate, setAppointmentDate] = useState('');
   const [appointmentTime, setAppointmentTime] = useState('');
 
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const { data: appointment } = await axios.get(`http://localhost:3000/api/appointments/${appointmentId}`);
-      setStatus(appointment.status);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data: appointment } = await axios.get(
+          `http://localhost:3000/api/appointments/${appointmentId}`,
+        );
+        setStatus(appointment.status);
 
-      const createdAt = new Date(appointment.createdAt);
-      setAppointmentDate(createdAt.toLocaleDateString('pt-BR'));
-      setAppointmentTime(createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+        const createdAt = new Date(appointment.createdAt);
+        setAppointmentDate(createdAt.toLocaleDateString('pt-BR'));
+        setAppointmentTime(
+          createdAt.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        );
 
-      const { data: service } = await axios.get(`http://localhost:3000/api/services/${appointment.service_id}`);
-      const { data: professional } = await axios.get(`http://localhost:3000/api/professionals/${appointment.professional_id}`);
-      const user = professional.User;
+        const { data: service } = await axios.get(
+          `http://localhost:3000/api/services/${appointment.service_id}`,
+        );
+        const { data: professional } = await axios.get(
+          `http://localhost:3000/api/professionals/${appointment.professional_id}`,
+        );
+        const user = professional.User;
 
-      const formattedService = {
-        id: service.id,
-        name: service.title,
-        date: new Date(appointment.start_time).toLocaleDateString(),
-        startTime: new Date(appointment.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        endTime: new Date(appointment.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        price: Number(service.price),
-        professional: user.name,
-      };
+        const formattedService = {
+          id: service.id,
+          name: service.title,
+          date: new Date(appointment.start_time).toLocaleDateString(),
+          startTime: new Date(appointment.start_time).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+          endTime: new Date(appointment.end_time).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+          price: Number(service.price),
+          professional: user.name,
+        };
 
-      setServices([formattedService]);
-      setProfessional(user);
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        setServices([formattedService]);
+        setProfessional(user);
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchData();
-}, [appointmentId]);
+    fetchData();
+  }, [appointmentId]);
 
   const subtotal = services.reduce((sum, s) => sum + s.price, 0);
 
@@ -61,8 +78,13 @@ useEffect(() => {
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <ProfessionalInfo 
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        <ProfessionalInfo
           professional={professional}
           appointmentDate={appointmentDate}
           appointmentTime={appointmentTime}

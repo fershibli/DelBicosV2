@@ -1,7 +1,7 @@
 import { Text } from '@react-navigation/elements';
 import { StyleSheet, View } from 'react-native';
 
-type AboutContentProps  = {
+type AboutContentProps = {
   details: string;
   amenities: {
     id: string;
@@ -9,10 +9,7 @@ type AboutContentProps  = {
   }[];
 };
 
-export function SobreContent({
-  details,
-  amenities,
-}: AboutContentProps) {
+export function SobreContent({ details, amenities }: AboutContentProps) {
   return (
     <View style={styles.contentContainer}>
       <View style={styles.section}>

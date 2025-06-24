@@ -5,11 +5,15 @@ type AvaliacoesContentProps = {
   availabilities?: any[];
 };
 
-export function AvaliacoesContent({ availabilities = [] }: AvaliacoesContentProps) {
+export function AvaliacoesContent({
+  availabilities = [],
+}: AvaliacoesContentProps) {
   if (availabilities.length === 0) {
     return (
       <View style={styles.noReviewsContainer}>
-        <Text style={styles.noReviewsText}>Não há avaliações para este usuário.</Text>
+        <Text style={styles.noReviewsText}>
+          Não há avaliações para este usuário.
+        </Text>
       </View>
     );
   }

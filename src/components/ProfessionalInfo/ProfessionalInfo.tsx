@@ -13,7 +13,11 @@ interface ProfessionalInfoProps {
   appointmentTime: string;
 }
 
-const ProfessionalInfo: React.FC<ProfessionalInfoProps> = ({ professional, appointmentDate, appointmentTime }) => {
+const ProfessionalInfo: React.FC<ProfessionalInfoProps> = ({
+  professional,
+  appointmentDate,
+  appointmentTime,
+}) => {
   if (!professional) return null;
 
   return (
