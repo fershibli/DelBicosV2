@@ -74,7 +74,7 @@ function PartnerProfileScreen() {
       case 'sobre':
         return (
           <SobreContent
-            detalhes={parceiro.description || ''}
+            details={parceiro.description || ''}
             amenities={parceiro.amenities || []}
           />
         );
@@ -92,7 +92,7 @@ function PartnerProfileScreen() {
       default:
         return (
           <SobreContent
-            detalhes={parceiro.description || ''}
+            details={parceiro.description || ''}
             amenities={parceiro.amenities || []}
           />
         );
@@ -133,7 +133,7 @@ function PartnerProfileScreen() {
                 ratingCount={5}
                 imageSize={12}
                 readonly
-                startingValue={parceiro.avaliacaoMedia || 0}
+                startingValue={0}
                 fractions={1}
                 tintColor="black"
                 style={{ marginRight: 4, backgroundColor: 'transparent' }}
@@ -219,6 +219,8 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'transparent',
+
     gap: 4,
     paddingVertical: 2,
   },
