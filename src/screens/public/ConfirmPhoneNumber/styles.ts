@@ -14,6 +14,25 @@ export const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 50, // Espaço para o rodapé
   },
+  header: {
+    backgroundColor: '#e6f0fa',
+    padding: 15,
+    alignItems: 'center',
+  },
+  logo: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  logoImage: {
+    width: '100%',
+    resizeMode: 'contain',
+  },
+  logoText: {
+    color: '#ff7f00',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -24,7 +43,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: '#003366',
     textAlign: 'center',
-    marginBottom: 60,
+    marginBottom: 40,
   },
   button: {
     backgroundColor: '#ff7f00',
@@ -32,7 +51,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     width: '20%',
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 20,
     marginBottom: 10,
   },
   buttonText: {
