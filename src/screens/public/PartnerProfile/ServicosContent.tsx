@@ -11,6 +11,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { generateAvailableDates } from '../../../utils/availabilityHelpers';
+import axios from 'axios';
 
 type Servico = {
   id: number;
@@ -38,12 +39,18 @@ type ProfessionalAvailability = {
 type ServicosContentProps = {
   servicos: Servico[];
   availability?: ProfessionalAvailability[];
+  professionalId: number;
+  clientId: number;
+  addressId: number;
   loading?: boolean;
 };
 
 export function ServicosContent({
   servicos = [],
   availability = [],
+  professionalId,
+  clientId,
+  addressId,
   loading = false
 }: ServicosContentProps) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -81,22 +88,6 @@ export function ServicosContent({
     setModalVisible(true);
   };
 
-  const handleConfirm = () => {
-    if (!selectedServico || !selectedDate || !selectedTime) {
-      alert('Por favor, selecione uma data e horário');
-      return;
-    }
-
-    alert(
-      `Agendado: ${selectedServico.title}\n` +
-      `Preço: ${formatCurrency(selectedServico.price)}\n` +
-      `Data: ${formatDate(selectedDate)}\n` +
-      `Horário: ${selectedTime}\n` +
-      `Duração: ${formatDuration(selectedServico.duration)}`
-    );
-    setModalVisible(false);
-  };
-
   const formatDate = (dateString: string) => {
     try {
       const options: Intl.DateTimeFormatOptions = {
@@ -110,6 +101,55 @@ export function ServicosContent({
       return dateString;
     }
   };
+
+  console.log('selectedDate:', selectedDate);
+  console.log('selectedTime:', selectedTime);
+
+
+const handleConfirm = async () => {
+  if (!selectedServico || !selectedDate || !selectedTime) {
+    alert('Por favor, selecione uma data e horário');
+    return;
+  }
+
+  try {
+    // Extrai horas e minutos do horário selecionado
+    const [hours, minutes] = selectedTime.split(':').map(Number);
+    const startDate = new Date(selectedDate);
+    startDate.setHours(hours, minutes, 0, 0);
+
+    if (isNaN(startDate.getTime())) {
+      throw new Error('Data/horário inválidos');
+    }
+
+    const endDate = new Date(startDate.getTime() + selectedServico.duration * 60000);
+
+    const appointmentData = {
+      professional_id: professionalId,
+      client_id: clientId,
+      service_id: selectedServico.id,
+      address_id: addressId,
+      start_time: startDate.toISOString(),
+      end_time: endDate.toISOString(),
+      status: 'pending',
+    };
+
+    const response = await axios.post('http://localhost:3000/api/appointments', appointmentData);
+
+    if (response.status === 201 || response.status === 200) {
+      alert('Agendamento criado com sucesso!');
+      setModalVisible(false);
+      setSelectedDate(null);
+      setSelectedTime(null);
+      setSelectedServico(null);
+    } else {
+      alert('Erro ao criar agendamento. Tente novamente.');
+    }
+  } catch (error) {
+    console.error('Erro ao criar agendamento:', error);
+    alert('Ocorreu um erro ao criar o agendamento. Veja o console para mais detalhes.');
+  }
+};
 
   if (loading) {
     return (
@@ -132,7 +172,7 @@ export function ServicosContent({
           renderItem={({ item }) => (
             <View style={styles.serviceCard}>
               {item.bannerImg && (
-                <Image 
+                <Image
                   source={{ uri: item.bannerImg }}
                   style={styles.serviceImage}
                   resizeMode="cover"
@@ -251,14 +291,15 @@ export function ServicosContent({
                 onPress={() => setModalVisible(false)}>
                 <Text style={styles.cancelButtonText}>Voltar</Text>
               </Pressable>
-              
+
               <Pressable
                 style={[
                   styles.confirmButton,
                   (!selectedDate || !selectedTime) && styles.disabledButton,
                 ]}
                 onPress={handleConfirm}
-                disabled={!selectedDate || !selectedTime}>
+                disabled={!selectedDate || !selectedTime}
+              >
                 <Text style={styles.confirmButtonText}>Confirmar Agendamento</Text>
               </Pressable>
             </View>
