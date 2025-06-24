@@ -171,4 +171,11 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: '#003366',
   },
+  errorText: {
+    color: '#ff0000',
+    fontSize: 12,
+    marginTop: -5,
+    marginBottom: 5,
+    textAlign: 'center',
+  },
 });
