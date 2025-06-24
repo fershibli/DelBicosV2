@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, TouchableOpacity, Modal } from 'react-native';
+import {
+  ScrollView,
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  Image,
+} from 'react-native';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import CodeInput from '@components/CodeInput';
 import { styles } from './styles';
+import logo from '../../../assets/logo.png';
 
 type ConfirmPhoneNumberRouteProp = RouteProp<
   { params: { code: string } },
@@ -43,20 +51,27 @@ function ConfirmPhoneNumberScreen({
       <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>Confirme seu número</Text>
-        <Text style={styles.subtitle}>
-          Insira o código de acesso de 4 dígitos que você recebeu para o número
-          (+55) 1622
-        </Text>
-        <CodeInput
-          verificationCode={verificationCode}
-          setVerificationCode={setVerificationCode}
-          focusedIndex={focusedIndex}
-          setFocusedIndex={setFocusedIndex}
-        />
-        <TouchableOpacity style={styles.button} onPress={handleContinue}>
-          <Text style={styles.buttonText}>Continuar</Text>
-        </TouchableOpacity>
+        <View style={styles.header}>
+          <View style={styles.logo}>
+            <Image source={logo} style={styles.logoImage} />
+            <View>
+              <Text style={styles.logoText}>Delivery de bicos</Text>
+            </View>
+          </View>
+          <Text style={styles.title}>Confirme seu número</Text>
+          <Text style={styles.subtitle}>
+            Insira o código de acesso de 4 dígitos que você recebeu
+          </Text>
+          <CodeInput
+            verificationCode={verificationCode}
+            setVerificationCode={setVerificationCode}
+            focusedIndex={focusedIndex}
+            setFocusedIndex={setFocusedIndex}
+          />
+          <TouchableOpacity style={styles.button} onPress={handleContinue}>
+            <Text style={styles.buttonText}>Continuar</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
