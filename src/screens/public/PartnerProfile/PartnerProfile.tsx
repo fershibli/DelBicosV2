@@ -74,7 +74,7 @@ function PartnerProfileScreen() {
       case 'sobre':
         return (
           <SobreContent
-            detalhes={parceiro.descricao || ''}
+            detalhes={parceiro.description || ''}
             amenities={parceiro.amenities || []}
           />
         );
