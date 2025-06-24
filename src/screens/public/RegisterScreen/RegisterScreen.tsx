@@ -37,6 +37,24 @@ function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
 
+  // Estados para mensagens de erro
+  const [nameError, setNameError] = useState('');
+  const [surnameError, setSurnameError] = useState('');
+  const [dayError, setDayError] = useState('');
+  const [monthError, setMonthError] = useState('');
+  const [yearError, setYearError] = useState('');
+  const [cpfError, setCpfError] = useState('');
+  const [cepError, setCepError] = useState('');
+  const [streetError, setStreetError] = useState('');
+  const [numberError, setNumberError] = useState('');
+  const [neighborhoodError, setNeighborhoodError] = useState('');
+  const [cityError, setCityError] = useState('');
+  const [stateError, setStateError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [termsError, setTermsError] = useState('');
+
   const isStrongPassword = (pass: string) => {
     const hasUpperCase = /[A-Z]/.test(pass);
     const hasNumber = /\d/.test(pass);
@@ -104,6 +122,7 @@ function RegisterScreen() {
           setStreet(data.logradouro || '');
           setNeighborhood(data.bairro || '');
           setLocation(data.localidade, data.uf);
+          setCepError('');
           console.log(
             'Localização via CEP definida:',
             data.localidade,
@@ -120,6 +139,7 @@ function RegisterScreen() {
           setStreet('');
           setNeighborhood('');
           setLocation('', '');
+          setCepError('CEP inválido ou não encontrado.');
           console.log('CEP inválido ou não encontrado na API.');
         }
       } catch (error) {
@@ -129,7 +149,7 @@ function RegisterScreen() {
         setStreet('');
         setNeighborhood('');
         setLocation('', '');
-        Alert.alert('Erro', 'Não foi possível consultar o CEP.');
+        setCepError('Erro ao consultar o CEP.');
       }
     } else {
       setCity('');
@@ -137,78 +157,190 @@ function RegisterScreen() {
       setStreet('');
       setNeighborhood('');
       setLocation('', '');
+      setCepError('CEP inválido. Deve conter 8 dígitos numéricos.');
       console.log('CEP inválido, navegando não realizado.');
     }
   };
 
   const handleSubmit = () => {
+    // Reinicia as mensagens de erro
+    setNameError('');
+    setSurnameError('');
+    setDayError('');
+    setMonthError('');
+    setYearError('');
+    setCpfError('');
+    setCepError('');
+    setStreetError('');
+    setNumberError('');
+    setNeighborhoodError('');
+    setCityError('');
+    setStateError('');
+    setPhoneError('');
+    setEmailError('');
+    setPasswordError('');
+    setTermsError('');
+
+    // Validação de Nome
     const nameValid = /^[A-Za-zÀ-ÿ\s]+$/.test(name);
+    if (!nameValid || !name.trim()) {
+      setNameError('O nome deve conter apenas letras e não pode estar vazio.');
+      return;
+    }
+
+    // Validação de Sobrenome
     const surnameValid = /^[A-Za-zÀ-ÿ\s]+$/.test(surname);
+    if (!surnameValid || !surname.trim()) {
+      setSurnameError(
+        'O sobrenome deve conter apenas letras e não pode estar vazio.',
+      );
+      return;
+    }
+
+    // Validação de Data de Nascimento
     const birthDateValid =
       day &&
       month &&
       year &&
-      !isNaN(new Date(`${year}-${month}-${day}`).getTime());
-    const numberValid = /^\d+$/.test(number);
-    const phoneValid =
-      phone.replace(/[^\d]/g, '').length === 11 &&
-      /^\(\d{2}\)\s\d{5}-\d{4}$/.test(phone);
-    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const passwordValid = isStrongPassword(password);
+      !isNaN(new Date(`${year}-${month}-${day}`).getTime()) &&
+      parseInt(day) >= 1 &&
+      parseInt(day) <= 31 &&
+      parseInt(month) >= 1 &&
+      parseInt(month) <= 12 &&
+      parseInt(year) >= 1900 &&
+      parseInt(year) <= new Date().getFullYear();
+    if (!birthDateValid) {
+      setDayError(
+        'Data de aniversário inválida. Use valores válidos para DD (01-31), MM (01-12) e AAAA (1900-atual).',
+      );
+      setMonthError(
+        'Data de aniversário inválida. Use valores válidos para DD (01-31), MM (01-12) e AAAA (1900-atual).',
+      );
+      setYearError(
+        'Data de aniversário inválida. Use valores válidos para DD (01-31), MM (01-12) e AAAA (1900-atual).',
+      );
+      return;
+    }
+
+    // Validação de CPF
     const cleanCpf = cpf.replace(/[^\d]/g, '');
     const cpfValid = cleanCpf.length === 11 && !/(\d)\1{10}/.test(cleanCpf);
-    const cepValid = validateCep(cep);
+    if (!cpfValid || !cpf.trim()) {
+      setCpfError(
+        'CPF inválido. Deve conter 11 dígitos numéricos e não pode ser uma sequência repetida (ex.: 11111111111).',
+      );
+      return;
+    }
 
-    if (!nameValid) {
-      Alert.alert('Erro', 'Nome deve conter apenas letras.');
-      return;
-    }
-    if (!surnameValid) {
-      Alert.alert('Erro', 'Sobrenome deve conter apenas letras.');
-      return;
-    }
-    if (!birthDateValid) {
-      Alert.alert(
-        'Erro',
-        'Data de aniversário inválida. Use o formato DD/MM/AAAA.',
-      );
-      return;
-    }
-    if (!numberValid) {
-      Alert.alert('Erro', 'Número deve conter apenas números.');
-      return;
-    }
-    if (!phoneValid) {
-      Alert.alert('Erro', 'Telefone deve estar no formato (DD) 99999-9999.');
-      return;
-    }
-    if (!emailValid) {
-      Alert.alert('Erro', 'E-mail inválido.');
-      return;
-    }
-    if (!passwordValid) {
-      Alert.alert(
-        'Erro',
-        'Senha deve conter letra maiúscula, número, caractere especial e ter no mínimo 8 caracteres.',
-      );
-      return;
-    }
-    if (!cpfValid) {
-      Alert.alert('Erro', 'CPF inválido.');
-      return;
-    }
-    if (!cepValid) {
-      Alert.alert(
-        'Erro',
+    // Validação de CEP
+    const cepValid = validateCep(cep);
+    if (!cepValid || !cep.trim()) {
+      setCepError(
         'CEP inválido. Deve conter 8 dígitos numéricos (ex.: 12345-678).',
       );
       return;
     }
-    if (!acceptTerms) {
-      Alert.alert('Erro', 'Você deve aceitar os termos de uso e condições.');
+
+    // Validação de Rua
+    if (!street.trim()) {
+      setStreetError('O campo Rua é obrigatório e não pode estar vazio.');
       return;
     }
 
+    // Validação de Número
+    const numberValid = /^\d+$/.test(number);
+    if (!numberValid || !number.trim()) {
+      setNumberError(
+        'O número deve conter apenas números e não pode estar vazio.',
+      );
+      return;
+    }
+
+    // Validação de Bairro
+    if (!neighborhood.trim()) {
+      setNeighborhoodError(
+        'O campo Bairro é obrigatório e não pode estar vazio.',
+      );
+      return;
+    }
+
+    // Validação de Cidade
+    if (!city.trim()) {
+      setCityError('O campo Cidade é obrigatório e não pode estar vazio.');
+      return;
+    }
+
+    // Validação de Estado
+    const states = [
+      'AC',
+      'AL',
+      'AP',
+      'AM',
+      'BA',
+      'CE',
+      'DF',
+      'ES',
+      'GO',
+      'MA',
+      'MT',
+      'MS',
+      'MG',
+      'PA',
+      'PB',
+      'PR',
+      'PE',
+      'PI',
+      'RJ',
+      'RN',
+      'RS',
+      'RO',
+      'RR',
+      'SC',
+      'SP',
+      'SE',
+      'TO',
+    ];
+    if (!states.includes(state) || !state.trim()) {
+      setStateError(
+        'O estado deve ser uma UF válida (ex.: SP, RJ) e não pode estar vazio.',
+      );
+      return;
+    }
+
+    // Validação de Telefone
+    const phoneValid =
+      phone.replace(/[^\d]/g, '').length === 11 &&
+      /^\(\d{2}\)\s\d{5}-\d{4}$/.test(phone);
+    if (!phoneValid || !phone.trim()) {
+      setPhoneError('Telefone inválido. Use o formato (DD) 99999-9999.');
+      return;
+    }
+
+    // Validação de E-mail
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!emailValid || !email.trim()) {
+      setEmailError(
+        'E-mail inválido. Use um formato válido (ex.: exemplo@dominio.com).',
+      );
+      return;
+    }
+
+    // Validação de Senha
+    const passwordValid = isStrongPassword(password);
+    if (!passwordValid || !password.trim()) {
+      setPasswordError(
+        'Senha inválida. Deve ter pelo menos 8 caracteres, incluindo letra maiúscula, número e caractere especial.',
+      );
+      return;
+    }
+
+    // Validação de Termos
+    if (!acceptTerms) {
+      setTermsError('Você deve aceitar os termos de uso e condições.');
+      return;
+    }
+
+    // Armazenamento dos dados
     const userData = {
       name,
       surname,
@@ -227,8 +359,10 @@ function RegisterScreen() {
       password,
       acceptTerms,
     };
-    setLocation(city, state);
-    console.log('Dados salvos:', userData);
+    setLocation(city, state); // Armazena a localização
+    console.log('Dados salvos:', userData); // Simulação de armazenamento
+
+    // Redirecionamento para Feed
     Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
     navigation.navigate('Feed');
   };
@@ -243,12 +377,12 @@ function RegisterScreen() {
           <View style={styles.logo}>
             <Image source={logo} style={styles.logoImage} />
             <View>
-              <Text style={styles.logoText}>delivery de bicos</Text>
+              <Text style={styles.logoText}>Delivery de bicos</Text>
             </View>
           </View>
         </View>
 
-        <Text style={styles.title}>Cadastre-se</Text>
+        <Text style={styles.title}>Precisamos de Você!</Text>
 
         <TextInput
           style={styles.input}
@@ -256,6 +390,7 @@ function RegisterScreen() {
           value={name}
           onChangeText={(text) => setName(text.replace(/[^A-Za-zÀ-ÿ\s]/g, ''))}
         />
+        {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
         <TextInput
           style={styles.input}
           placeholder="Sobrenome"
@@ -264,35 +399,46 @@ function RegisterScreen() {
             setSurname(text.replace(/[^A-Za-zÀ-ÿ\s]/g, ''))
           }
         />
+        {surnameError ? (
+          <Text style={styles.errorText}>{surnameError}</Text>
+        ) : null}
         <View style={styles.formRow}>
           <View style={styles.dateContainer}>
             <TextInput
-              style={[styles.inputdd]}
+              style={styles.inputdd}
               placeholder="DD"
               value={day}
               onChangeText={setDay}
               keyboardType="numeric"
               maxLength={2}
             />
+            {dayError ? <Text style={styles.errorText}>{dayError}</Text> : null}
             <TextInput
-              style={[styles.inputdata]}
+              style={styles.inputdata}
               placeholder="MM"
               value={month}
               onChangeText={setMonth}
               keyboardType="numeric"
               maxLength={2}
             />
+            {monthError ? (
+              <Text style={styles.errorText}>{monthError}</Text>
+            ) : null}
             <TextInput
-              style={[styles.inputdata]}
+              style={styles.inputdata}
               placeholder="AAAA"
               value={year}
               onChangeText={setYear}
               keyboardType="numeric"
               maxLength={4}
             />
+            {yearError ? (
+              <Text style={styles.errorText}>{yearError}</Text>
+            ) : null}
           </View>
         </View>
         <CpfInput value={cpf} onChangeText={setCpf} />
+        {cpfError ? <Text style={styles.errorText}>{cpfError}</Text> : null}
         <View style={styles.locationContainer}>
           <TextInput
             style={[styles.input, styles.locationInput]}
@@ -306,12 +452,16 @@ function RegisterScreen() {
             <Text style={styles.buttonText}>📍</Text>
           </TouchableOpacity>
         </View>
+        {cepError ? <Text style={styles.errorText}>{cepError}</Text> : null}
         <TextInput
           style={styles.input}
           placeholder="Rua"
           value={street}
           onChangeText={setStreet}
         />
+        {streetError ? (
+          <Text style={styles.errorText}>{streetError}</Text>
+        ) : null}
         <TextInput
           style={styles.input}
           placeholder="Número"
@@ -319,12 +469,18 @@ function RegisterScreen() {
           onChangeText={(text) => setNumber(text.replace(/[^\d]/g, ''))}
           keyboardType="numeric"
         />
+        {numberError ? (
+          <Text style={styles.errorText}>{numberError}</Text>
+        ) : null}
         <TextInput
           style={styles.input}
           placeholder="Bairro"
           value={neighborhood}
           onChangeText={setNeighborhood}
         />
+        {neighborhoodError ? (
+          <Text style={styles.errorText}>{neighborhoodError}</Text>
+        ) : null}
         <View style={styles.formRow}>
           <TextInput
             style={styles.inputend}
@@ -332,12 +488,16 @@ function RegisterScreen() {
             value={city}
             onChangeText={setCity}
           />
+          {cityError ? <Text style={styles.errorText}>{cityError}</Text> : null}
           <TextInput
             style={styles.inputuf}
             placeholder="UF"
             value={state}
             onChangeText={setState}
           />
+          {stateError ? (
+            <Text style={styles.errorText}>{stateError}</Text>
+          ) : null}
         </View>
         <TextInput
           style={styles.input}
@@ -346,6 +506,7 @@ function RegisterScreen() {
           onChangeText={(text) => setPhone(formatPhone(text))}
           keyboardType="phone-pad"
         />
+        {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
         <TextInput
           style={styles.input}
           placeholder="E-mail"
@@ -354,6 +515,7 @@ function RegisterScreen() {
           keyboardType="email-address"
           autoCapitalize="none"
         />
+        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
         <View style={styles.passwordContainer}>
           <TextInput
             style={[styles.input, styles.passwordInput]}
@@ -369,6 +531,9 @@ function RegisterScreen() {
             <Text style={styles.eyeIcon}>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
           </TouchableOpacity>
         </View>
+        {passwordError ? (
+          <Text style={styles.errorText}>{passwordError}</Text>
+        ) : null}
 
         <View style={styles.termsContainer}>
           <Switch
@@ -386,6 +551,7 @@ function RegisterScreen() {
             </Text>
           </Text>
         </View>
+        {termsError ? <Text style={styles.errorText}>{termsError}</Text> : null}
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Cadastrar</Text>
