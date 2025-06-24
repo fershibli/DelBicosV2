@@ -19,8 +19,8 @@ type Servico = {
 };
 
 type Disponibilidade = {
-  data: string;
-  horarios: string[];
+  date: string;
+  times: string[];
 };
 
 type ServicosContentProps = {
