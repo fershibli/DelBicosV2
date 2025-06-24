@@ -26,6 +26,20 @@ export interface Professional {
   gallery: GalleryImage[];
 }
 
+export interface ProfessionalAvailability {
+  id: number;
+  professional_id: number;
+  days_of_week?: string;
+  start_day_of_month?: number;
+  end_day_of_month?: number;
+  start_day?: string;
+  end_day?: string;
+  start_time: string;
+  end_time: string;
+  is_available: boolean;
+  recurrence_pattern: 'none' | 'daily' | 'weekly' | 'monthly';
+}
+
 interface User {
   id: number;
   name: string;
