@@ -1,1 +1,1 @@
-export { default } from './RegisterScreenSelector';
+export { default } from './RegisterScreen';
