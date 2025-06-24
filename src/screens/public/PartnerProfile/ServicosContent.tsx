@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 
 type Servico = {
-  id: string;
-  nome: string;
-  preco: string;
-  duracao: string;
+  id: number;
+  title: string;
+  description?: string;
+  price: number;
+  duration: number;
+  bannerImg?: string;
 };
 
 type Disponibilidade = {
