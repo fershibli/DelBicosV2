@@ -1,8 +1,8 @@
 import { Text } from '@react-navigation/elements';
 import { StyleSheet, View } from 'react-native';
 
-type SobreContentProps = {
-  detalhes: string;
+type AboutContentProps  = {
+  details: string;
   amenities: {
     id: string;
     title: string;
@@ -10,23 +10,23 @@ type SobreContentProps = {
 };
 
 export function SobreContent({
-  detalhes,
+  details,
   amenities,
-}: SobreContentProps) {
+}: AboutContentProps) {
   return (
     <View style={styles.contentContainer}>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Detalhes</Text>
-        <Text style={styles.sectionText}>{detalhes || 'Não informado'}</Text>
+        <Text style={styles.sectionText}>{details || 'Não informado'}</Text>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Comodidades</Text>
         <View style={styles.list}>
           {amenities.length > 0 ? (
-            amenities.map((amenity) => (
-              <Text key={amenity.id} style={styles.listItem}>
-                • {amenity.title}
+            amenities.map((comodidade) => (
+              <Text key={comodidade.id} style={styles.listItem}>
+                • {comodidade.title}
               </Text>
             ))
           ) : (
