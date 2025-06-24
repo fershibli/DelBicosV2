@@ -17,7 +17,7 @@ import { AvaliacoesContent } from './AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
 import { comodidades } from './comodidades';
 import axios from 'axios';
-
+import { Professional } from '@screens/types';
 
 function PartnerProfileScreen() {
   const navigation = useNavigation();
@@ -28,25 +28,45 @@ function PartnerProfileScreen() {
     'sobre' | 'servicos' | 'galeria' | 'avaliacoes'
   >('sobre');
 
-  const [parceiro, setParceiro] = useState<any>(null);
-
+  const [parceiro, setParceiro] = useState<Professional | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-  const fetchProfessionalData = async () => {
-    try {
-      const { data: prof } = await axios.get(`http://localhost:3000/api/professional_dto/${id}`);
-      setParceiro(prof);
-    } catch (error) {
-      console.error('Erro ao buscar parceiro:', error);
-    }
-  };
+    const fetchProfessionalData = async () => {
+      try {
+        setLoading(true);
+        const { data } = await axios.get(`http://localhost:3000/api/professional_dto/${id}`);
+        setParceiro(data);
+      } catch (err) {
+        console.error('Erro ao buscar parceiro:', err);
+        setError('Não foi possível carregar os dados do profissional');
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchProfessionalData();
   }, [id]);
 
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Carregando...</Text>
+      </View>
+    );
+  }
 
-  if (!parceiro || !parceiro.address) {
-    return <Text>Carregando...</Text>;
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  if (!parceiro) {
+    return null;
   }
 
   const renderContent = () => {
@@ -54,28 +74,26 @@ function PartnerProfileScreen() {
       case 'sobre':
         return (
           <SobreContent
-            detalhes={parceiro.descricao}
-            comodidadesIds={parceiro.comodidadesIds ?? []}
-            todasComodidades={comodidades}
+            detalhes={parceiro.descricao || ''}
+            amenities={parceiro.amenities || []}
           />
         );
       case 'servicos':
         return (
           <ServicosContent
-            servicos={parceiro.servicos}
+            servicos={parceiro.services}
             disponibilidades={parceiro.agenda}
           />
         );
       case 'galeria':
-        return <GaleriaContent imagens={parceiro.galeria} />;
+        return <GaleriaContent imagens={parceiro.gallery} />;
       case 'avaliacoes':
         return <AvaliacoesContent avaliacoes={parceiro.avaliacoes} />;
       default:
         return (
           <SobreContent
-            detalhes={parceiro.descricao}
-            comodidadesIds={parceiro.comodidadesIds}
-            todasComodidades={comodidades}
+            detalhes={parceiro.descricao || ''}
+            amenities={parceiro.amenities || []}
           />
         );
     }
@@ -86,14 +104,12 @@ function PartnerProfileScreen() {
 
   return (
     <View style={styles.container}>
-    <ImageBackground
-      source={{
-        uri: parceiro?.User.bannerImg
-          ? parceiro.User.bannerImg
-          : 'https://media.istockphoto.com/id/1412131208/pt/vetorial/abstract-orange-and-red-gradient-geometric-shape-circle-background-modern-futuristic.jpg?s=612x612&w=0&k=20&c=5Yd7MWfUtp6iOFYsYmuMCmNFBpBW67gwO0yE_zbnLq8=',
-         }}
+      <ImageBackground
+        source={{
+          uri: usuario.bannerImg || 'https://media.istockphoto.com/id/1412131208/pt/vetorial/abstract-orange-and-red-gradient-geometric-shape-circle-background-modern-futuristic.jpg?s=612x612&w=0&k=20&c=5Yd7MWfUtp6iOFYsYmuMCmNFBpBW67gwO0yE_zbnLq8=',
+        }}
         style={styles.headerImage}
-        >
+      >
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.8)']}
           style={styles.gradientOverlay}>
@@ -106,18 +122,18 @@ function PartnerProfileScreen() {
           <View style={styles.profileInfo}>
             <View style={{ alignItems: 'flex-start', marginBottom: 8 }}>
               <Image
-                source={{ uri: parceiro.User.avatarImg }}
+                source={{ uri: usuario.avatarImg || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}
                 style={styles.avatarImage}
               />
             </View>
-            <Text style={styles.profileName}>{parceiro.User.name}</Text>
+            <Text style={styles.profileName}>{usuario.name}</Text>
             <View style={styles.ratingContainer}>
               <Rating
                 type="star"
                 ratingCount={5}
                 imageSize={12}
                 readonly
-                startingValue={parceiro.avaliacaoMedia}
+                startingValue={parceiro.avaliacaoMedia || 0}
                 fractions={1}
                 tintColor="black"
                 style={{ marginRight: 4, backgroundColor: 'transparent' }}
@@ -238,11 +254,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   avatarImage: {
-  width: 72,
-  height: 72,
-  borderRadius: 36,
-  borderWidth: 2,
-  borderColor: 'white',
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 2,
+    borderColor: 'white',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
   },
 });
 
