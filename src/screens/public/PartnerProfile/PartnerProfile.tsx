@@ -82,17 +82,17 @@ function PartnerProfileScreen() {
         return (
           <ServicosContent
             servicos={parceiro.services}
-            disponibilidades={parceiro.agenda}
+            availability={parceiro.availabilities}
           />
         );
       case 'galeria':
         return <GaleriaContent imagens={parceiro.gallery} />;
       case 'avaliacoes':
-        return <AvaliacoesContent avaliacoes={parceiro.avaliacoes} />;
+        return <AvaliacoesContent avaliacoes={parceiro.availability} />;
       default:
         return (
           <SobreContent
-            detalhes={parceiro.descricao || ''}
+            detalhes={parceiro.description || ''}
             amenities={parceiro.amenities || []}
           />
         );
