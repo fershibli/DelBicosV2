@@ -10,15 +10,12 @@ import {
   Modal,
 } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
-
-type Imagem = {
-  id: string;
-  url: string;
-};
+import { GalleryImage } from '@screens/types';
 
 type GaleriaContentProps = {
-  imagens: Imagem[];
+  imagens: GalleryImage[];
 };
+
 export function GaleriaContent({ imagens }: GaleriaContentProps) {
   const [visible, setVisible] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -32,7 +29,7 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
     setVisible(true);
   };
 
-  const renderItem = ({ item, index }: { item: Imagem; index: number }) => (
+  const renderItem = ({ item, index }: { item: GalleryImage; index: number }) => (
     <TouchableOpacity
       onPress={() => openImageViewer(index)}
       activeOpacity={0.8}>
@@ -46,6 +43,13 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
         }}
         resizeMode="cover"
       />
+      {item.description && (
+        <View style={styles.imageDescription}>
+          <Text style={styles.descriptionText} numberOfLines={1}>
+            {item.description}
+          </Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 
@@ -70,7 +74,7 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
             ref={flatListRef}
             data={imagens}
             renderItem={renderItem}
-            keyExtractor={(item: Imagem) => item.id}
+            keyExtractor={(item) => item.id.toString()}
             numColumns={numColumns}
             contentContainerStyle={styles.galleryContainer}
           />
@@ -154,5 +158,17 @@ const styles = StyleSheet.create({
   indicatorText: {
     color: 'white',
     fontSize: 16,
+  },
+  imageDescription: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 4,
+  },
+  descriptionText: {
+    color: 'white',
+    fontSize: 10,
   },
 });
