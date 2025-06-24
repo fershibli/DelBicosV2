@@ -81,8 +81,7 @@ function PartnerProfileScreen() {
         return (
           <ServicosContent
             servicos={parceiro.services}
-            availability={parceiro.availabilities}
-          />
+            availability={parceiro.availabilities} professionalId={1} clientId={1} addressId={1}          />
         );
       case 'galeria':
         return <GaleriaContent imagens={parceiro.gallery} />;
