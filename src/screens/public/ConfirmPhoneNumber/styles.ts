@@ -24,14 +24,15 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: '#003366',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 60,
   },
   button: {
     backgroundColor: '#ff7f00',
     padding: 12,
     borderRadius: 8,
-    width: '100%',
+    width: '20%',
     alignItems: 'center',
+    marginTop: 40,
     marginBottom: 10,
   },
   buttonText: {
@@ -47,12 +48,12 @@ export const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   messageBox: {
-    width: '80%',
+    width: '25%',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
@@ -67,7 +68,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#ff7f00',
     padding: 12,
     borderRadius: 8,
-    width: '100%',
+    width: '25%',
     alignItems: 'center',
   },
 });
