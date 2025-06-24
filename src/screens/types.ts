@@ -12,6 +12,8 @@ export type NavigationParams = {
 };
 
 export interface Professional {
+  availabilities: ProfessionalAvailability[] | undefined;
+  description: string;
   id: number;
   user_id: number;
   main_address_id: number;
