@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
-  Image
+  Image,
+  ActivityIndicator
 } from 'react-native';
+import { generateAvailableDates } from '../../../utils/availabilityHelpers';
 
 type Servico = {
   id: number;
@@ -19,24 +21,46 @@ type Servico = {
   bannerImg?: string;
 };
 
-type Disponibilidade = {
-  date: string;
-  times: string[];
+type ProfessionalAvailability = {
+  id: number;
+  professional_id: number;
+  days_of_week?: string;
+  start_day_of_month?: number;
+  end_day_of_month?: number;
+  start_day?: string;
+  end_day?: string;
+  start_time: string;
+  end_time: string;
+  is_available: boolean;
+  recurrence_pattern: 'none' | 'daily' | 'weekly' | 'monthly';
 };
 
 type ServicosContentProps = {
   servicos: Servico[];
-  disponibilidades: Disponibilidade[];
+  availability?: ProfessionalAvailability[];
+  loading?: boolean;
 };
 
 export function ServicosContent({
   servicos = [],
-  disponibilidades = []
+  availability = [],
+  loading = false
 }: ServicosContentProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedServico, setSelectedServico] = useState<Servico | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [disponibilidades, setDisponibilidades] = useState<{date: string; times: string[]}[]>([]);
+
+  // Processa as disponibilidades quando o availability muda
+  useEffect(() => {
+    if (availability && availability.length > 0) {
+      const disponibilidadesProcessadas = generateAvailableDates(availability);
+      setDisponibilidades(disponibilidadesProcessadas);
+    } else {
+      setDisponibilidades([]);
+    }
+  }, [availability]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -68,19 +92,33 @@ export function ServicosContent({
       `Agendado: ${selectedServico.title}\n` +
       `Preço: ${formatCurrency(selectedServico.price)}\n` +
       `Data: ${formatDate(selectedDate)}\n` +
-      `Horário: ${selectedTime}`
+      `Horário: ${selectedTime}\n` +
+      `Duração: ${formatDuration(selectedServico.duration)}`
     );
     setModalVisible(false);
   };
 
   const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-    };
-    return new Date(dateString).toLocaleDateString('pt-BR', options);
+    try {
+      const options: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+      };
+      return new Date(dateString).toLocaleDateString('pt-BR', options);
+    } catch (error) {
+      console.error('Erro ao formatar data:', error);
+      return dateString;
+    }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#FC8200" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -119,8 +157,14 @@ export function ServicosContent({
               </View>
               <TouchableOpacity
                 style={styles.bookButton}
-                onPress={() => openAgendamento(item)}>
-                <Text style={styles.bookButtonText}>Agendar</Text>
+                onPress={() => openAgendamento(item)}
+                disabled={disponibilidades.length === 0}>
+                <Text style={[
+                  styles.bookButtonText,
+                  disponibilidades.length === 0 && styles.disabledButtonText
+                ]}>
+                  {disponibilidades.length === 0 ? 'Indisponível' : 'Agendar'}
+                </Text>
               </TouchableOpacity>
             </View>
           )}
@@ -137,58 +181,68 @@ export function ServicosContent({
             <Text style={styles.modalTitle}>
               Agendar {selectedServico?.title}
             </Text>
+            <Text style={styles.serviceModalPrice}>
+              {selectedServico && formatCurrency(selectedServico.price)} • {selectedServico && formatDuration(selectedServico.duration)}
+            </Text>
 
             <Text style={styles.sectionTitle}>Selecione a data:</Text>
-            <FlatList
-              horizontal
-              data={disponibilidades}
-              keyExtractor={(item) => item.date}
-              renderItem={({ item }) => (
-                <Pressable
-                  style={[
-                    styles.dateButton,
-                    selectedDate === item.date && styles.selectedDateButton,
-                  ]}
-                  onPress={() => {
-                    setSelectedDate(item.date);
-                    setSelectedTime(null);
-                  }}>
-                  <Text
-                    style={[
-                      styles.dateText,
-                      selectedDate === item.date && styles.selectedDateText,
-                    ]}>
-                    {formatDate(item.date)}
-                  </Text>
-                </Pressable>
-              )}
-              contentContainerStyle={styles.datesContainer}
-            />
-
-            {selectedDate && (
+            {disponibilidades.length === 0 ? (
+              <Text style={styles.noAvailabilityText}>Nenhuma disponibilidade neste período</Text>
+            ) : (
               <>
-                <Text style={styles.sectionTitle}>Horários disponíveis:</Text>
-                <View style={styles.timesContainer}>
-                  {disponibilidades
-                    .find((d) => d.date === selectedDate)
-                    ?.times.map((time) => (
-                      <Pressable
-                        key={time}
+                <FlatList
+                  horizontal
+                  data={disponibilidades}
+                  keyExtractor={(item) => item.date}
+                  renderItem={({ item }) => (
+                    <Pressable
+                      style={[
+                        styles.dateButton,
+                        selectedDate === item.date && styles.selectedDateButton,
+                      ]}
+                      onPress={() => {
+                        setSelectedDate(item.date);
+                        setSelectedTime(null);
+                      }}>
+                      <Text
                         style={[
-                          styles.timeButton,
-                          selectedTime === time && styles.selectedTimeButton,
-                        ]}
-                        onPress={() => setSelectedTime(time)}>
-                        <Text
-                          style={[
-                            styles.timeText,
-                            selectedTime === time && styles.selectedTimeText,
-                          ]}>
-                          {time}
-                        </Text>
-                      </Pressable>
-                    ))}
-                </View>
+                          styles.dateText,
+                          selectedDate === item.date && styles.selectedDateText,
+                        ]}>
+                        {formatDate(item.date)}
+                      </Text>
+                    </Pressable>
+                  )}
+                  contentContainerStyle={styles.datesContainer}
+                  showsHorizontalScrollIndicator={false}
+                />
+
+                {selectedDate && (
+                  <>
+                    <Text style={styles.sectionTitle}>Horários disponíveis:</Text>
+                    <View style={styles.timesContainer}>
+                      {disponibilidades
+                        .find((d) => d.date === selectedDate)
+                        ?.times.map((time) => (
+                          <Pressable
+                            key={time}
+                            style={[
+                              styles.timeButton,
+                              selectedTime === time && styles.selectedTimeButton,
+                            ]}
+                            onPress={() => setSelectedTime(time)}>
+                            <Text
+                              style={[
+                                styles.timeText,
+                                selectedTime === time && styles.selectedTimeText,
+                              ]}>
+                              {time}
+                            </Text>
+                          </Pressable>
+                        ))}
+                    </View>
+                  </>
+                )}
               </>
             )}
 
@@ -222,6 +276,11 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f5f5f5',
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -231,6 +290,11 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: '#666',
+  },
+  noAvailabilityText: {
+    textAlign: 'center',
+    color: '#666',
+    marginVertical: 20,
   },
   serviceCard: {
     backgroundColor: 'white',
@@ -262,6 +326,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     lineHeight: 20,
   },
+  serviceModalPrice: {
+    fontSize: 16,
+    color: '#FC8200',
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
   serviceMeta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -286,6 +357,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
   },
+  disabledButtonText: {
+    color: '#999',
+  },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
@@ -301,7 +375,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 5,
     textAlign: 'center',
     color: '#333',
   },
