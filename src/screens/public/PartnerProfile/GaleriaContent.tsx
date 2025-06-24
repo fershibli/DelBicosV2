@@ -113,7 +113,7 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#DDE6F0',
   },
   galleryContainer: {
     padding: 8,
@@ -126,7 +126,8 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    fontWeight: '600',
+    color: '#333',
     textAlign: 'center',
   },
   closeButton: {

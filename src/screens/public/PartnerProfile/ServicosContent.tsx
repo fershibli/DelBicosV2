@@ -52,7 +52,6 @@ export function ServicosContent({
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [disponibilidades, setDisponibilidades] = useState<{date: string; times: string[]}[]>([]);
 
-  // Processa as disponibilidades quando o availability muda
   useEffect(() => {
     if (availability && availability.length > 0) {
       const disponibilidadesProcessadas = generateAvailableDates(availability);
@@ -274,7 +273,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#DDE6F0',
   },
   loadingContainer: {
     flex: 1,
@@ -289,7 +288,9 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
   },
   noAvailabilityText: {
     textAlign: 'center',

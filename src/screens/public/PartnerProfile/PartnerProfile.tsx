@@ -15,7 +15,6 @@ import { ServicosContent } from './ServicosContent';
 import { GaleriaContent } from './GaleriaContent';
 import { AvaliacoesContent } from './AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
-import { comodidades } from './comodidades';
 import axios from 'axios';
 import { Professional } from '@screens/types';
 
@@ -88,7 +87,7 @@ function PartnerProfileScreen() {
       case 'galeria':
         return <GaleriaContent imagens={parceiro.gallery} />;
       case 'avaliacoes':
-        return <AvaliacoesContent avaliacoes={parceiro.availability} />;
+        return <AvaliacoesContent />;
       default:
         return (
           <SobreContent
@@ -276,6 +275,8 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     textAlign: 'center',
+    fontSize: 24,
+    fontWeight: '600',
   },
 });
 
