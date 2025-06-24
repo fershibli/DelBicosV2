@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
+  Image
 } from 'react-native';
 
 type Servico = {
@@ -29,13 +30,26 @@ type ServicosContentProps = {
 };
 
 export function ServicosContent({
-  servicos,
-  disponibilidades,
+  servicos = [],
+  disponibilidades = []
 }: ServicosContentProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedServico, setSelectedServico] = useState<Servico | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
+
+  const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return hours > 0 ? `${hours}h ${mins}min` : `${mins}min`;
+  };
 
   const openAgendamento = (servico: Servico) => {
     setSelectedServico(servico);
@@ -45,13 +59,16 @@ export function ServicosContent({
   };
 
   const handleConfirm = () => {
-    if (!selectedDate || !selectedTime) {
+    if (!selectedServico || !selectedDate || !selectedTime) {
       alert('Por favor, selecione uma data e horário');
       return;
     }
 
     alert(
-      `Agendado: ${selectedServico?.nome}\nData: ${formatDate(selectedDate)}\nHorário: ${selectedTime}`,
+      `Agendado: ${selectedServico.title}\n` +
+      `Preço: ${formatCurrency(selectedServico.price)}\n` +
+      `Data: ${formatDate(selectedDate)}\n` +
+      `Horário: ${selectedTime}`
     );
     setModalVisible(false);
   };
@@ -67,69 +84,94 @@ export function ServicosContent({
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={servicos}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.serviceCard}>
-            <View>
-              <Text style={styles.serviceName}>{item.nome}</Text>
-              <Text style={styles.serviceInfo}>
-                {item.preco} • {item.duracao}
-              </Text>
+      {servicos.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Nenhum serviço disponível</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={servicos}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.serviceCard}>
+              {item.bannerImg && (
+                <Image 
+                  source={{ uri: item.bannerImg }}
+                  style={styles.serviceImage}
+                  resizeMode="cover"
+                />
+              )}
+              <View style={styles.serviceInfoContainer}>
+                <Text style={styles.serviceTitle}>{item.title}</Text>
+                {item.description && (
+                  <Text style={styles.serviceDescription} numberOfLines={2}>
+                    {item.description}
+                  </Text>
+                )}
+                <View style={styles.serviceMeta}>
+                  <Text style={styles.servicePrice}>
+                    {formatCurrency(item.price)}
+                  </Text>
+                  <Text style={styles.serviceDuration}>
+                    {formatDuration(item.duration)}
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.bookButton}
+                onPress={() => openAgendamento(item)}>
+                <Text style={styles.bookButtonText}>Agendar</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={styles.bookButton}
-              onPress={() => openAgendamento(item)}>
-              <Text style={styles.bookButtonText}>Agendar</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
+          )}
+        />
+      )}
 
       <Modal
         visible={modalVisible}
         transparent
         animationType="slide"
         onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>
-              Agendar {selectedServico?.nome}
+              Agendar {selectedServico?.title}
             </Text>
 
             <Text style={styles.sectionTitle}>Selecione a data:</Text>
-            <View style={styles.datesContainer}>
-              {disponibilidades.map((day) => (
+            <FlatList
+              horizontal
+              data={disponibilidades}
+              keyExtractor={(item) => item.date}
+              renderItem={({ item }) => (
                 <Pressable
-                  key={day.data}
                   style={[
                     styles.dateButton,
-                    selectedDate === day.data && styles.selectedDateButton,
+                    selectedDate === item.date && styles.selectedDateButton,
                   ]}
                   onPress={() => {
-                    setSelectedDate(day.data);
+                    setSelectedDate(item.date);
                     setSelectedTime(null);
                   }}>
                   <Text
-                    style={
-                      selectedDate === day.data
-                        ? styles.selectedDateText
-                        : styles.dateText
-                    }>
-                    {formatDate(day.data)}
+                    style={[
+                      styles.dateText,
+                      selectedDate === item.date && styles.selectedDateText,
+                    ]}>
+                    {formatDate(item.date)}
                   </Text>
                 </Pressable>
-              ))}
-            </View>
+              )}
+              contentContainerStyle={styles.datesContainer}
+            />
 
             {selectedDate && (
               <>
                 <Text style={styles.sectionTitle}>Horários disponíveis:</Text>
                 <View style={styles.timesContainer}>
                   {disponibilidades
-                    .find((d) => d.data === selectedDate)
-                    ?.horarios.map((time) => (
+                    .find((d) => d.date === selectedDate)
+                    ?.times.map((time) => (
                       <Pressable
                         key={time}
                         style={[
@@ -138,11 +180,10 @@ export function ServicosContent({
                         ]}
                         onPress={() => setSelectedTime(time)}>
                         <Text
-                          style={
-                            selectedTime === time
-                              ? styles.selectedTimeText
-                              : styles.timeText
-                          }>
+                          style={[
+                            styles.timeText,
+                            selectedTime === time && styles.selectedTimeText,
+                          ]}>
                           {time}
                         </Text>
                       </Pressable>
@@ -151,7 +192,13 @@ export function ServicosContent({
               </>
             )}
 
-            <View style={styles.modalButtons}>
+            <View style={styles.modalFooter}>
+              <Pressable
+                style={styles.cancelButton}
+                onPress={() => setModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Voltar</Text>
+              </Pressable>
+              
               <Pressable
                 style={[
                   styles.confirmButton,
@@ -159,13 +206,7 @@ export function ServicosContent({
                 ]}
                 onPress={handleConfirm}
                 disabled={!selectedDate || !selectedTime}>
-                <Text style={styles.confirmButtonText}>Confirmar</Text>
-              </Pressable>
-
-              <Pressable
-                style={styles.cancelButton}
-                onPress={() => setModalVisible(false)}>
-                <Text style={styles.cancelButtonText}>Cancelar</Text>
+                <Text style={styles.confirmButtonText}>Confirmar Agendamento</Text>
               </Pressable>
             </View>
           </View>
@@ -179,51 +220,86 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: 'transparent',
+    backgroundColor: '#f5f5f5',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
   },
   serviceCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    marginBottom: 16,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  serviceImage: {
+    width: '100%',
+    height: 120,
+  },
+  serviceInfoContainer: {
+    padding: 16,
+  },
+  serviceTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  serviceDescription: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 12,
+    lineHeight: 20,
+  },
+  serviceMeta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-    elevation: 2,
   },
-  serviceName: {
+  servicePrice: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: '700',
+    color: '#FC8200',
   },
-  serviceInfo: {
+  serviceDuration: {
     fontSize: 14,
     color: '#666',
   },
   bookButton: {
     backgroundColor: '#FC8200',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
+    padding: 14,
+    alignItems: 'center',
   },
   bookButtonText: {
     color: 'white',
     fontWeight: '600',
+    fontSize: 16,
   },
-  modalContainer: {
+  modalOverlay: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
-  modalContent: {
+  modalContainer: {
     backgroundColor: 'white',
-    width: '90%',
+    marginHorizontal: 20,
     borderRadius: 12,
     padding: 20,
+    maxHeight: '80%',
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
@@ -232,17 +308,18 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 10,
+    marginBottom: 12,
     color: '#444',
   },
   datesContainer: {
-    marginBottom: 20,
+    paddingBottom: 8,
   },
   dateButton: {
     padding: 12,
     borderRadius: 8,
-    backgroundColor: '#f0f0f0',
-    marginBottom: 8,
+    backgroundColor: '#f5f5f5',
+    marginRight: 10,
+    minWidth: 120,
   },
   selectedDateButton: {
     backgroundColor: '#005A93',
@@ -252,59 +329,61 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   selectedDateText: {
-    textAlign: 'center',
     color: 'white',
-    fontWeight: '600',
   },
   timesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'flex-start',
     marginBottom: 20,
   },
   timeButton: {
-    width: 80,
-    padding: 10,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#f5f5f5',
     margin: 4,
-    borderRadius: 6,
-    backgroundColor: '#f0f0f0',
-    alignItems: 'center',
+    minWidth: 80,
   },
   selectedTimeButton: {
     backgroundColor: '#005A93',
   },
   timeText: {
+    textAlign: 'center',
     color: '#333',
   },
   selectedTimeText: {
     color: 'white',
-    fontWeight: '600',
   },
-  modalButtons: {
-    marginTop: 10,
+  modalFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
   },
   confirmButton: {
+    flex: 1,
     backgroundColor: '#FC8200',
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 10,
+    marginLeft: 10,
   },
   disabledButton: {
-    backgroundColor: '#cccccc',
+    backgroundColor: '#ccc',
   },
   confirmButtonText: {
     color: 'white',
     fontWeight: '600',
   },
   cancelButton: {
+    flex: 1,
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
+    marginRight: 10,
   },
   cancelButtonText: {
     color: '#666',
+    fontWeight: '600',
   },
 });
