@@ -39,8 +39,8 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 🔗 **Documentações das disciplinas do projeto**
 
-- `<a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf">` Gestão Ágil de Projetos de Software `</a>`
-- `<a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf">` Interação Humano-Computador `</a>`
+- <a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf"> Gestão Ágil de Projetos de Software </a>
+- <a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf"> Interação Humano-Computador </a>
 
 <br>
 
