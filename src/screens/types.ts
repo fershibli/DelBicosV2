@@ -57,7 +57,7 @@ interface Address {
   updatedAt: string;
 }
 
-interface GalleryImage {
+export interface GalleryImage {
   id: number;
   professional_id: number;
   url: string;
