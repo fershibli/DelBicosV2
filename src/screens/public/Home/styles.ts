@@ -11,10 +11,8 @@ export const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
-    marginBottom: 10,
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   title: {
     fontSize: 28,
