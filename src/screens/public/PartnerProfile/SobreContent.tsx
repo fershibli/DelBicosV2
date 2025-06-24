@@ -3,22 +3,16 @@ import { StyleSheet, View } from 'react-native';
 
 type SobreContentProps = {
   detalhes: string;
-  comodidadesIds: string[];
-  todasComodidades: {
+  amenities: {
     id: string;
-    nome: string;
+    title: string;
   }[];
 };
 
 export function SobreContent({
   detalhes,
-  comodidadesIds,
-  todasComodidades,
+  amenities,
 }: SobreContentProps) {
-  const comodidadesParceiro = todasComodidades.filter((comodidade) =>
-    comodidadesIds.includes(comodidade.id),
-  );
-
   return (
     <View style={styles.contentContainer}>
       <View style={styles.section}>
@@ -29,10 +23,10 @@ export function SobreContent({
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Comodidades</Text>
         <View style={styles.list}>
-          {comodidadesParceiro.length > 0 ? (
-            comodidadesParceiro.map((comodidade) => (
-              <Text key={comodidade.id} style={styles.listItem}>
-                • {comodidade.nome}
+          {amenities.length > 0 ? (
+            amenities.map((amenity) => (
+              <Text key={amenity.id} style={styles.listItem}>
+                • {amenity.title}
               </Text>
             ))
           ) : (
