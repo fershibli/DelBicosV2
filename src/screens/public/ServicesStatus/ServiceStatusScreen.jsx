@@ -7,7 +7,7 @@ import ServiceItems from '@components/ServiceItems';
 import PaymentInfo from '@components/PaymentInfo';
 import { styles } from './styles';
 import { useAppointmentStore } from '@stores/Appointments/AppointmentStore';
-import { useProfessionalDetailsStore } from '@stores/Professional/professionalDetails';
+import { useProfessionalDetailsStore } from '@stores/Professional/Professional';
 import { useServiceStore } from '@stores/Service/Services';
 
 const ServiceStatusScreen = () => {
