@@ -1,4 +1,4 @@
-import { Professional } from "@screens/types";
+import { Professional } from '@screens/types';
 
 export interface ListedProfessional {
   id: number;
