@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { AppointmentStore, Appointment, AppointmentPayload } from './types';
 
-export const useAppointmentStore = create<AppointmentStore>((set) => ({
+export const useAppointmentStore = create<AppointmentStore>((set, get) => ({
   appointments: [],
   loading: false,
   error: null,
@@ -62,6 +62,35 @@ export const useAppointmentStore = create<AppointmentStore>((set) => ({
       set({ appointments: data, loading: false });
     } catch (error: any) {
       set({ loading: false, error: error.message || 'Erro inesperado' });
+    }
+  },
+
+  getAppointmentById: async (id: number) => {
+    try {
+      set({ loading: true, error: null });
+
+      const existingAppointment = get().appointments.find(a => a.id === id);
+      if (existingAppointment) {
+        set({ loading: false });
+        return existingAppointment;
+      }
+
+      const res = await fetch(
+        `http://localhost:3000/api/appointments/${id}`,
+      );
+
+      if (!res.ok) {
+        throw new Error('Agendamento não encontrado');
+      }
+
+      const data = await res.json();
+      set({ loading: false });
+
+      return data;
+    } catch (error: any) {
+      console.error('getAppointmentById error:', error);
+      set({ loading: false, error: error.message || 'Erro ao buscar agendamento' });
+      throw error;
     }
   },
 }));
