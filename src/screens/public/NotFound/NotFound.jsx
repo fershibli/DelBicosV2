@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styles from './styles';
+import VLibrasComponent from '@components/Vlibras/VLibrasComponent';
 
 const NotFoundScreen = () => {
   return (
@@ -12,6 +13,7 @@ const NotFoundScreen = () => {
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Voltar para o início</Text>
       </TouchableOpacity>
+      <VLibrasComponent />
     </View>
   );
 };

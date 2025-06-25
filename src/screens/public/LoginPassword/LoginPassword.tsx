@@ -13,6 +13,7 @@ import IconPhone from '@assets/phone.svg';
 import LogoV3 from '@assets/LogoV3.png';
 
 import { styles } from './styles';
+import VLibrasComponent from '@components/Vlibras/VLibrasComponent';
 
 export const LoginPassword = () => {
   //navigation
@@ -87,6 +88,7 @@ export const LoginPassword = () => {
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
+      <VLibrasComponent />
       <Modal
         open={!!error}
         onClose={() => setError(null)}

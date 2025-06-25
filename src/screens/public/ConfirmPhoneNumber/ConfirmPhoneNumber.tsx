@@ -4,6 +4,7 @@ import { RouteProp, useNavigation } from '@react-navigation/native';
 import CodeInput from '@components/CodeInput';
 import { styles } from './styles';
 import { useUserStore } from '@stores/User';
+import VLibrasComponent from '@components/Vlibras/VLibrasComponent';
 
 type ConfirmPhoneNumberRouteProp = RouteProp<
   { params: { code: string } },
@@ -87,6 +88,7 @@ function ConfirmPhoneNumberScreen({
           </View>
         </View>
       </Modal>
+      <VLibrasComponent />
     </View>
   );
 }

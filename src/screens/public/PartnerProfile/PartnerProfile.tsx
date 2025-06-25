@@ -17,6 +17,7 @@ import { Rating } from 'react-native-ratings';
 
 import { parceiros } from './parceiros.mock';
 import { comodidades } from './comodidades';
+import VLibrasComponent from '@components/Vlibras/VLibrasComponent';
 
 function PartnerProfileScreen() {
   const navigation = useNavigation();
@@ -143,6 +144,7 @@ function PartnerProfileScreen() {
       </View>
 
       {renderContent()}
+      <VLibrasComponent />
     </View>
   );
 }

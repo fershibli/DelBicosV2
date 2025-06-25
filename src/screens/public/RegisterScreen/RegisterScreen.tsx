@@ -14,6 +14,7 @@ import CpfInput from '@components/CpfInput';
 import DateInput from '@components/DateInput';
 import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
+import VLibrasComponent from '@components/Vlibras/VLibrasComponent';
 
 function RegisterScreen() {
   const navigation = useNavigation();
@@ -181,6 +182,7 @@ function RegisterScreen() {
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
+      <VLibrasComponent />
     </View>
   );
 }

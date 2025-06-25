@@ -4,6 +4,7 @@ import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
 import CategoryList from '@components/CategoryList';
 import ListProfessionals from '@components/ListProfessionals';
+import VLibrasComponent from '@components/Vlibras/VLibrasComponent';
 
 function FeedScreen() {
   return (
@@ -12,6 +13,7 @@ function FeedScreen() {
       <CategoryList />
       <Text style={styles.title}>Profissionais próximos a você</Text>
       <ListProfessionals />
+      <VLibrasComponent />
     </View>
   );
 }

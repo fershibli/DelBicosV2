@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 import { RouteProp } from '@react-navigation/native';
 import { styles } from './styles';
+import VLibrasComponent from '@components/Vlibras/VLibrasComponent';
 
 type VerificationResultRouteProps = {
   params: {
@@ -38,6 +39,7 @@ function VerificationResult({
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
+      <VLibrasComponent />
     </View>
   );
 }
