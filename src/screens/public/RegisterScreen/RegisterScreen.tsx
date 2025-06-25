@@ -15,6 +15,7 @@ import CpfInput from '@components/CpfInput';
 import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
 import logo from '../../../assets/logo.png'; // Importação tipada de logo
+import { stateCodeList } from '@lib/constants/address';
 
 function RegisterScreen() {
   const navigation = useNavigation();
@@ -270,37 +271,7 @@ function RegisterScreen() {
       return;
     }
 
-    // Validação de Estado
-    const states = [
-      'AC',
-      'AL',
-      'AP',
-      'AM',
-      'BA',
-      'CE',
-      'DF',
-      'ES',
-      'GO',
-      'MA',
-      'MT',
-      'MS',
-      'MG',
-      'PA',
-      'PB',
-      'PR',
-      'PE',
-      'PI',
-      'RJ',
-      'RN',
-      'RS',
-      'RO',
-      'RR',
-      'SC',
-      'SP',
-      'SE',
-      'TO',
-    ];
-    if (!states.includes(state) || !state.trim()) {
+    if (!stateCodeList.includes(state) || !state.trim()) {
       setStateError(
         'O estado deve ser uma UF válida (ex.: SP, RJ) e não pode estar vazio.',
       );
