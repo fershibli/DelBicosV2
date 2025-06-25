@@ -1,37 +1,42 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  statusContainer: {
-    marginBottom: 20,
-    width: '20%',
-    marginRight: 10,
+  container: {
+    width: '100%',
     alignItems: 'center',
+    marginVertical: 20,
   },
   statusBanner: {
-    backgroundColor: '#22843B',
+    width: '80%',
+    maxWidth: 400,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#22843B',
-    borderRadius: 3,
-    width: '40%',
-    marginTop: 25,
-    marginLeft: 270,
-    paddingVertical: 10,
     alignItems: 'center',
-    marginBottom: 10,
+    justifyContent: 'center',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   statusText: {
-    fontWeight: '700',
-    fontSize: 10,
-    lineHeight: 18,
-    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 14,
+    letterSpacing: 0.5,
   },
   reminderButton: {
-    alignSelf: 'flex-end',
-    marginBottom: 10,
+    marginTop: 10,
+    padding: 8,
+    borderRadius: 6,
+    backgroundColor: '#E3F2FD',
   },
   reminderText: {
-    fontSize: 9,
-    lineHeight: 11,
-    color: '#000000',
+    fontSize: 12,
+    color: '#0D47A1',
+    fontWeight: '500',
   },
 });

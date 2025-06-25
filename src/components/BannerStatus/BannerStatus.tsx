@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { styles } from './styles';
 
 type StatusType = 'pending' | 'confirmed' | 'completed' | 'canceled';
@@ -18,48 +18,50 @@ interface BannerStatusProps {
 const BannerStatus: React.FC<BannerStatusProps> = ({ status }) => {
   const statusConfig: Record<StatusType, StatusConfig> = {
     pending: {
-      backgroundColor: '#FFE092',
-      borderColor: '#FC8200',
-      textColor: '#000000',
-      message: 'Aguardando aprovação do profissional',
+      backgroundColor: '#FFF5E6',
+      borderColor: '#FFA726',
+      textColor: '#E65100',
+      message: 'Aguardando aprovação',
     },
     confirmed: {
-      backgroundColor: '#FFE092',
-      borderColor: '#FC8200',
-      textColor: '#000000',
+      backgroundColor: '#E3F2FD',
+      borderColor: '#42A5F5',
+      textColor: '#0D47A1',
       message: 'Serviço Agendado',
     },
     completed: {
-      backgroundColor: '#22843B',
-      borderColor: '#22843B',
-      textColor: '#FFFFFF',
+      backgroundColor: '#E8F5E9',
+      borderColor: '#66BB6A',
+      textColor: '#1B5E20',
       message: 'Serviço Executado',
     },
     canceled: {
-      backgroundColor: '#F8D7DA',
-      borderColor: '#DC3545',
-      textColor: '#721C24',
+      backgroundColor: '#FFEBEE',
+      borderColor: '#EF5350',
+      textColor: '#C62828',
       message: 'Serviço Cancelado',
     },
   };
 
   const currentStatus = statusConfig[status] || {
-    backgroundColor: '#CCCCCC',
-    borderColor: '#999999',
-    textColor: '#333333',
+    backgroundColor: '#F5F5F5',
+    borderColor: '#9E9E9E',
+    textColor: '#212121',
     message: 'Status Desconhecido',
   };
 
   return (
-    <View style={styles.statusContainer}>
+    <View style={styles.container}>
       <View
         style={[
           styles.statusBanner,
           {
             backgroundColor: currentStatus.backgroundColor,
             borderColor: currentStatus.borderColor,
+            shadowColor: currentStatus.borderColor,
           },
-        ]}>
+        ]}
+      >
         <Text style={[styles.statusText, { color: currentStatus.textColor }]}>
           {currentStatus.message}
         </Text>
