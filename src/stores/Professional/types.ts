@@ -1,3 +1,5 @@
+import { Professional } from "@screens/types";
+
 export interface ListedProfessional {
   id: number;
   name: string;
@@ -14,4 +16,11 @@ export interface ProfessionalStore {
     page?: number,
     limit?: number,
   ) => Promise<ListedProfessional[]>;
+}
+
+export interface ProfessionalDetailsStore {
+  professional: Professional | null;
+  loading: boolean;
+  error: string | null;
+  fetchProfessionalById: (id: string) => Promise<void>;
 }
