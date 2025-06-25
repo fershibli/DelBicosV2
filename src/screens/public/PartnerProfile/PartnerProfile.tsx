@@ -17,6 +17,8 @@ import { AvaliacoesContent } from './AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
 import axios from 'axios';
 import { Professional } from '@screens/types';
+import { useProfessionalDetailsStore } from '@stores/Professional/professionalDetails';
+
 
 function PartnerProfileScreen() {
   const navigation = useNavigation();
@@ -26,28 +28,12 @@ function PartnerProfileScreen() {
   const [activeTab, setActiveTab] = useState<
     'sobre' | 'servicos' | 'galeria' | 'avaliacoes'
   >('sobre');
-
-  const [parceiro, setParceiro] = useState<Professional | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  
+  const { professional: parceiro, loading, error, fetchProfessionalById } =
+  useProfessionalDetailsStore();
 
   useEffect(() => {
-    const fetchProfessionalData = async () => {
-      try {
-        setLoading(true);
-        const { data } = await axios.get(
-          `http://localhost:3000/api/professional_dto/${id}`,
-        );
-        setParceiro(data);
-      } catch (err) {
-        console.error('Erro ao buscar parceiro:', err);
-        setError('Não foi possível carregar os dados do profissional');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfessionalData();
+    fetchProfessionalById(id);
   }, [id]);
 
   if (loading) {
