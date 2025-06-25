@@ -62,7 +62,7 @@ function PhoneConfirmationScreen() {
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
-      <VLibrasComponent />
+      <VLibrasComponent forceOnload={true} />
     </View>
   );
 }

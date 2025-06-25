@@ -144,7 +144,7 @@ function PartnerProfileScreen() {
       </View>
 
       {renderContent()}
-      <VLibrasComponent />
+      <VLibrasComponent forceOnload={true} />
     </View>
   );
 }

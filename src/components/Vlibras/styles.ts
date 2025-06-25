@@ -5,9 +5,9 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    width: 120, // Aumentado para melhor visibilidade
-    height: 120, // Aumentado para melhor visibilidade
-    borderRadius: 10, // Bordas arredondadas para estética
-    overflow: 'hidden', // Garante que o conteúdo não vaze
+    width: 120,
+    height: 120,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
 });

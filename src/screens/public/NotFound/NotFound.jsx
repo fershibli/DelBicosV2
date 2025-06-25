@@ -13,7 +13,7 @@ const NotFoundScreen = () => {
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Voltar para o início</Text>
       </TouchableOpacity>
-      <VLibrasComponent />
+      <VLibrasComponent forceOnload={true} />
     </View>
   );
 };

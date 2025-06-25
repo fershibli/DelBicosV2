@@ -47,6 +47,7 @@ export const LoginPassword = () => {
   return (
     <View style={styles.wrapper}>
       <ScrollView style={styles.scrollContainer}>
+        <VLibrasComponent forceOnload={true} />
         <View style={styles.wrapper}>
           <Image source={LogoV3} style={styles.logo} />
           <TextInput

@@ -9,7 +9,7 @@ import VLibrasComponent from '@components/Vlibras/VLibrasComponent';
 function FeedScreen() {
   return (
     <View style={styles.container}>
-      <VLibrasComponent />
+      <VLibrasComponent forceOnload={true} />
       <Text style={styles.title}>Selecione por Categorias</Text>
       <CategoryList />
       <Text style={styles.title}>Profissionais próximos a você</Text>
