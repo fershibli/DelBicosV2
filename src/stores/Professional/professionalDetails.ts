@@ -13,7 +13,7 @@ export const useProfessionalDetailsStore = create<ProfessionalDetailsStore>(
       try {
         set({ loading: true, error: null });
         const response = await axios.get<Professional>(
-          `http://localhost:3000/api/professional_dto/${id}`
+          `http://localhost:3000/api/professional_dto/${id}`,
         );
         set({ professional: response.data });
       } catch (error) {
@@ -23,5 +23,5 @@ export const useProfessionalDetailsStore = create<ProfessionalDetailsStore>(
         set({ loading: false });
       }
     },
-  })
+  }),
 );
