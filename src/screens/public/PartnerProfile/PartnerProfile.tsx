@@ -15,7 +15,7 @@ import { ServicosContent } from './ServicosContent';
 import { GaleriaContent } from './GaleriaContent';
 import { AvaliacoesContent } from './AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
-import { useProfessionalDetailsStore } from '@stores/Professional/professionalDetails';
+import { useProfessionalDetailsStore } from '@stores/Professional/Professional';
 
 function PartnerProfileScreen() {
   const navigation = useNavigation();
