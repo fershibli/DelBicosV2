@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import axios from 'axios';
 import ProfessionalInfo from '@components/ProfessionalInfo';
 import BannerStatus from '@components/BannerStatus';
 import ServiceItems from '@components/ServiceItems';
 import PaymentInfo from '@components/PaymentInfo';
 import { styles } from './styles';
+import { useAppointmentStore } from '@stores/Appointments/AppointmentStore';
+import { useProfessionalDetailsStore } from '@stores/Professional/professionalDetails';
 
 const ServiceStatusScreen = ({ route }) => {
   const [services, setServices] = useState([]);
@@ -17,12 +18,13 @@ const ServiceStatusScreen = ({ route }) => {
   const [appointmentDate, setAppointmentDate] = useState('');
   const [appointmentTime, setAppointmentTime] = useState('');
 
+  const { getAppointmentById } = useAppointmentStore();
+  const { getProfessionalById } = useProfessionalDetailsStore();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data: appointment } = await axios.get(
-          `http://localhost:3000/api/appointments/${appointmentId}`,
-        );
+        const appointment = await getAppointmentById(appointmentId);
         setStatus(appointment.status);
 
         const createdAt = new Date(appointment.createdAt);
@@ -34,17 +36,12 @@ const ServiceStatusScreen = ({ route }) => {
           }),
         );
 
-        const { data: service } = await axios.get(
-          `http://localhost:3000/api/services/${appointment.service_id}`,
-        );
-        const { data: professional } = await axios.get(
-          `http://localhost:3000/api/professionals/${appointment.professional_id}`,
-        );
-        const user = professional.User;
+        const professionalData = await getProfessionalById(appointment.professional_id);
+        const user = professionalData.User;
 
         const formattedService = {
-          id: service.id,
-          name: service.title,
+          id: appointment.service_id,
+          name: appointment.service_title || 'Serviço',
           date: new Date(appointment.start_time).toLocaleDateString(),
           startTime: new Date(appointment.start_time).toLocaleTimeString([], {
             hour: '2-digit',
@@ -54,7 +51,7 @@ const ServiceStatusScreen = ({ route }) => {
             hour: '2-digit',
             minute: '2-digit',
           }),
-          price: Number(service.price),
+          price: Number(appointment.service_price || 0),
           professional: user.name,
         };
 
@@ -68,7 +65,7 @@ const ServiceStatusScreen = ({ route }) => {
     };
 
     fetchData();
-  }, [appointmentId]);
+  }, [appointmentId, getAppointmentById, getProfessionalById]);
 
   const subtotal = services.reduce((sum, s) => sum + s.price, 0);
 
