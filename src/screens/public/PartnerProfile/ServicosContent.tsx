@@ -114,7 +114,6 @@ export function ServicosContent({
     }
 
     try {
-      // Extrai horas e minutos do horário selecionado
       const [hours, minutes] = selectedTime.split(':').map(Number);
       const startDate = new Date(selectedDate);
       startDate.setHours(hours, minutes, 0, 0);
@@ -178,42 +177,29 @@ export function ServicosContent({
           data={servicos}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View style={styles.serviceCard}>
+            <View style={styles.serviceBox}>
               {item.bannerImg && (
-                <Image
-                  source={{ uri: item.bannerImg }}
-                  style={styles.serviceImage}
-                  resizeMode="cover"
-                />
+                <Image source={{ uri: item.bannerImg }} style={styles.serviceImage} />
               )}
-              <View style={styles.serviceInfoContainer}>
+              <View style={styles.serviceDetails}>
                 <Text style={styles.serviceTitle}>{item.title}</Text>
-                {item.description && (
-                  <Text style={styles.serviceDescription} numberOfLines={2}>
-                    {item.description}
-                  </Text>
-                )}
-                <View style={styles.serviceMeta}>
-                  <Text style={styles.servicePrice}>
-                    {formatCurrency(item.price)}
-                  </Text>
-                  <Text style={styles.serviceDuration}>
-                    {formatDuration(item.duration)}
-                  </Text>
-                </View>
+                <Text style={styles.availabilityText}>Horários disponíveis para hoje!</Text>
               </View>
-              <TouchableOpacity
-                style={styles.bookButton}
-                onPress={() => openAgendamento(item)}
-                disabled={disponibilidades.length === 0}>
-                <Text
-                  style={[
-                    styles.bookButtonText,
-                    disponibilidades.length === 0 && styles.disabledButtonText,
-                  ]}>
-                  {disponibilidades.length === 0 ? 'Indisponível' : 'Agendar'}
-                </Text>
-              </TouchableOpacity>
+
+              <View style={styles.sideActions}>
+                <View style={styles.priceTag}>
+                  <Text style={styles.priceLabel}>A partir de</Text>
+                  <Text style={styles.priceValue}>{formatCurrency(item.price)}</Text>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.scheduleButton}
+                  onPress={() => openAgendamento(item)}
+                  disabled={disponibilidades.length === 0}
+                >
+                  <Text style={styles.scheduleButtonText}>Agendar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
         />
@@ -366,18 +352,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  serviceImage: {
-    width: '100%',
-    height: 120,
-  },
   serviceInfoContainer: {
     padding: 16,
-  },
-  serviceTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
   },
   serviceDescription: {
     fontSize: 14,
@@ -519,4 +495,104 @@ const styles = StyleSheet.create({
     color: '#666',
     fontWeight: '600',
   },
+oldServiceCard: {
+  backgroundColor: '#fff',
+  padding: 12,
+  marginBottom: 12,
+  borderWidth: 1,
+  borderColor: '#ccc',
+},
+
+serviceBox: {
+  flexDirection: 'row',
+  backgroundColor: '#fff',
+  borderRadius: 5,
+  padding: 10,
+  marginBottom: 12,
+  alignItems: 'center',
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 4,
+},
+
+serviceImage: {
+  width: 100,
+  height: 100,
+  borderRadius: 5,
+  marginRight: 10,
+},
+
+serviceDetails: {
+  flex: 1,
+  justifyContent: 'center',
+},
+
+serviceTitle: {
+  fontSize: 20,
+  fontWeight: '500',
+  color: '#000',
+},
+
+availabilityText: {
+  color: '#FC8200',
+  fontSize: 16,
+  marginTop: 4,
+  fontWeight: '500',
+},
+
+serviceCategory: {
+  fontSize: 14,
+  fontWeight: '300',
+  color: '#333',
+  marginTop: 4,
+},
+
+sideActions: {
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  display: 'flex',
+  gap: 30,
+  flexDirection: 'row',
+  height: '100%',
+},
+
+priceTag: {
+  backgroundColor: '#FC8200',
+  paddingVertical: 6,
+  width: 110,
+  alignItems: 'center',
+  height: 60,
+  paddingHorizontal: 10,
+  borderRadius: 10,
+},
+
+priceLabel: {
+  fontSize: 14,
+  color: '#fff',
+  fontWeight: '300',
+},
+
+priceValue: {
+  fontSize: 22,
+  color: '#fff',
+  fontWeight: 'bold',
+},
+
+scheduleButton: {
+  backgroundColor: '#005A93',
+  paddingVertical: 10,
+  paddingHorizontal: 16,
+  borderRadius: 15,
+},
+
+scheduleButtonText: {
+  color: '#fff',
+  fontWeight: 'bold',
+  alignItems: 'center',
+  fontSize: 16,
+  marginTop: 8,
+  height: 35,
+},
 });
