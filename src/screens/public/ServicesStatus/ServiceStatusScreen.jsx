@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import ProfessionalInfo from '@components/ProfessionalInfo';
 import BannerStatus from '@components/BannerStatus';
 import ServiceItems from '@components/ServiceItems';
@@ -7,19 +8,23 @@ import PaymentInfo from '@components/PaymentInfo';
 import { styles } from './styles';
 import { useAppointmentStore } from '@stores/Appointments/AppointmentStore';
 import { useProfessionalDetailsStore } from '@stores/Professional/professionalDetails';
+import { useServiceStore } from '@stores/Service/Services';
 
-const ServiceStatusScreen = ({ route }) => {
-  const [services, setServices] = useState([]);
-  const [professional, setProfessional] = useState(null);
+const ServiceStatusScreen = () => {
+  const route = useRoute();
+  const [service, setService] = useState(null);
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const appointmentId = route?.params?.appointmentId || 1;
+  const appointmentId = route.params?.appointmentId || 
+                       (route.params?.id ? Number(route.params.id) : 1);
+
   const [appointmentDate, setAppointmentDate] = useState('');
   const [appointmentTime, setAppointmentTime] = useState('');
 
   const { getAppointmentById } = useAppointmentStore();
-  const { getProfessionalById } = useProfessionalDetailsStore();
+  const { professional, fetchProfessionalById } = useProfessionalDetailsStore();
+  const { service: serviceDetails, fetchServiceById } = useServiceStore(); // Obtenha a store de serviços
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,13 +41,18 @@ const ServiceStatusScreen = ({ route }) => {
           }),
         );
 
-        const professionalData = await getProfessionalById(appointment.professional_id);
-        const user = professionalData.User;
+        await fetchProfessionalById(appointment.professional_id.toString());
+        
+        await fetchServiceById(appointment.service_id);
 
         const formattedService = {
           id: appointment.service_id,
           name: appointment.service_title || 'Serviço',
-          date: new Date(appointment.start_time).toLocaleDateString(),
+          title: serviceDetails?.title || appointment.service_title || 'Serviço',
+          description: serviceDetails?.description || '',
+          bannerImg: serviceDetails?.bannerImg,
+          duration: serviceDetails?.duration,
+          date: new Date(appointment.start_time).toLocaleDateString('pt-BR'),
           startTime: new Date(appointment.start_time).toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',
@@ -51,12 +61,10 @@ const ServiceStatusScreen = ({ route }) => {
             hour: '2-digit',
             minute: '2-digit',
           }),
-          price: Number(appointment.service_price || 0),
-          professional: user.name,
+          price: Number(serviceDetails.price || 0),
         };
 
-        setServices([formattedService]);
-        setProfessional(user);
+        setService(formattedService);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
       } finally {
@@ -65,9 +73,9 @@ const ServiceStatusScreen = ({ route }) => {
     };
 
     fetchData();
-  }, [appointmentId, getAppointmentById, getProfessionalById]);
+  }, [appointmentId, getAppointmentById, fetchProfessionalById, fetchServiceById, serviceDetails]);
 
-  const subtotal = services.reduce((sum, s) => sum + s.price, 0);
+  const subtotal = service ? service.price : 0;
 
   if (loading) {
     return <ActivityIndicator size="large" />;
@@ -82,14 +90,32 @@ const ServiceStatusScreen = ({ route }) => {
           alignItems: 'center',
         }}>
         <ProfessionalInfo
-          professional={professional}
+          professional={{
+            name: professional?.User?.name || 'Profissional não encontrado',
+            avatarImg: professional?.User?.avatarImg,
+          }}
           appointmentDate={appointmentDate}
           appointmentTime={appointmentTime}
         />
         <BannerStatus status={status} />
       </View>
       <View style={styles.divider} />
-      <ServiceItems items={services} />
+      {service && (
+        <ServiceItems 
+          items={[{
+            id: service.id,
+            title: service.title,
+            description: service.description,
+            bannerImg: service.bannerImg,
+            price: service.price,
+            duration: service.duration,
+            date: service.date,
+            startTime: service.startTime,
+            endTime: service.endTime,
+            professional: professional?.User?.name,
+          }]} 
+        />
+      )}
       <PaymentInfo
         total={subtotal}
         discount={0}
