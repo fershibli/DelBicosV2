@@ -10,7 +10,7 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
-import { generateAvailableDates } from '../../../utils/availabilityHelpers';
+import { generateAvailableDates } from '../../../lib/helpers/availabilityHelpers';
 import axios from 'axios';
 
 type Servico = {
