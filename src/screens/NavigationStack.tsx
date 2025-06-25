@@ -59,17 +59,17 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       linking: {
         path: 'partner/:id',
         parse: {
-          id: (value) => value,
+          id: (id: string) => id,
         },
         stringify: {
-          id: (value) => value,
+          id: (id: string) => `${id}`,
         },
       },
     },
     ServiceStatus: {
       screen: ServiceStatusScreen,
       linking: {
-        path: 'service-status',
+        path: 'service-status/:id',
       },
     },
     PhoneConfirmation: {

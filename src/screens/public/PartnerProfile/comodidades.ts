@@ -1,4 +1,3 @@
-
 export const comodidades = [
   { id: '1', nome: 'Acessibilidade à deficientes' },
   { id: '2', nome: 'Atendimento à crianças' },

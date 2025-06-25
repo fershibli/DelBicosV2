@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import {
+  Image,
   ImageBackground,
   StyleSheet,
   Text,
@@ -14,9 +15,7 @@ import { ServicosContent } from './ServicosContent';
 import { GaleriaContent } from './GaleriaContent';
 import { AvaliacoesContent } from './AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
-
-import { parceiros } from './parceiros.mock';
-import { comodidades } from './comodidades';
+import { useProfessionalDetailsStore } from '@stores/Professional/Professional';
 
 function PartnerProfileScreen() {
   const navigation = useNavigation();
@@ -27,16 +26,35 @@ function PartnerProfileScreen() {
     'sobre' | 'servicos' | 'galeria' | 'avaliacoes'
   >('sobre');
 
-  const parceiro = parceiros.find((p) => p.id === id);
+  const {
+    professional: parceiro,
+    loading,
+    error,
+    fetchProfessionalById,
+  } = useProfessionalDetailsStore();
 
-  if (!parceiro) {
+  useEffect(() => {
+    fetchProfessionalById(id);
+  }, [id]);
+
+  if (loading) {
     return (
-      <View style={styles.container}>
-        <Text style={{ margin: 20, fontSize: 16 }}>
-          Parceiro não encontrado.
-        </Text>
+      <View style={styles.loadingContainer}>
+        <Text>Carregando...</Text>
       </View>
     );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  if (!parceiro) {
+    return null;
   }
 
   const renderContent = () => {
@@ -44,37 +62,45 @@ function PartnerProfileScreen() {
       case 'sobre':
         return (
           <SobreContent
-            detalhes={parceiro.descricao}
-            comodidadesIds={parceiro.comodidadesIds}
-            todasComodidades={comodidades}
+            details={parceiro.description || ''}
+            amenities={parceiro.amenities || []}
           />
         );
       case 'servicos':
         return (
           <ServicosContent
-            servicos={parceiro.servicos}
-            disponibilidades={parceiro.agenda}
+            servicos={parceiro.services}
+            availability={parceiro.availabilities}
+            professionalId={1}
+            clientId={1}
+            addressId={1}
           />
         );
       case 'galeria':
-        return <GaleriaContent imagens={parceiro.galeria} />;
+        return <GaleriaContent imagens={parceiro.gallery} />;
       case 'avaliacoes':
-        return <AvaliacoesContent avaliacoes={parceiro.avaliacoes} />;
+        return <AvaliacoesContent />;
       default:
         return (
           <SobreContent
-            detalhes={parceiro.descricao}
-            comodidadesIds={parceiro.comodidadesIds}
-            todasComodidades={comodidades}
+            details={parceiro.description || ''}
+            amenities={parceiro.amenities || []}
           />
         );
     }
   };
 
+  const endereco = parceiro.address || {};
+  const usuario = parceiro.User || {};
+
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={{ uri: parceiro.imagemCapa }}
+        source={{
+          uri:
+            usuario.bannerImg ||
+            'https://media.istockphoto.com/id/1412131208/pt/vetorial/abstract-orange-and-red-gradient-geometric-shape-circle-background-modern-futuristic.jpg?s=612x612&w=0&k=20&c=5Yd7MWfUtp6iOFYsYmuMCmNFBpBW67gwO0yE_zbnLq8=',
+        }}
         style={styles.headerImage}>
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.8)']}
@@ -86,17 +112,27 @@ function PartnerProfileScreen() {
           </TouchableOpacity>
 
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{parceiro.nome}</Text>
+            <View style={{ alignItems: 'flex-start', marginBottom: 8 }}>
+              <Image
+                source={{
+                  uri:
+                    usuario.avatarImg ||
+                    'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+                }}
+                style={styles.avatarImage}
+              />
+            </View>
+            <Text style={styles.profileName}>{usuario.name}</Text>
             <View style={styles.ratingContainer}>
               <Rating
                 type="star"
                 ratingCount={5}
                 imageSize={12}
                 readonly
-                startingValue={parceiro.avaliacaoMedia}
+                startingValue={0}
                 fractions={1}
                 tintColor="black"
-                style={{ marginRight: 4 }}
+                style={{ marginRight: 4, backgroundColor: 'transparent' }}
               />
             </View>
           </View>
@@ -106,7 +142,7 @@ function PartnerProfileScreen() {
       <View style={styles.addressContainer}>
         <MaterialCommunityIcons name="map-marker" size={16} color="#000" />
         <Text style={styles.addressText}>
-          {`${parceiro.endereco.rua} - ${parceiro.endereco.cep} - ${parceiro.endereco.bairro} - ${parceiro.endereco.cidade} / ${parceiro.endereco.estado}`}
+          {`${endereco.street || ''} ${endereco.number || ''} - ${endereco.postal_code || ''} - ${endereco.neighborhood || ''} - ${endereco.city || ''} / ${endereco.state || ''}`}
         </Text>
       </View>
 
@@ -179,6 +215,8 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'transparent',
+
     gap: 4,
     paddingVertical: 2,
   },
@@ -212,6 +250,30 @@ const styles = StyleSheet.create({
   activeTab: {
     color: '#FC8200',
     fontWeight: 'bold',
+  },
+  avatarImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 2,
+    borderColor: 'white',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: '600',
   },
 });
 

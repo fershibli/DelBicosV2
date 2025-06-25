@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,33 +7,83 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
+import { generateAvailableDates } from '../../../lib/helpers/availabilityHelpers';
+import { useAppointmentStore } from '@stores/Appointments/AppointmentStore';
 
 type Servico = {
-  id: string;
-  nome: string;
-  preco: string;
-  duracao: string;
+  id: number;
+  title: string;
+  description?: string;
+  price: number;
+  duration: number;
+  bannerImg?: string;
 };
 
-type Disponibilidade = {
-  data: string;
-  horarios: string[];
+type ProfessionalAvailability = {
+  id: number;
+  professional_id: number;
+  days_of_week?: string;
+  start_day_of_month?: number;
+  end_day_of_month?: number;
+  start_day?: string;
+  end_day?: string;
+  start_time: string;
+  end_time: string;
+  is_available: boolean;
+  recurrence_pattern: 'none' | 'daily' | 'weekly' | 'monthly';
 };
 
 type ServicosContentProps = {
   servicos: Servico[];
-  disponibilidades: Disponibilidade[];
+  availability?: ProfessionalAvailability[];
+  professionalId: number;
+  clientId: number;
+  addressId: number;
+  loading?: boolean;
 };
 
 export function ServicosContent({
-  servicos,
-  disponibilidades,
+  servicos = [],
+  availability = [],
+  professionalId,
+  clientId,
+  addressId,
+  loading = false,
 }: ServicosContentProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedServico, setSelectedServico] = useState<Servico | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [disponibilidades, setDisponibilidades] = useState<
+    { date: string; times: string[] }[]
+  >([]);
+
+  const { createAppointment } = useAppointmentStore();
+
+  useEffect(() => {
+    if (availability && availability.length > 0) {
+      const disponibilidadesProcessadas = generateAvailableDates(availability);
+      setDisponibilidades(disponibilidadesProcessadas);
+    } else {
+      setDisponibilidades([]);
+    }
+  }, [availability]);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value);
+  };
+
+  const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return hours > 0 ? `${hours}h ${mins}min` : `${mins}min`;
+  };
 
   const openAgendamento = (servico: Servico) => {
     setSelectedServico(servico);
@@ -42,114 +92,210 @@ export function ServicosContent({
     setModalVisible(true);
   };
 
-  const handleConfirm = () => {
-    if (!selectedDate || !selectedTime) {
+  const formatDate = (dateString: string) => {
+    try {
+      const options: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+      };
+      return new Date(dateString).toLocaleDateString('pt-BR', options);
+    } catch (error) {
+      console.error('Erro ao formatar data:', error);
+      return dateString;
+    }
+  };
+
+  const handleConfirm = async () => {
+    if (!selectedServico || !selectedDate || !selectedTime) {
       alert('Por favor, selecione uma data e horário');
       return;
     }
 
-    alert(
-      `Agendado: ${selectedServico?.nome}\nData: ${formatDate(selectedDate)}\nHorário: ${selectedTime}`,
-    );
-    setModalVisible(false);
+    try {
+      const [hours, minutes] = selectedTime.split(':').map(Number);
+      const startDate = new Date(selectedDate);
+      startDate.setHours(hours, minutes, 0, 0);
+
+      if (isNaN(startDate.getTime())) {
+        throw new Error('Data/horário inválidos');
+      }
+
+      const endDate = new Date(
+        startDate.getTime() + selectedServico.duration * 60000,
+      );
+
+      const appointmentData = {
+        professional_id: professionalId,
+        client_id: clientId,
+        service_id: selectedServico.id,
+        address_id: addressId,
+        start_time: startDate.toISOString(),
+        end_time: endDate.toISOString(),
+        status: 'pending' as const,
+      };
+
+      const success = await createAppointment(appointmentData);
+
+      if (success) {
+        alert('Agendamento criado com sucesso!');
+        setModalVisible(false);
+        setSelectedDate(null);
+        setSelectedTime(null);
+        setSelectedServico(null);
+      } else {
+        alert('Erro ao criar agendamento. Verifique os dados.');
+      }
+    } catch (error) {
+      console.error('Erro ao criar agendamento:', error);
+      alert(
+        'Ocorreu um erro ao criar o agendamento. Veja o console para mais detalhes.',
+      );
+    }
   };
 
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-    };
-    return new Date(dateString).toLocaleDateString('pt-BR', options);
-  };
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#FC8200" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={servicos}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.serviceCard}>
-            <View>
-              <Text style={styles.serviceName}>{item.nome}</Text>
-              <Text style={styles.serviceInfo}>
-                {item.preco} • {item.duracao}
-              </Text>
+      {servicos.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Nenhum serviço disponível</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={servicos}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.serviceBox}>
+              {item.bannerImg && (
+                <Image
+                  source={{ uri: item.bannerImg }}
+                  style={styles.serviceImage}
+                />
+              )}
+              <View style={styles.serviceDetails}>
+                <Text style={styles.serviceTitle}>{item.title}</Text>
+                <Text style={styles.availabilityText}>
+                  Horários disponíveis para hoje!
+                </Text>
+              </View>
+
+              <View style={styles.sideActions}>
+                <View style={styles.priceTag}>
+                  <Text style={styles.priceLabel}>A partir de</Text>
+                  <Text style={styles.priceValue}>
+                    {formatCurrency(item.price)}
+                  </Text>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.scheduleButton}
+                  onPress={() => openAgendamento(item)}
+                  disabled={disponibilidades.length === 0}>
+                  <Text style={styles.scheduleButtonText}>Agendar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <TouchableOpacity
-              style={styles.bookButton}
-              onPress={() => openAgendamento(item)}>
-              <Text style={styles.bookButtonText}>Agendar</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
+          )}
+        />
+      )}
 
       <Modal
         visible={modalVisible}
         transparent
         animationType="slide"
         onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>
-              Agendar {selectedServico?.nome}
+              Agendar {selectedServico?.title}
+            </Text>
+            <Text style={styles.serviceModalPrice}>
+              {selectedServico && formatCurrency(selectedServico.price)} •{' '}
+              {selectedServico && formatDuration(selectedServico.duration)}
             </Text>
 
             <Text style={styles.sectionTitle}>Selecione a data:</Text>
-            <View style={styles.datesContainer}>
-              {disponibilidades.map((day) => (
-                <Pressable
-                  key={day.data}
-                  style={[
-                    styles.dateButton,
-                    selectedDate === day.data && styles.selectedDateButton,
-                  ]}
-                  onPress={() => {
-                    setSelectedDate(day.data);
-                    setSelectedTime(null);
-                  }}>
-                  <Text
-                    style={
-                      selectedDate === day.data
-                        ? styles.selectedDateText
-                        : styles.dateText
-                    }>
-                    {formatDate(day.data)}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-
-            {selectedDate && (
+            {disponibilidades.length === 0 ? (
+              <Text style={styles.noAvailabilityText}>
+                Nenhuma disponibilidade neste período
+              </Text>
+            ) : (
               <>
-                <Text style={styles.sectionTitle}>Horários disponíveis:</Text>
-                <View style={styles.timesContainer}>
-                  {disponibilidades
-                    .find((d) => d.data === selectedDate)
-                    ?.horarios.map((time) => (
-                      <Pressable
-                        key={time}
+                <FlatList
+                  horizontal
+                  data={disponibilidades}
+                  keyExtractor={(item) => item.date}
+                  renderItem={({ item }) => (
+                    <Pressable
+                      style={[
+                        styles.dateButton,
+                        selectedDate === item.date && styles.selectedDateButton,
+                      ]}
+                      onPress={() => {
+                        setSelectedDate(item.date);
+                        setSelectedTime(null);
+                      }}>
+                      <Text
                         style={[
-                          styles.timeButton,
-                          selectedTime === time && styles.selectedTimeButton,
-                        ]}
-                        onPress={() => setSelectedTime(time)}>
-                        <Text
-                          style={
-                            selectedTime === time
-                              ? styles.selectedTimeText
-                              : styles.timeText
-                          }>
-                          {time}
-                        </Text>
-                      </Pressable>
-                    ))}
-                </View>
+                          styles.dateText,
+                          selectedDate === item.date && styles.selectedDateText,
+                        ]}>
+                        {formatDate(item.date)}
+                      </Text>
+                    </Pressable>
+                  )}
+                  contentContainerStyle={styles.datesContainer}
+                  showsHorizontalScrollIndicator={false}
+                />
+
+                {selectedDate && (
+                  <>
+                    <Text style={styles.sectionTitle}>
+                      Horários disponíveis:
+                    </Text>
+                    <View style={styles.timesContainer}>
+                      {disponibilidades
+                        .find((d) => d.date === selectedDate)
+                        ?.times.map((time) => (
+                          <Pressable
+                            key={time}
+                            style={[
+                              styles.timeButton,
+                              selectedTime === time &&
+                                styles.selectedTimeButton,
+                            ]}
+                            onPress={() => setSelectedTime(time)}>
+                            <Text
+                              style={[
+                                styles.timeText,
+                                selectedTime === time &&
+                                  styles.selectedTimeText,
+                              ]}>
+                              {time}
+                            </Text>
+                          </Pressable>
+                        ))}
+                    </View>
+                  </>
+                )}
               </>
             )}
 
-            <View style={styles.modalButtons}>
+            <View style={styles.modalFooter}>
+              <Pressable
+                style={styles.cancelButton}
+                onPress={() => setModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Voltar</Text>
+              </Pressable>
+
               <Pressable
                 style={[
                   styles.confirmButton,
@@ -157,13 +303,9 @@ export function ServicosContent({
                 ]}
                 onPress={handleConfirm}
                 disabled={!selectedDate || !selectedTime}>
-                <Text style={styles.confirmButtonText}>Confirmar</Text>
-              </Pressable>
-
-              <Pressable
-                style={styles.cancelButton}
-                onPress={() => setModalVisible(false)}>
-                <Text style={styles.cancelButtonText}>Cancelar</Text>
+                <Text style={styles.confirmButtonText}>
+                  Confirmar Agendamento
+                </Text>
               </Pressable>
             </View>
           </View>
@@ -177,70 +319,118 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: 'transparent',
+    backgroundColor: '#DDE6F0',
   },
-  serviceCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-    elevation: 2,
   },
-  serviceName: {
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
+    textAlign: 'center',
   },
-  serviceInfo: {
+  noAvailabilityText: {
+    textAlign: 'center',
+    color: '#666',
+    marginVertical: 20,
+  },
+  serviceCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    marginBottom: 16,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  serviceInfoContainer: {
+    padding: 16,
+  },
+  serviceDescription: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 12,
+    lineHeight: 20,
+  },
+  serviceModalPrice: {
+    fontSize: 16,
+    color: '#FC8200',
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  serviceMeta: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  servicePrice: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FC8200',
+  },
+  serviceDuration: {
     fontSize: 14,
     color: '#666',
   },
   bookButton: {
     backgroundColor: '#FC8200',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
+    padding: 14,
+    alignItems: 'center',
   },
   bookButtonText: {
     color: 'white',
     fontWeight: '600',
+    fontSize: 16,
   },
-  modalContainer: {
+  disabledButtonText: {
+    color: '#999',
+  },
+  modalOverlay: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
-  modalContent: {
+  modalContainer: {
     backgroundColor: 'white',
-    width: '90%',
+    marginHorizontal: 20,
     borderRadius: 12,
     padding: 20,
+    maxHeight: '80%',
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 5,
     textAlign: 'center',
     color: '#333',
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 10,
+    marginBottom: 12,
     color: '#444',
   },
   datesContainer: {
-    marginBottom: 20,
+    paddingBottom: 8,
   },
   dateButton: {
     padding: 12,
     borderRadius: 8,
-    backgroundColor: '#f0f0f0',
-    marginBottom: 8,
+    backgroundColor: '#f5f5f5',
+    marginRight: 10,
+    minWidth: 120,
   },
   selectedDateButton: {
     backgroundColor: '#005A93',
@@ -250,59 +440,161 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   selectedDateText: {
-    textAlign: 'center',
     color: 'white',
-    fontWeight: '600',
   },
   timesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'flex-start',
     marginBottom: 20,
   },
   timeButton: {
-    width: 80,
-    padding: 10,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#f5f5f5',
     margin: 4,
-    borderRadius: 6,
-    backgroundColor: '#f0f0f0',
-    alignItems: 'center',
+    minWidth: 80,
   },
   selectedTimeButton: {
     backgroundColor: '#005A93',
   },
   timeText: {
+    textAlign: 'center',
     color: '#333',
   },
   selectedTimeText: {
     color: 'white',
-    fontWeight: '600',
   },
-  modalButtons: {
-    marginTop: 10,
+  modalFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
   },
   confirmButton: {
+    flex: 1,
     backgroundColor: '#FC8200',
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 10,
+    marginLeft: 10,
   },
   disabledButton: {
-    backgroundColor: '#cccccc',
+    backgroundColor: '#ccc',
   },
   confirmButtonText: {
     color: 'white',
     fontWeight: '600',
   },
   cancelButton: {
+    flex: 1,
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
+    marginRight: 10,
   },
   cancelButtonText: {
     color: '#666',
+    fontWeight: '600',
+  },
+  oldServiceCard: {
+    backgroundColor: '#fff',
+    padding: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+
+  serviceBox: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 12,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+
+  serviceImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+
+  serviceDetails: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+
+  serviceTitle: {
+    fontSize: 20,
+    fontWeight: '500',
+    color: '#000',
+  },
+
+  availabilityText: {
+    color: '#FC8200',
+    fontSize: 16,
+    marginTop: 4,
+    fontWeight: '500',
+  },
+
+  serviceCategory: {
+    fontSize: 14,
+    fontWeight: '300',
+    color: '#333',
+    marginTop: 4,
+  },
+
+  sideActions: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    display: 'flex',
+    gap: 30,
+    flexDirection: 'row',
+    height: '100%',
+  },
+
+  priceTag: {
+    backgroundColor: '#FC8200',
+    paddingVertical: 6,
+    width: 110,
+    alignItems: 'center',
+    height: 60,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+  },
+
+  priceLabel: {
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: '300',
+  },
+
+  priceValue: {
+    fontSize: 22,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+
+  scheduleButton: {
+    backgroundColor: '#005A93',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 15,
+  },
+
+  scheduleButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    alignItems: 'center',
+    fontSize: 16,
+    marginTop: 8,
+    height: 35,
   },
 });

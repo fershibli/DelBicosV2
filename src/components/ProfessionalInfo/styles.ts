@@ -40,4 +40,13 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
+  errorText: {
+    color: '#FF0000',
+    fontSize: 14,
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+  disabledText: {
+    color: '#AAAAAA',
+  },
 });
