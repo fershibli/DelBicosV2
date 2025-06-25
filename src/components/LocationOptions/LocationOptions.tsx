@@ -1,7 +1,20 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  Alert,
+  Image,
+} from 'react-native';
 import * as Location from 'expo-location';
 import { styles } from './styles';
+// @ts-ignore
+import IconPin from '@assets/Local.svg';
+// @ts-ignore
+import IconSearch from '@assets/Search.svg';
+// @ts-ignore
+import IconPerson from '@assets/person.svg';
 
 interface Props {
   onLocationRetrieved: (city: string, country: string) => void;
@@ -95,7 +108,8 @@ const LocationOptions: React.FC<Props> = ({
   return (
     <View style={styles.wrapper}>
       <TouchableOpacity style={styles.button} onPress={handleUseLocation}>
-        <Text style={styles.buttonText}>📍 Usar minha localização</Text>
+        <Image source={IconPin} width={21} height={29} />
+        <Text style={styles.buttonText}>Usar minha localização</Text>
       </TouchableOpacity>
 
       <TextInput
@@ -107,11 +121,13 @@ const LocationOptions: React.FC<Props> = ({
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSearchCep}>
-        <Text style={styles.buttonText}>🔍 Buscar CEP ou ruas</Text>
+        <Image source={IconSearch} width={21} height={29} />
+        <Text style={styles.buttonText}>Buscar CEP ou Ruas</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={onLoginPress}>
-        <Text style={styles.buttonText}>🔐 Fazer Login</Text>
+      <TouchableOpacity style={styles.buttonLogin} onPress={onLoginPress}>
+        <Image source={IconPerson} width={21} height={29} />
+        <Text style={styles.buttonLoginText}>Fazer Login</Text>
       </TouchableOpacity>
     </View>
   );

@@ -5,7 +5,7 @@ import LocationOptions from '@components/LocationOptions';
 import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
 
-function HomeScreen() {
+function LoginScreen() {
   const navigation = useNavigation();
   const { setLocation } = useLocation();
 
@@ -32,7 +32,7 @@ function HomeScreen() {
 
   const onLoginPress = () => {
     console.log('Navegando para PhoneConfirmation');
-    navigation.navigate('PhoneConfirmation');
+    navigation.navigate('LoginPassword');
   };
 
   const navigateToFeed = () => {
@@ -45,9 +45,7 @@ function HomeScreen() {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}>
-        <Image source={require('@assets/logo.png')} style={styles.logo} />
-        <Text style={styles.title}>DelBicos</Text>
-        <Text style={styles.subtitle}>Delivery de Bicos</Text>
+        <Image source={require('@assets/LogoV3.png')} style={styles.logo} />
 
         <LocationOptions
           onLocationRetrieved={handleLocation}
@@ -63,4 +61,4 @@ function HomeScreen() {
   );
 }
 
-export default HomeScreen;
+export default LoginScreen;

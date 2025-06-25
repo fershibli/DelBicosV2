@@ -11,6 +11,7 @@ import { RouteProp, useNavigation } from '@react-navigation/native';
 import CodeInput from '@components/CodeInput';
 import { styles } from './styles';
 import logo from '../../../assets/logo.png';
+import { useUserStore } from '@stores/User';
 
 type ConfirmPhoneNumberRouteProp = RouteProp<
   { params: { code: string } },
@@ -23,6 +24,7 @@ function ConfirmPhoneNumberScreen({
   route: ConfirmPhoneNumberRouteProp;
 }) {
   const navigation = useNavigation();
+  const { signIn } = useUserStore();
   const { code: sentCode = '1234' } = route.params || {};
   const [verificationCode, setVerificationCode] = useState(['', '', '', '']);
   const [focusedIndex, setFocusedIndex] = useState(0);
@@ -39,7 +41,8 @@ function ConfirmPhoneNumberScreen({
   const closeModal = () => {
     setModalVisible(false);
     if (isSuccess) {
-      navigation.navigate('Register');
+      signIn();
+      navigation.navigate('Feed');
     } else {
       setVerificationCode(['', '', '', '']);
       setFocusedIndex(0);
