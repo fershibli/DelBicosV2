@@ -4,10 +4,12 @@ import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
 import CategoryList from '@components/CategoryList';
 import ListProfessionals from '@components/ListProfessionals';
+import VLibrasComponent from '@components/Vlibras/VLibrasComponent';
 
 function FeedScreen() {
   return (
     <View style={styles.container}>
+      <VLibrasComponent forceOnload={true} />
       <Text style={styles.title}>Selecione por Categorias</Text>
       <CategoryList />
       <Text style={styles.title}>Profissionais próximos a você</Text>

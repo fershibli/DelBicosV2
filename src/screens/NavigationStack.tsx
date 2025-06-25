@@ -19,7 +19,7 @@ import { LoginPassword } from './public/LoginPassword';
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
   const { user } = useUserStore();
-  return user ? <Feed /> : <Login />;
+  return user ? <Login /> : <Login />;
 };
 
 const RootStack = createNativeStackNavigator<NavigationParams>({

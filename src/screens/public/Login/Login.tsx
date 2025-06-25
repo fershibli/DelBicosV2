@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import LocationOptions from '@components/LocationOptions';
 import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
+import VLibrasComponent from '@components/Vlibras/VLibrasComponent';
 
 function LoginScreen() {
   const navigation = useNavigation();
@@ -54,6 +55,7 @@ function LoginScreen() {
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
+      <VLibrasComponent forceOnload={true} />
     </View>
   );
 }

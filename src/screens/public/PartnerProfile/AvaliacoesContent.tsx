@@ -1,7 +1,6 @@
 import { Text } from '@react-navigation/elements';
 import { FlatList, StyleSheet, View, Image } from 'react-native';
 import { Rating } from 'react-native-ratings';
-
 type Avaliacao = {
   id: string;
   usuario: {

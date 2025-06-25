@@ -5,6 +5,7 @@ import { styles } from './styles';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NavigationParams } from '../../types';
 import { MaskedTextInput } from 'react-native-mask-text';
+import VLibrasComponent from '@components/Vlibras/VLibrasComponent';
 
 type NavigationProp = NativeStackNavigationProp<NavigationParams>;
 
@@ -61,6 +62,7 @@ function PhoneConfirmationScreen() {
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
+      <VLibrasComponent forceOnload={true} />
     </View>
   );
 }
