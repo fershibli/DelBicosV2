@@ -35,7 +35,6 @@ export const useAppointmentStore = create<AppointmentStore>((set) => ({
     }
   },
 
-
   fetchAppointmentsByClient: async (clientId: number) => {
     try {
       set({ loading: true, error: null });
