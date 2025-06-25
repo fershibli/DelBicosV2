@@ -3,28 +3,16 @@ import { WebView } from 'react-native-webview';
 import { styles } from './styles';
 
 const VLibrasComponent = () => {
-  const htmlContent = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-        <script>
-          new window.VLibras.Widget('https://vlibras.gov.br/app');
-        </script>
-      </head>
-      <body>
-        <div id="vlibras"></div>
-      </body>
-    </html>
-  `;
-
   return (
     <WebView
-      source={{ html: htmlContent }}
+      source={{ uri: 'https://vlibras.gov.br/app' }} // Carrega a página oficial
       style={styles.webviewContainer}
       javaScriptEnabled={true}
-      originWhitelist={['*']}
+      originWhitelist={['https://vlibras.gov.br', '*']}
+      onError={(syntheticEvent) => {
+        const { nativeEvent } = syntheticEvent;
+        console.warn('Erro no WebView:', nativeEvent);
+      }}
     />
   );
 };

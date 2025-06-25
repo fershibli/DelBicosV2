@@ -9,11 +9,11 @@ import VLibrasComponent from '@components/Vlibras/VLibrasComponent';
 function FeedScreen() {
   return (
     <View style={styles.container}>
+      <VLibrasComponent />
       <Text style={styles.title}>Selecione por Categorias</Text>
       <CategoryList />
       <Text style={styles.title}>Profissionais próximos a você</Text>
       <ListProfessionals />
-      <VLibrasComponent />
     </View>
   );
 }
