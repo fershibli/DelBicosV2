@@ -1,5 +1,6 @@
 export type NavigationParams = {
   Home: undefined;
+  MyAppointments: undefined;
   Login: undefined;
   LoginPassword: undefined;
   Feed: undefined;
