@@ -60,8 +60,7 @@ const BannerStatus: React.FC<BannerStatusProps> = ({ status }) => {
             borderColor: currentStatus.borderColor,
             shadowColor: currentStatus.borderColor,
           },
-        ]}
-      >
+        ]}>
         <Text style={[styles.statusText, { color: currentStatus.textColor }]}>
           {currentStatus.message}
         </Text>

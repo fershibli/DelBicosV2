@@ -69,15 +69,13 @@ export const useAppointmentStore = create<AppointmentStore>((set, get) => ({
     try {
       set({ loading: true, error: null });
 
-      const existingAppointment = get().appointments.find(a => a.id === id);
+      const existingAppointment = get().appointments.find((a) => a.id === id);
       if (existingAppointment) {
         set({ loading: false });
         return existingAppointment;
       }
 
-      const res = await fetch(
-        `http://localhost:3000/api/appointments/${id}`,
-      );
+      const res = await fetch(`http://localhost:3000/api/appointments/${id}`);
 
       if (!res.ok) {
         throw new Error('Agendamento não encontrado');
@@ -89,7 +87,10 @@ export const useAppointmentStore = create<AppointmentStore>((set, get) => ({
       return data;
     } catch (error: any) {
       console.error('getAppointmentById error:', error);
-      set({ loading: false, error: error.message || 'Erro ao buscar agendamento' });
+      set({
+        loading: false,
+        error: error.message || 'Erro ao buscar agendamento',
+      });
       throw error;
     }
   },

@@ -16,8 +16,9 @@ const ServiceStatusScreen = () => {
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const appointmentId = route.params?.appointmentId || 
-                       (route.params?.id ? Number(route.params.id) : 1);
+  const appointmentId =
+    route.params?.appointmentId ||
+    (route.params?.id ? Number(route.params.id) : 1);
 
   const [appointmentDate, setAppointmentDate] = useState('');
   const [appointmentTime, setAppointmentTime] = useState('');
@@ -42,13 +43,14 @@ const ServiceStatusScreen = () => {
         );
 
         await fetchProfessionalById(appointment.professional_id.toString());
-        
+
         await fetchServiceById(appointment.service_id);
 
         const formattedService = {
           id: appointment.service_id,
           name: appointment.service_title || 'Serviço',
-          title: serviceDetails?.title || appointment.service_title || 'Serviço',
+          title:
+            serviceDetails?.title || appointment.service_title || 'Serviço',
           description: serviceDetails?.description || '',
           bannerImg: serviceDetails?.bannerImg,
           duration: serviceDetails?.duration,
@@ -73,7 +75,13 @@ const ServiceStatusScreen = () => {
     };
 
     fetchData();
-  }, [appointmentId, getAppointmentById, fetchProfessionalById, fetchServiceById, serviceDetails]);
+  }, [
+    appointmentId,
+    getAppointmentById,
+    fetchProfessionalById,
+    fetchServiceById,
+    serviceDetails,
+  ]);
 
   const subtotal = service ? service.price : 0;
 
@@ -101,19 +109,21 @@ const ServiceStatusScreen = () => {
       </View>
       <View style={styles.divider} />
       {service && (
-        <ServiceItems 
-          items={[{
-            id: service.id,
-            title: service.title,
-            description: service.description,
-            bannerImg: service.bannerImg,
-            price: service.price,
-            duration: service.duration,
-            date: service.date,
-            startTime: service.startTime,
-            endTime: service.endTime,
-            professional: professional?.User?.name,
-          }]} 
+        <ServiceItems
+          items={[
+            {
+              id: service.id,
+              title: service.title,
+              description: service.description,
+              bannerImg: service.bannerImg,
+              price: service.price,
+              duration: service.duration,
+              date: service.date,
+              startTime: service.startTime,
+              endTime: service.endTime,
+              professional: professional?.User?.name,
+            },
+          ]}
         />
       )}
       <PaymentInfo

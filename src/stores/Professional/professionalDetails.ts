@@ -24,21 +24,21 @@ export const useProfessionalDetailsStore = create<ProfessionalDetailsStore>(
       }
     },
 
-  getProfessionalById: async (id: string) => {
-  try {
-    set({ loading: true, error: null });
-    const response = await axios.get<Professional>(
-      `http://localhost:3000/api/professional_dto/${id}`,
-    );
-    set({ professional: response.data });
-    return response.data;
-  } catch (error) {
-    console.error('Erro ao buscar profissional:', error);
-    set({ error: 'Erro ao carregar profissional' });
-    throw error;
-  } finally {
-    set({ loading: false });
-  }
-},
-}),
+    getProfessionalById: async (id: string) => {
+      try {
+        set({ loading: true, error: null });
+        const response = await axios.get<Professional>(
+          `http://localhost:3000/api/professional_dto/${id}`,
+        );
+        set({ professional: response.data });
+        return response.data;
+      } catch (error) {
+        console.error('Erro ao buscar profissional:', error);
+        set({ error: 'Erro ao carregar profissional' });
+        throw error;
+      } finally {
+        set({ loading: false });
+      }
+    },
+  }),
 );

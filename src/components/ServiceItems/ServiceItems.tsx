@@ -21,13 +21,12 @@ interface ServiceItemsProps {
 
 const ServiceItems: React.FC<ServiceItemsProps> = ({ items }) => {
   const formatPrice = (price: number | string): string => {
-    const value = typeof price === 'string' ? 
-                 parseFloat(price.replace(',', '.')) : 
-                 price;
-    
+    const value =
+      typeof price === 'string' ? parseFloat(price.replace(',', '.')) : price;
+
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     }).format(isNaN(value) ? 0 : value);
   };
 
@@ -46,10 +45,9 @@ const ServiceItems: React.FC<ServiceItemsProps> = ({ items }) => {
 
       {items.map((item) => (
         <View key={item.id} style={styles.itemDetails}>
-
           <Text style={styles.itemTitle}>{item.title}</Text>
           <Text style={styles.itemDescription}>{item.description}</Text>
-          
+
           {item.date && (
             <View style={styles.itemRow}>
               <Text style={styles.itemDate}>{item.date}</Text>
@@ -60,7 +58,7 @@ const ServiceItems: React.FC<ServiceItemsProps> = ({ items }) => {
               )}
             </View>
           )}
-          
+
           <View style={styles.itemRow}>
             {item.duration && (
               <Text style={styles.itemDuration}>
@@ -69,7 +67,6 @@ const ServiceItems: React.FC<ServiceItemsProps> = ({ items }) => {
             )}
             <Text style={styles.itemPrice}>{formatPrice(item.price)}</Text>
           </View>
-        
         </View>
       ))}
     </View>
