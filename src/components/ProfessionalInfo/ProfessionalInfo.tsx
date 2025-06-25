@@ -4,11 +4,14 @@ import { styles } from './styles';
 
 type Professional = {
   name: string;
-  avatar?: string;
+  avatarImg?: string;
 };
 
 interface ProfessionalInfoProps {
-  professional: Professional;
+  professional: {
+    name: string;
+    avatarImg?: string;
+  };
   appointmentDate: string;
   appointmentTime: string;
 }
@@ -26,7 +29,7 @@ const ProfessionalInfo: React.FC<ProfessionalInfoProps> = ({
         <Image
           source={{
             uri:
-              professional?.avatar ||
+              professional.avatarImg ||
               'https://png.pngtree.com/element_our/20200610/ourmid/pngtree-character-default-avatar-image_2237203.jpg',
           }}
           style={styles.partnerLogo}
