@@ -15,10 +15,7 @@ import { ServicosContent } from './ServicosContent';
 import { GaleriaContent } from './GaleriaContent';
 import { AvaliacoesContent } from './AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
-import axios from 'axios';
-import { Professional } from '@screens/types';
 import { useProfessionalDetailsStore } from '@stores/Professional/professionalDetails';
-
 
 function PartnerProfileScreen() {
   const navigation = useNavigation();
@@ -28,9 +25,13 @@ function PartnerProfileScreen() {
   const [activeTab, setActiveTab] = useState<
     'sobre' | 'servicos' | 'galeria' | 'avaliacoes'
   >('sobre');
-  
-  const { professional: parceiro, loading, error, fetchProfessionalById } =
-  useProfessionalDetailsStore();
+
+  const {
+    professional: parceiro,
+    loading,
+    error,
+    fetchProfessionalById,
+  } = useProfessionalDetailsStore();
 
   useEffect(() => {
     fetchProfessionalById(id);
