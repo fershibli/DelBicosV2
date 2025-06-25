@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
-import {
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  View,
-} from 'react-native';
+import { ScrollView, Text, TouchableOpacity, Alert, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NavigationParams } from '../../types';
+import { MaskedTextInput } from 'react-native-mask-text';
 
 type NavigationProp = NativeStackNavigationProp<NavigationParams>;
 
@@ -35,6 +29,13 @@ function PhoneConfirmationScreen() {
     }
   };
 
+  const handlePhoneNumberChange = (text: string) => {
+    if (phoneNumber.length === 0) {
+      text = '+55 ' + text;
+    }
+    setPhoneNumber(text);
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -45,11 +46,12 @@ function PhoneConfirmationScreen() {
           Insira seu celular para entrar. Você receberá um código SMS para
           confirmar seu telefone
         </Text>
-        <TextInput
+        <MaskedTextInput
+          mask="+99 (99) 99999-9999"
           style={styles.input}
           placeholder="DDD + CELULAR"
           value={phoneNumber}
-          onChangeText={setPhoneNumber}
+          onChangeText={handlePhoneNumberChange}
           keyboardType="phone-pad"
         />
         <TouchableOpacity style={styles.button} onPress={handleContinue}>

@@ -7,9 +7,17 @@
 </p>
 
 <p align="center">
-
-[About](#-about) | [Backlogs & User Stories](#-backlogs--user-stories) | [Prototype & Documentation](#-prototype-documentation) | [Tecnologies](#️-tecnologies) | [Team](#-team) | [Project Structure](#-project-structure) | [Installation](#️-installation) | [Backend Project](https://github.com/fershibli/DelBicosBackend)
-
+  <a href="#-about">About</a> |
+  <a href="#-entregas-de-sprints">Sprints</a> |
+  <a href="#-backlogs">Backlogs</a> |
+  <a href="#-user-stories">User Stories</a> |
+  <a href="#-functional-requirements">Functional Requirements</a> |
+  <a href="#-prototype">Prototype</a> |
+  <a href="#️-tecnologies">Tecnologies</a> |
+  <a href="#-team">Team</a> |
+  <a href="#-project-structure">Project Structure</a> |
+  <a href="#️-installation">Installation</a> |
+  <a href="https://github.com/fershibli/DelBicosBackend">Backend Project</a>
 </p>
 
 # 💻 About
@@ -20,36 +28,60 @@ Profissionais informais, de diversas vertentes, têm muita dificuldade para adqu
 
 Ao solucionar esse problema, notaria-se também os seguintes benefícios para a sociedade:
 
-- a diminuição do translado entre cliente e profissional, que causaria a redução da emissão de gases do efeito estufa nesta atividade;
-- o aumento de demanda para profissionais de diversas comunidades, contribuindo com a redução da desigualdade social;
-- a integração de indivíduos no ciclo de consumo de serviços locais, levando à melhora na qualidade de vida;
-- o acompanhamento das atividades e avaliações, levando a melhor confiabilidade e segurança.
+- A diminuição do translado entre cliente e profissional, que causaria a redução da emissão de gases do efeito estufa nesta atividade;
+- O aumento de demanda para profissionais de diversas comunidades, contribuindo com a redução da desigualdade social;
+- A integração de indivíduos no ciclo de consumo de serviços locais, levando à melhora na qualidade de vida;
+- O acompanhamento das atividades e avaliações, levando a melhor confiabilidade e segurança.
 
-Os dois grupos destacados no problema descrito, compõem o público-alvo deste projeto.
->
- ### Repositórios do Projeto
-- [Backend do DelBicos](https://git@github.com:fershibli/DelBicosBackend.git)  
-- [Frontend do DelBicos](https://git@github.com:fershibli/DelBicosV2.git)  
-- [Documentação Oficial](https://)
+> Os dois grupos destacados no problema descrito, compõem o público-alvo deste projeto.
 
- 📌 **Status:** _Em desenvolvimento_
+> > 📌 **Status:** $\color{Apricot}{Em\ desenvolvimento}$
 
- ### 🏁 Entregas de Sprints
-Cada entrega possui uma branch neste repositório com um relatório completo de tudo o que foi desenvolvido naquela sprint. Observe a relação a seguir:
-| Sprint | Ínício | Fim | Status | Histórico |
-|:--:|:----------:|:----------:|:---------------:|:-------------------------------------------------:|
-| 01 | 17/03/2025 | 01/05/2025 |✔️ Concluída    | [ver relatório]() |
-| 02 | 01/04/2025 | 16/05/2025 |🔄 Em Andamento    | [ver relatório]() |
+🔗 **Documentações das disciplinas do projeto**
 
+- <a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf"> Gestão Ágil de Projetos de Software </a>
+- <a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf"> Interação Humano-Computador </a>
 
-## 🎯 Backlogs & User Stories
+<br>
+
+## 🏁 Entregas de Sprints
+
+| Sprint |    Período    | Entregas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |    Status    |
+| :----: | :-----------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------: |
+|   01   | 04/06 - 20/06 | Figma do protótipo de agendar e pagar serviço, Página de Feed, Header, Endpoint GET de profissionais com filtros opcionais`<br>` (termo pesquisado, localização, categoria, subcategoria, data_inicio, data_fim) e com ordenação (relevância, avaliação, distância, disponibilidade)                                                                                                                                                                                                                                                                                                                                                                                                                                                    | ✅ Concluído |
+|   02   | 10/06 - 17/06 | Página de Meus Agendamentos, Figma do protótipo de Página de Login, Página de Login por E-mail e Senha,`<br>` dois endpoints POST de login por senha, endpoint POST de cadastro, endpoint POST de cancelar agendamento                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | ✅ Concluído |
+|   03   | 17/06 - 24/06 | Interações do protótipo do Figma, endpoint POST de cadastro de parceiro,`<br>` endpoint POST de aceitar agendamento, endpoint POST de editar disponibilidade                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | ✅ Concluído |
+|   04   |    24/06 -    | Criar o protótipo do Figma de Página de Ajuda (FAQ e mandar e-mail), Criar Figma de Perfil do Usuário, Criar Figma de Portal do Parceiro (login/cadastro),`<br>` Criar Figma de Meus Agendamentos (visão do parceiro), Criar Figma de Editar Loja do Parceiro, Criar Figma de Editar Disponibilidade do Parceiro, `<br>` Criar endpoint GET de detalhes do profissional, Criar dois endpoints POST de login por celular+SMS, Criar endpoint POST de enviar e-mail de Ajuda, `<br>` Criar endpoint POST de Editar Loja do Parceiro, Criar tabela noSQL para armazenar os chats (por id de sala), Criar tabela SQL para listar salas de chat por id de usuário, `<br>` Criar endpoint WebSocket de chat (sala com lista de participantes) | Em Andamento |
+
+<br>
+
+### 🎬 Apresentação
+
+<image src="assets/login01.gif" alt="tela de login">
+
+<br>
+
+## 🎯 Backlogs
 
 <image src="assets/backlogP.png" alt="Backlog de Produtos do projeto DelBicos" width="60%">
 <image src="assets/backlogS.png" alt="Backlog de Sprints do projeto DelBicos" width="60%">
 
 <br>
 
-## 💡 Requisitos Funcionais
+## 🎥 User Stories
+
+<image src="assets/sprint01-1.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint01-2.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint01-3.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint02-1.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint02-2.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint03-1.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint03-2.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint04.png" alt="User Stories do projeto DelBicos" width="60%">
+
+<br>
+
+## 💡 Functional Requirements
 
 - **_Requisitos Funcionais - Cliente_**
 
@@ -93,15 +125,13 @@ Cada entrega possui uma branch neste repositório com um relatório completo de 
 
 <br>
 
-## Prototype & Documentation
+## 🎨 Prototype
 
-#### Protótipo
-O protótipo do projeto foi desenvolvido na ferramenta Figma, trabalhando padronização de componentes e cores, disponível em:
-- [Link para o protótipo do projeto](https://www.figma.com).
+O protótipo do DelBicos no Figma serve como uma demonstração visual interativa das funcionalidades centrais do sistema. Ele apresenta a página inicial, a navegação para pesquisa de profissionais, os fluxos de cadastro e login de usuários, além das interações de agendamento de serviços e pagamentos. Embora a página do administrador esteja desenvolvida, as áreas dedicadas aos perfis de cliente e profissional ainda estão em fase de finalização.
 
-  #### Documentação
-Para a documentação, utilizamos várias ferramentas para criação de diagramas e de texto. Como Microsoft Word, Excel, Astah e Photopea. A documentação está disponível em:
-- [Link para a documentação delBicos](https://)
+🔗 👉 [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/proto/1xZfYHmDwbr9aaqoh5ddxN/DelBicosV2?node-id=1364-969&t=tZpzceJg13szkrPk-1)
+
+<br>
 
 ## 🛠️ Tecnologies
 
@@ -111,13 +141,12 @@ Para a documentação, utilizamos várias ferramentas para criação de diagrama
 
 ## 👥 Team
 
-|       Nome       | Função           |
-| :--------------: | ---------------- |
-| Fernando Chibli  | _Product Owner_  |
-|  Douglas Wenzel  | _Scrum Master_   |
-| Andreza Oliveira | _Desenvolvedora_ |
-| Gustavo Ferreira | _Desenvolvedor_  |
-|   Isabel Maito   | _Desenvolvedora_ |
+|                        Nome                        | Função                      |
+| :------------------------------------------------: | --------------------------- |
+|  [Fernando Chibli](https://github.com/fershibli)   | _Product Owner & FullStack_ |
+| [Douglas Wenzel](https://github.com/douglaswenzel) | _Scrum Master & FullStack_  |
+|  [Gustavo Ferreira](https://github.com/Gspedine)   | _Desenvolvedor FullStack_   |
+|   [Isabel Maito](https://github.com/isabelmaito)   | _Desenvolvedora FullStack_  |
 
 <br>
 

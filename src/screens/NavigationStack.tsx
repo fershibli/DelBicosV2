@@ -12,13 +12,39 @@ import PartnerProfile from './public/PartnerProfile';
 import ServiceStatusScreen from './public/ServicesStatus';
 import MyAppointments from './public/MyAppointments';
 import { NavigationParams } from './types';
-import Home from './public/Home';
+import Login from './public/Login';
+import Header from '@components/Header';
+import { useUserStore } from '@stores/User';
+import { LoginPassword } from './public/LoginPassword';
+
+// If logged in Home = Feed, otherwise Home = Login
+const Home = () => {
+  const { user } = useUserStore();
+  return user ? <Feed /> : <Login />;
+};
 
 const RootStack = createNativeStackNavigator<NavigationParams>({
+  screenOptions: {
+    header: (props) => <Header {...props} />,
+  },
   screens: {
     Home: {
-      // Alterado de 'Loading' para 'Home'
       screen: Home,
+    },
+    Login: {
+      screen: Login,
+      linking: {
+        path: 'login',
+      },
+      options: {
+        headerShown: false,
+      },
+    },
+    LoginPassword: {
+      screen: LoginPassword,
+      linking: {
+        path: 'login-password',
+      },
       options: {
         headerShown: false,
       },
@@ -27,9 +53,6 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: Feed,
       linking: {
         path: 'feed',
-      },
-      options: {
-        headerShown: false,
       },
     },
     PartnerProfile: {
@@ -59,19 +82,13 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
     PhoneConfirmation: {
       screen: PhoneConfirmation,
       options: {
-        title: 'Acesse sua conta',
-        headerStyle: { backgroundColor: '#e6f0fa' },
-        headerTintColor: '#003366',
-        headerTitleStyle: { fontWeight: 'bold' },
+        headerShown: false,
       },
     },
     ConfirmPhoneNumber: {
       screen: ConfirmPhoneNumber,
       options: {
-        title: 'Confirme seu número',
-        headerStyle: { backgroundColor: '#e6f0fa' },
-        headerTintColor: '#003366',
-        headerTitleStyle: { fontWeight: 'bold' },
+        headerShown: false,
       },
     },
     Register: {
@@ -80,17 +97,11 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
         path: 'register',
       },
       options: {
-        title: 'Cadastre-se',
-        headerStyle: { backgroundColor: '#e6f0fa' },
-        headerTintColor: '#003366',
-        headerTitleStyle: { fontWeight: 'bold' },
+        headerShown: false,
       },
     },
     NotFound: {
       screen: NotFound,
-      options: {
-        title: '404',
-      },
       linking: {
         path: '*',
       },
