@@ -12,12 +12,9 @@ function LoginScreen() {
   const handleLocation = (city: string, country: string) => {
     console.log('handleLocation chamado com:', city, country);
     setLocation(city, country);
-    if (city && country) {
-      console.log('Localização definida, navegando para Feed');
-      navigation.navigate('Feed');
-    } else {
-      console.log('Falha ao definir localização, navegando não realizado');
-    }
+    // Removida condição para alinhar com onNavigateToFeed
+    console.log('Navegando para Feed via handleLocation');
+    navigation.navigate('Feed');
   };
 
   const handleCep = (city: string, state: string) => {
@@ -38,6 +35,11 @@ function LoginScreen() {
     navigation.navigate('LoginPassword');
   };
 
+  const navigateToFeed = () => {
+    console.log('navigateToFeed chamado');
+    navigation.navigate('Feed');
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -48,7 +50,8 @@ function LoginScreen() {
         <LocationOptions
           onLocationRetrieved={handleLocation}
           onCepRetrieved={handleCep}
-          onLoginPress={onLoginPress}
+          onLoginPress={onLoginPress} // Corrigido
+          onNavigateToFeed={navigateToFeed}
         />
       </ScrollView>
       <Text style={styles.footer}>

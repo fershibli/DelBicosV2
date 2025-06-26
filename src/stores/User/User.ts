@@ -96,7 +96,67 @@ export const useUserStore = create<UserStore>()(
           throw new Error('Erro ao fazer login. Por favor, tente novamente.');
         }
       },
-      signOut: () => set({ user: null }),
+      signUp: async (name, email, phone, password, cpf, address) => {
+        try {
+          const response = await backendHttpClient.post('/api/user/register', {
+            name,
+            email,
+            phone,
+            password,
+            cpf,
+            address,
+          });
+
+          console.log(response.data);
+
+          const { token, user } = response.data;
+          if (!token) {
+            console.error('No token received from the server');
+            return;
+          }
+          const userData = {
+            id: user.id,
+            client_id: user.client_id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            cpf: user.cpf,
+          };
+          const addressData = {
+            id: user.address.id,
+            lat: user.address.lat,
+            lng: user.address.lng,
+            street: user.address.street,
+            number: user.address.number,
+            complement: user.address.complement,
+            neighborhood: user.address.neighborhood,
+            city: user.address.city,
+            state: user.address.state,
+            country_iso: user.address.country_iso,
+            postal_code: user.address.postal_code,
+          };
+          console.log({ userData, addressData, token });
+          set({ user: userData, address: addressData, token });
+          console.log('Login successful:', userData);
+        } catch (error: any | AxiosError) {
+          if (error instanceof AxiosError && error.status) {
+            if (error.status.toString().startsWith('4')) {
+              throw new Error(
+                'Credenciais inválidas. Por favor, tente novamente.',
+              );
+            }
+            if (error.status.toString().startsWith('5')) {
+              throw new Error(
+                'Erro interno do servidor. Por favor, tente novamente mais tarde.',
+              );
+            }
+          }
+          throw new Error('Erro ao fazer login. Por favor, tente novamente.');
+        }
+      },
+      signOut: () => {
+        set({ user: null, address: null, token: null });
+      },
     }),
     {
       name: 'user-storage',

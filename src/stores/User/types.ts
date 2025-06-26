@@ -8,7 +8,7 @@ export type User = {
 };
 
 export type Address = {
-  id: number;
+  id?: number;
   lat: string;
   lng: string;
   street: string;
@@ -27,5 +27,13 @@ export type UserStore = {
   token: string | null;
   signIn: () => void;
   signInPassword: (email: string, password: string) => Promise<void>;
+  signUp: (
+    name: string,
+    email: string,
+    phone: string,
+    password: string,
+    cpf: string,
+    address: Address,
+  ) => Promise<void>;
   signOut: () => void;
 };
