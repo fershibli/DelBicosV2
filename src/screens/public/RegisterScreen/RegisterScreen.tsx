@@ -16,9 +16,12 @@ import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
 import logo from '../../../assets/logo.png'; // Importação tipada de logo
 import { stateCodeList } from '@lib/constants/address';
+import { useUserStore } from '@stores/User';
+import { Address } from '@stores/User/types';
 
 function RegisterScreen() {
   const navigation = useNavigation();
+  const { signUp } = useUserStore();
   const { setLocation } = useLocation();
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
@@ -335,7 +338,28 @@ function RegisterScreen() {
 
     // Redirecionamento para Feed
     Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-    navigation.navigate('Feed');
+    const address: Address = {
+      lat: '0',
+      lng: '0',
+      street,
+      number,
+      complement: '',
+      neighborhood,
+      city,
+      state,
+      country_iso: 'BR',
+      postal_code: cep.replace('-', ''),
+    };
+
+    const formatedPhone = phone
+      .replace(' ', '')
+      .replace('-', '')
+      .replace('(', '')
+      .replace(')', '');
+
+    signUp(name, email, formatedPhone, password, cpf, address).then(() => {
+      navigation.navigate('Feed');
+    });
   };
 
   return (
