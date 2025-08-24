@@ -130,10 +130,37 @@ function RegisterScreen() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (validateFields()) {
-      Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-      navigation.navigate('Home');
+      try {
+        const response = await fetch('http://localhost:3000/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData), // Envia todos os dados do formulário
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Status 2xx (ex: 200)
+          Alert.alert(
+            'Quase lá!',
+            'Enviamos um código de verificação para o seu e-mail.',
+          );
+          navigation.navigate('VerificationScreen', { email: formData.email });
+        } else {
+          // O servidor retornou um erro (4xx ou 5xx)
+          Alert.alert('Erro no Cadastro', data.error || 'Ocorreu um problema.');
+        }
+      } catch (error) {
+        console.error('Erro ao conectar com o servidor:', error);
+        Alert.alert(
+          'Erro de Conexão',
+          'Não foi possível se conectar ao servidor. Tente novamente mais tarde.',
+        );
+      }
     }
   };
 
