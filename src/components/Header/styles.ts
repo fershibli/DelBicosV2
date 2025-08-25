@@ -62,8 +62,16 @@ export const styles = StyleSheet.create({
     color: '#000',
   },
   blueBar: {
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
     height: 42,
     backgroundColor: '#005A93',
     width: '100%',
+  },
+  welcomeUser: {
+    fontFamily: 'Afacad-Bold',
+    fontSize: 22,
+    color: '#fff',
   },
 });

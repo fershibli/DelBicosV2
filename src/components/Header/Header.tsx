@@ -10,7 +10,7 @@ import SouthIcon from '@mui/icons-material/South';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 
 const Header: React.FC<NativeStackHeaderProps> = (props) => {
-  const { user, address } = useUserStore();
+  const { user, address, signOut } = useUserStore();
   const navigation = useNavigation();
 
   const navigateTo = (screen?: keyof NavigationParams) => {
@@ -33,6 +33,11 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       {children}
     </Button>
   );
+
+  const handleLogout = () => {
+    signOut();
+    navigateTo('Feed');
+  };
 
   return (
     <View style={styles.headerContainer}>
@@ -74,12 +79,15 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
             </Button>
           </View>
           {!!user ? (
-            <TouchableOpacity style={styles.userContainer} activeOpacity={0.7}>
+            <TouchableOpacity
+              style={styles.userContainer}
+              activeOpacity={0.7}
+              onPress={handleLogout}>
               <Image
                 source={require('../../assets/logo.png')}
                 style={styles.profileImage}
               />
-              <Text style={styles.userName}>{user.name}</Text>
+              <Text style={styles.userName}>Logout</Text>
             </TouchableOpacity>
           ) : (
             <>
@@ -92,7 +100,13 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         </View>
       </View>
 
-      <View style={styles.blueBar} />
+      <View style={styles.blueBar}>
+        {!!user && (
+          <Text style={styles.welcomeUser}>
+            Seja bem-vindo(a), {user?.name}!
+          </Text>
+        )}
+      </View>
     </View>
   );
 };
