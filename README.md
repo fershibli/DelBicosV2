@@ -8,9 +8,11 @@
 
 <p align="center">
   <a href="#-about">About</a> |
+  <a href="#-entregas-de-sprints">Sprints</a> |
   <a href="#-backlogs">Backlogs</a> |
   <a href="#-user-stories">User Stories</a> |
   <a href="#-functional-requirements">Functional Requirements</a> |
+  <a href="#-prototype">Prototype</a> |
   <a href="#️-tecnologies">Tecnologies</a> |
   <a href="#-team">Team</a> |
   <a href="#-project-structure">Project Structure</a> |
@@ -33,14 +35,29 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 > Os dois grupos destacados no problema descrito, compõem o público-alvo deste projeto.
 
-> > 📌 **Status:** _Em desenvolvimento_
+> > 📌 **Status:** $\color{Apricot}{Em\ desenvolvimento}$
 
 🔗 **Documentações das disciplinas do projeto**
 
-- Banco de Dados - Relacional:
-- Desenvolvimento Web III:
-- Gestão Ágil de Projetos de Software:
-- Interação Humano-Computador:
+- <a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf"> Gestão Ágil de Projetos de Software </a>
+- <a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf"> Interação Humano-Computador </a>
+
+<br>
+
+## 🏁 Entregas de Sprints
+
+| Sprint |    Período    | Entregas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |    Status    |
+| :----: | :-----------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------: |
+|   01   | 04/06 - 20/06 | Figma do protótipo de agendar e pagar serviço, Página de Feed, Header, Endpoint GET de profissionais com filtros opcionais`<br>` (termo pesquisado, localização, categoria, subcategoria, data_inicio, data_fim) e com ordenação (relevância, avaliação, distância, disponibilidade)                                                                                                                                                                                                                                                                                                                                                                                                                                                    | ✅ Concluído |
+|   02   | 10/06 - 17/06 | Página de Meus Agendamentos, Figma do protótipo de Página de Login, Página de Login por E-mail e Senha,`<br>` dois endpoints POST de login por senha, endpoint POST de cadastro, endpoint POST de cancelar agendamento                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | ✅ Concluído |
+|   03   | 17/06 - 24/06 | Interações do protótipo do Figma, endpoint POST de cadastro de parceiro,`<br>` endpoint POST de aceitar agendamento, endpoint POST de editar disponibilidade                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | ✅ Concluído |
+|   04   |    24/06 -    | Criar o protótipo do Figma de Página de Ajuda (FAQ e mandar e-mail), Criar Figma de Perfil do Usuário, Criar Figma de Portal do Parceiro (login/cadastro),`<br>` Criar Figma de Meus Agendamentos (visão do parceiro), Criar Figma de Editar Loja do Parceiro, Criar Figma de Editar Disponibilidade do Parceiro, `<br>` Criar endpoint GET de detalhes do profissional, Criar dois endpoints POST de login por celular+SMS, Criar endpoint POST de enviar e-mail de Ajuda, `<br>` Criar endpoint POST de Editar Loja do Parceiro, Criar tabela noSQL para armazenar os chats (por id de sala), Criar tabela SQL para listar salas de chat por id de usuário, `<br>` Criar endpoint WebSocket de chat (sala com lista de participantes) | Em Andamento |
+
+<br>
+
+### 🎬 Apresentação
+
+<image src="assets/login01.gif" alt="tela de login">
 
 <br>
 
@@ -110,9 +127,11 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 ## 🎨 Prototype
 
-O protótipo no Figma demonstra as funcionalidades essenciais do sistema, começando pela página inicial e a navegação de pesquisa por profissionais. Ele inclui os fluxos completos para cadastro de novos usuários, login, agendamentos de serviços e o processo de pagamentos. Embora a página do administrador já esteja presente, as páginas dedicadas ao cliente e ao profissional ainda precisam ser finalizadas, o que significa que o protótipo foca nas interações centrais antes de expandir para as visualizações completas de cada perfil.
+O protótipo do DelBicos no Figma serve como uma demonstração visual interativa das funcionalidades centrais do sistema. Ele apresenta a página inicial, a navegação para pesquisa de profissionais, os fluxos de cadastro e login de usuários, além das interações de agendamento de serviços e pagamentos. Embora a página do administrador esteja desenvolvida, as áreas dedicadas aos perfis de cliente e profissional ainda estão em fase de finalização.
 
-<!-- [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/1xZfYHmDwbr9aaqoh5ddxN/DelBicosV2?node-id=1564-1564&t=IwxsvEhuwBR00Rqn-1) -->
+🔗 👉 [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/proto/1xZfYHmDwbr9aaqoh5ddxN/DelBicosV2?node-id=1364-969&t=tZpzceJg13szkrPk-1)
+
+<br>
 
 ## 🛠️ Tecnologies
 
