@@ -39,8 +39,8 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 🔗 **Documentações das disciplinas do projeto**
 
-- <a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf"> Gestão Ágil de Projetos de Software </a>
-- <a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf"> Interação Humano-Computador </a>
+- `<a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf">` Gestão Ágil de Projetos de Software `</a>`
+- `<a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf">` Interação Humano-Computador `</a>`
 
 <br>
 
@@ -48,7 +48,7 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 | Sprint |    Período    | Entregas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |    Status    |
 | :----: | :-----------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------: |
-|   01   | 04/06 - 20/06 | Figma do protótipo de agendar e pagar serviço, Página de Feed, Header, Endpoint GET de profissionais com filtros opcionais`<br>` (termo pesquisado, localização, categoria, subcategoria, data_inicio, data_fim) e com ordenação (relevância, avaliação, distância, disponibilidade)                                                                                                                                                                                                                                                                                                                                                                                                                                                    | ✅ Concluído |
+|   01   | 04/06 - 20/06 | Figma do protótipo de agendar e pagar serviço, Página de Feed, Header, Endpoint GET de profissionais com filtros opcionais `<br>` (termo pesquisado, localização, categoria, subcategoria, data_inicio, data_fim) e com ordenação (relevância, avaliação, distância, disponibilidade)                                                                                                                                                                                                                                                                                                                                                                                                                                                   | ✅ Concluído |
 |   02   | 10/06 - 17/06 | Página de Meus Agendamentos, Figma do protótipo de Página de Login, Página de Login por E-mail e Senha,`<br>` dois endpoints POST de login por senha, endpoint POST de cadastro, endpoint POST de cancelar agendamento                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | ✅ Concluído |
 |   03   | 17/06 - 24/06 | Interações do protótipo do Figma, endpoint POST de cadastro de parceiro,`<br>` endpoint POST de aceitar agendamento, endpoint POST de editar disponibilidade                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | ✅ Concluído |
 |   04   |    24/06 -    | Criar o protótipo do Figma de Página de Ajuda (FAQ e mandar e-mail), Criar Figma de Perfil do Usuário, Criar Figma de Portal do Parceiro (login/cadastro),`<br>` Criar Figma de Meus Agendamentos (visão do parceiro), Criar Figma de Editar Loja do Parceiro, Criar Figma de Editar Disponibilidade do Parceiro, `<br>` Criar endpoint GET de detalhes do profissional, Criar dois endpoints POST de login por celular+SMS, Criar endpoint POST de enviar e-mail de Ajuda, `<br>` Criar endpoint POST de Editar Loja do Parceiro, Criar tabela noSQL para armazenar os chats (por id de sala), Criar tabela SQL para listar salas de chat por id de usuário, `<br>` Criar endpoint WebSocket de chat (sala com lista de participantes) | Em Andamento |
@@ -145,8 +145,11 @@ O protótipo do DelBicos no Figma serve como uma demonstração visual interativ
 | :------------------------------------------------: | --------------------------- |
 |  [Fernando Chibli](https://github.com/fershibli)   | _Product Owner & FullStack_ |
 | [Douglas Wenzel](https://github.com/douglaswenzel) | _Scrum Master & FullStack_  |
+|    [Eduardo Iguei](https://github.com/edukamoz)    | _Desenvolvedor FullStack_   |
 |  [Gustavo Ferreira](https://github.com/Gspedine)   | _Desenvolvedor FullStack_   |
+|  [Iago Rossan](https://github.com/IagoYuriRossan)  | _Desenvolvedor FullStack_   |
 |   [Isabel Maito](https://github.com/isabelmaito)   | _Desenvolvedora FullStack_  |
+|    [Lucas Consani](https://github.com/konsanii)    | _Desenvolvedor FullStack_   |
 
 <br>
 
@@ -175,7 +178,7 @@ DelBicosV2
 ├── ⚙️ .prettierrc       # Prettier configuration file
 ├── ⚙️ app.json          # Configuration file for the React Native app
 ├── ⚙️ eslint.config.js  # ESLint configuration file
-├── 📄 index.js          # Entry point for the React Native app
+├── 📄 index.tsx         # Entry point for the React Native app
 ├── 📦 package.json      # Lists dependencies and scripts for the project
 ├── 📖 README.md         # Project documentation
 └── ⚙️ tsconfig.json     # TypeScript configuration file
