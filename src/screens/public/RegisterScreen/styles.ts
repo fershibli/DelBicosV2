@@ -89,4 +89,15 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: '#003366',
   },
+  // Linhas adicionadas para estilizar os erros
+  inputError: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginBottom: 10,
+    marginLeft: 5,
+  },
 });

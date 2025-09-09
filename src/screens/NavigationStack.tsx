@@ -8,6 +8,7 @@ import NotFound from './public/NotFound';
 import PhoneConfirmation from './public/PhoneConfirmation';
 import ConfirmPhoneNumber from './public/ConfirmPhoneNumber';
 import RegisterScreen from './public/RegisterScreen';
+import VerificationScreen from './public/VerificationScreen';
 import PartnerProfile from './public/PartnerProfile';
 import ServiceStatusScreen from './public/ServicesStatus';
 import { NavigationParams } from './types';
@@ -91,6 +92,12 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       },
       options: {
         headerShown: false,
+      },
+    },
+    VerificationScreen: {
+      screen: VerificationScreen,
+      options: {
+        headerShown: false, // Para manter a consistência com as telas de login/registro
       },
     },
     NotFound: {

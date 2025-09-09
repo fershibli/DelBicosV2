@@ -9,4 +9,5 @@ export type NavigationParams = {
   ConfirmPhoneNumber: { code: string };
   Register: undefined;
   NotFound: undefined;
+  VerificationScreen: { email: string };
 };
