@@ -16,6 +16,7 @@ import Login from './public/Login';
 import Header from '@components/Header';
 import { useUserStore } from '@stores/User';
 import { LoginPassword } from './public/LoginPassword';
+import SearchCategory from '@screens/public/SearchCategory';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -71,6 +72,12 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: ServiceStatusScreen,
       linking: {
         path: 'service-status',
+      },
+    },
+    SearchCategory: {
+      screen: SearchCategory,
+      linking: {
+        path: 'search-category',
       },
     },
     PhoneConfirmation: {

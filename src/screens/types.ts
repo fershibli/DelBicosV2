@@ -10,4 +10,5 @@ export type NavigationParams = {
   Register: undefined;
   NotFound: undefined;
   VerificationScreen: { email: string };
+  SearchCategory: undefined;
 };
