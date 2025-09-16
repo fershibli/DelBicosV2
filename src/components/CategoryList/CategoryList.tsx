@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useCategoryStore } from '@stores/Category/Category';
-import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Category } from '@stores/Category/types';
 import colors from '@theme/colors';
 import { styles } from './styles';
@@ -17,6 +24,7 @@ import miscSVG from '@assets/categories/miscellaneous.svg';
 import petsSVG from '@assets/categories/pets.svg';
 // @ts-ignore
 import repairSVG from '@assets/categories/repair.svg';
+import { useNavigation } from '@react-navigation/native';
 
 // {IconComponent, width, height}
 const categoryImagesById: Record<number, any> = {
@@ -63,9 +71,15 @@ interface CategoryCardProps {
 }
 
 function CategoryCard({ category, imageUrl, onPress }: CategoryCardProps) {
+  const navigation = useNavigation();
   const image = getCategoryImagesById(category.id);
   return (
-    <View style={styles.categoryCard}>
+    <TouchableOpacity
+      style={styles.categoryCard}
+      onPress={() => {
+        onPress(category);
+        navigation.navigate('SearchCategory');
+      }}>
       <image.IconComponent
         style={{
           width: image.width,
@@ -75,7 +89,7 @@ function CategoryCard({ category, imageUrl, onPress }: CategoryCardProps) {
         color={colors.primaryOrange}
       />
       <Text style={styles.categoryTitle}>{category.title}</Text>
-    </View>
+    </TouchableOpacity>
   );
 }
 
