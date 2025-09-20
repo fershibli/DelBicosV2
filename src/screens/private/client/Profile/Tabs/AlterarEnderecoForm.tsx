@@ -1,22 +1,30 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Platform, ScrollView } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+  ScrollView,
+} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function EnderecoForm() {
-  const [cep, setCep] = useState("23585-500");
-  const [endereco, setEndereco] = useState("Rua Alvorada de Minas");
-  const [numero, setNumero] = useState("1972");
-  const [bairro, setBairro] = useState("Jardim Alvorada");
-  const [uf, setUf] = useState("RJ");
-  const [cidade, setCidade] = useState("Rio de Janeiro");
+  const [cep, setCep] = useState('23585-500');
+  const [endereco, setEndereco] = useState('Rua Alvorada de Minas');
+  const [numero, setNumero] = useState('1972');
+  const [bairro, setBairro] = useState('Jardim Alvorada');
+  const [uf, setUf] = useState('RJ');
+  const [cidade, setCidade] = useState('Rio de Janeiro');
   // Segundo endereço (apenas visual)
-  const [cep2, setCep2] = useState("01310-200");
-  const [endereco2, setEndereco2] = useState("Av. Paulista");
-  const [numero2, setNumero2] = useState("1000");
-  const [bairro2, setBairro2] = useState("Bela Vista");
-  const [uf2, setUf2] = useState("SP");
-  const [cidade2, setCidade2] = useState("São Paulo");
+  const [cep2, setCep2] = useState('01310-200');
+  const [endereco2, setEndereco2] = useState('Av. Paulista');
+  const [numero2, setNumero2] = useState('1000');
+  const [bairro2, setBairro2] = useState('Bela Vista');
+  const [uf2, setUf2] = useState('SP');
+  const [cidade2, setCidade2] = useState('São Paulo');
 
   return (
     <View style={{ flex: 1 }}>
@@ -25,8 +33,7 @@ export default function EnderecoForm() {
         contentContainerStyle={styles.page}
         showsVerticalScrollIndicator
         keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
-        keyboardShouldPersistTaps="handled"
-      >
+        keyboardShouldPersistTaps="handled">
         <Text style={styles.pageTitle}>Meus Endereços</Text>
 
         <View>
@@ -60,12 +67,35 @@ export default function EnderecoForm() {
                     <Picker
                       selectedValue={uf}
                       onValueChange={(itemValue) => setUf(itemValue as string)}
-                      style={styles.picker}
-                    >
+                      style={styles.picker}>
                       {[
-                        "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT",
-                        "MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO",
-                        "RR","SC","SP","SE","TO"
+                        'AC',
+                        'AL',
+                        'AP',
+                        'AM',
+                        'BA',
+                        'CE',
+                        'DF',
+                        'ES',
+                        'GO',
+                        'MA',
+                        'MT',
+                        'MS',
+                        'MG',
+                        'PA',
+                        'PB',
+                        'PR',
+                        'PE',
+                        'PI',
+                        'RJ',
+                        'RN',
+                        'RS',
+                        'RO',
+                        'RR',
+                        'SC',
+                        'SP',
+                        'SE',
+                        'TO',
                       ].map((sigla) => (
                         <Picker.Item key={sigla} label={sigla} value={sigla} />
                       ))}
@@ -156,12 +186,35 @@ export default function EnderecoForm() {
                     <Picker
                       selectedValue={uf2}
                       onValueChange={(itemValue) => setUf2(itemValue as string)}
-                      style={styles.picker}
-                    >
+                      style={styles.picker}>
                       {[
-                        "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT",
-                        "MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO",
-                        "RR","SC","SP","SE","TO"
+                        'AC',
+                        'AL',
+                        'AP',
+                        'AM',
+                        'BA',
+                        'CE',
+                        'DF',
+                        'ES',
+                        'GO',
+                        'MA',
+                        'MT',
+                        'MS',
+                        'MG',
+                        'PA',
+                        'PB',
+                        'PR',
+                        'PE',
+                        'PI',
+                        'RJ',
+                        'RN',
+                        'RS',
+                        'RO',
+                        'RR',
+                        'SC',
+                        'SP',
+                        'SE',
+                        'TO',
                       ].map((sigla) => (
                         <Picker.Item key={sigla} label={sigla} value={sigla} />
                       ))}
@@ -228,7 +281,9 @@ export default function EnderecoForm() {
           <Text style={styles.newButtonText}>+ Novo Endereço</Text>
         </TouchableOpacity>
       </ScrollView>
-      <Text style={styles.rodape}>© DelBicos - 2025 - Todos os direitos reservados.</Text>
+      <Text style={styles.rodape}>
+        © DelBicos - 2025 - Todos os direitos reservados.
+      </Text>
     </View>
   );
 }
@@ -236,43 +291,41 @@ export default function EnderecoForm() {
 const styles = StyleSheet.create({
   scroll: {
     flex: 1,
-    width: "100%",
-    backgroundColor: "#e0e8f0",
+    width: '100%',
+    backgroundColor: '#e0e8f0',
   },
   page: {
     flexGrow: 1,
-    alignItems: "center",
+    alignItems: 'center',
     padding: 20,
-    width: "100%",
+    width: '100%',
     paddingBottom: 160,
   },
   pageTitle: {
-    width: "100%",
-    maxWidth: "80%",
+    width: '100%',
+    maxWidth: '80%',
     fontSize: 32,
-    fontWeight: "bold",
-    color: "#1d2b36",
+    fontWeight: 'bold',
+    color: '#1d2b36',
     marginBottom: 12,
-    alignSelf: "flex-start",
-    marginLeft: "3%",
+    alignSelf: 'flex-start',
+    marginLeft: '3%',
   },
 
   card: {
-    width: "100%",
-    backgroundColor: "#f8fafd",
+    width: '100%',
+    backgroundColor: '#f8fafd',
     borderRadius: 12,
     padding: 24,
     borderWidth: 2,
-    borderColor: "#3399ff30", // os dois últimos dígitos (80) representam a opacidade em hex (~50%)
-    shadowColor: "#000",
+    borderColor: '#3399ff30', // os dois últimos dígitos (80) representam a opacidade em hex (~50%)
+    shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
     elevation: 4,
     marginBottom: 20,
-
   },
-
 
   formContainer: {
     flexDirection: 'row',
@@ -289,8 +342,8 @@ const styles = StyleSheet.create({
   // título movido para fora do card
 
   row: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 12,
   },
 
@@ -302,97 +355,109 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 4,
-    color: "#333",
+    color: '#333',
   },
 
- cepInput: {
-    width: "70%",
+  cepInput: {
+    width: '70%',
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 12,
     fontSize: 18,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     flexGrow: 0,
     flexShrink: 0,
-    ...(Platform.OS === "web" ? { boxShadow: "0 1px 0 rgba(0,0,0,0.05) inset" } : {}),
+    ...(Platform.OS === 'web'
+      ? { boxShadow: '0 1px 0 rgba(0,0,0,0.05) inset' }
+      : {}),
   },
 
   enderecoInput: {
-    width: "60%",
+    width: '60%',
     flex: 1,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 12,
     fontSize: 18,
-    backgroundColor: "#fff",
-    ...(Platform.OS === "web" ? { boxShadow: "0 1px 0 rgba(0,0,0,0.05) inset" } : {}),
+    backgroundColor: '#fff',
+    ...(Platform.OS === 'web'
+      ? { boxShadow: '0 1px 0 rgba(0,0,0,0.05) inset' }
+      : {}),
   },
 
   numeroInput: {
-    width: "50%",
+    width: '50%',
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 12,
     fontSize: 18,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     flexGrow: 0,
     flexShrink: 0,
-    ...(Platform.OS === "web" ? { boxShadow: "0 1px 0 rgba(0,0,0,0.05) inset" } : {}),
+    ...(Platform.OS === 'web'
+      ? { boxShadow: '0 1px 0 rgba(0,0,0,0.05) inset' }
+      : {}),
   },
 
   bairroInput: {
     flex: 1,
     width: '50%',
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 12,
     fontSize: 18,
-    backgroundColor: "#fff",
-    ...(Platform.OS === "web" ? { boxShadow: "0 1px 0 rgba(0,0,0,0.05) inset" } : {}),
+    backgroundColor: '#fff',
+    ...(Platform.OS === 'web'
+      ? { boxShadow: '0 1px 0 rgba(0,0,0,0.05) inset' }
+      : {}),
   },
 
   ufInput: {
     width: '30%',
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 10,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     flexGrow: 0,
     flexShrink: 0,
-    ...(Platform.OS === "web" ? { boxShadow: "0 1px 0 rgba(0,0,0,0.05) inset" } : {}),
+    ...(Platform.OS === 'web'
+      ? { boxShadow: '0 1px 0 rgba(0,0,0,0.05) inset' }
+      : {}),
   },
 
   cidadeInput: {
     flex: 1,
     width: '60%',
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 12,
     fontSize: 18,
-    backgroundColor: "#fff",
-    ...(Platform.OS === "web" ? { boxShadow: "0 1px 0 rgba(0,0,0,0.05) inset" } : {}),
+    backgroundColor: '#fff',
+    ...(Platform.OS === 'web'
+      ? { boxShadow: '0 1px 0 rgba(0,0,0,0.05) inset' }
+      : {}),
   },
 
   picker: {
-    height: Platform.OS === "web" ? 46 : 50,
-    width: "100%",
+    height: Platform.OS === 'web' ? 46 : 50,
+    width: '100%',
   },
 
   saveRow: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     marginTop: 10,
   },
 
@@ -405,35 +470,35 @@ const styles = StyleSheet.create({
   },
 
   saveButton: {
-    backgroundColor: "#005A93",
+    backgroundColor: '#005A93',
     paddingVertical: 12,
     paddingHorizontal: 18,
     borderRadius: 8,
   },
 
   saveButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: '#fff',
+    fontWeight: 'bold',
   },
 
   newButton: {
-    backgroundColor: "#ff6600",
+    backgroundColor: '#ff6600',
     paddingVertical: 12,
     paddingHorizontal: 22,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
   },
 
   newButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: '#fff',
+    fontWeight: 'bold',
   },
 
   rodape: {
-		fontSize: 13,
-		color: '#1877c9',
-		marginTop: 30,
-		alignSelf: 'center',
-		fontWeight: '500',
-	},
+    fontSize: 13,
+    color: '#1877c9',
+    marginTop: 30,
+    alignSelf: 'center',
+    fontWeight: '500',
+  },
 });
