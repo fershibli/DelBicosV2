@@ -26,28 +26,34 @@ const UserProfileScreen: React.FC = () => {
   const uploadAvatarToServer = async (base64Image: string) => {
     try {
       setUploading(true);
-      
-      console.log('📤 Base64 completo (primeiros 200 chars):', base64Image.substring(0, 200));
+
+      console.log(
+        '📤 Base64 completo (primeiros 200 chars):',
+        base64Image.substring(0, 200),
+      );
       console.log('📤 Tipo MIME detectado:', base64Image.substring(0, 50));
       console.log('📤 Tamanho do base64:', base64Image.length);
-      
-      const response = await fetch(`http://localhost:3000/api/user/${userId}/avatar`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
+
+      const response = await fetch(
+        `http://localhost:3000/api/user/${userId}/avatar`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            base64Image: base64Image,
+            userId: userId,
+          }),
         },
-        body: JSON.stringify({ 
-          base64Image: base64Image,
-          userId: userId
-        }),
-      });
+      );
 
       console.log('📤 Status da resposta:', response.status);
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('❌ Erro na resposta:', errorText);
-        
+
         try {
           const errorData = JSON.parse(errorText);
           throw new Error(errorData.error || `Erro ${response.status}`);
@@ -58,7 +64,7 @@ const UserProfileScreen: React.FC = () => {
 
       const data = await response.json();
       console.log('✅ Resposta do servidor:', data);
-      
+
       const newUri = `http://localhost:3000/${data.avatarUri}`;
       setAvatarUri(newUri);
       Alert.alert('Sucesso', 'Avatar atualizado com sucesso!');
@@ -79,7 +85,9 @@ const UserProfileScreen: React.FC = () => {
         localStorage.setItem(storageKey, apiAvatarUri);
         console.log('✅ URI do avatar salva localmente no localStorage!');
       } else {
-        console.log('Lógica de armazenamento local em outras plataformas ainda não implementada.');
+        console.log(
+          'Lógica de armazenamento local em outras plataformas ainda não implementada.',
+        );
       }
     } catch (error) {
       console.error('Erro ao salvar URI do avatar localmente:', error);
@@ -88,10 +96,13 @@ const UserProfileScreen: React.FC = () => {
 
   const removeAvatar = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/user/${userId}/avatar`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/user/${userId}/avatar`,
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -136,7 +147,7 @@ const UserProfileScreen: React.FC = () => {
       console.error('Erro ao processar avatar:', error);
     }
   };
-  
+
   const loadSavedAvatar = async (apiAvatarUri: string | null) => {
     if (!apiAvatarUri) {
       setAvatarUri(null);
@@ -144,7 +155,7 @@ const UserProfileScreen: React.FC = () => {
     }
 
     const fullAvatarUrl = `http://localhost:3000/${apiAvatarUri}`;
-    
+
     if (Platform.OS === 'web') {
       setAvatarUri(fullAvatarUrl);
       console.log('💻 Imagem carregada via URL:', fullAvatarUrl);
@@ -155,14 +166,20 @@ const UserProfileScreen: React.FC = () => {
       const userImageDir = `${FileSystem.documentDirectory}userImages/${userId}`;
       const avatarPath = `${userImageDir}/avatar.jpg`;
       const fileInfo = await FileSystem.getInfoAsync(avatarPath);
-      
+
       if (fileInfo.exists) {
         setAvatarUri(avatarPath);
         console.log('📱 Imagem carregada do cache local:', avatarPath);
       } else {
-        const downloadedFile = await FileSystem.downloadAsync(fullAvatarUrl, avatarPath);
+        const downloadedFile = await FileSystem.downloadAsync(
+          fullAvatarUrl,
+          avatarPath,
+        );
         setAvatarUri(downloadedFile.uri);
-        console.log('📱 Imagem baixada e carregada do servidor:', downloadedFile.uri);
+        console.log(
+          '📱 Imagem baixada e carregada do servidor:',
+          downloadedFile.uri,
+        );
       }
     } catch (error) {
       console.error('❌ Erro ao carregar/baixar avatar:', error);
@@ -174,7 +191,9 @@ const UserProfileScreen: React.FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/user/${userId}`);
+        const response = await fetch(
+          `http://localhost:3000/api/user/${userId}`,
+        );
         if (!response.ok) throw new Error('Erro ao buscar usuário');
 
         const data: User = await response.json();
@@ -203,15 +222,15 @@ const UserProfileScreen: React.FC = () => {
   if (!userData) return null;
 
   return (
-    <ProfileWrapper 
-      user={{ 
-        userId: String(userData.id), 
+    <ProfileWrapper
+      user={{
+        userId: String(userData.id),
         userName: userData.name,
         userEmail: userData.email,
         userPhone: userData.phone,
         avatarSource: { uri: avatarUri },
         onAvatarChange: handleAvatarChange,
-        uploading: uploading
+        uploading: uploading,
       }}
     />
   );
