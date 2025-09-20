@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,32 +7,56 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  Platform
-} from "react-native";
+  Platform,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import TextCostumization from "./TextCostumization";
+import TextCostumization from './TextCostumization';
 
 const estados = [
-  "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
-  "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
-  "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
 ];
 
 export default function Formnovo() {
   const [form, setForm] = useState({
-    nome: "Douglas",
-    sobrenome: "W.",
-    telefone: "(15) 95147-89530",
-    email: "douglasw@gmail.com",
-    cpf: "001.112.223-45",
-    endereco: "Rua Alvorada de Minas",
-    numero: "1972",
-    bairro: "Jardim Alvorada",
-    cep: "23585-500",
-    cidade: "Rio de Janeiro",
-    uf: "RJ",
-    senha: "********************",
-    confirmarSenha: "********************"
+    nome: 'Douglas',
+    sobrenome: 'W.',
+    telefone: '(15) 95147-89530',
+    email: 'douglasw@gmail.com',
+    cpf: '001.112.223-45',
+    endereco: 'Rua Alvorada de Minas',
+    numero: '1972',
+    bairro: 'Jardim Alvorada',
+    cep: '23585-500',
+    cidade: 'Rio de Janeiro',
+    uf: 'RJ',
+    senha: '********************',
+    confirmarSenha: '********************',
   });
 
   function handleChange(name: string, value: string) {
@@ -40,7 +64,7 @@ export default function Formnovo() {
   }
 
   function handleSubmit() {
-    Alert.alert("Alterações salvas!");
+    Alert.alert('Alterações salvas!');
   }
 
   return (
@@ -48,31 +72,37 @@ export default function Formnovo() {
       <View style={styles.formWrapper}>
         <View style={styles.row}>
           <View style={styles.inputColNome}>
-            <Text style={styles.label}><TextCostumization>Nome</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>Nome</TextCostumization>
+            </Text>
             <TextInput
               style={styles.input}
               value={form.nome}
-              onChangeText={text => handleChange("nome", text)}
+              onChangeText={(text) => handleChange('nome', text)}
               placeholder="Nome"
               placeholderTextColor="#aaa"
             />
           </View>
           <View style={styles.inputColSobrenome}>
-            <Text style={styles.label}><TextCostumization>Sobrenome</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>Sobrenome</TextCostumization>
+            </Text>
             <TextInput
               style={styles.input}
               value={form.sobrenome}
-              onChangeText={text => handleChange("sobrenome", text)}
+              onChangeText={(text) => handleChange('sobrenome', text)}
               placeholder="Sobrenome"
               placeholderTextColor="#aaa"
             />
           </View>
           <View style={styles.inputColTelefone}>
-            <Text style={styles.label}><TextCostumization>Telefone</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>Telefone</TextCostumization>
+            </Text>
             <TextInput
               style={styles.input}
               value={form.telefone}
-              onChangeText={text => handleChange("telefone", text)}
+              onChangeText={(text) => handleChange('telefone', text)}
               placeholder="Telefone"
               placeholderTextColor="#aaa"
               keyboardType="phone-pad"
@@ -82,11 +112,13 @@ export default function Formnovo() {
 
         <View style={styles.row}>
           <View style={styles.inputColEmail}>
-            <Text style={styles.label}><TextCostumization>E-mail</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>E-mail</TextCostumization>
+            </Text>
             <TextInput
               style={styles.input}
               value={form.email}
-              onChangeText={text => handleChange("email", text)}
+              onChangeText={(text) => handleChange('email', text)}
               placeholder="E-mail"
               placeholderTextColor="#aaa"
               keyboardType="email-address"
@@ -94,22 +126,26 @@ export default function Formnovo() {
             />
           </View>
           <View style={styles.inputColCpf}>
-            <Text style={styles.label}><TextCostumization>CPF</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>CPF</TextCostumization>
+            </Text>
             <TextInput
               style={styles.input}
               value={form.cpf}
-              onChangeText={text => handleChange("cpf", text)}
+              onChangeText={(text) => handleChange('cpf', text)}
               placeholder="CPF"
               placeholderTextColor="#aaa"
               keyboardType="numeric"
             />
           </View>
           <View style={styles.inputColCep}>
-            <Text style={styles.label}><TextCostumization>CEP</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>CEP</TextCostumization>
+            </Text>
             <TextInput
               style={styles.input}
               value={form.cep}
-              onChangeText={text => handleChange("cep", text)}
+              onChangeText={(text) => handleChange('cep', text)}
               placeholder="CEP"
               placeholderTextColor="#aaa"
               keyboardType="numeric"
@@ -119,32 +155,38 @@ export default function Formnovo() {
 
         <View style={styles.row}>
           <View style={styles.inputColEndereco}>
-            <Text style={styles.label}><TextCostumization>Endereço</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>Endereço</TextCostumization>
+            </Text>
             <TextInput
               style={styles.input}
               value={form.endereco}
-              onChangeText={text => handleChange("endereco", text)}
+              onChangeText={(text) => handleChange('endereco', text)}
               placeholder="Endereço"
               placeholderTextColor="#aaa"
             />
           </View>
           <View style={styles.inputColNumero}>
-            <Text style={styles.label}><TextCostumization>Número</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>Número</TextCostumization>
+            </Text>
             <TextInput
               style={styles.input}
               value={form.numero}
-              onChangeText={text => handleChange("numero", text)}
+              onChangeText={(text) => handleChange('numero', text)}
               placeholder="Número"
               placeholderTextColor="#aaa"
               keyboardType="numeric"
             />
           </View>
           <View style={styles.inputColBairro}>
-            <Text style={styles.label}><TextCostumization>Bairro</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>Bairro</TextCostumization>
+            </Text>
             <TextInput
               style={styles.input}
               value={form.bairro}
-              onChangeText={text => handleChange("bairro", text)}
+              onChangeText={(text) => handleChange('bairro', text)}
               placeholder="Bairro"
               placeholderTextColor="#aaa"
             />
@@ -153,26 +195,29 @@ export default function Formnovo() {
 
         <View style={styles.row}>
           <View style={styles.inputColCidade}>
-            <Text style={styles.label}><TextCostumization>Cidade</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>Cidade</TextCostumization>
+            </Text>
             <TextInput
               style={styles.input}
               value={form.cidade}
-              onChangeText={text => handleChange("cidade", text)}
+              onChangeText={(text) => handleChange('cidade', text)}
               placeholder="Cidade"
               placeholderTextColor="#aaa"
             />
           </View>
           <View style={styles.inputColUf}>
-            <Text style={styles.label}><TextCostumization>UF</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>UF</TextCostumization>
+            </Text>
             <View style={styles.pickerWrapper}>
               <Picker
                 selectedValue={form.uf}
-                onValueChange={(value: string) => handleChange("uf", value)}
+                onValueChange={(value: string) => handleChange('uf', value)}
                 style={styles.picker}
                 dropdownIconColor="#222"
-                mode={Platform.OS === 'ios' ? 'dropdown' : 'dialog'}
-              >
-                {estados.map(uf => (
+                mode={Platform.OS === 'ios' ? 'dropdown' : 'dialog'}>
+                {estados.map((uf) => (
                   <Picker.Item key={uf} label={uf} value={uf} />
                 ))}
               </Picker>
@@ -182,22 +227,26 @@ export default function Formnovo() {
 
         <View style={styles.row}>
           <View style={styles.inputColSenha}>
-            <Text style={styles.label}><TextCostumization>Senha</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>Senha</TextCostumization>
+            </Text>
             <TextInput
               style={styles.input}
               value={form.senha}
-              onChangeText={text => handleChange("senha", text)}
+              onChangeText={(text) => handleChange('senha', text)}
               placeholder="*"
               placeholderTextColor="#aaa"
               secureTextEntry
             />
           </View>
           <View style={styles.inputColConfirmarSenha}>
-            <Text style={styles.label}><TextCostumization>Confirmar Senha</TextCostumization></Text>
+            <Text style={styles.label}>
+              <TextCostumization>Confirmar Senha</TextCostumization>
+            </Text>
             <TextInput
               style={styles.input}
               value={form.confirmarSenha}
-              onChangeText={text => handleChange("confirmarSenha", text)}
+              onChangeText={(text) => handleChange('confirmarSenha', text)}
               placeholder="*"
               placeholderTextColor="#aaa"
               secureTextEntry
@@ -219,7 +268,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingVertical: 24,
     alignItems: 'center',
-    minWidth: 1000
+    minWidth: 1000,
   },
   formWrapper: {
     backgroundColor: '#fff',
@@ -231,53 +280,53 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 2,
-      height: 3
+      height: 3,
     },
     shadowOpacity: 0.15,
     shadowRadius: 8,
     borderWidth: 1,
     borderColor: '#bdbdbd',
-    marginBottom: 30
+    marginBottom: 30,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'flex-end',
     marginBottom: 18,
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   inputColNome: {
     minWidth: 300,
     maxWidth: 300,
     marginRight: 18,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   inputColSobrenome: {
     flexBasis: '38%',
     minWidth: 300,
     maxWidth: 300,
     marginRight: 18,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   inputColTelefone: {
     minWidth: 250,
     maxWidth: 250,
     marginRight: 0,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   inputColEmail: {
     flexBasis: '65%',
     minWidth: 300,
     maxWidth: 300,
     marginRight: 18,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   inputColCpf: {
     flexBasis: '35%',
     minWidth: 200,
     maxWidth: 200,
     marginRight: 0,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   inputColCep: {
     flexBasis: '100%',
@@ -285,70 +334,70 @@ const styles = StyleSheet.create({
     maxWidth: 170,
     marginRight: 0,
     alignItems: 'flex-start',
-    marginLeft: 18
+    marginLeft: 18,
   },
   inputColEndereco: {
     flexBasis: '38%',
     minWidth: 300,
     maxWidth: 300,
     marginRight: 18,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   inputColNumero: {
     flexBasis: '15%',
     minWidth: 90,
     maxWidth: 90,
     marginRight: 18,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   inputColBairro: {
     flexBasis: '27%',
     minWidth: 200,
     maxWidth: 200,
     marginRight: 18,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   inputColUf: {
     flexBasis: '25%',
     minWidth: 80,
     maxWidth: 80,
     marginRight: 0,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   inputColCidade: {
     flexBasis: '70%',
     minWidth: 300,
     maxWidth: 300,
     marginRight: 18,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   inputColSenha: {
     flexBasis: '40%',
     minWidth: 300,
     maxWidth: 300,
     marginRight: 18,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   inputColConfirmarSenha: {
     flexBasis: '40%',
     minWidth: 300,
     maxWidth: 300,
     marginRight: 18,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   buttonCol: {
     justifyContent: 'flex-end',
     alignItems: 'flex-start',
     height: 60,
     marginTop: 20,
-    marginLeft: 75, 
-    minWidth: 130 
+    marginLeft: 75,
+    minWidth: 130,
   },
   label: {
     marginBottom: 6,
     fontWeight: '600',
     fontSize: 22,
-    color: '#222'
+    color: '#222',
   },
   input: {
     width: '100%',
@@ -366,15 +415,15 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: {
           width: 2,
-          height: 3
+          height: 3,
         },
         shadowOpacity: 0.13,
-        shadowRadius: 6
+        shadowRadius: 6,
       },
       android: {
-        elevation: 5
-      }
-    })
+        elevation: 5,
+      },
+    }),
   },
   button: {
     backgroundColor: '#006494',
@@ -389,22 +438,22 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: {
           width: 1,
-          height: 2
+          height: 2,
         },
         shadowOpacity: 0.13,
-        shadowRadius: 6
+        shadowRadius: 6,
       },
       android: {
-        elevation: 5
-      }
-    })
+        elevation: 5,
+      },
+    }),
   },
   buttonText: {
     color: '#fff',
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
-    width: '100%'
+    width: '100%',
   },
   pickerWrapper: {
     width: '100%',
@@ -418,15 +467,15 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: {
           width: 2,
-          height: 3
+          height: 3,
         },
         shadowOpacity: 0.13,
-        shadowRadius: 6
+        shadowRadius: 6,
       },
       android: {
-        elevation: 5
-      }
-    })
+        elevation: 5,
+      },
+    }),
   },
   picker: {
     width: '100%',
@@ -434,6 +483,6 @@ const styles = StyleSheet.create({
     color: '#222',
     fontSize: 22,
     fontWeight: '700',
-    backgroundColor: 'transparent'
-  }
+    backgroundColor: 'transparent',
+  },
 });
