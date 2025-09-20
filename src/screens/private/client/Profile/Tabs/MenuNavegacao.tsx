@@ -1,7 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
 import TextCostumization from './TextCostumization';
-
 
 type MenuNavegacaoProps = {
   onItemSelected?: (screen: string) => void;
@@ -14,13 +12,12 @@ type MenuItem = {
   screen: string;
 };
 
-
 const MenuNavegacao: React.FC<MenuNavegacaoProps> = ({
   onItemSelected,
   initialActive = 'DadosConta',
 }) => {
   const [activeItem, setActiveItem] = useState(initialActive);
-  
+
   // Sincroniza quando a tela ativa fornecida pelo pai mudar
   useEffect(() => {
     setActiveItem(initialActive);
@@ -53,7 +50,7 @@ const MenuNavegacao: React.FC<MenuNavegacaoProps> = ({
     maxWidth: '100%',
   };
   const menuItem: React.CSSProperties = {
-    width: "90%",
+    width: '90%',
     height: 41,
     borderRadius: 20,
     marginBottom: 17,
@@ -93,14 +90,12 @@ const MenuNavegacao: React.FC<MenuNavegacaoProps> = ({
                 ...menuItem,
                 ...(isActive ? activeMenuItem : inactiveMenuItem),
               }}
-              onClick={() => handlePress(item.screen)}
-            >
+              onClick={() => handlePress(item.screen)}>
               <TextCostumization
                 style={{
                   ...menuText,
                   ...(isActive ? activeMenuText : {}),
-                }}
-              >
+                }}>
                 {item.title}
               </TextCostumization>
             </button>
