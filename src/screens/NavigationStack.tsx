@@ -16,6 +16,7 @@ import Login from './public/Login';
 import Header from '@components/Header';
 import { useUserStore } from '@stores/User';
 import { LoginPassword } from './public/LoginPassword';
+import ProfileScreen from './private/client/Profile';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -98,6 +99,12 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: VerificationScreen,
       options: {
         headerShown: false, // Para manter a consistência com as telas de login/registro
+      },
+    },
+    ClientProfile: {
+      screen: ProfileScreen,
+      linking: {
+        path: 'client-profile',
       },
     },
     NotFound: {
