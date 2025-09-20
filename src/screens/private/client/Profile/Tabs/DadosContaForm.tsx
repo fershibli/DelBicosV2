@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Platform, Modal, Image, Alert, Animated, Easing, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+  Modal,
+  Image,
+  Alert,
+  Animated,
+  Easing,
+  ActivityIndicator,
+} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 interface UserProfileProps {
@@ -25,7 +38,12 @@ interface StatusModalProps {
   onClose: () => void;
 }
 
-const StatusModal = ({ visible, status, message, onClose }: StatusModalProps) => {
+const StatusModal = ({
+  visible,
+  status,
+  message,
+  onClose,
+}: StatusModalProps) => {
   const isSuccess = status === 'success';
   const isError = status === 'error';
   const isProgress = status === 'loading';
@@ -49,15 +67,27 @@ const StatusModal = ({ visible, status, message, onClose }: StatusModalProps) =>
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}>
       <View style={statusModalStyles.overlay}>
         <View style={statusModalStyles.container}>
           <Text style={statusModalStyles.icon}>{getIcon()}</Text>
           <Text style={statusModalStyles.title}>{getTitle()}</Text>
           <Text style={statusModalStyles.message}>{message}</Text>
-          {isProgress && <ActivityIndicator size="small" color="#005A93" style={statusModalStyles.activityIndicator} />}
+          {isProgress && (
+            <ActivityIndicator
+              size="small"
+              color="#005A93"
+              style={statusModalStyles.activityIndicator}
+            />
+          )}
           {!isProgress && (
-            <TouchableOpacity style={statusModalStyles.button} onPress={onClose}>
+            <TouchableOpacity
+              style={statusModalStyles.button}
+              onPress={onClose}>
               <Text style={statusModalStyles.buttonText}>OK</Text>
             </TouchableOpacity>
           )}
@@ -96,12 +126,14 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
 
   const requestPermissions = async () => {
     if (Platform.OS !== 'web') {
-      const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
-      const { status: libraryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status: cameraStatus } =
+        await ImagePicker.requestCameraPermissionsAsync();
+      const { status: libraryStatus } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (cameraStatus !== 'granted' || libraryStatus !== 'granted') {
         Alert.alert(
           'Permissões necessárias',
-          'Precisamos de acesso à câmera e galeria para esta funcionalidade.'
+          'Precisamos de acesso à câmera e galeria para esta funcionalidade.',
         );
       }
     }
@@ -110,20 +142,50 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
   const handleAvatarPress = () => setShowOptions(true);
   const handleAvatarLongPress = () => {
     Animated.sequence([
-      Animated.timing(scaleAnim, { toValue: 0.95, duration: 100, easing: Easing.ease, useNativeDriver: true }),
-      Animated.timing(scaleAnim, { toValue: 1, duration: 100, easing: Easing.ease, useNativeDriver: true }),
+      Animated.timing(scaleAnim, {
+        toValue: 0.95,
+        duration: 100,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 100,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
     ]).start(() => setShowOptions(true));
   };
   const handleHoverIn = () => {
     Animated.parallel([
-      Animated.timing(scaleAnim, { toValue: 1.05, duration: 200, easing: Easing.ease, useNativeDriver: true }),
-      Animated.timing(overlayOpacity, { toValue: 1, duration: 200, easing: Easing.ease, useNativeDriver: true }),
+      Animated.timing(scaleAnim, {
+        toValue: 1.05,
+        duration: 200,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
+      Animated.timing(overlayOpacity, {
+        toValue: 1,
+        duration: 200,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
     ]).start();
   };
   const handleHoverOut = () => {
     Animated.parallel([
-      Animated.timing(scaleAnim, { toValue: 1, duration: 200, easing: Easing.ease, useNativeDriver: true }),
-      Animated.timing(overlayOpacity, { toValue: 0, duration: 200, easing: Easing.ease, useNativeDriver: true }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 200,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
+      Animated.timing(overlayOpacity, {
+        toValue: 0,
+        duration: 200,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
     ]).start();
   };
 
@@ -186,18 +248,22 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
 
   const removePhoto = () => {
     if (user?.uploading) return;
-    Alert.alert('Remover foto', 'Tem certeza que deseja remover a foto de perfil?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Remover',
-        style: 'destructive',
-        onPress: () => {
-          if (user?.onAvatarChange) {
-            user.onAvatarChange(null);
-          }
+    Alert.alert(
+      'Remover foto',
+      'Tem certeza que deseja remover a foto de perfil?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Remover',
+          style: 'destructive',
+          onPress: () => {
+            if (user?.onAvatarChange) {
+              user.onAvatarChange(null);
+            }
+          },
         },
-      },
-    ]);
+      ],
+    );
     setShowOptions(false);
   };
 
@@ -207,9 +273,9 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
     setStatusMessage('Estamos salvando suas alterações...');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       const success = Math.random() > 0.2;
-      
+
       if (success) {
         console.log('Dados Salvos:', { nome, sobrenome, cpf, email, telefone });
         setStatus('success');
@@ -219,7 +285,10 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
       }
     } catch (error: any) {
       setStatus('error');
-      setStatusMessage(error.message || 'Ocorreu um erro inesperado. Tente novamente mais tarde.');
+      setStatusMessage(
+        error.message ||
+          'Ocorreu um erro inesperado. Tente novamente mais tarde.',
+      );
       console.error('Erro ao salvar:', error);
     }
   };
@@ -244,39 +313,112 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
               onPressIn={handleHoverIn}
               onPressOut={handleHoverOut}
               activeOpacity={0.9}
-              disabled={user?.uploading}
-            >
-              <Animated.View style={{ width: '100%', height: '100%', borderRadius: 60, overflow: 'hidden', backgroundColor: 'orange', alignItems: 'center', justifyContent: 'center', transform: [{ scale: scaleAnim }] }}>
+              disabled={user?.uploading}>
+              <Animated.View
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 60,
+                  overflow: 'hidden',
+                  backgroundColor: 'orange',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transform: [{ scale: scaleAnim }],
+                }}>
                 {avatarUriToDisplay ? (
-                  <Image source={{ uri: avatarUriToDisplay }} style={{ width: '100%', height: '100%', borderRadius: 60 }} resizeMode="cover" />
+                  <Image
+                    source={{ uri: avatarUriToDisplay }}
+                    style={{ width: '100%', height: '100%', borderRadius: 60 }}
+                    resizeMode="cover"
+                  />
                 ) : (
-                  <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#fff' }}>{nome[0]}{sobrenome[0]}</Text>
+                  <Text
+                    style={{ fontSize: 36, fontWeight: 'bold', color: '#fff' }}>
+                    {nome[0]}
+                    {sobrenome[0]}
+                  </Text>
                 )}
-                <Animated.View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 60, alignItems: 'center', justifyContent: 'center', opacity: overlayOpacity }}>
+                <Animated.View
+                  style={{
+                    ...StyleSheet.absoluteFillObject,
+                    backgroundColor: 'rgba(0,0,0,0.6)',
+                    borderRadius: 60,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: overlayOpacity,
+                  }}>
                   {user?.uploading ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
-                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600', textAlign: 'center' }}>Alterar Foto</Text>
+                    <Text
+                      style={{
+                        color: '#fff',
+                        fontSize: 16,
+                        fontWeight: '600',
+                        textAlign: 'center',
+                      }}>
+                      Alterar Foto
+                    </Text>
                   )}
                 </Animated.View>
               </Animated.View>
             </TouchableOpacity>
-            <Modal visible={showOptions} transparent animationType="fade" onRequestClose={() => setShowOptions(false)}>
+            <Modal
+              visible={showOptions}
+              transparent
+              animationType="fade"
+              onRequestClose={() => setShowOptions(false)}>
               <View style={modalStyles.modalOverlay}>
-                <TouchableOpacity style={{flex:1, position:'absolute', width:'100%', height:'100%'}} activeOpacity={1} onPress={() => setShowOptions(false)} />
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                  }}
+                  activeOpacity={1}
+                  onPress={() => setShowOptions(false)}
+                />
                 <View style={modalStyles.optionsContainer}>
-                  <TouchableOpacity style={modalStyles.optionButton} onPress={handleTakePhoto} disabled={user?.uploading}>
-                    <Text style={modalStyles.optionText}>{user?.uploading ? 'Processando...' : 'Tirar Foto'}</Text>
+                  <TouchableOpacity
+                    style={modalStyles.optionButton}
+                    onPress={handleTakePhoto}
+                    disabled={user?.uploading}>
+                    <Text style={modalStyles.optionText}>
+                      {user?.uploading ? 'Processando...' : 'Tirar Foto'}
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={modalStyles.optionButton} onPress={handlePickFromGallery} disabled={user?.uploading}>
-                    <Text style={modalStyles.optionText}>{user?.uploading ? 'Processando...' : 'Escolher da Galeria'}</Text>
+                  <TouchableOpacity
+                    style={modalStyles.optionButton}
+                    onPress={handlePickFromGallery}
+                    disabled={user?.uploading}>
+                    <Text style={modalStyles.optionText}>
+                      {user?.uploading
+                        ? 'Processando...'
+                        : 'Escolher da Galeria'}
+                    </Text>
                   </TouchableOpacity>
                   {avatarUriToDisplay && (
-                    <TouchableOpacity style={[modalStyles.optionButton, modalStyles.removeOption]} onPress={removePhoto} disabled={user?.uploading}>
-                      <Text style={[modalStyles.optionText, modalStyles.removeText]}>Remover Foto</Text>
+                    <TouchableOpacity
+                      style={[
+                        modalStyles.optionButton,
+                        modalStyles.removeOption,
+                      ]}
+                      onPress={removePhoto}
+                      disabled={user?.uploading}>
+                      <Text
+                        style={[
+                          modalStyles.optionText,
+                          modalStyles.removeText,
+                        ]}>
+                        Remover Foto
+                      </Text>
                     </TouchableOpacity>
                   )}
-                  <TouchableOpacity style={[modalStyles.optionButton, modalStyles.cancelOption]} onPress={() => setShowOptions(false)} disabled={user?.uploading}>
+                  <TouchableOpacity
+                    style={[modalStyles.optionButton, modalStyles.cancelOption]}
+                    onPress={() => setShowOptions(false)}
+                    disabled={user?.uploading}>
                     <Text style={modalStyles.optionText}>Cancelar</Text>
                   </TouchableOpacity>
                 </View>
@@ -288,17 +430,29 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
             <View style={styles.row}>
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Nome</Text>
-                <TextInput style={styles.input} value={nome} onChangeText={setNome} />
+                <TextInput
+                  style={styles.input}
+                  value={nome}
+                  onChangeText={setNome}
+                />
               </View>
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Sobrenome</Text>
-                <TextInput style={styles.input} value={sobrenome} onChangeText={setSobrenome} />
+                <TextInput
+                  style={styles.input}
+                  value={sobrenome}
+                  onChangeText={setSobrenome}
+                />
               </View>
             </View>
             <View style={styles.row}>
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>CPF</Text>
-                <TextInput style={styles.input} value={cpf} onChangeText={setCpf} />
+                <TextInput
+                  style={styles.input}
+                  value={cpf}
+                  onChangeText={setCpf}
+                />
               </View>
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>E-mail</Text>
@@ -321,7 +475,9 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
                 />
               </View>
               <View style={styles.saveButtonContainer}>
-                <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+                <TouchableOpacity
+                  style={styles.saveButton}
+                  onPress={handleSaveChanges}>
                   <Text style={styles.saveButtonText}>Salvar Alterações</Text>
                 </TouchableOpacity>
               </View>
@@ -330,7 +486,16 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
         </View>
       </View>
       <View style={{ flexGrow: 1 }} />
-      <Text style={{ fontSize: 13, color: '#1877c9', marginTop: 30, alignSelf: 'center', fontWeight: '500' }}>© DelBicos - 2025 - Todos os direitos reservados.</Text>
+      <Text
+        style={{
+          fontSize: 13,
+          color: '#1877c9',
+          marginTop: 30,
+          alignSelf: 'center',
+          fontWeight: '500',
+        }}>
+        © DelBicos - 2025 - Todos os direitos reservados.
+      </Text>
       <StatusModal
         visible={showStatusModal}
         status={status}
@@ -414,7 +579,7 @@ const styles = StyleSheet.create({
   },
   telefoneInput: {
     borderWidth: 2,
-    width: "50%",
+    width: '50%',
   },
   saveButtonContainer: {
     width: '48%',
