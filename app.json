@@ -20,14 +20,27 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Este aplicativo precisa acessar sua localização para mostrar serviços disponíveis na sua região.",
         "NSLocationAlwaysUsageDescription": "Este aplicativo precisa acessar sua localização para mostrar serviços disponíveis na sua região."
+      },
+      "config": {
+        "googleMapsApiKey": "SUA_CHAVE_API_DO_GOOGLE_MAPS_PARA_IOS"
       }
     },
     "android": {
       "package": "com.delbicos.app",
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      "config": {
+        "googleMaps": {
+          "apiKey": "SUA_CHAVE_API_DO_GOOGLE_MAPS_PARA_ANDROID"
+        }
+      }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "config": {
+         "googleMaps": {
+           "apiKey": "SUA_CHAVE_API_DO_GOOGLE_MAPS_PARA_WEB"
+         }
+      }
     },
     "description": "Aplicativo de delivery de serviços temporários (bicos).",
     "scheme": "delbicos",
