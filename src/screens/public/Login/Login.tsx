@@ -4,19 +4,35 @@ import { useNavigation } from '@react-navigation/native';
 import LocationOptions from '@components/LocationOptions';
 import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
+import * as Location from 'expo-location';
 
 function LoginScreen() {
   const navigation = useNavigation();
   const { setLocation } = useLocation();
 
-  const handleLocation = (city: string, country: string) => {
-    console.log('handleLocation chamado com:', city, country);
-    setLocation(city, country);
-    if (city && country) {
-      console.log('Localização definida, navegando para Feed');
-      navigation.navigate('Feed');
-    } else {
-      console.log('Falha ao definir localização, navegando não realizado');
+  const handleLocation = async (coords: {
+    latitude: number;
+    longitude: number;
+  }) => {
+    try {
+      console.log('handleLocation chamado com coords:', coords);
+      const results = await Location.reverseGeocodeAsync({
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+      });
+      const place = results?.[0];
+      const city = place?.city || place?.subregion || '';
+      const state = place?.region || '';
+      console.log('Reverse geocoded para:', { city, state });
+      setLocation(city, state);
+      if (city && state) {
+        console.log('Localização definida, navegando para Feed');
+        navigation.navigate('Feed');
+      } else {
+        console.log('Falha ao definir localização; navegação não realizada');
+      }
+    } catch (error) {
+      console.error('Erro no reverse geocode:', error);
     }
   };
 
