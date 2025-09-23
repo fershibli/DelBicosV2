@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 
 export const ENVIRONMENT: 'development' | 'staging' | 'production' =
   process.env.EXPO_PUBLIC_ENVIRONMENT;
+export const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY || '';
 const DOMAIN_ANDROID = process.env.EXPO_PUBLIC_DOMAIN_ANDROID;
 const DOMAIN_IOS = process.env.EXPO_PUBLIC_DOMAIN_IOS;
 const PORT = process.env.EXPO_PUBLIC_PORT;
