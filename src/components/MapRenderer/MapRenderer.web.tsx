@@ -1,14 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Platform,
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import { Region, AddressData } from '../../lib/types/types';
+import { Region, AddressData } from '@lib/types/types';
+import { GOOGLE_MAPS_API_KEY } from '@config/varEnvs';
 
 interface WebMapWrapperProps {
   region: Region | null;
@@ -55,20 +49,8 @@ const WebMapWrapper: React.FC<WebMapWrapperProps> = ({
   style,
 }) => {
   const mapRef = useRef<google.maps.Map | null>(null);
-  const [apiKey, setApiKey] = useState<string>('');
   const [mapLoaded, setMapLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Carrega a API key apenas no client-side
-  useEffect(() => {
-    if (typeof window !== 'undefined' && Platform.OS === 'web') {
-      const key =
-        process.env.GOOGLE_MAPS_API_KEY ||
-        (window as any).GOOGLE_MAPS_API_KEY ||
-        '';
-      setApiKey(key);
-    }
-  }, []);
 
   useEffect(() => {
     if (region && mapRef.current && mapLoaded) {
@@ -99,7 +81,7 @@ const WebMapWrapper: React.FC<WebMapWrapperProps> = ({
   };
 
   // Se não tem API key, mostra placeholder
-  if (!apiKey) {
+  if (!GOOGLE_MAPS_API_KEY) {
     return (
       <View style={[styles.mapContainer, style]}>
         <View style={styles.placeholder}>
@@ -129,7 +111,7 @@ const WebMapWrapper: React.FC<WebMapWrapperProps> = ({
   return (
     <View style={[styles.mapContainer, style]}>
       <LoadScript
-        googleMapsApiKey={apiKey}
+        googleMapsApiKey={GOOGLE_MAPS_API_KEY}
         onError={handleLoadError}
         onLoad={() => setMapLoaded(true)}>
         <GoogleMap
