@@ -1,3 +1,10 @@
+export enum AppointmentStatus {
+  PENDING = 'pending',
+  CONFIRMED = 'confirmed',
+  COMPLETED = 'completed',
+  CANCELED = 'canceled',
+}
+
 export interface Service {
   id: number;
   title: string;
@@ -57,7 +64,7 @@ export interface Appointment {
   review: string | null;
   start_time: string; // ISO date string
   end_time: string; // ISO date string
-  status: 'pending' | 'confirmed' | 'completed' | 'canceled';
+  status: AppointmentStatus;
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
   Service: Service;
