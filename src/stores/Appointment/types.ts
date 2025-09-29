@@ -74,4 +74,9 @@ export interface Appointment {
 
 export interface AppointmentStore {
   fetchAppointments: () => Promise<Appointment[]>;
+  reviewAppointment: (
+    appointmentId: number,
+    rating: number,
+    review: string,
+  ) => Promise<boolean>;
 }

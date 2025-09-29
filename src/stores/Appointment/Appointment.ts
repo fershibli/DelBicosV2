@@ -16,4 +16,16 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
       return [];
     }
   },
+  reviewAppointment: async (appointmentId, rating, review) => {
+    try {
+      const response = await backendHttpClient.post(
+        `api/appointments/${appointmentId}/review`,
+        { rating, review },
+      );
+      return response.status === 200;
+    } catch (error) {
+      console.error('Failed to submit review:', error);
+      return false;
+    }
+  },
 }));
