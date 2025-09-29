@@ -78,6 +78,18 @@ export const buttonColorVariants = {
       color: '#A9A9A9',
     },
   },
+  primaryGreen: {
+    backgroundColor: '#22843B',
+    color: '#FFFFFF',
+    hover: {
+      backgroundColor: '#FFFFFF',
+      color: '#22843B',
+    },
+    disabled: {
+      backgroundColor: '#D3D3D3',
+      color: '#A9A9A9',
+    },
+  },
 };
 
 export type ButtonFontVariantsType = typeof buttonFontVariants;
