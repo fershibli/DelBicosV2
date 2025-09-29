@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, Alert, Platform } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import ProfileWrapper from './ProfileWrapper';
+import { useUserStore } from '@stores/User';
 
 interface User {
   id: number;
@@ -9,8 +10,8 @@ interface User {
   email: string;
   phone: string;
   active: boolean;
-  avatarUri: string | null;
-  bannerImg: string;
+  avatar_uri: string | null;
+  banner_uri: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -21,7 +22,9 @@ const UserProfileScreen: React.FC = () => {
   const [avatarUri, setAvatarUri] = useState<string | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
 
-  const userId = '4';
+  const { user } = useUserStore();
+
+  const userId = user?.id.toString() || '';
 
   const uploadAvatarToServer = async (base64Image: string) => {
     try {
@@ -65,7 +68,7 @@ const UserProfileScreen: React.FC = () => {
       const data = await response.json();
       console.log('✅ Resposta do servidor:', data);
 
-      const newUri = `http://localhost:3000/${data.avatarUri}`;
+      const newUri = `http://localhost:3000/${data.avatar_uri}`;
       setAvatarUri(newUri);
       Alert.alert('Sucesso', 'Avatar atualizado com sucesso!');
       return data;
@@ -199,7 +202,7 @@ const UserProfileScreen: React.FC = () => {
         const data: User = await response.json();
         setUserData(data);
 
-        await loadSavedAvatar(data.avatarUri);
+        await loadSavedAvatar(data.avatar_uri);
       } catch (error) {
         console.error('Erro ao carregar dados do usuário:', error);
         Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
