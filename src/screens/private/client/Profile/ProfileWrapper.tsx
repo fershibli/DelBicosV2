@@ -5,6 +5,7 @@ import MenuNavegacao from './Tabs/MenuNavegacao';
 import AlterarEnderecoForm from './Tabs/AlterarEnderecoForm';
 import DadosContaForm from './Tabs/DadosContaForm';
 import TrocarSenhaForm from './Tabs/TrocarSenhaForm';
+import MeusAgendamentos from './Tabs/MeusAgendamentos';
 
 interface UserProfileProps {
   userId: string;
@@ -27,6 +28,8 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
         return <DadosContaForm user={user} />;
       case 'TrocarSenhaForm':
         return <TrocarSenhaForm />;
+      case 'MeusAgendamentos':
+        return <MeusAgendamentos />;
       default:
         return (
           <Text style={styles.contentText}>Selecione uma opção no menu</Text>
