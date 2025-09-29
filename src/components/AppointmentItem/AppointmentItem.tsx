@@ -5,6 +5,7 @@ import { Card, CardMedia, Modal, Rating, TextField } from '@mui/material';
 import { Text, View } from 'react-native';
 import { useUnsplashStore } from '@stores/Unsplash/Unsplash';
 import { Button } from '@components/Button';
+import { useAppointmentStore } from '@stores/Appointment';
 
 interface ReviewAppointmentProps {
   appointment: Appointment;
@@ -17,6 +18,17 @@ const ReviewAppointment = ({
 }: ReviewAppointmentProps) => {
   const [rating, setRating] = useState<number | null>(0);
   const [review, setReview] = useState<string>('');
+
+  const { reviewAppointment } = useAppointmentStore();
+
+  const handleSubmit = async () => {
+    if (rating !== null) {
+      const success = await reviewAppointment(appointment.id, rating, review);
+      if (success) {
+        onClose();
+      }
+    }
+  };
 
   return (
     <View
@@ -58,7 +70,7 @@ const ReviewAppointment = ({
           sizeVariant="medium"
           colorVariant="primaryGreen"
           fontVariant="AfacadRegular15"
-          onClick={onClose}>
+          onClick={handleSubmit}>
           Enviar Avaliação
         </Button>
       </View>
@@ -98,14 +110,10 @@ const AppointmentItem: React.FC<AppointmentItemProps> = ({ appointment }) => {
             {appointment.Professional.User.name}
           </Text>
           <Text style={Styles.CategoryTitle}>{appointment.Service.title}</Text>
-          <Text style={Styles.LocationTitle}>{appointment.address_id}</Text>
           <Text style={Styles.ServiceTitle}>{appointment.Service.title}</Text>
-          <Text style={Styles.StartTime}>
-            {new Date(appointment.start_time).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </Text>
+          <Rating readOnly value={appointment.rating || 0} />
+          <Text style={Styles.LocationTitle}>{appointment.review}</Text>
+          <Text style={Styles.StartTime}>{appointment.status}</Text>
           <View>
             <Button
               sizeVariant="medium"
@@ -123,6 +131,8 @@ const AppointmentItem: React.FC<AppointmentItemProps> = ({ appointment }) => {
               component="img"
               image={appointment.Service.banner_uri || mockedImage}
               alt={appointment.Service.title}
+              width={300}
+              height={300}
             />
           )}
         </View>
