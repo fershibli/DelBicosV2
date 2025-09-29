@@ -1,17 +1,77 @@
 import React, { useEffect, useState } from 'react';
 import { Appointment } from '@stores/Appointment/types';
 import { Styles } from './styles';
-import { Card, CardMedia } from '@mui/material';
+import { Card, CardMedia, Modal, Rating, TextField } from '@mui/material';
 import { Text, View } from 'react-native';
 import { useUnsplashStore } from '@stores/Unsplash/Unsplash';
 import { Button } from '@components/Button';
 
-// Interface
+interface ReviewAppointmentProps {
+  appointment: Appointment;
+  onClose: () => void;
+}
+
+const ReviewAppointment = ({
+  appointment,
+  onClose,
+}: ReviewAppointmentProps) => {
+  const [rating, setRating] = useState<number | null>(0);
+  const [review, setReview] = useState<string>('');
+
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+      }}>
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'white',
+          padding: 20,
+          borderRadius: 10,
+          gap: 10,
+          width: 300,
+        }}>
+        <Text>Avaliar Serviço</Text>
+        <Rating
+          name="appointment-rating"
+          value={rating}
+          precision={1}
+          onChange={(event, newValue) => {
+            setRating(newValue);
+          }}
+        />
+        <Text>Comentários:</Text>
+        <TextField
+          multiline
+          rows={4}
+          variant="outlined"
+          fullWidth
+          value={review}
+          onChange={(event) => setReview(event.target.value)}
+        />
+        <Button
+          sizeVariant="medium"
+          colorVariant="primaryGreen"
+          fontVariant="AfacadRegular15"
+          onClick={onClose}>
+          Enviar Avaliação
+        </Button>
+      </View>
+    </View>
+  );
+};
+
 interface AppointmentItemProps {
   appointment: Appointment;
 }
 
 const AppointmentItem: React.FC<AppointmentItemProps> = ({ appointment }) => {
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [mockedImage, setMockedImage] = useState<string | null>(null);
   const { fetchRandomPhoto } = useUnsplashStore();
 
@@ -51,7 +111,7 @@ const AppointmentItem: React.FC<AppointmentItemProps> = ({ appointment }) => {
               sizeVariant="medium"
               colorVariant="primaryGreen"
               fontVariant="AfacadRegular15"
-              onClick={() => {}}>
+              onClick={() => setIsReviewModalOpen(true)}>
               Avaliar
             </Button>
           </View>
@@ -67,6 +127,16 @@ const AppointmentItem: React.FC<AppointmentItemProps> = ({ appointment }) => {
           )}
         </View>
       </View>
+      <Modal
+        open={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description">
+        <ReviewAppointment
+          appointment={appointment}
+          onClose={() => setIsReviewModalOpen(false)}
+        />
+      </Modal>
     </Card>
   );
 };
