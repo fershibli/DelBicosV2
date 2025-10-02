@@ -7,16 +7,16 @@ import { styles } from './styles';
 
 function LoginScreen() {
   const navigation = useNavigation();
-  const { setLocation } = useLocation();
+  const { setLocation, lookupByCoordinates } = useLocation();
 
-  const handleLocation = (city: string, country: string) => {
-    console.log('handleLocation chamado com:', city, country);
-    setLocation(city, country);
-    if (city && country) {
+  const handleLocation = async (latitude: number, longitude: number) => {
+    console.log('handleLocation chamado com:', { latitude, longitude });
+    try {
+      await lookupByCoordinates(latitude, longitude);
       console.log('Localização definida, navegando para Feed');
       navigation.navigate('Feed');
-    } else {
-      console.log('Falha ao definir localização, navegando não realizado');
+    } catch (error) {
+      console.log('Falha ao definir localização, navegando não realizado:', error);
     }
   };
 
