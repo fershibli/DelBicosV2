@@ -3,7 +3,7 @@ import { StyleSheet, Platform } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F7FA',
+    backgroundColor: '#FC8200',
   },
   scrollContainer: {
     flex: 1,
@@ -11,7 +11,14 @@ export const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
+  },
+  logo: {
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
+    marginBottom: 40,
   },
   formContainer: {
     backgroundColor: '#FFFFFF',
@@ -121,13 +128,8 @@ export const styles = StyleSheet.create({
     fontFamily: 'Afacad-Regular',
     flexShrink: 1,
   },
-  linkText: {
-    color: '#ff7f00',
-    textDecorationLine: 'underline',
-    fontWeight: 'bold',
-  },
   button: {
-    backgroundColor: '#ff7f00',
+    backgroundColor: '#003366',
     padding: 16,
     borderRadius: 8,
     width: '100%',
@@ -140,10 +142,21 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Afacad-Bold',
   },
+  linkText: {
+    marginTop: 24, // Aumenta o espaço acima do link
+    color: '#003366',
+    fontFamily: 'Afacad-Regular',
+    fontSize: 14,
+    textAlign: 'center', // Garante que o texto fique centralizado
+  },
+  linkTextBold: {
+    fontFamily: 'Afacad-Bold',
+    textDecorationLine: 'underline',
+  },
   footer: {
     padding: 10,
     textAlign: 'center',
     fontSize: 12,
-    color: '#6c757d',
+    color: '#FFFFFF',
   },
 });

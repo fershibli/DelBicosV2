@@ -8,6 +8,7 @@ import {
   Switch,
   ActivityIndicator,
   TextInput,
+  Image,
 } from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
@@ -19,6 +20,7 @@ import DateInput from '@components/DateInput';
 import { styles } from './styles';
 import { HTTP_DOMAIN } from '@config/varEnvs';
 import { isValidCPF } from '@utils/validators';
+import LogoV3 from '@assets/LogoV3.png';
 
 type FormData = {
   name: string;
@@ -124,6 +126,10 @@ function RegisterScreen() {
         style={styles.scrollContainer}
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="handled">
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <Image source={LogoV3} style={styles.logo} />
+        </TouchableOpacity>
+
         <View style={styles.formContainer}>
           <Text style={styles.title}>Crie sua conta</Text>
           <Text style={styles.subtitle}>
@@ -335,6 +341,13 @@ function RegisterScreen() {
             style={styles.button}
             onPress={handleSubmit(handleRegister)}>
             <Text style={styles.buttonText}>Cadastrar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.linkText}>
+              Já tem uma conta?{' '}
+              <Text style={styles.linkTextBold}>Faça login</Text>
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
