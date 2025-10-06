@@ -66,4 +66,31 @@ export const styles = StyleSheet.create({
     backgroundColor: '#005A93',
     width: '100%',
   },
+  menuOptionsContainer: {
+    borderRadius: 8,
+    marginTop: 40, // Deslocamento para baixo para não cobrir o avatar
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  menuOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  menuIcon: {
+    marginRight: 12,
+  },
+  menuOptionText: {
+    fontFamily: 'Afacad-Regular',
+    fontSize: 16,
+    color: '#333',
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: '#EFEFEF',
+  },
 });

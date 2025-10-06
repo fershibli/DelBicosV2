@@ -8,9 +8,16 @@ import { Button, ButtonProps } from '@components/Button';
 import { NavigationParams } from '@screens/types';
 import SouthIcon from '@mui/icons-material/South';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
+import { FontAwesome } from '@expo/vector-icons';
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 
 const Header: React.FC<NativeStackHeaderProps> = (props) => {
-  const { user, address } = useUserStore();
+  const { user, address, signOut } = useUserStore();
   const navigation = useNavigation();
 
   const navigateTo = (screen?: keyof NavigationParams) => {
@@ -74,18 +81,53 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
             </Button>
           </View>
           {!!user ? (
-            <TouchableOpacity style={styles.userContainer} activeOpacity={0.7}>
-              <Image
-                source={require('../../assets/logo.png')}
-                style={styles.profileImage}
-              />
-              <Text style={styles.userName}>{user.name}</Text>
-            </TouchableOpacity>
+            <Menu>
+              <MenuTrigger>
+                <View style={styles.userContainer}>
+                  <Image
+                    source={require('../../assets/logo.png')}
+                    style={styles.profileImage}
+                  />
+                  <Text style={styles.userName}>{user.name}</Text>
+                </View>
+              </MenuTrigger>
+              <MenuOptions
+                customStyles={{
+                  optionsContainer: styles.menuOptionsContainer,
+                }}>
+                <MenuOption
+                  onSelect={() => navigation.navigate('ClientProfile')}>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="user-circle-o"
+                      size={20}
+                      color="#333"
+                      style={styles.menuIcon}
+                    />
+                    <Text style={styles.menuOptionText}>Meu Perfil</Text>
+                  </View>
+                </MenuOption>
+                <View style={styles.menuDivider} />
+                <MenuOption onSelect={signOut}>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="sign-out"
+                      size={20}
+                      color="#D32F2F"
+                      style={styles.menuIcon}
+                    />
+                    <Text style={[styles.menuOptionText, { color: '#D32F2F' }]}>
+                      Deslogar
+                    </Text>
+                  </View>
+                </MenuOption>
+              </MenuOptions>
+            </Menu>
           ) : (
             <>
-              <NavbarButton screen="Register">Cadastre-se</NavbarButton>
-              <NavbarButton screen="Login" colorVariant="secondary">
-                Fazer login
+              <NavbarButton screen="Login">Fazer login</NavbarButton>
+              <NavbarButton screen="Register" colorVariant="secondary">
+                Cadastre-se
               </NavbarButton>
             </>
           )}
