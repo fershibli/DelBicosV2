@@ -1,5 +1,4 @@
 import ProfessionalCard from '@components/ProfessionalCard';
-import { Grid } from '@mui/material';
 import { useProfessionalStore } from '@stores/Professional';
 import { ListedProfessional } from '@stores/Professional/types';
 import React, { useState } from 'react';

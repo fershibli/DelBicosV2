@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useCategoryStore } from '@stores/Category/Category';
-import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import { Category } from '@stores/Category/types';
 import colors from '@theme/colors';
 import { styles } from './styles';
