@@ -1,30 +1,74 @@
-import React, { useState } from 'react';
-import { ScrollView, View, Text, TouchableOpacity, Modal } from 'react-native';
+import React, { useState, useRef } from 'react';
+import {
+  ScrollView,
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  Image,
+  TextInput,
+  Keyboard,
+  NativeSyntheticEvent,
+  TextInputKeyPressEventData,
+  Alert,
+} from 'react-native';
 import { RouteProp, useNavigation } from '@react-navigation/native';
-import CodeInput from '@components/CodeInput';
-import { styles } from './styles';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { NavigationParams } from '../../types';
 import { useUserStore } from '@stores/User';
+import LogoV3 from '@assets/LogoV3.png';
+import { styles } from './styles';
 
 type ConfirmPhoneNumberRouteProp = RouteProp<
-  { params: { code: string } },
+  { params: { code: string; phoneNumber?: string } },
   'params'
 >;
+
+type NavigationProp = NativeStackNavigationProp<NavigationParams>;
 
 function ConfirmPhoneNumberScreen({
   route,
 }: {
   route: ConfirmPhoneNumberRouteProp;
 }) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const { signIn } = useUserStore();
-  const { code: sentCode = '1234' } = route.params || {};
-  const [verificationCode, setVerificationCode] = useState(['', '', '', '']);
-  const [focusedIndex, setFocusedIndex] = useState(0);
+  const { code: sentCode = '1234', phoneNumber } = route.params || {};
+
+  const [code, setCode] = useState(['', '', '', '']);
   const [modalVisible, setModalVisible] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // Refs para controlar o foco dos inputs
+  const inputs = useRef<Array<TextInput | null>>([]);
+
+  const handleTextChange = (text: string, index: number) => {
+    const newCode = [...code];
+    newCode[index] = text;
+    setCode(newCode);
+
+    // Foca no próximo input se um dígito for inserido
+    if (text && index < 3) {
+      inputs.current[index + 1]?.focus();
+    }
+
+    // Se o código de 4 dígitos estiver completo, fecha o teclado
+    if (newCode.every((digit) => digit !== '')) {
+      Keyboard.dismiss();
+    }
+  };
+
+  const handleKeyPress = (
+    e: NativeSyntheticEvent<TextInputKeyPressEventData>,
+    index: number,
+  ) => {
+    if (e.nativeEvent.key === 'Backspace' && !code[index] && index > 0) {
+      inputs.current[index - 1]?.focus();
+    }
+  };
+
   const handleContinue = () => {
-    const enteredCode = verificationCode.join('');
+    const enteredCode = code.join('');
     const verificationSuccess = enteredCode === sentCode;
     setIsSuccess(verificationSuccess);
     setModalVisible(true);
@@ -33,33 +77,66 @@ function ConfirmPhoneNumberScreen({
   const closeModal = () => {
     setModalVisible(false);
     if (isSuccess) {
-      signIn();
+      signIn(); // Simula o login
       navigation.navigate('Feed');
     } else {
-      setVerificationCode(['', '', '', '']);
-      setFocusedIndex(0);
+      setCode(['', '', '', '']);
+      inputs.current[0]?.focus(); // Volta o foco para o primeiro input
     }
+  };
+
+  const handleResendCode = () => {
+    // Aqui você adicionaria a lógica para reenviar o SMS
+    Alert.alert(
+      'Código Reenviado',
+      `Um novo código foi enviado para ${phoneNumber || 'seu número'}.`,
+    );
   };
 
   return (
     <View style={styles.container}>
       <ScrollView
-        style={styles.scrollContainer}
-        contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>Confirme seu número</Text>
-        <Text style={styles.subtitle}>
-          Insira o código de acesso de 4 dígitos que você recebeu para o número
-          (+55) 1622
-        </Text>
-        <CodeInput
-          verificationCode={verificationCode}
-          setVerificationCode={setVerificationCode}
-          focusedIndex={focusedIndex}
-          setFocusedIndex={setFocusedIndex}
-        />
-        <TouchableOpacity style={styles.button} onPress={handleContinue}>
-          <Text style={styles.buttonText}>Continuar</Text>
+        contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="handled">
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <Image source={LogoV3} style={styles.logo} />
         </TouchableOpacity>
+
+        <View style={styles.card}>
+          <Text style={styles.title}>Confirme seu número</Text>
+          <Text style={styles.subtitle}>
+            Insira o código de 4 dígitos que você recebeu no número{' '}
+            {phoneNumber || ''}.
+          </Text>
+
+          <View style={styles.codeInputContainer}>
+            {code.map((digit, index) => (
+              <TextInput
+                key={index}
+                ref={(el) => (inputs.current[index] = el)}
+                style={styles.codeInput}
+                keyboardType="number-pad"
+                maxLength={1}
+                value={digit}
+                onChangeText={(text) => handleTextChange(text, index)}
+                onKeyPress={(e) => handleKeyPress(e, index)}
+              />
+            ))}
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={handleContinue}>
+            <Text style={styles.buttonText}>Continuar</Text>
+          </TouchableOpacity>
+
+          <View style={styles.linksContainer}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Text style={styles.linkText}>Voltar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleResendCode}>
+              <Text style={styles.linkText}>Reenviar código</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
@@ -71,18 +148,21 @@ function ConfirmPhoneNumberScreen({
         visible={modalVisible}
         onRequestClose={closeModal}>
         <View style={styles.modalOverlay}>
-          <View
-            style={[
-              styles.messageBox,
-              { backgroundColor: isSuccess ? '#003366' : '#ff4444' },
-            ]}>
-            <Text style={styles.message}>
-              {isSuccess
-                ? 'Código enviado com sucesso!'
-                : 'Erro na verificação do código.'}
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              {isSuccess ? 'Sucesso!' : 'Código Inválido'}
             </Text>
-            <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
-              <Text style={styles.buttonText}>Continuar</Text>
+            <Text style={styles.modalText}>
+              {isSuccess
+                ? 'Seu número foi verificado.'
+                : 'O código inserido está incorreto. Por favor, tente novamente.'}
+            </Text>
+            <TouchableOpacity
+              style={[styles.button, styles.modalButton]}
+              onPress={closeModal}>
+              <Text style={styles.buttonText}>
+                {isSuccess ? 'Entrar' : 'Tentar Novamente'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
