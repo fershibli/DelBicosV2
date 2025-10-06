@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Text, TextInput, TextInputProps } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TextInputProps,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import { styles } from './styles';
 import { FieldError } from 'react-hook-form';
 
@@ -7,16 +14,18 @@ interface CustomTextInputProps extends TextInputProps {
   label: string;
   error?: FieldError;
   children?: React.ReactNode;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 const CustomTextInput: React.FC<CustomTextInputProps> = ({
   label,
   error,
   children,
+  containerStyle,
   ...rest
 }) => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <Text style={styles.label}>{label}</Text>
       <View>
         {children ? (

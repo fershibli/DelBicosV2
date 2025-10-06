@@ -2,33 +2,33 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
+    flexDirection: 'row',
+    alignItems: 'center',
     width: '100%',
-    marginBottom: 16,
-  },
-  label: {
-    marginBottom: 8,
-    fontSize: 16,
-    color: '#003366',
-    fontFamily: 'Afacad-SemiBold',
-  },
-  input: {
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 16,
     borderWidth: 1,
     borderColor: '#CED4DA',
+    height: 50,
+  },
+  input: {
+    flex: 1,
+    paddingHorizontal: 16,
+    height: '100%',
+    fontSize: 16,
     fontFamily: 'Afacad-Regular',
+    color: '#212529',
   },
   inputError: {
     borderColor: '#D32F2F',
     borderWidth: 1.5,
   },
-  errorText: {
-    color: '#D32F2F',
-    fontSize: 14,
-    marginTop: 4,
-    fontFamily: 'Afacad-Regular',
+  eyeButton: {
+    padding: 12,
+  },
+  eyeIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#6c757d',
   },
 });

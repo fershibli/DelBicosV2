@@ -17,6 +17,12 @@ export interface Service {
   professional_id: number;
   createdAt: string;
   updatedAt: string;
+  Subcategory: Subcategory;
+}
+
+export interface Subcategory {
+  id: number;
+  name: string;
 }
 
 export interface User {
