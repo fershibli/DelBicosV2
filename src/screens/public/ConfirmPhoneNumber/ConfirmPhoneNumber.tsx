@@ -40,7 +40,7 @@ function ConfirmPhoneNumberScreen({
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Refs para controlar o foco dos inputs
-  const inputs = useRef<Array<TextInput | null>>([]);
+  const inputs = useRef<(TextInput | null)[]>([]);
 
   const handleTextChange = (text: string, index: number) => {
     const newCode = [...code];
@@ -113,7 +113,9 @@ function ConfirmPhoneNumberScreen({
             {code.map((digit, index) => (
               <TextInput
                 key={index}
-                ref={(el) => (inputs.current[index] = el)}
+                ref={(el) => {
+                  inputs.current[index] = el;
+                }}
                 style={styles.codeInput}
                 keyboardType="number-pad"
                 maxLength={1}

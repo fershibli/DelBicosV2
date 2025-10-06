@@ -11,6 +11,8 @@ export const useUserStore = create<UserStore>()(
       user: null,
       address: null,
       token: null,
+      verificationEmail: null, // Adicionar estado inicial
+      setVerificationEmail: (email) => set({ verificationEmail: email }),
 
       signIn: () => {
         try {

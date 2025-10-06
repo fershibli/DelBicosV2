@@ -25,6 +25,8 @@ export type UserStore = {
   user: User | null;
   address: Address | null;
   token: string | null;
+  verificationEmail: string | null; // Adicionar esta linha
+  setVerificationEmail: (email: string | null) => void;
   signIn: () => void;
   signInPassword: (email: string, password: string) => Promise<void>;
   signOut: () => void;

@@ -19,8 +19,9 @@ import CpfInput from '@components/CpfInput';
 import DateInput from '@components/DateInput';
 import { styles } from './styles';
 import { HTTP_DOMAIN } from '@config/varEnvs';
-import { isValidCPF } from '@utils/validators';
+import { isValidCPF } from '../../../utils/validators';
 import LogoV3 from '@assets/LogoV3.png';
+import { useUserStore } from '@stores/User';
 
 type FormData = {
   name: string;
@@ -38,6 +39,7 @@ function RegisterScreen() {
   const { setLocation: updateLocationInContext } = useLocation();
   const [isLocationLoading, setLocationLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const { setVerificationEmail } = useUserStore();
 
   const {
     control,
@@ -107,7 +109,8 @@ function RegisterScreen() {
           'Quase lá!',
           'Enviamos um código de verificação para o seu e-mail.',
         );
-        navigation.navigate('VerificationScreen', { email: formData.email });
+        setVerificationEmail(formData.email);
+        navigation.navigate('VerificationScreen');
       } else {
         Alert.alert('Erro no Cadastro', data.error || 'Ocorreu um problema.');
       }
