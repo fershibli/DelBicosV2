@@ -80,28 +80,6 @@ export const AddressCard: React.FC<AddressCardProps> = ({
 
   return (
     <View style={styles.card}>
-      <View style={styles.actionsRow}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => onSetPrimary(localData.id)}>
-          <FontAwesome
-            name={localData.isPrimary ? 'star' : 'star-o'}
-            size={22}
-            color={localData.isPrimary ? '#ffc107' : '#003366'}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => setIsEditing(true)}>
-          <FontAwesome name="pencil" size={22} color="#007bff" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => onDelete(localData.id)}>
-          <FontAwesome name="trash-o" size={22} color="#dc3545" />
-        </TouchableOpacity>
-      </View>
-
       <View style={styles.formRow}>
         <CustomTextInput
           label="CEP"
@@ -183,6 +161,28 @@ export const AddressCard: React.FC<AddressCardProps> = ({
           </TouchableOpacity>
         </View>
       )}
+
+      <View style={styles.actionsRow}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => onSetPrimary(localData.id)}>
+          <FontAwesome
+            name={localData.isPrimary ? 'star' : 'star-o'}
+            size={22}
+            color={localData.isPrimary ? '#ffc107' : '#003366'}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => setIsEditing(true)}>
+          <FontAwesome name="pencil" size={22} color="#007bff" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => onDelete(localData.id)}>
+          <FontAwesome name="trash-o" size={22} color="#dc3545" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

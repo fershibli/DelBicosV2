@@ -6,7 +6,8 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import { AddressCard, Address } from '@components/AddressCard'; // Importando o novo componente
+import { AddressCard, Address } from '@components/AddressCard';
+import ConfirmationModal from '@components/ConfirmationModal';
 
 // Dados de exemplo
 const initialAddresses: Address[] = [
@@ -34,6 +35,8 @@ const initialAddresses: Address[] = [
 
 export default function AlterarEnderecoForm() {
   const [addresses, setAddresses] = useState<Address[]>(initialAddresses);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [addressToDelete, setAddressToDelete] = useState<Address | null>(null);
 
   const handleUpdate = (id: number, data: Partial<Address>) => {
     setAddresses((currentAddresses) =>
@@ -45,10 +48,21 @@ export default function AlterarEnderecoForm() {
   };
 
   const handleDelete = (id: number) => {
-    setAddresses((currentAddresses) =>
-      currentAddresses.filter((addr) => addr.id !== id),
-    );
-    Alert.alert('Sucesso', 'Endereço removido!');
+    const address = addresses.find((addr) => addr.id === id);
+    if (address) {
+      setAddressToDelete(address);
+      setModalVisible(true);
+    }
+  };
+
+  const confirmDelete = () => {
+    if (addressToDelete) {
+      setAddresses((currentAddresses) =>
+        currentAddresses.filter((addr) => addr.id !== addressToDelete.id),
+      );
+      setModalVisible(false);
+      setAddressToDelete(null);
+    }
   };
 
   const handleSetPrimary = (id: number) => {
@@ -89,6 +103,18 @@ export default function AlterarEnderecoForm() {
       <TouchableOpacity style={styles.newButton} onPress={handleAddNewAddress}>
         <Text style={styles.newButtonText}>+ Adicionar Novo Endereço</Text>
       </TouchableOpacity>
+
+      {addressToDelete && (
+        <ConfirmationModal
+          visible={isModalVisible}
+          title="Confirmar Exclusão"
+          message={`Você tem certeza que deseja excluir o endereço "${addressToDelete.endereco}, ${addressToDelete.numero}"?`}
+          cancelText="Cancelar"
+          confirmText="Excluir"
+          onCancel={() => setModalVisible(false)}
+          onConfirm={confirmDelete}
+        />
+      )}
     </ScrollView>
   );
 }
