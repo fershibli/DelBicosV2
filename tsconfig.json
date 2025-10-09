@@ -18,8 +18,10 @@
       "@assets/*": ["src/assets/*"],
       "@components/*": ["src/components/*"],
       "@config/*": ["src/config/*"],
+      "@hooks/*": ["src/hooks/*"],
       "@lib/*": ["src/lib/*"],
       "@screens/*": ["src/screens/*"],
+      "@services/*": ["src/services/*"],
       "@stores/*": ["src/stores/*"],
       "@theme/*": ["src/theme/*"]
     },
