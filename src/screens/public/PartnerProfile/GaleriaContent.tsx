@@ -11,14 +11,10 @@ import {
 } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
-type Imagem = {
-  id: string;
-  url: string;
+type GaleriaContentProps = {
+  imagens: string[];
 };
 
-type GaleriaContentProps = {
-  imagens: Imagem[];
-};
 export function GaleriaContent({ imagens }: GaleriaContentProps) {
   const [visible, setVisible] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -32,12 +28,12 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
     setVisible(true);
   };
 
-  const renderItem = ({ item, index }: { item: Imagem; index: number }) => (
+  const renderItem = ({ item, index }: { item: string; index: number }) => (
     <TouchableOpacity
       onPress={() => openImageViewer(index)}
       activeOpacity={0.8}>
       <Image
-        source={{ uri: item.url }}
+        source={{ uri: item }}
         style={{
           width: imageSize,
           height: imageSize,
@@ -49,10 +45,10 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
     </TouchableOpacity>
   );
 
-  const imagesForViewer = imagens.map((img) => ({
-    url: img.url,
+  const imagesForViewer = imagens.map((url) => ({
+    url: url,
     props: {
-      source: { uri: img.url },
+      source: { uri: url },
     },
   }));
 
@@ -70,7 +66,7 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
             ref={flatListRef}
             data={imagens}
             renderItem={renderItem}
-            keyExtractor={(item: Imagem) => item.id}
+            keyExtractor={(item, index) => index.toString()}
             numColumns={numColumns}
             contentContainerStyle={styles.galleryContainer}
           />
