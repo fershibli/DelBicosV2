@@ -10,13 +10,20 @@ import {
 } from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
+import type { StackNavigationProp } from '@react-navigation/stack';
+import type { NavigationParams } from '../../types';
 import CpfInput from '@components/CpfInput';
 import DateInput from '@components/DateInput';
 import { useLocation } from '@lib/hooks/LocationContext';
 import { styles } from './styles';
 
+type RegisterScreenNavigationProp = StackNavigationProp<
+  NavigationParams,
+  'Register'
+>;
+
 function RegisterScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<RegisterScreenNavigationProp>();
   // const { setLocation: updateLocation } = useLocation();
   const { setLocation: updateLocationInContext } = useLocation();
 

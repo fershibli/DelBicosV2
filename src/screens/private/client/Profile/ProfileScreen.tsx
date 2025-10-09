@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, Alert, Platform } from 'react-native';
-import * as FileSystem from 'expo-file-system';
 import ProfileWrapper from './ProfileWrapper';
 import { useUserStore } from '@stores/User';
 
@@ -117,12 +116,14 @@ const UserProfileScreen: React.FC = () => {
         const storageKey = `userImages/${userId}/avatar.uri`;
         localStorage.removeItem(storageKey);
       } else {
-        const userImageDir = `${FileSystem.documentDirectory}userImages/${userId}`;
-        const avatarPath = `${userImageDir}/avatar.jpg`;
-        const fileInfo = await FileSystem.getInfoAsync(avatarPath);
-        if (fileInfo.exists) {
-          await FileSystem.deleteAsync(avatarPath);
-        }
+        // Para React Native, usar uma alternativa ou comentar por enquanto
+        console.log('File system operations not available on this platform');
+        // const userImageDir = `${FileSystem.documentDirectory!}userImages/${userId}`;
+        // const avatarPath = `${userImageDir}/avatar.jpg`;
+        // const fileInfo = await FileSystem.getInfoAsync(avatarPath);
+        // if (fileInfo.exists) {
+        //   await FileSystem.deleteAsync(avatarPath);
+        // }
       }
 
       setAvatarUri(null);
@@ -166,24 +167,26 @@ const UserProfileScreen: React.FC = () => {
     }
 
     try {
-      const userImageDir = `${FileSystem.documentDirectory}userImages/${userId}`;
-      const avatarPath = `${userImageDir}/avatar.jpg`;
-      const fileInfo = await FileSystem.getInfoAsync(avatarPath);
+      // Para React Native, usar uma alternativa ou comentar por enquanto
+      console.log('Loading saved avatar from cache - not implemented');
+      // const userImageDir = `${FileSystem.documentDirectory!}userImages/${userId}`;
+      // const avatarPath = `${userImageDir}/avatar.jpg`;
+      // const fileInfo = await FileSystem.getInfoAsync(avatarPath);
 
-      if (fileInfo.exists) {
-        setAvatarUri(avatarPath);
-        console.log('📱 Imagem carregada do cache local:', avatarPath);
-      } else {
-        const downloadedFile = await FileSystem.downloadAsync(
-          fullAvatarUrl,
-          avatarPath,
-        );
-        setAvatarUri(downloadedFile.uri);
-        console.log(
-          '📱 Imagem baixada e carregada do servidor:',
-          downloadedFile.uri,
-        );
-      }
+      // if (fileInfo.exists) {
+      //   setAvatarUri(avatarPath);
+      //   console.log('📱 Imagem carregada do cache local:', avatarPath);
+      // } else {
+      //   const downloadedFile = await FileSystem.downloadAsync(
+      //     fullAvatarUrl,
+      //     avatarPath,
+      //   );
+      //   setAvatarUri(downloadedFile.uri);
+      //   console.log(
+      //     '📱 Imagem baixada e carregada do servidor:',
+      //     downloadedFile.uri,
+      //   );
+      // }
     } catch (error) {
       console.error('❌ Erro ao carregar/baixar avatar:', error);
       setAvatarUri(fullAvatarUrl);
@@ -212,7 +215,7 @@ const UserProfileScreen: React.FC = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, [userId]);
 
   if (loading) {
     return (
