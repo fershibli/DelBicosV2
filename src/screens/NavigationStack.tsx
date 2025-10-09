@@ -17,6 +17,7 @@ import Header from '@components/Header';
 import { useUserStore } from '@stores/User';
 import { LoginPassword } from './public/LoginPassword';
 import ProfileScreen from './private/client/Profile';
+import Dashboard from './private/client/Dashboard';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -105,6 +106,15 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: ProfileScreen,
       linking: {
         path: 'client-profile',
+      },
+    },
+    Dashboard: {
+      screen: Dashboard,
+      linking: {
+        path: 'dashboard',
+      },
+      options: {
+        headerShown: false, // Remove o header para ter mais espaço
       },
     },
     NotFound: {
