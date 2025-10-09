@@ -74,13 +74,20 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
             </Button>
           </View>
           {!!user ? (
-            <TouchableOpacity style={styles.userContainer} activeOpacity={0.7}>
-              <Image
-                source={require('../../assets/logo.png')}
-                style={styles.profileImage}
-              />
-              <Text style={styles.userName}>{user.name}</Text>
-            </TouchableOpacity>
+            <>
+              <NavbarButton screen="Dashboard" colorVariant="primary">
+                📊 Dashboard
+              </NavbarButton>
+              <TouchableOpacity
+                style={styles.userContainer}
+                activeOpacity={0.7}>
+                <Image
+                  source={require('../../assets/logo.png')}
+                  style={styles.profileImage}
+                />
+                <Text style={styles.userName}>{user.name}</Text>
+              </TouchableOpacity>
+            </>
           ) : (
             <>
               <NavbarButton screen="Register">Cadastre-se</NavbarButton>
