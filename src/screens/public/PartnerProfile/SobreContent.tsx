@@ -3,9 +3,9 @@ import { StyleSheet, View } from 'react-native';
 
 type SobreContentProps = {
   detalhes: string;
-  comodidadesIds: string[];
+  comodidadesIds: (string | number)[];
   todasComodidades: {
-    id: string;
+    id: string | number;
     nome: string;
   }[];
 };
@@ -31,7 +31,7 @@ export function SobreContent({
         <View style={styles.list}>
           {comodidadesParceiro.length > 0 ? (
             comodidadesParceiro.map((comodidade) => (
-              <Text key={comodidade.id} style={styles.listItem}>
+              <Text key={comodidade.id.toString()} style={styles.listItem}>
                 • {comodidade.nome}
               </Text>
             ))
@@ -45,25 +45,6 @@ export function SobreContent({
 }
 
 const styles = StyleSheet.create({
-  navTabs: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  tab: {
-    fontSize: 17,
-    color: '#666',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  activeTab: {
-    color: '#FC8200',
-    fontWeight: 'bold',
-    borderBottomWidth: 2,
-    borderBottomColor: '#FC8200',
-  },
   contentContainer: {
     padding: 16,
   },
