@@ -6,18 +6,14 @@ import {
   Alert,
   ActivityIndicator,
   StyleSheet,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { CheckCircle, Description, Share, Download } from '@mui/icons-material';
-import { Button } from '../../../../components/Button';
-import InvoiceTemplate, {
-  type InvoiceData,
-} from '../../../../components/InvoiceTemplate';
-import { generateOptimizedInvoicePDF } from '../../../../lib/helpers/pdfGenerator';
-import {
-  shareInvoice,
-  downloadPDF,
-} from '../../../../lib/helpers/shareHelperSimple';
+import { Button } from '@components/Button';
+import InvoiceTemplate, { type InvoiceData } from '@components/InvoiceTemplate';
+import { generatePDF } from '@lib/helpers/pdfGenerator';
+import { shareInvoice, downloadPDF } from '@lib/helpers/shareHelperSimple';
 
 export const PaymentCompletionScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -49,6 +45,7 @@ export const PaymentCompletionScreen: React.FC = () => {
     [],
   );
 
+  // Modificar a função handleShareInvoice
   const handleShareInvoice = useCallback(async () => {
     try {
       setIsGeneratingPDF(true);
@@ -56,16 +53,19 @@ export const PaymentCompletionScreen: React.FC = () => {
       // Gera o HTML da nota fiscal
       const htmlContent = InvoiceTemplate(mockInvoiceData);
 
-      // Gera o PDF localmente
-      const pdfUri = await generateOptimizedInvoicePDF(htmlContent);
+      // Gera o PDF
+      const result = await generatePDF(htmlContent);
 
-      // Compartilha o PDF diretamente
-      const success = await shareInvoice(pdfUri);
+      // No caso da web, não precisamos compartilhar pois a janela de impressão já foi aberta
+      if (Platform.OS !== 'web' && result !== 'web-pdf-printed') {
+        // Compartilha o PDF diretamente apenas em plataformas nativas
+        const success = await shareInvoice(result);
 
-      if (success) {
-        Alert.alert('Sucesso!', 'Nota fiscal compartilhada com sucesso!', [
-          { text: 'OK' },
-        ]);
+        if (success) {
+          Alert.alert('Sucesso!', 'Nota fiscal compartilhada com sucesso!', [
+            { text: 'OK' },
+          ]);
+        }
       }
     } catch (error) {
       console.error('Erro ao compartilhar nota fiscal:', error);
@@ -79,6 +79,7 @@ export const PaymentCompletionScreen: React.FC = () => {
     }
   }, [mockInvoiceData]);
 
+  // Modificar a função handleDownloadPDF de forma similar
   const handleDownloadPDF = useCallback(async () => {
     try {
       setIsGeneratingPDF(true);
@@ -86,21 +87,28 @@ export const PaymentCompletionScreen: React.FC = () => {
       // Gera o HTML da nota fiscal
       const htmlContent = InvoiceTemplate(mockInvoiceData);
 
-      // Gera o PDF localmente
-      const pdfUri = await generateOptimizedInvoicePDF(htmlContent);
-
-      // Faz o download do PDF
-      const success = await downloadPDF(
-        pdfUri,
-        `nota-fiscal-${mockInvoiceData.invoiceNumber}.pdf`,
+      // Na web, usamos a mesma função que já abre a janela de impressão
+      const result = await generatePDF(
+        htmlContent,
+        `nota-fiscal-${mockInvoiceData.invoiceNumber}`,
       );
 
-      if (success) {
-        Alert.alert('Download Iniciado!', 'O PDF está sendo baixado.', [
-          { text: 'OK' },
-        ]);
-      } else {
-        Alert.alert('Erro', 'Não foi possível baixar o PDF.', [{ text: 'OK' }]);
+      // Apenas para dispositivos móveis
+      if (Platform.OS !== 'web' && result !== 'web-pdf-printed') {
+        const success = await downloadPDF(
+          result,
+          `nota-fiscal-${mockInvoiceData.invoiceNumber}.pdf`,
+        );
+
+        if (success) {
+          Alert.alert('Download Iniciado!', 'O PDF está sendo baixado.', [
+            { text: 'OK' },
+          ]);
+        } else {
+          Alert.alert('Erro', 'Não foi possível baixar o PDF.', [
+            { text: 'OK' },
+          ]);
+        }
       }
     } catch (error) {
       console.error('Erro ao baixar PDF:', error);
@@ -111,69 +119,6 @@ export const PaymentCompletionScreen: React.FC = () => {
       setIsGeneratingPDF(false);
     }
   }, [mockInvoiceData]);
-
-  // Função de email temporariamente comentada
-  /*
-  const handleShareViaEmail = useCallback(async () => {
-    try {
-      setIsGeneratingPDF(true);
-
-      // Solicita o email do destinatário
-      const recipientEmail = await new Promise<string>((resolve) => {
-        Alert.prompt(
-          'Enviar por Email',
-          'Digite o email do destinatário:',
-          [
-            { text: 'Cancelar', style: 'cancel', onPress: () => resolve('') },
-            {
-              text: 'Enviar',
-              onPress: (email) => resolve(email || ''),
-            },
-          ],
-          'plain-text',
-          '',
-          'email-address',
-        );
-      });
-
-      if (!recipientEmail || !recipientEmail.trim()) {
-        Alert.alert('Cancelado', 'Envio de email cancelado.');
-        return;
-      }
-
-      // Valida email básico
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(recipientEmail)) {
-        Alert.alert('Email Inválido', 'Por favor, digite um email válido.');
-        return;
-      }
-
-      // Envia via back-end
-      const result = await sendInvoiceByEmail({
-        invoiceData: mockInvoiceData,
-        recipientEmail: recipientEmail.trim(),
-        customerEmail: mockInvoiceData.customerName,
-      });
-
-      if (result.success) {
-        Alert.alert(
-          'Email Enviado!',
-          `A nota fiscal foi enviada para ${recipientEmail}`,
-          [{ text: 'OK' }],
-        );
-      } else {
-        Alert.alert('Erro ao Enviar', result.message, [{ text: 'OK' }]);
-      }
-    } catch (error) {
-      console.error('Erro ao enviar por email:', error);
-      Alert.alert('Erro', 'Não foi possível enviar a nota fiscal por email.', [
-        { text: 'OK' },
-      ]);
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  }, [mockInvoiceData]);
-  */
 
   const handleBackToHome = useCallback(() => {
     navigation.navigate('Feed' as never);
