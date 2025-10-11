@@ -6,14 +6,16 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ff7f00"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.delbicos.app",
@@ -24,13 +26,19 @@
     },
     "android": {
       "package": "com.delbicos.app",
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "description": "Aplicativo de delivery de serviços temporários (bicos).",
     "scheme": "delbicos",
-    "plugins": ["expo-font"]
+    "plugins": [
+      "expo-font",
+      "expo-asset"
+    ]
   }
 }
