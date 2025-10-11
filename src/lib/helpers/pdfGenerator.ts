@@ -1,17 +1,5 @@
-import { printToFileAsync } from 'expo-print';
-
-export interface PDFGenerationOptions {
-  html: string;
-  width?: number;
-  height?: number;
-  base64?: boolean;
-  margins?: {
-    top?: number;
-    bottom?: number;
-    left?: number;
-    right?: number;
-  };
-}
+import { printToFileAsync, FilePrintOptions } from 'expo-print';
+import { Platform } from 'react-native';
 
 /**
  * Gera um arquivo PDF a partir de conteúdo HTML
@@ -23,15 +11,36 @@ export interface PDFGenerationOptions {
 export const generatePDF = async (
   htmlContent: string,
   filename: string = 'invoice',
-  customOptions?: Partial<PDFGenerationOptions>,
+  customOptions?: Partial<FilePrintOptions>,
 ): Promise<string> => {
   try {
     if (!htmlContent || htmlContent.trim().length === 0) {
       throw new Error('Conteúdo HTML não pode estar vazio');
     }
 
-    // Configurações padrão para o PDF
-    const defaultOptions: PDFGenerationOptions = {
+    // Tratamento especial para web
+    if (Platform.OS === 'web') {
+      // Cria uma nova janela com apenas o conteúdo HTML
+      const newWindow = window.open('', '_blank');
+      if (!newWindow) {
+        throw new Error(
+          'Não foi possível abrir uma nova janela. Verifique se os pop-ups estão permitidos.',
+        );
+      }
+
+      newWindow.document.write(htmlContent);
+      newWindow.document.close();
+
+      // Dar tempo para o conteúdo carregar antes de imprimir
+      setTimeout(() => {
+        newWindow.print();
+      }, 300);
+
+      return 'web-pdf-printed';
+    }
+
+    // Configurações padrão para o PDF (plataformas nativas)
+    const defaultOptions: FilePrintOptions = {
       html: htmlContent,
       width: 612, // Largura em pontos (equivale a uma página A4: 8.5 x 11 polegadas)
       height: 792, // Altura em pontos
@@ -44,7 +53,7 @@ export const generatePDF = async (
       },
     };
 
-    const options = { ...defaultOptions, ...customOptions };
+    const options: FilePrintOptions = { ...defaultOptions, ...customOptions };
 
     // Gera o PDF usando expo-print
     const { uri } = await printToFileAsync(options);
@@ -71,7 +80,7 @@ export const generatePDF = async (
 export const generateInvoicePDF = async (
   htmlContent: string,
   prefix: string = 'nota_fiscal',
-  customOptions?: Partial<PDFGenerationOptions>,
+  customOptions?: Partial<FilePrintOptions>,
 ): Promise<string> => {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5); // Remove milissegundos e 'Z'
 
@@ -88,7 +97,7 @@ export const generateInvoicePDF = async (
 export const generateOptimizedInvoicePDF = async (
   htmlContent: string,
 ): Promise<string> => {
-  const optimizedOptions: Partial<PDFGenerationOptions> = {
+  const optimizedOptions: Partial<FilePrintOptions> = {
     margins: {
       top: 30,
       bottom: 30,
