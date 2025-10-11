@@ -4,7 +4,7 @@ import { Alert, Platform } from 'react-native';
 /**
  * Compartilha um arquivo PDF de forma simples
  */
-export const shareInvoice = async (uri: string): Promise<boolean> => {
+export const shareContent = async (uri: string): Promise<boolean> => {
   try {
     if (Platform.OS === 'web') {
       const isSharingAvailable = await isAvailableAsync();

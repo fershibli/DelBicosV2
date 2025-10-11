@@ -13,7 +13,7 @@ import { CheckCircle, Description, Share, Download } from '@mui/icons-material';
 import { Button } from '@components/Button';
 import InvoiceTemplate, { type InvoiceData } from '@components/InvoiceTemplate';
 import { generatePDF } from '@lib/helpers/pdfGenerator';
-import { shareInvoice, downloadPDF } from '@lib/helpers/shareHelperSimple';
+import { shareContent, downloadPDF } from '@lib/helpers/shareHelperSimple';
 
 export const PaymentCompletionScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -59,7 +59,7 @@ export const PaymentCompletionScreen: React.FC = () => {
       // No caso da web, não precisamos compartilhar pois a janela de impressão já foi aberta
       if (Platform.OS !== 'web' && result !== 'web-pdf-printed') {
         // Compartilha o PDF diretamente apenas em plataformas nativas
-        const success = await shareInvoice(result);
+        const success = await shareContent(result);
 
         if (success) {
           Alert.alert('Sucesso!', 'Nota fiscal compartilhada com sucesso!', [
