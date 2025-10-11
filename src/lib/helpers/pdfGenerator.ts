@@ -20,21 +20,27 @@ export const generatePDF = async (
 
     // Tratamento especial para web
     if (Platform.OS === 'web') {
-      // Cria uma nova janela com apenas o conteúdo HTML
-      const newWindow = window.open('', '_blank');
+      // Create a blob from the HTML content
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+
+      // Open the blob URL in a new window
+      const newWindow = window.open(url, '_blank');
+
       if (!newWindow) {
         throw new Error(
           'Não foi possível abrir uma nova janela. Verifique se os pop-ups estão permitidos.',
         );
       }
 
-      newWindow.document.write(htmlContent);
-      newWindow.document.close();
-
-      // Dar tempo para o conteúdo carregar antes de imprimir
-      setTimeout(() => {
-        newWindow.print();
-      }, 300);
+      // Print after content is loaded
+      newWindow.onload = () => {
+        setTimeout(() => {
+          newWindow.print();
+          // Clean up the object URL
+          URL.revokeObjectURL(url);
+        }, 300);
+      };
 
       return 'web-pdf-printed';
     }
