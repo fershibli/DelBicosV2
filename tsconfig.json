@@ -7,11 +7,6 @@
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "bundler",
     "jsx": "react-native",
-    "plugins": [
-      {
-        "name": "typescript-styled-plugin"
-      }
-    ],
     "strict": true,
     "baseUrl": ".",
     "paths": {
