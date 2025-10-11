@@ -56,7 +56,7 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
       hoverColors={buttonColor.hover ? hoverColors : undefined}
       disabledColors={disabledColors}
       noWrap={noWrap}
-      style={{
+      sx={{
         ...style,
       }}
       {...muiProps}>
