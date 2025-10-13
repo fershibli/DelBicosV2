@@ -52,7 +52,7 @@ export function ServicosContent({
   servicos,
   disponibilidades,
   professionalId,
-  clientId = "1",
+  clientId = "5",
   userId = "1",
 }: ServicosContentProps) {
   const [addressModalVisible, setAddressModalVisible] = useState(false);

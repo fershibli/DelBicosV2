@@ -309,7 +309,7 @@ function PartnerProfileScreen() {
             servicos={parceiro.servicos}
             disponibilidades={parceiro.disponibilidades}
             professionalId={parceiro.id}
-            clientId="1"
+            clientId="5"
             userId="1"
           />
         );
