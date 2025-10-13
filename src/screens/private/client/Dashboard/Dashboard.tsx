@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Dimensions,
   TouchableOpacity,
@@ -223,6 +223,10 @@ const Dashboard = () => {
   const navigation = useNavigation();
   const { user } = useUserStore();
   const { data, loading, error, refetch } = useDashboard(user?.id || 0);
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   if (loading) {
     return (
