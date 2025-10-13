@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -14,36 +14,14 @@ import { Button } from '@components/Button';
 import InvoiceTemplate, { type InvoiceData } from '@components/InvoiceTemplate';
 import { generatePDF } from '@lib/helpers/pdfGenerator';
 import { shareContent, downloadPDF } from '@lib/helpers/shareHelperSimple';
+import { useAppointmentStore } from '@stores/Appointment';
 
 export const PaymentCompletionScreen: React.FC = () => {
   const navigation = useNavigation();
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
 
-  // Dados mockados da nota fiscal com useMemo para otimização
-  const mockInvoiceData: InvoiceData = useMemo(
-    () => ({
-      invoiceNumber: `NF${Math.floor(Math.random() * 100000)
-        .toString()
-        .padStart(5, '0')}`,
-      date: new Date().toLocaleDateString('pt-BR'),
-      customerName: 'João da Silva Santos',
-      customerCpf: '123.456.789-00',
-      customerAddress:
-        'Rua das Flores, 123 - Centro - São Paulo/SP - CEP: 01234-567',
-      professionalName: 'Maria Oliveira Costa',
-      professionalCpf: '987.654.321-00',
-      serviceName: 'Limpeza Residencial Completa',
-      serviceDescription:
-        'Limpeza completa de casa com 3 quartos, incluindo cozinha, banheiros e áreas comuns',
-      servicePrice: 150.0,
-      serviceDate: new Date().toLocaleDateString('pt-BR'),
-      serviceTime: '14:00 - 17:00',
-      total: 150.0,
-      paymentMethod: 'Cartão de Crédito',
-      transactionId: `TXN${Date.now()}`,
-    }),
-    [],
-  );
+  const { fetchInvoice } = useAppointmentStore();
 
   // Modificar a função handleShareInvoice
   const handleShareInvoice = useCallback(async () => {
@@ -51,7 +29,7 @@ export const PaymentCompletionScreen: React.FC = () => {
       setIsGeneratingPDF(true);
 
       // Gera o HTML da nota fiscal
-      const htmlContent = InvoiceTemplate(mockInvoiceData);
+      const htmlContent = InvoiceTemplate(invoiceData);
 
       // Gera o PDF
       const result = await generatePDF(htmlContent);
@@ -77,7 +55,7 @@ export const PaymentCompletionScreen: React.FC = () => {
     } finally {
       setIsGeneratingPDF(false);
     }
-  }, [mockInvoiceData]);
+  }, [invoiceData]);
 
   // Modificar a função handleDownloadPDF de forma similar
   const handleDownloadPDF = useCallback(async () => {
@@ -85,19 +63,19 @@ export const PaymentCompletionScreen: React.FC = () => {
       setIsGeneratingPDF(true);
 
       // Gera o HTML da nota fiscal
-      const htmlContent = InvoiceTemplate(mockInvoiceData);
+      const htmlContent = InvoiceTemplate(invoiceData);
 
       // Na web, usamos a mesma função que já abre a janela de impressão
       const result = await generatePDF(
         htmlContent,
-        `nota-fiscal-${mockInvoiceData.invoiceNumber}`,
+        `nota-fiscal-${invoiceData.invoiceNumber}`,
       );
 
       // Apenas para dispositivos móveis
       if (Platform.OS !== 'web' && result !== 'web-pdf-printed') {
         const success = await downloadPDF(
           result,
-          `nota-fiscal-${mockInvoiceData.invoiceNumber}.pdf`,
+          `nota-fiscal-${invoiceData.invoiceNumber}.pdf`,
         );
 
         if (success) {
@@ -118,11 +96,32 @@ export const PaymentCompletionScreen: React.FC = () => {
     } finally {
       setIsGeneratingPDF(false);
     }
-  }, [mockInvoiceData]);
+  }, [invoiceData]);
 
   const handleBackToHome = useCallback(() => {
     navigation.navigate('Feed' as never);
   }, [navigation]);
+
+  useEffect(() => {
+    const loadInvoiceData = async () => {
+      try {
+        const data = await fetchInvoice(1);
+        setInvoiceData(data);
+      } catch (error) {
+        console.error('Erro ao carregar dados da nota fiscal:', error);
+        Alert.alert(
+          'Erro',
+          'Não foi possível carregar os dados da nota fiscal. Tente novamente.',
+          [{ text: 'OK' }],
+        );
+      }
+    };
+    loadInvoiceData();
+  }, []);
+
+  if (!invoiceData) {
+    return null;
+  }
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -142,30 +141,28 @@ export const PaymentCompletionScreen: React.FC = () => {
 
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Serviço:</Text>
-            <Text style={styles.infoValue}>{mockInvoiceData.serviceName}</Text>
+            <Text style={styles.infoValue}>{invoiceData.serviceName}</Text>
           </View>
 
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Profissional:</Text>
-            <Text style={styles.infoValue}>
-              {mockInvoiceData.professionalName}
-            </Text>
+            <Text style={styles.infoValue}>{invoiceData.professionalName}</Text>
           </View>
 
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Data:</Text>
-            <Text style={styles.infoValue}>{mockInvoiceData.serviceDate}</Text>
+            <Text style={styles.infoValue}>{invoiceData.serviceDate}</Text>
           </View>
 
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Horário:</Text>
-            <Text style={styles.infoValue}>{mockInvoiceData.serviceTime}</Text>
+            <Text style={styles.infoValue}>{invoiceData.serviceTime}</Text>
           </View>
 
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total Pago:</Text>
             <Text style={styles.totalValue}>
-              R$ {mockInvoiceData.total.toFixed(2).replace('.', ',')}
+              R$ {invoiceData.total.toFixed(2).replace('.', ',')}
             </Text>
           </View>
         </View>
