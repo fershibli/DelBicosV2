@@ -1,48 +1,73 @@
-name: 01 - Análise Semântica de Versão
+name: 01 - Análise Semântica Pós-Merge
 
+# Gatilho: Acionado QUANDO um Pull Request é FECHADO.
 on:
   pull_request:
-    # Acionado quando um PR é aberto ou atualizado, tendo 'main' como branch de destino
+    types: [ closed ]
     branches:
-      - main
-    types: [opened, synchronize, reopened]
+      - main # Apenas PRs direcionados à 'main'
 
-# Permissões necessárias para o job poder escrever um comentário no PR
+# Permissões necessárias para ler os commits do PR.
 permissions:
-  pull-requests: write
-  contents: read # Necessário para fazer o checkout e ler os commits
+  pull-requests: read
+  contents: read
 
 jobs:
   analise-semantica:
-    # Condição: Este job só vai rodar se o PR vier da branch 'stag'
-    if: github.head_ref == 'stag'
+    # Condições: O job só roda se:
+    # 1. O PR foi de fato mergeado (e não apenas fechado).
+    # 2. A branch de origem (head) era 'stag'.
+    if: |
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.ref == 'stag'
+      
     runs-on: ubuntu-latest
     
+    # Define saídas (outputs) para este job, que podem ser usadas por outros jobs
+    outputs:
+      bump_type: ${{ steps.analisar_versao.outputs.BUMP_TYPE }}
+      bump_reason: ${{ steps.analisar_versao.outputs.BUMP_REASON }}
+
     steps:
-      - name: 1. Fazer checkout do código
-        uses: actions/checkout@v4
+      - name: 1. Listar Commits do PR (via API)
+        id: get_commits
+        uses: actions/github-script@v7
         with:
-          fetch-depth: 0 # Puxa todo o histórico para poder comparar as branches
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string # Garante que a saída seja uma string
+          script: |
+            console.log(`Analisando commits do PR #${context.issue.number}`);
+            
+            const { data: commits } = await github.rest.pulls.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
 
-      - name: 2. Analisar commits da Pull Request
-        id: analisar_commits
+            // Mapeia para uma lista de mensagens de commit
+            const messages = commits.map(c => c.commit.message.split('\n')[0]); // Pega apenas a primeira linha
+            
+            // Retorna a lista de mensagens, separadas por nova linha
+            const commitMessages = messages.join('\n');
+            console.log("Commits analisados:\n" + commitMessages);
+            return commitMessages;
+
+      - name: 2. Analisar Commits e Determinar Versão
+        id: analisar_versao
         run: |
-          # Compara a branch de origem (stag) com a de destino (main) e lista os assuntos dos commits
-          # A sintaxe é 'destino..origem'
-          COMMITS=$(git log origin/${{ github.base_ref }}..origin/${{ github.head_ref }} --pretty=%s)
-
-          echo "Commits a analisar:"
-          echo "$COMMITS"
+          # Pega a string de commits do passo anterior
+          COMMITS=$(echo "${{ steps.get_commits.outputs.result }}")
           
-          # Lógica de versionamento com as suas regras customizadas
           BUMP_TYPE="Nenhum"
           BUMP_REASON=""
 
-          # A ordem é importante: checamos do maior (MAJOR) para o menor (PATCH)
-          if echo "$COMMITS" | grep -q -i "^refactor:"; then
+          # Lógica de versionamento com as NOVAS regras (incluindo "refatorar" e "refatoração")
+          # A ordem de prioridade (MAJOR > MINOR > PATCH) é mantida.
+          
+          if echo "$COMMITS" | grep -q -i -E "^(refactor|refatorar|refatoração):"; then
             BUMP_TYPE="MAJOR"
-            BUMP_REASON="Um commit 'refactor:' foi encontrado, indicando uma atualização MAJOR."
-          elif echo "$COMMITS" | grep -q -i "^feat:" || echo "$COMMITS" | grep -q -i "^feature:"; then
+            BUMP_REASON="Um commit 'refactor/refatorar/refatoração:' foi encontrado, indicando uma atualização MAJOR."
+          elif echo "$COMMITS" | grep -q -i -E "^(feat|feature):"; then
             BUMP_TYPE="MINOR"
             BUMP_REASON="Um commit 'feat:' ou 'feature:' foi encontrado, indicando uma atualização MINOR."
           elif echo "$COMMITS" | grep -q -i "^fix:"; then
@@ -50,70 +75,26 @@ jobs:
             BUMP_REASON="Um commit 'fix:' foi encontrado, indicando uma atualização PATCH."
           else
             BUMP_TYPE="Nenhum"
-            BUMP_REASON="Nenhum commit semântico (fix, feature, refactor) foi detectado."
+            BUMP_REASON="Nenhum commit semântico (fix, feature, refactor, refatorar, refatoração) foi detectado."
           fi
           
+          # Exibe o resultado no log
+          echo "Tipo de Bump: $BUMP_TYPE"
+          echo "Razão: $BUMP_REASON"
+          
+          # Salva como 'output' do passo
           echo "BUMP_TYPE=$BUMP_TYPE" >> $GITHUB_OUTPUT
           echo "BUMP_REASON=$BUMP_REASON" >> $GITHUB_OUTPUT
-          
-          # Prepara a lista de commits para o comentário (escapando caracteres especiais)
-          COMMITS="${COMMITS//'%'/'%25'}"
-          COMMITS="${COMMITS//$'\n'/'%0A'}"
-          COMMITS="${COMMITS//$'\r'/'%0D'}"
-          echo "COMMIT_LIST=$COMMITS" >> $GITHUB_OUTPUT
 
-      - name: 3. Comentar no PR com o resultado
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const bumpType = "${{ steps.analisar_commits.outputs.BUMP_TYPE }}";
-            const bumpReason = "${{ steps.analisar_commits.outputs.BUMP_REASON }}";
-            const commits = `${{ steps.analisar_commits.outputs.COMMIT_LIST }}`.replace(/%0A/g, '\n');
-            const botCommentIdentifier = "";
-            
-            let body = `## 🤖 Análise de Versionamento Semântico\n`;
-            body += `${botCommentIdentifier}\n\n`;
-            body += `**Atualização de versão detectada:** \`${bumpType}\`\n`;
-            body += `**Justificativa:** ${bumpReason}\n\n`;
-            
-            if (bumpType === "Nenhum") {
-               body += `> ⚠️ **Atenção:** Nenhum commit com os prefixos \`fix:\`, \`feature:\` ou \`refactor:\` foi encontrado. A verificação falhará.\n\n`;
-            }
-            
-            body += `### Commits Analisados:\n`;
-            body += "```\n" + (commits || "Nenhum commit novo encontrado na análise.") + "\n```";
-
-            // Lógica para evitar spam: atualiza o comentário do bot se ele já existir
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-
-            const botComment = comments.find(comment =>
-              comment.user.type === 'Bot' && comment.body.includes(botCommentIdentifier)
-            );
-
-            if (botComment) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-                body: body
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: body
-              });
-            }
-
-      - name: 4. Falhar a verificação se nenhum tipo for detectado
-        if: steps.analisar_commits.outputs.BUMP_TYPE == 'Nenhum'
+      - name: 3. Exibir Resultado da Análise
         run: |
-          echo "Erro: A verificação falhou pois nenhum commit semântico (fix, feature, refactor) foi encontrado."
-          echo "Por favor, adicione um commit com o prefixo apropriado na branch 'stag' antes de fazer o merge."
+          echo "Merge de 'stag' para 'main' concluído."
+          echo "Bump de versão determinado: ${{ steps.analisar_versao.outputs.BUMP_TYPE }}"
+          echo "Justificativa: ${{ steps.analisar_versao.outputs.BUMP_REASON }}"
+
+      - name: 4. Falhar se nenhum commit semântico for encontrado
+        if: steps.analisar_versao.outputs.BUMP_TYPE == 'Nenhum'
+        run: |
+          echo "Erro: O merge foi concluído, mas nenhum commit semântico (fix, feature, refactor/refatorar/refatoração) foi encontrado."
+          echo "O pipeline de release não pode determinar a próxima versão."
           exit 1
