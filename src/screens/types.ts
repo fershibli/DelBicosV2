@@ -11,4 +11,5 @@ export type NavigationParams = {
   NotFound: undefined;
   VerificationScreen: { email: string };
   ClientProfile: undefined;
+  PaymentCompletion: undefined;
 };

@@ -1,0 +1,1 @@
+export { PaymentCompletionScreen } from './PaymentCompletionScreen';
