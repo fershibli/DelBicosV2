@@ -4,9 +4,10 @@ import { styles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
 import DelBicosLogo from '@assets/DelBicos_LogoH.png';
-import { Button, ButtonProps } from '@components/Button';
+import { ButtonNative } from '@components/Button/Button.native';
 import { NavigationParams } from '@screens/types';
-import SouthIcon from '@mui/icons-material/South';
+import { Ionicons } from '@expo/vector-icons';
+import { ButtonFontVariantsKeys, ButtonColorVariantsKeys  } from '../Button/variants';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 
 const Header: React.FC<NativeStackHeaderProps> = (props) => {
@@ -14,24 +15,25 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const navigation = useNavigation();
 
   const navigateTo = (screen?: keyof NavigationParams) => {
-    if (!screen) return; // remove this later, when all screens are defined
-    navigation.navigate(screen);
+    if (!screen) return;
+    navigation.navigate(screen as any);
   };
 
-  interface NavbarButtonProps extends Partial<ButtonProps> {
+  interface NavbarButtonProps {
     screen?: keyof NavigationParams;
     children: React.ReactNode;
+    colorVariant?: ButtonColorVariantsKeys;
   }
 
-  const NavbarButton = ({ screen, children, ...props }: NavbarButtonProps) => (
-    <Button
-      onClick={() => navigateTo(screen)}
+  const NavbarButton = ({ screen, children, colorVariant = 'primaryWhite' }: NavbarButtonProps) => (
+    <ButtonNative
+      onPress={() => navigateTo(screen)}
       sizeVariant="large"
-      colorVariant="primaryWhite"
+      colorVariant={colorVariant}
       noWrap
-      {...props}>
+    >
       {children}
-    </Button>
+    </ButtonNative>
   );
 
   return (
@@ -62,16 +64,17 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         <View style={styles.navButtonsContainer}>
           <View style={styles.locationContainer}>
             <Text style={styles.locationLabel}>Estou em:</Text>
-            <Button
+            <ButtonNative
               colorVariant="secondary"
               sizeVariant="smallPill"
               fontVariant="AfacadRegular15"
-              onClick={() => {}}
-              endIcon={<SouthIcon />}>
+              onPress={() => {}}
+              endIcon={<Ionicons name="chevron-down" size={16} color="white" />}
+            >
               {!!address
                 ? `${address.street}, ${address.city} - ${address.state}`
                 : 'Localização não definida'}
-            </Button>
+            </ButtonNative>
           </View>
           {!!user ? (
             <TouchableOpacity style={styles.userContainer} activeOpacity={0.7}>
