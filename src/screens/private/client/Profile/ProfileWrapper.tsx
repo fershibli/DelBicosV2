@@ -6,6 +6,7 @@ import AlterarEnderecoForm from './Tabs/AlterarEnderecoForm';
 import DadosContaForm from './Tabs/DadosContaForm';
 import TrocarSenhaForm from './Tabs/TrocarSenhaForm';
 import MeusAgendamentos from './Tabs/MeusAgendamentos';
+import NotificacoesContent from './Tabs/NotificacoesContent';
 
 interface UserProfileProps {
   userId: string;
@@ -30,6 +31,8 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
         return <TrocarSenhaForm />;
       case 'MeusAgendamentos':
         return <MeusAgendamentos />;
+      case 'Notificacoes':
+        return <NotificacoesContent userId={user.userId} />;
       default:
         return (
           <Text style={styles.contentText}>Selecione uma opção no menu</Text>
