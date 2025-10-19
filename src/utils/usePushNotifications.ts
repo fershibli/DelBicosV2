@@ -20,7 +20,7 @@ export async function setupNotifications() {
 
   const token = await Notifications.getExpoPushTokenAsync();
   console.log('Push Token:', token);
-  
+
   return token;
 }
 
@@ -40,32 +40,37 @@ export async function scheduleLocalNotification(title: string, body: string) {
   }
 }
 
-export async function checkForNewNotifications(userId: string, lastChecked: Date): Promise<boolean> {
+export async function checkForNewNotifications(
+  userId: string,
+  lastChecked: Date,
+): Promise<boolean> {
   try {
     console.log('🔍 Verificando novas notificações...');
-    
-    const response = await fetch(`http://192.168.1.136:3000/api/notifications/${userId}`);
-    
+
+    const response = await fetch(
+      `http://192.168.1.136:3000/api/notifications/${userId}`,
+    );
+
     if (!response.ok) {
       throw new Error(`Erro HTTP: ${response.status}`);
     }
-    
+
     const notifications = await response.json();
     console.log('Notificações da API:', notifications.length);
-    
+
     const newNotifications = notifications.filter((notification: any) => {
       const notificationDate = new Date(notification.createdAt);
       const isNew = !notification.is_read && notificationDate > lastChecked;
-      
+
       if (isNew) {
         console.log('🆕 Nova notificação encontrada:', {
           id: notification.id,
           title: notification.title,
           createdAt: notification.createdAt,
-          is_read: notification.is_read
+          is_read: notification.is_read,
         });
       }
-      
+
       return isNew;
     });
 
