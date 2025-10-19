@@ -38,7 +38,7 @@ const UserProfileScreen: React.FC = () => {
       console.log('📤 Tamanho do base64:', base64Image.length);
 
       const response = await fetch(
-        `http://localhost:3000/api/user/${userId}/avatar`,
+        `192.168.1.136/api/user/${userId}/avatar`,
         {
           method: 'POST',
           headers: {
@@ -100,7 +100,7 @@ const UserProfileScreen: React.FC = () => {
   const removeAvatar = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/user/${userId}/avatar`,
+        `http://192.168.1.136:3000/api/user/${userId}/avatar`,
         {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
@@ -157,7 +157,7 @@ const UserProfileScreen: React.FC = () => {
         return;
       }
 
-      const fullAvatarUrl = `http://localhost:3000/${apiAvatarUri}`;
+      const fullAvatarUrl = `http://192.168.1.136:3000/${apiAvatarUri}`;
 
       if (Platform.OS === 'web') {
         setAvatarUri(fullAvatarUrl);
@@ -196,7 +196,7 @@ const UserProfileScreen: React.FC = () => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/user/${userId}`,
+          `http://192.168.1.136:3000/api/user/${userId}`,
         );
         if (!response.ok) throw new Error('Erro ao buscar usuário');
 
