@@ -22,7 +22,7 @@ import { PaymentCompletionScreen } from './private/client/PaymentCompletion';
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
   const { user } = useUserStore();
-  return user ? <ProfileScreen /> : <ProfileScreen />;
+  return user ? <Feed /> : <Login />;
 };
 
 const RootStack = createNativeStackNavigator<NavigationParams>({
