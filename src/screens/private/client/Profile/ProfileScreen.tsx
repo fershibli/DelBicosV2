@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, ActivityIndicator, Alert, Platform } from 'react-native';
-import * as FileSystem from 'expo-file-system';
+import { Paths, Directory, File } from 'expo-file-system';
 import ProfileWrapper from './ProfileWrapper';
 import { useUserStore } from '@stores/User';
 
@@ -117,11 +117,10 @@ const UserProfileScreen: React.FC = () => {
         const storageKey = `userImages/${userId}/avatar.uri`;
         localStorage.removeItem(storageKey);
       } else {
-        const userImageDir = `${FileSystem.documentDirectory}userImages/${userId}`;
-        const avatarPath = `${userImageDir}/avatar.jpg`;
-        const fileInfo = await FileSystem.getInfoAsync(avatarPath);
-        if (fileInfo.exists) {
-          await FileSystem.deleteAsync(avatarPath);
+        const userImageDir = new Directory(Paths.cache, 'userImages', userId);
+        const avatarFile = new File(userImageDir, 'avatar.jpg');
+        if (avatarFile.exists) {
+          avatarFile.delete();
         }
       }
 
@@ -151,45 +150,47 @@ const UserProfileScreen: React.FC = () => {
     }
   };
 
-  const loadSavedAvatar = async (apiAvatarUri: string | null) => {
-    if (!apiAvatarUri) {
-      setAvatarUri(null);
-      return;
-    }
-
-    const fullAvatarUrl = `http://localhost:3000/${apiAvatarUri}`;
-
-    if (Platform.OS === 'web') {
-      setAvatarUri(fullAvatarUrl);
-      console.log('💻 Imagem carregada via URL:', fullAvatarUrl);
-      return;
-    }
-
-    try {
-      const userImageDir = `${FileSystem.documentDirectory}userImages/${userId}`;
-      const avatarPath = `${userImageDir}/avatar.jpg`;
-      const fileInfo = await FileSystem.getInfoAsync(avatarPath);
-
-      if (fileInfo.exists) {
-        setAvatarUri(avatarPath);
-        console.log('📱 Imagem carregada do cache local:', avatarPath);
-      } else {
-        const downloadedFile = await FileSystem.downloadAsync(
-          fullAvatarUrl,
-          avatarPath,
-        );
-        setAvatarUri(downloadedFile.uri);
-        console.log(
-          '📱 Imagem baixada e carregada do servidor:',
-          downloadedFile.uri,
-        );
+  const loadSavedAvatar = useCallback(
+    async (apiAvatarUri: string | null) => {
+      if (!apiAvatarUri) {
+        setAvatarUri(null);
+        return;
       }
-    } catch (error) {
-      console.error('❌ Erro ao carregar/baixar avatar:', error);
-      setAvatarUri(fullAvatarUrl);
-      console.log('🔄 Tentando carregar diretamente via URL:', fullAvatarUrl);
-    }
-  };
+
+      const fullAvatarUrl = `http://localhost:3000/${apiAvatarUri}`;
+
+      if (Platform.OS === 'web') {
+        setAvatarUri(fullAvatarUrl);
+        console.log('💻 Imagem carregada via URL:', fullAvatarUrl);
+        return;
+      }
+
+      try {
+        const userImageDir = new Directory(Paths.cache, 'userImages', userId);
+        const avatarFile = new File(userImageDir, 'avatar.jpg');
+
+        if (avatarFile.exists) {
+          setAvatarUri(avatarFile.uri);
+          console.log('📱 Imagem carregada do cache local:', avatarFile.uri);
+        } else {
+          const downloadedFile = await File.downloadFileAsync(
+            fullAvatarUrl,
+            avatarFile,
+          );
+          setAvatarUri(downloadedFile.uri);
+          console.log(
+            '📱 Imagem baixada e carregada do servidor:',
+            downloadedFile.uri,
+          );
+        }
+      } catch (error) {
+        console.error('❌ Erro ao carregar/baixar avatar:', error);
+        setAvatarUri(fullAvatarUrl);
+        console.log('🔄 Tentando carregar diretamente via URL:', fullAvatarUrl);
+      }
+    },
+    [userId],
+  );
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -212,7 +213,7 @@ const UserProfileScreen: React.FC = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, [userId, loadSavedAvatar]);
 
   if (loading) {
     return (

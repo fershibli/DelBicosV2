@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Appointment, AppointmentStore } from './types';
+import { AppointmentStore } from './types';
 import { useUserStore } from '@stores/User';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 
@@ -10,7 +10,7 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
       const endpoint = `api/appointments/user/${user?.id}`;
       const response = await backendHttpClient.get(endpoint);
 
-      return response.data as Appointment[];
+      return response.data;
     } catch (error) {
       console.error('Failed to fetch appointments:', error);
       return [];
@@ -26,6 +26,17 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
     } catch (error) {
       console.error('Failed to submit review:', error);
       return false;
+    }
+  },
+  fetchInvoice: async (appointmentId) => {
+    try {
+      const response = await backendHttpClient.get(
+        `api/appointments/${appointmentId}/invoice`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch invoice:', error);
+      return null;
     }
   },
 }));
