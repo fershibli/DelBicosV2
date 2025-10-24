@@ -98,7 +98,12 @@ export const useUserStore = create<UserStore>()(
           throw new Error('Erro ao fazer login. Por favor, tente novamente.');
         }
       },
-      signOut: () => set({ user: null }),
+      signOut: () =>
+        set({
+          user: null,
+          address: null,
+          token: null,
+        }),
     }),
     {
       name: 'user-storage',

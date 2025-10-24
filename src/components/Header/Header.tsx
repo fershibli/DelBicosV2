@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Image, Text, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
 import DelBicosLogo from '@assets/DelBicos_LogoH.png';
 import { Button, ButtonProps } from '@components/Button';
@@ -40,6 +40,17 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       {children}
     </Button>
   );
+
+  const handleSignOut = () => {
+    signOut();
+
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      }),
+    );
+  };
 
   return (
     <View style={styles.headerContainer}>
@@ -108,7 +119,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                   </View>
                 </MenuOption>
                 <View style={styles.menuDivider} />
-                <MenuOption onSelect={signOut}>
+                <MenuOption onSelect={handleSignOut}>
                   <View style={styles.menuOption}>
                     <FontAwesome
                       name="sign-out"
