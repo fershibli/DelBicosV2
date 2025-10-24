@@ -2,39 +2,43 @@ import { StyleSheet, Platform } from 'react-native';
 import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
-  loadingContainer: {
+  externalContainer: {
+    backgroundColor: 'transparent',
     width: '100%',
-    minHeight: 146,
+    minHeight: 120,
+    paddingVertical: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  listContainer: {
-    paddingBottom: 20,
+  flatList: {
+    paddingHorizontal: 16,
   },
   categoryCard: {
-    flex: 1,
-    margin: 8,
-    padding: 16,
+    flexDirection: 'row',
+    width: 210,
+    height: 90,
+    marginHorizontal: 8,
+    paddingHorizontal: 16,
     borderRadius: 12,
-    height: 140,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#E0E0E0',
+    justifyContent: 'center',
+    alignItems: 'center',
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: colors.primaryBlack,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
       },
       android: {
-        elevation: 4,
+        elevation: 3,
       },
       web: {
-        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+        boxShadow: `0px 2px 4px rgba(0, 0, 0, 0.1)`,
         transition: 'all 0.2s ease-in-out',
+        cursor: 'pointer',
       },
     }),
   },
@@ -43,20 +47,19 @@ export const styles = StyleSheet.create({
       web: {
         backgroundColor: '#005A93',
         borderColor: '#005A93',
-        transform: [{ scale: 1.05 }],
+        transform: [{ scale: 1.03 }],
       },
-      // No mobile, podemos adicionar um feedback de "ativo" diferente se quisermos
-      // Por enquanto, o hover é só para web
     }),
   },
   categoryTitle: {
     fontSize: 18,
-    fontFamily: 'Afacad-Bold',
-    color: '#003366',
-    textAlign: 'center',
-    marginTop: 10,
+    fontFamily: 'Afacad-SemiBold',
+    color: '#003366', // Texto azul
+    textAlign: 'left',
+    flexShrink: 1,
+    marginLeft: 12,
   },
   categoryTitleHovered: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
 });

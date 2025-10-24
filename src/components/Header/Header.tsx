@@ -67,7 +67,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       <View style={styles.navContainer}>
         <View style={styles.navButtonsContainer}>
           <NavbarButton screen={'Feed'}>Página Inicial</NavbarButton>
-          <NavbarButton>Categorias</NavbarButton>
+          <NavbarButton screen={'Category'}>Categorias</NavbarButton>
           <NavbarButton>Ajuda</NavbarButton>
           {!!user && (
             <>

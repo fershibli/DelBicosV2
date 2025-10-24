@@ -17,6 +17,8 @@ import Header from '@components/Header';
 import { useUserStore } from '@stores/User';
 import { LoginPassword } from './public/LoginPassword';
 import ProfileScreen from './private/client/Profile';
+import CategoryScreen from './public/Category';
+import SubCategoryScreen from './public/SubCategoryScreen';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -111,6 +113,27 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: NotFound,
       linking: {
         path: '*',
+      },
+    },
+    Category: {
+      screen: CategoryScreen,
+      linking: {
+        path: 'categories',
+      },
+      options: {
+        title: 'Categorias', // Título que pode ser usado pelo Header
+      },
+    },
+    SubCategoryScreen: {
+      screen: SubCategoryScreen,
+      linking: {
+        path: 'category/:categoryId',
+        parse: {
+          categoryId: (value) => Number(value), // Converte o ID da URL para número
+        },
+      },
+      options: {
+        title: 'Serviços',
       },
     },
   },

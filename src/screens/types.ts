@@ -11,4 +11,6 @@ export type NavigationParams = {
   NotFound: undefined;
   VerificationScreen: { email: string };
   ClientProfile: undefined;
+  Category: undefined;
+  SubCategoryScreen: { categoryId: string };
 };

@@ -4,14 +4,17 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.secondaryGray,
+    backgroundColor: '#F4F7FA',
+  },
+  contentContainer: {
+    paddingBottom: 40,
   },
   title: {
-    fontSize: 30,
-    fontFamily: 'Afacad-Regular',
-    color: colors.primaryBlack,
-    marginLeft: 67,
-    marginTop: 17,
+    fontSize: 24,
+    fontFamily: 'Afacad-Bold',
+    color: colors.primaryBlue,
+    paddingHorizontal: 24,
+    marginTop: 24,
     marginBottom: 10,
   },
 });

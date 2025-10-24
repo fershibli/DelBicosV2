@@ -1,17 +1,19 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Text, ScrollView } from 'react-native';
 import { styles } from './styles';
-import CategoryList from '@components/CategoryList';
+import CategorySlider from '@components/CategorySlider';
 import ListProfessionals from '@components/ListProfessionals';
 
 function FeedScreen() {
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}>
       <Text style={styles.title}>Selecione por Categorias</Text>
-      <CategoryList />
+      <CategorySlider />
       <Text style={styles.title}>Profissionais próximos a você</Text>
       <ListProfessionals />
-    </View>
+    </ScrollView>
   );
 }
 
