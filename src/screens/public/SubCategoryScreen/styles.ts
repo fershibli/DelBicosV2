@@ -3,28 +3,25 @@ import { StyleSheet, Platform } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F7FA', // Fundo cinza claro
+    backgroundColor: '#F4F7FA',
   },
   scrollContainer: {
     flexGrow: 1,
     padding: 24,
   },
-  // Layout principal
   mainContent: {
     flexDirection: 'row',
     width: '100%',
     gap: 24,
   },
   leftColumn: {
-    flex: 3, // Ocupa 3/5 do espaço (60%)
-    minWidth: 300, // Garante que não fique muito espremido
-  },
-  rightColumn: {
-    flex: 2, // Ocupa 2/5 do espaço (40%)
+    flex: 3,
     minWidth: 300,
   },
-
-  // Coluna da Esquerda (Subcategorias)
+  rightColumn: {
+    flex: 2,
+    minWidth: 300,
+  },
   pageTitle: {
     fontSize: 28,
     fontFamily: 'Afacad-Bold',
@@ -35,7 +32,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   subCategoryButton: {
-    flex: 1, // Para o numColumns funcionar bem
+    flex: 1,
     height: 80,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -57,36 +54,37 @@ export const styles = StyleSheet.create({
     }),
   },
   subCategoryButtonActive: {
-    backgroundColor: '#005A93', // Fundo azul
+    backgroundColor: '#005A93',
     borderColor: '#005A93',
   },
   subCategoryText: {
     fontSize: 16,
     fontFamily: 'Afacad-SemiBold',
-    color: '#FC8200', // Texto laranja
+    color: '#FC8200',
     textAlign: 'center',
   },
   subCategoryTextActive: {
-    color: '#FFFFFF', // Texto branco
+    color: '#FFFFFF',
   },
-
-  // Coluna da Direita (Calendário)
   calendarContainer: {
     backgroundColor: '#FC8200',
     borderRadius: 16,
-    padding: 20,
-    alignItems: 'center',
-  },
-  calendarPlaceholder: {
-    width: '100%',
-    height: 300,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  calendarText: {
-    fontFamily: 'Afacad-Bold',
-    fontSize: 18,
-    color: 'white',
+    overflow: 'hidden',
+    paddingBottom: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+      web: {
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+      },
+    }),
   },
   continueButton: {
     backgroundColor: '#005A93',
@@ -104,8 +102,6 @@ export const styles = StyleSheet.create({
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
   },
-
-  // Rodapé
   footer: {
     padding: 20,
     textAlign: 'center',

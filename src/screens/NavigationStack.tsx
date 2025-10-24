@@ -19,6 +19,7 @@ import { LoginPassword } from './public/LoginPassword';
 import ProfileScreen from './private/client/Profile';
 import CategoryScreen from './public/Category';
 import SubCategoryScreen from './public/SubCategoryScreen';
+import SearchResultScreen from './public/SearchResultScreen';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -134,6 +135,15 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       },
       options: {
         title: 'Serviços',
+      },
+    },
+    SearchResult: {
+      screen: SearchResultScreen,
+      linking: {
+        path: 'search', // A URL será algo como /search?subcategory=...&date=...
+      },
+      options: {
+        title: 'Resultados da Busca',
       },
     },
   },

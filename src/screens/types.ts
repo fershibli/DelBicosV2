@@ -13,4 +13,5 @@ export type NavigationParams = {
   ClientProfile: undefined;
   Category: undefined;
   SubCategoryScreen: { categoryId: string };
+  SearchResult: { subcategoryId: number; date: string };
 };
