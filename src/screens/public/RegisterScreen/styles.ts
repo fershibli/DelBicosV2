@@ -1,9 +1,10 @@
 import { StyleSheet, Platform } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FC8200',
+    backgroundColor: colors.primaryOrange,
   },
   scrollContainer: {
     flex: 1,
@@ -17,21 +18,28 @@ export const styles = StyleSheet.create({
   logo: {
     width: 150,
     height: 150,
-    resizeMode: 'contain',
     marginBottom: 40,
   },
   formContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 16,
     padding: 24,
     width: '100%',
     maxWidth: 500,
-    alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+      },
+    }),
   },
   title: {
     fontSize: 32,
@@ -48,7 +56,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
   input: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 8,
     paddingHorizontal: 16,
     height: 50,
@@ -137,17 +145,17 @@ export const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonText: {
-    color: '#ffffff',
+    color: colors.primaryWhite,
     fontWeight: 'bold',
     fontSize: 16,
     fontFamily: 'Afacad-Bold',
   },
   linkText: {
-    marginTop: 24, // Aumenta o espaço acima do link
+    marginTop: 24,
     color: '#003366',
     fontFamily: 'Afacad-Regular',
     fontSize: 14,
-    textAlign: 'center', // Garante que o texto fique centralizado
+    textAlign: 'center',
   },
   linkTextBold: {
     fontFamily: 'Afacad-Bold',
@@ -157,6 +165,6 @@ export const styles = StyleSheet.create({
     padding: 10,
     textAlign: 'center',
     fontSize: 12,
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
 });

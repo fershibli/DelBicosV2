@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   card: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 12,
     padding: 20,
     marginBottom: 20,
@@ -30,7 +31,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
   },
   input: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -78,7 +79,7 @@ export const styles = StyleSheet.create({
     borderColor: '#CED4DA',
     borderRadius: 8,
     justifyContent: 'center', // Centraliza o Picker verticalmente
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
   },
   pickerWrapper: {
     borderWidth: 1,
@@ -87,7 +88,7 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   picker: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 14,

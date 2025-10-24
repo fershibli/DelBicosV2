@@ -10,6 +10,7 @@ import { useForm, Controller } from 'react-hook-form';
 import CustomTextInput from '@components/CustomTextInput';
 import PasswordInput from '@components/PasswordInput';
 import { styles } from './styles';
+import colors from '@theme/colors';
 
 const TrocarSenhaForm: React.FC = () => {
   const {
@@ -119,7 +120,7 @@ const TrocarSenhaForm: React.FC = () => {
               onPress={handleSubmit(handleSalvar)}
               disabled={!isValid || isSubmitting}>
               {isSubmitting ? (
-                <ActivityIndicator color="#FFFFFF" />
+                <ActivityIndicator color={colors.primaryWhite} />
               ) : (
                 <Text style={styles.buttonText}>Salvar Alterações</Text>
               )}

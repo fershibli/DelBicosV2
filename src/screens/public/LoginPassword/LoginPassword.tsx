@@ -21,6 +21,7 @@ import IconPhone from '@assets/phone.svg';
 import LogoV3 from '@assets/LogoV3.png';
 
 import { styles } from './styles';
+import colors from '@theme/colors';
 
 type FormData = {
   email: string;
@@ -123,13 +124,13 @@ export const LoginPassword = () => {
             onPress={handleSubmit(onLoginPress)}
             disabled={!isValid || isSubmitting}>
             {isSubmitting ? (
-              <ActivityIndicator color="#FFFFFF" />
+              <ActivityIndicator color={colors.primaryWhite} />
             ) : (
               <Text style={styles.buttonText}>
                 <IconPerson
                   width={16}
                   height={16}
-                  color="#ffffff"
+                  color={colors.primaryWhite}
                   style={{ marginRight: 8 }}
                 />{' '}
                 Login
@@ -166,7 +167,6 @@ export const LoginPassword = () => {
 
       <Modal
         animationType="fade"
-        transparent={true}
         visible={errorModalVisible}
         onRequestClose={() => setErrorModalVisible(false)}>
         <View style={styles.modalOverlay}>

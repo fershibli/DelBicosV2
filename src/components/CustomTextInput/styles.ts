@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   container: {
@@ -12,7 +13,7 @@ export const styles = StyleSheet.create({
     fontFamily: 'Afacad-SemiBold',
   },
   input: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 14,

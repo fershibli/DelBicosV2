@@ -3,6 +3,7 @@ import { View, ActivityIndicator, Alert, Platform } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import ProfileWrapper from './ProfileWrapper';
 import { useUserStore } from '@stores/User';
+import colors from '@theme/colors';
 
 interface User {
   id: number;
@@ -217,7 +218,7 @@ const UserProfileScreen: React.FC = () => {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#FC8200" />
+        <ActivityIndicator size="large" color={colors.primaryOrange} />
       </View>
     );
   }

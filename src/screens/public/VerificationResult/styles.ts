@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   container: {
@@ -16,7 +17,7 @@ export const styles = StyleSheet.create({
   },
   message: {
     fontSize: 18,
-    color: '#ffffff',
+    color: colors.primaryWhite,
     fontWeight: 'bold',
   },
   button: {
@@ -27,7 +28,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: '#ffffff',
+    color: colors.primaryWhite,
     fontWeight: 'bold',
   },
   footer: {

@@ -25,8 +25,19 @@ interface ButtonProps {
   noWrap?: boolean;
 }
 
+const customProps = [
+  'defaultColors',
+  'defaultSize',
+  'defaultFont',
+  'hoverColors',
+  'disabledColors',
+  'noWrap',
+];
+
 export const Styled = {
-  Button: styled(Button)<ButtonProps>(
+  Button: styled(Button, {
+    shouldForwardProp: (prop) => !customProps.includes(prop as string),
+  })<ButtonProps>(
     ({
       defaultColors,
       defaultSize,

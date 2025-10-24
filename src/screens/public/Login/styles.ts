@@ -1,9 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FC8200',
+    backgroundColor: colors.primaryOrange,
   },
   contentContainer: {
     flexGrow: 1,
@@ -20,15 +21,24 @@ export const styles = StyleSheet.create({
   card: {
     width: '100%',
     maxWidth: 400,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 16,
     padding: 24,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 8,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 8,
+      },
+      web: {
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
+      },
+    }),
   },
   title: {
     fontSize: 28,
@@ -40,7 +50,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Afacad-Regular',
     color: '#6c757d',
-    marginBottom: 32, // 1. Aumentamos a margem inferior do subtítulo
+    marginBottom: 32,
     textAlign: 'center',
   },
   button: {
@@ -51,19 +61,18 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  // 2. Criamos um container para o input para controlar o espaçamento
   inputContainer: {
     width: '100%',
-    marginTop: 24, // Esta margem cria o espaço maior que você pediu
+    marginTop: 24,
   },
   buttonText: {
-    color: '#ffffff',
+    color: colors.primaryWhite,
     fontWeight: 'bold',
     fontSize: 16,
     fontFamily: 'Afacad-Bold',
   },
   buttonSecondary: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderWidth: 1.5,
     borderColor: '#003366',
   },
@@ -90,6 +99,6 @@ export const styles = StyleSheet.create({
     padding: 10,
     textAlign: 'center',
     fontSize: 12,
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
 });

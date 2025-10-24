@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FC8200',
+    backgroundColor: colors.primaryOrange,
   },
   contentContainer: {
     flexGrow: 1,
@@ -20,7 +21,7 @@ export const styles = StyleSheet.create({
   formContainer: {
     width: '100%',
     maxWidth: 400,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 16,
     padding: 24,
     alignItems: 'center',
@@ -57,13 +58,13 @@ export const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    color: '#ffffff',
+    color: colors.primaryWhite,
     fontWeight: 'bold',
     fontSize: 16,
     fontFamily: 'Afacad-Bold',
   },
   buttonSecondary: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderWidth: 1.5,
     borderColor: '#003366',
   },
@@ -84,7 +85,7 @@ export const styles = StyleSheet.create({
     padding: 10,
     textAlign: 'center',
     fontSize: 12,
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
   modalOverlay: {
     flex: 1,

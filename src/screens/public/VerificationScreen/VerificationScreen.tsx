@@ -17,6 +17,7 @@ import LogoV3 from '@assets/LogoV3.png';
 import { styles } from './styles';
 import { HTTP_DOMAIN } from '@config/varEnvs';
 import { useUserStore } from '@stores/User';
+import colors from '@theme/colors';
 
 function VerificationScreen() {
   const navigation = useNavigation();
@@ -130,7 +131,7 @@ function VerificationScreen() {
             onPress={handleVerify}
             disabled={isLoading}>
             {isLoading ? (
-              <ActivityIndicator color="#FFFFFF" />
+              <ActivityIndicator color={colors.primaryWhite} />
             ) : (
               <Text style={styles.buttonText}>Verificar</Text>
             )}

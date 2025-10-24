@@ -14,6 +14,7 @@ import { useLocation } from '@lib/hooks/LocationContext';
 import CustomTextInput from '@components/CustomTextInput';
 import LogoV3 from '@assets/LogoV3.png';
 import { styles } from './styles';
+import colors from '@theme/colors';
 
 function LoginScreen() {
   const navigation = useNavigation();
@@ -111,7 +112,7 @@ function LoginScreen() {
             onPress={handleUseLocation}
             disabled={isLoadingLocation}>
             {isLoadingLocation ? (
-              <ActivityIndicator color="#FFFFFF" />
+              <ActivityIndicator color={colors.primaryWhite} />
             ) : (
               <Text style={styles.buttonText}>Usar minha localização</Text>
             )}
@@ -133,7 +134,7 @@ function LoginScreen() {
             onPress={handleCepSearch}
             disabled={isLoadingCep}>
             {isLoadingCep ? (
-              <ActivityIndicator color="#FFFFFF" />
+              <ActivityIndicator color={colors.primaryWhite} />
             ) : (
               <Text style={styles.buttonText}>Buscar CEP</Text>
             )}

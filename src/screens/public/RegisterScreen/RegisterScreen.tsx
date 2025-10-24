@@ -130,7 +130,7 @@ function RegisterScreen() {
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="handled">
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <Image source={LogoV3} style={styles.logo} />
+          <Image source={LogoV3} style={styles.logo} resizeMode="contain" />
         </TouchableOpacity>
 
         <View style={styles.formContainer}>

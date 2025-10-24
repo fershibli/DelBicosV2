@@ -1,6 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
-import { useLocation } from '@lib/hooks/LocationContext';
+import { View, Text } from 'react-native';
 import { styles } from './styles';
 import CategoryList from '@components/CategoryList';
 import ListProfessionals from '@components/ListProfessionals';

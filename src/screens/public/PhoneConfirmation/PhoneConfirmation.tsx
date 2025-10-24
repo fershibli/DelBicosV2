@@ -16,6 +16,7 @@ import { MaskedTextInput } from 'react-native-mask-text';
 import CustomTextInput from '@components/CustomTextInput';
 import LogoV3 from '@assets/LogoV3.png';
 import { styles } from './styles';
+import colors from '@theme/colors';
 
 type NavigationProp = NativeStackNavigationProp<NavigationParams>;
 
@@ -74,7 +75,7 @@ function PhoneConfirmationScreen() {
             onPress={handleContinue}
             disabled={isLoading}>
             {isLoading ? (
-              <ActivityIndicator color="#FFFFFF" />
+              <ActivityIndicator color={colors.primaryWhite} />
             ) : (
               <Text style={styles.buttonText}>Continuar</Text>
             )}

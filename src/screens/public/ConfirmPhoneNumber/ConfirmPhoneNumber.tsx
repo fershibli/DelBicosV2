@@ -146,7 +146,6 @@ function ConfirmPhoneNumberScreen({
 
       <Modal
         animationType="fade"
-        transparent={true}
         visible={modalVisible}
         onRequestClose={closeModal}>
         <View style={styles.modalOverlay}>

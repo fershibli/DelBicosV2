@@ -15,6 +15,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import CustomTextInput from '@components/CustomTextInput';
 import { styles } from './styles';
+import colors from '@theme/colors';
 
 interface UserProfileProps {
   userId: string;
@@ -68,11 +69,7 @@ const StatusModal = ({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}>
+    <Modal visible={visible} animationType="fade" onRequestClose={onClose}>
       <View style={statusModalStyles.overlay}>
         <View style={statusModalStyles.container}>
           <Text style={statusModalStyles.icon}>{getIcon()}</Text>
@@ -81,7 +78,7 @@ const StatusModal = ({
           {isProgress && (
             <ActivityIndicator
               size="small"
-              color="#005A93"
+              color={colors.primaryBlue}
               style={statusModalStyles.activityIndicator}
             />
           )}
@@ -395,11 +392,7 @@ const AvatarOptionsModal = ({
   hasPhoto,
   uploading,
 }: AvatarOptionsModalProps) => (
-  <Modal
-    visible={visible}
-    transparent
-    animationType="slide"
-    onRequestClose={onClose}>
+  <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
     <TouchableOpacity
       style={styles.modalOverlay}
       activeOpacity={1}
@@ -489,7 +482,7 @@ const statusModalStyles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
-    backgroundColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,

@@ -1,9 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+import colors from '@theme/colors';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#DDE6F0',
+    backgroundColor: colors.secondaryGray,
     paddingHorizontal: 15,
   },
   header: {
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 15,
     lineHeight: 18,
-    color: '#005A93',
+    color: colors.primaryBlue,
   },
   professionalContainer: {
     alignItems: 'flex-start',
@@ -29,20 +30,20 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 15,
     lineHeight: 18,
-    color: '#000000',
+    color: colors.primaryBlack,
     marginBottom: 5,
   },
   serviceInfo: {
     fontWeight: '300',
     fontSize: 12,
-    color: '#000000',
+    color: colors.primaryBlack,
     marginBottom: 5,
   },
   viewProfessionalText: {
     fontWeight: '300',
     fontSize: 9,
     lineHeight: 11,
-    color: '#005A93',
+    color: colors.primaryBlue,
   },
   divider: {
     height: 2,
@@ -53,9 +54,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   statusBanner: {
-    backgroundColor: '#22843B',
+    backgroundColor: colors.primaryGreen,
     borderWidth: 1,
-    borderColor: '#22843B',
+    borderColor: colors.primaryGreen,
     borderRadius: 3,
     width: '40%',
     paddingVertical: 10,
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 10,
     lineHeight: 18,
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
   reminderButton: {
     alignSelf: 'flex-end',
@@ -75,17 +76,17 @@ const styles = StyleSheet.create({
   reminderText: {
     fontSize: 9,
     lineHeight: 11,
-    color: '#000000',
+    color: colors.primaryBlack,
   },
   itemsContainer: {
     borderWidth: 0.3,
-    borderColor: '#000000',
+    borderColor: colors.primaryBlack,
     borderRadius: 3,
     marginBottom: 10,
     overflow: 'hidden',
   },
   itemsHeader: {
-    backgroundColor: '#FC8200',
+    backgroundColor: colors.primaryOrange,
     paddingVertical: 2,
     paddingHorizontal: 10,
   },
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 9,
     lineHeight: 11,
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
   itemDetails: {
     backgroundColor: '#FFE092',
@@ -109,31 +110,31 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 9,
     lineHeight: 11,
-    color: '#000000',
+    color: colors.primaryBlack,
   },
   itemDate: {
     fontWeight: '400',
     fontSize: 9,
     lineHeight: 11,
-    color: '#000000',
+    color: colors.primaryBlack,
   },
   itemTime: {
     fontWeight: '500',
     fontSize: 9,
     lineHeight: 11,
-    color: '#000000',
+    color: colors.primaryBlack,
   },
   itemPrice: {
     fontWeight: '800',
     fontSize: 9,
     lineHeight: 11,
-    color: '#000000',
+    color: colors.primaryBlack,
   },
   professionalText: {
     fontWeight: '500',
     fontSize: 9,
     lineHeight: 11,
-    color: '#000000',
+    color: colors.primaryBlack,
     marginTop: 5,
   },
   addressContainer: {
@@ -167,15 +168,24 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   paymentCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+      web: {
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+      },
+    }),
   },
   paymentHeader: {
     flexDirection: 'row',
@@ -189,7 +199,7 @@ const styles = StyleSheet.create({
   paymentTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#005A93',
+    color: colors.primaryBlue,
   },
   paymentStatus: {
     backgroundColor: '#E1F5E9',
@@ -198,7 +208,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   paymentStatusText: {
-    color: '#22843B',
+    color: colors.primaryGreen,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -229,12 +239,12 @@ const styles = StyleSheet.create({
   totalLabel: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#005A93',
+    color: colors.primaryBlue,
   },
   totalValue: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#22843B',
+    color: colors.primaryGreen,
   },
   paymentMethodContainer: {
     marginTop: 16,
@@ -258,12 +268,12 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     marginRight: 12,
-    tintColor: '#005A93',
+    tintColor: colors.primaryBlue,
   },
   paymentMethodText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#005A93',
+    color: colors.primaryBlue,
   },
   paymentMethodDetails: {
     fontSize: 12,
@@ -279,7 +289,7 @@ const styles = StyleSheet.create({
   },
   couponText: {
     fontSize: 12,
-    color: '#FC8200',
+    color: colors.primaryOrange,
   },
   paymentContainer: {
     marginBottom: 20,
@@ -301,7 +311,7 @@ const styles = StyleSheet.create({
   paymentNote: {
     marginTop: 10,
     fontSize: 12,
-    color: '#22843B',
+    color: colors.primaryGreen,
     fontStyle: 'italic',
   },
 });

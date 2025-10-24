@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import colors from '@theme/colors'; // Supondo que você tenha esse arquivo de cores
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   // Container Principal
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
 
   // Card Principal
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 16,
     padding: 24,
     shadowColor: '#000',
@@ -103,11 +103,11 @@ export const styles = StyleSheet.create({
   // Modal de Opções do Avatar
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'flex-end',
   },
   optionsContainer: {
-    backgroundColor: '#FFF',
+    backgroundColor: colors.primaryWhite,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 16,
@@ -167,7 +167,7 @@ export const styles = StyleSheet.create({
   },
   statusModalButton: {
     marginTop: 10,
-    backgroundColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -196,8 +196,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeMenuItem: {
-    backgroundColor: '#FC8200',
-    shadowColor: '#FC8200',
+    backgroundColor: colors.primaryOrange,
+    shadowColor: colors.primaryOrange,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 6,
@@ -209,7 +209,7 @@ export const styles = StyleSheet.create({
     color: '#003366',
   },
   activeMenuText: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
     fontFamily: 'Afacad-Bold',
   },
 
