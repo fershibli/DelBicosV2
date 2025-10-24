@@ -10,39 +10,13 @@ import {
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { styles } from './styles';
+import { useSubCategoryStore } from '@stores/SubCategory';
+import { SubCategory } from '@stores/SubCategory/types';
 
-// --- PLACEHOLDERS ---
-// Vamos precisar criar/usar o seu store de subcategorias
-// Por enquanto, usaremos dados mockados
-// import { useSubCategoryStore } from '@stores/SubCategory';
-
-// Interface para os parâmetros da rota
 type SubCategoryRouteParams = {
   categoryId: number;
   categoryTitle: string;
 };
-
-// Interface para o item de Subcategoria
-// (Idealmente, viria do seu store)
-interface SubCategory {
-  id: number;
-  name: string;
-}
-
-// Dados Mockados (Substitua pelo fetch do seu store)
-const MOCK_SUB_CATEGORIES: SubCategory[] = [
-  { id: 1, name: 'Chaveiro' },
-  { id: 2, name: 'Eletricista' },
-  { id: 3, name: 'Encanador' },
-  { id: 4, name: 'Gás & Água' },
-  { id: 5, name: 'Limpeza pós Obra' },
-  { id: 6, name: 'Marido de Aluguel' },
-  { id: 7, name: 'Marceneiro' },
-  { id: 8, name: 'Pedreiro' },
-  { id: 9, name: 'Pintor' },
-  { id: 10, name: 'Vidraceiro' },
-];
-// --- FIM DOS PLACEHOLDERS ---
 
 // Componente de botão reutilizável para a grade
 const SubCategoryButton: React.FC<{
@@ -71,36 +45,30 @@ function SubCategoryScreen() {
   const { categoryId, categoryTitle } = route.params as SubCategoryRouteParams;
 
   const [isLoading, setIsLoading] = useState(true);
-  const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState<number | null>(
     null,
   );
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  // const { fetchSubCategoriesByCategoryId } = useSubCategoryStore(); // (Quando você tiver)
+  const { subCategories, fetchSubCategoriesByCategoryId } =
+    useSubCategoryStore();
 
   useEffect(() => {
     const loadSubCategories = async () => {
       setIsLoading(true);
-      // --- LÓGICA DE BUSCA REAL (quando o store estiver pronto) ---
-      // try {
-      //   const data = await fetchSubCategoriesByCategoryId(categoryId);
-      //   setSubCategories(data);
-      // } catch (error) {
-      //   console.error(error);
-      // } finally {
-      //   setIsLoading(false);
-      // }
 
-      // --- LÓGICA MOCKADA (para desenvolver o layout) ---
-      setTimeout(() => {
-        setSubCategories(MOCK_SUB_CATEGORIES);
-        setIsLoading(false);
-      }, 500);
+      // 3. Chame a função do store
+      await fetchSubCategoriesByCategoryId(categoryId);
+
+      setIsLoading(false);
     };
 
     loadSubCategories();
-  }, [categoryId]);
+    // Limpa as subcategorias ao sair da tela (opcional mas recomendado)
+    return () => {
+      useSubCategoryStore.setState({ subCategories: [] });
+    };
+  }, [categoryId, fetchSubCategoriesByCategoryId]);
 
   const handleContinue = () => {
     if (!selectedSubCategory || !selectedDate) {
@@ -133,8 +101,8 @@ function SubCategoryScreen() {
               data={subCategories}
               keyExtractor={(item) => item.id.toString()}
               numColumns={numColumns}
-              key={numColumns} // Força re-renderização ao mudar colunas
-              style={{ flex: 1 }} // Pode deixar o style com 'flex: 1' ou vazio
+              key={numColumns}
+              style={{ flex: 1 }}
               contentContainerStyle={styles.subCategoryListContainer}
               renderItem={({ item }) => (
                 <SubCategoryButton
@@ -147,7 +115,6 @@ function SubCategoryScreen() {
           )}
         </View>
 
-        {/* COLUNA DA DIREITA: CALENDÁRIO */}
         <View style={styles.rightColumn}>
           <Text style={styles.pageTitle}>Qual Data?</Text>
           <View style={styles.calendarContainer}>
