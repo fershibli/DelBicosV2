@@ -14,4 +14,11 @@ export type NavigationParams = {
   Category: undefined;
   SubCategoryScreen: { categoryId: string };
   SearchResult: { subcategoryId: number; date: string };
+  Checkout: {
+    professionalId: number;
+    priceFrom: number;
+    selectedTime: string;
+    imageUrl?: string; // Marcar como opcional com '?'
+    professionalName?: string; // Marcar como opcional com '?'
+  };
 };

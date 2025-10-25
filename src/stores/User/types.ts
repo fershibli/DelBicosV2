@@ -5,6 +5,7 @@ export type User = {
   name: string;
   phone: string;
   cpf: string;
+  avatar_uri?: string | null;
 };
 
 export type Address = {

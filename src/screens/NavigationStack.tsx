@@ -20,6 +20,7 @@ import ProfileScreen from './private/client/Profile';
 import CategoryScreen from './public/Category';
 import SubCategoryScreen from './public/SubCategoryScreen';
 import SearchResultScreen from './public/SearchResultScreen';
+import CheckoutScreen from './public/CheckoutScreen';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -144,6 +145,15 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       },
       options: {
         title: 'Resultados da Busca',
+      },
+    },
+    Checkout: {
+      screen: CheckoutScreen,
+      linking: {
+        path: 'checkout', // A URL será algo como /checkout?professionalId=...&time=...
+      },
+      options: {
+        headerShown: false, // Opcional: Esconde o header padrão
       },
     },
   },
