@@ -20,9 +20,9 @@ export const styles = StyleSheet.create({
     marginHorizontal: 8,
     paddingHorizontal: 16,
     borderRadius: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.secondaryBeige,
     justifyContent: 'center',
     alignItems: 'center',
     ...Platform.select({
@@ -45,8 +45,8 @@ export const styles = StyleSheet.create({
   categoryCardHovered: {
     ...Platform.select({
       web: {
-        backgroundColor: '#005A93',
-        borderColor: '#005A93',
+        backgroundColor: colors.primaryBlue,
+        borderColor: colors.primaryBlue,
         transform: [{ scale: 1.03 }],
       },
     }),

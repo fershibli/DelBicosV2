@@ -287,7 +287,10 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
                 <Animated.View
                   style={[styles.avatarOverlay, { opacity: overlayOpacity }]}>
                   {user?.uploading ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator
+                      size="small"
+                      color={colors.primaryWhite}
+                    />
                   ) : (
                     <Text style={styles.avatarOverlayText}>Alterar Foto</Text>
                   )}
@@ -451,7 +454,7 @@ const statusModalStyles = StyleSheet.create({
     maxWidth: 350,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: colors.primaryBlack,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
@@ -490,7 +493,7 @@ const statusModalStyles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
+    color: colors.primaryWhite,
     fontWeight: 'bold',
     fontSize: 16,
   },

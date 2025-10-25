@@ -57,7 +57,7 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
     styles.categoryTitle,
     isHovered && styles.categoryTitleHovered,
   ];
-  const iconColor = isHovered ? '#FFFFFF' : '#003366';
+  const iconColor = isHovered ? colors.primaryWhite : '#003366';
 
   return (
     <Pressable
@@ -90,6 +90,7 @@ function CategoryList() {
   }, [categories, fetchCategories]);
 
   const handleCategoryPress = (category: Category) => {
+    // @ts-ignore
     navigation.navigate('SubCategoryScreen', {
       categoryId: category.id,
       categoryTitle: category.title,

@@ -19,12 +19,12 @@ export const styles = StyleSheet.create({
     height: 140,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.secondaryBeige,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: colors.primaryBlack,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -41,8 +41,8 @@ export const styles = StyleSheet.create({
   categoryCardHovered: {
     ...Platform.select({
       web: {
-        backgroundColor: '#005A93',
-        borderColor: '#005A93',
+        backgroundColor: colors.primaryBlue,
+        borderColor: colors.primaryBlue,
         transform: [{ scale: 1.05 }],
       },
       // No mobile, podemos adicionar um feedback de "ativo" diferente se quisermos
@@ -57,6 +57,6 @@ export const styles = StyleSheet.create({
     marginTop: 10,
   },
   categoryTitleHovered: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
 });

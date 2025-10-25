@@ -1,3 +1,4 @@
+import colors from '@theme/colors';
 import { StyleSheet, Platform } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -34,9 +35,9 @@ export const styles = StyleSheet.create({
   subCategoryButton: {
     flex: 1,
     height: 80,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.secondaryBeige,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
@@ -54,26 +55,26 @@ export const styles = StyleSheet.create({
     }),
   },
   subCategoryButtonActive: {
-    backgroundColor: '#005A93',
-    borderColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
+    borderColor: colors.primaryBlue,
   },
   subCategoryText: {
     fontSize: 16,
     fontFamily: 'Afacad-SemiBold',
-    color: '#FC8200',
+    color: colors.primaryOrange,
     textAlign: 'center',
   },
   subCategoryTextActive: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
   calendarContainer: {
-    backgroundColor: '#FC8200',
+    backgroundColor: colors.primaryOrange,
     borderRadius: 16,
     overflow: 'hidden',
     paddingBottom: 10,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: colors.primaryBlack,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -87,7 +88,7 @@ export const styles = StyleSheet.create({
     }),
   },
   continueButton: {
-    backgroundColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
     paddingVertical: 16,
     borderRadius: 8,
     alignItems: 'center',
@@ -98,7 +99,7 @@ export const styles = StyleSheet.create({
     opacity: 0.7,
   },
   continueButtonText: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
   },

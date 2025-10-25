@@ -69,10 +69,10 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingVertical: 20,
-    backgroundColor: '#fff',
+    backgroundColor: colors.primaryWhite,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: colors.primaryBlack,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 8,

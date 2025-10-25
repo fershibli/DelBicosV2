@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 20,
     marginBottom: 20,
-    shadowColor: '#000',
+    shadowColor: colors.primaryBlack,
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -67,12 +67,12 @@ export const styles = StyleSheet.create({
     backgroundColor: '#6c757d',
   },
   actionButtonText: {
-    color: '#fff',
+    color: colors.primaryWhite,
     fontWeight: 'bold',
     fontFamily: 'Afacad-Bold',
   },
   cancelButtonText: {
-    color: '#fff',
+    color: colors.primaryWhite,
   },
   pickerContainer: {
     borderWidth: 1,

@@ -13,7 +13,7 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
   const navigation = useNavigation();
 
   const navigateToProfile = () => {
-    // Navega para o perfil do profissional
+    // @ts-ignore
     navigation.navigate('PartnerProfile', { id: professional.id });
   };
 

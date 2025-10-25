@@ -106,7 +106,11 @@ function PartnerProfileScreen() {
       </ImageBackground>
 
       <View style={styles.addressContainer}>
-        <MaterialCommunityIcons name="map-marker" size={16} color="#000" />
+        <MaterialCommunityIcons
+          name="map-marker"
+          size={16}
+          color={colors.primaryBlack}
+        />
         <Text style={styles.addressText}>
           {`${parceiro.endereco.rua} - ${parceiro.endereco.cep} - ${parceiro.endereco.bairro} - ${parceiro.endereco.cidade} / ${parceiro.endereco.estado}`}
         </Text>
@@ -209,7 +213,7 @@ const styles = StyleSheet.create({
   },
   tab: {
     fontSize: 17,
-    color: '#000',
+    color: colors.primaryBlack,
   },
   activeTab: {
     color: colors.primaryOrange,

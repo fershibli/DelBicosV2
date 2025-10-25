@@ -11,11 +11,11 @@ export const styles = StyleSheet.create({
     marginTop: 30,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
     borderRadius: 8,
   },
   backButtonText: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
     fontFamily: 'Afacad-Bold',
   },
   loadingContainer: {
@@ -47,11 +47,11 @@ export const styles = StyleSheet.create({
   backButtonError: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
     borderRadius: 8,
   },
   backButtonTextError: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
     fontFamily: 'Afacad-Bold',
   },
   errorMessageText: {
@@ -96,15 +96,15 @@ export const styles = StyleSheet.create({
   },
   // Card de Resumo (Coluna Esquerda)
   summaryCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.secondaryBeige,
     overflow: 'hidden',
     ...Platform.select({
       // Sombra
       ios: {
-        shadowColor: '#000',
+        shadowColor: colors.primaryBlack,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 3,
@@ -115,7 +115,7 @@ export const styles = StyleSheet.create({
   },
   // Botão Finalizar Compra (Agora dentro do CheckoutForm)
   checkoutButton: {
-    backgroundColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
@@ -125,7 +125,7 @@ export const styles = StyleSheet.create({
     opacity: 0.6,
   },
   checkoutButtonText: {
-    color: '#FFF',
+    color: colors.primaryWhite,
     fontSize: 16,
     fontFamily: 'Afacad-Bold',
   },
@@ -202,15 +202,15 @@ export const styles = StyleSheet.create({
     flex: 1, // Ocupa a outra metade do espaço no layout web
   },
   paymentContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.secondaryBeige,
     padding: 20,
     ...Platform.select({
       // Sombra
       ios: {
-        shadowColor: '#000',
+        shadowColor: colors.primaryBlack,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 3,
@@ -254,7 +254,7 @@ export const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderTopColor: colors.secondaryBeige,
   },
   totalLabel: {
     // "Total"

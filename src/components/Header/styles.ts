@@ -42,7 +42,7 @@ export const styles = StyleSheet.create({
   locationLabel: {
     fontFamily: 'Afacad-Regular',
     fontSize: 18,
-    color: '#000',
+    color: colors.primaryBlack,
     marginBottom: 0,
   },
   userContainer: {
@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
   userName: {
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
-    color: '#000',
+    color: colors.primaryBlack,
   },
   blueBar: {
     height: 42,
@@ -72,7 +72,7 @@ export const styles = StyleSheet.create({
     marginTop: 40,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: colors.primaryBlack,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.15,
         shadowRadius: 5,

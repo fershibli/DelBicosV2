@@ -18,7 +18,7 @@ export type NavigationParams = {
     professionalId: number;
     priceFrom: number;
     selectedTime: string;
-    imageUrl?: string; // Marcar como opcional com '?'
-    professionalName?: string; // Marcar como opcional com '?'
+    imageUrl?: string;
+    professionalName?: string;
   };
 };

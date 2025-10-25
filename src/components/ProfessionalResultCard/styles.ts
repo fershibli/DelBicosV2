@@ -5,11 +5,11 @@ export const styles = StyleSheet.create({
   card: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 12,
     marginVertical: 8,
     marginHorizontal: 8,
-    shadowColor: '#000',
+    shadowColor: colors.primaryBlack,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
@@ -75,16 +75,16 @@ export const styles = StyleSheet.create({
     gap: 6,
   },
   timeSlot: {
-    backgroundColor: '#FFF',
+    backgroundColor: colors.primaryWhite,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.secondaryBeige,
     borderRadius: 6,
     paddingVertical: 4,
     paddingHorizontal: 8,
   },
   timeSlotActive: {
-    backgroundColor: '#005A93',
-    borderColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
+    borderColor: colors.primaryBlue,
   },
   timeText: {
     fontSize: 12,
@@ -92,7 +92,7 @@ export const styles = StyleSheet.create({
     color: colors.primaryOrange,
   },
   timeTextActive: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
 
   // Serviços Oferecidos
@@ -135,7 +135,7 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
   },
   profileButtonText: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
     fontFamily: 'Afacad-Bold',
     fontSize: 12,
   },
@@ -161,7 +161,7 @@ export const styles = StyleSheet.create({
     borderRadius: 6,
   },
   priceText: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
     fontSize: 14,
     fontFamily: 'Afacad-Bold',
   },
@@ -180,7 +180,7 @@ export const styles = StyleSheet.create({
     borderRadius: 6,
   },
   tagText: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
     fontSize: 11,
     fontFamily: 'Afacad-Regular',
   },

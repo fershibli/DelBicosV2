@@ -22,6 +22,7 @@ import { HTTP_DOMAIN } from '@config/varEnvs';
 import { isValidCPF } from '../../../utils/validators';
 import LogoV3 from '@assets/LogoV3.png';
 import { useUserStore } from '@stores/User';
+import colors from '@theme/colors';
 
 type FormData = {
   name: string;
@@ -235,7 +236,7 @@ function RegisterScreen() {
                     onPress={handleUseLocation}
                     disabled={isLocationLoading}>
                     {isLocationLoading ? (
-                      <ActivityIndicator color="#FFF" />
+                      <ActivityIndicator color={colors.primaryWhite} />
                     ) : (
                       <Text style={styles.locationButtonText}>📍</Text>
                     )}

@@ -13,6 +13,7 @@ import { styles } from './styles';
 import { useSubCategoryStore } from '@stores/SubCategory';
 import { SubCategory } from '@stores/SubCategory/types';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
+import colors from '@theme/colors';
 
 type SubCategoryRouteParams = {
   categoryId: number;
@@ -120,6 +121,7 @@ function SubCategoryScreen() {
       return;
     }
     // Navegar para a próxima tela (Lista de Profissionais ou Checkout)
+    // @ts-ignore
     navigation.navigate('SearchResult', {
       subCategoryId: selectedSubCategory,
       date: selectedDate,
@@ -130,9 +132,9 @@ function SubCategoryScreen() {
     [selectedDate || '']: {
       // Se a data for nula, ele não marca nada
       selected: true,
-      selectedColor: '#005A93', // Cor azul para o dia selecionado
+      selectedColor: colors.primaryBlue, // Cor azul para o dia selecionado
       disableTouchEvent: true,
-      selectedTextColor: '#FFFFFF',
+      selectedTextColor: colors.primaryWhite,
     },
   };
 
@@ -177,20 +179,20 @@ function SubCategoryScreen() {
                 calendarBackground: 'transparent', // O container já tem a cor
 
                 // Texto do Mês (ex: "Outubro 2025")
-                monthTextColor: '#FFFFFF',
+                monthTextColor: colors.primaryWhite,
                 textMonthFontSize: 18,
                 textMonthFontFamily: 'Afacad-Bold',
 
                 // Setas de navegação (< >)
-                arrowColor: '#FFFFFF',
+                arrowColor: colors.primaryWhite,
 
                 // Nomes dos dias (Dom, Seg, Ter...)
-                textSectionTitleColor: '#FFFFFF',
+                textSectionTitleColor: colors.primaryWhite,
                 textDayHeaderFontFamily: 'Afacad-Regular', // Fonte dos dias da semana
 
                 // Números dos dias
-                dayTextColor: '#FFFFFF',
-                todayTextColor: '#005A93', // Cor do dia "Hoje"
+                dayTextColor: colors.primaryWhite,
+                todayTextColor: colors.primaryBlue, // Cor do dia "Hoje"
                 textDisabledColor: 'rgba(255, 255, 255, 0.4)',
 
                 // @ts-ignore: Esta é uma API de override não tipada da biblioteca

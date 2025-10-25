@@ -10,6 +10,7 @@ import {
   Modal,
 } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import colors from '@theme/colors';
 
 type Imagem = {
   id: string;
@@ -109,7 +110,7 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.primaryWhite,
   },
   galleryContainer: {
     padding: 8,

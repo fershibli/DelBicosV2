@@ -31,11 +31,7 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const handleTimeSlotPress = (time: string) => {
-    console.log(
-      `[ProfessionalResultCard] Navegando para Checkout com ID: ${professional.id}, Preço: ${professional.priceFrom}, Hora: ${time}`,
-    );
-
-    // 3. ATUALIZE A NAVEGAÇÃO AQUI
+    // @ts-ignore
     navigation.navigate('Checkout', {
       professionalId: professional.id, // Passa o ID (número)
       priceFrom: professional.priceFrom, // Passa o preço (número)
@@ -46,6 +42,7 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
   };
 
   const navigateToProfile = () => {
+    // @ts-ignore
     navigation.navigate('PartnerProfile', { id: professional.id });
   };
 

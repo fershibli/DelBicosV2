@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.primaryWhite,
     borderRadius: 16,
     padding: 24,
-    shadowColor: '#000',
+    shadowColor: colors.primaryBlack,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -57,7 +57,7 @@ export const styles = StyleSheet.create({
   avatarInitials: {
     fontSize: 40,
     fontFamily: 'Afacad-Bold',
-    color: '#FFF',
+    color: colors.primaryWhite,
   },
   avatarOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -66,7 +66,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatarOverlayText: {
-    color: '#FFF',
+    color: colors.primaryWhite,
     fontFamily: 'Afacad-SemiBold',
     fontSize: 14,
     textAlign: 'center',
@@ -95,7 +95,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
   },
   saveButtonText: {
-    color: '#fff',
+    color: colors.primaryWhite,
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
   },
@@ -175,7 +175,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statusModalButtonText: {
-    color: '#fff',
+    color: colors.primaryWhite,
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
   },
@@ -239,7 +239,7 @@ export const styles = StyleSheet.create({
     opacity: 0.5,
   },
   buttonText: {
-    color: '#fff',
+    color: colors.primaryWhite,
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
   },

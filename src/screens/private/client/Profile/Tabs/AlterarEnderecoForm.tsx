@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { AddressCard, Address } from '@components/AddressCard';
 import ConfirmationModal from '@components/ConfirmationModal';
+import colors from '@theme/colors';
 
 // Dados de exemplo
 const initialAddresses: Address[] = [
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   newButtonText: {
-    color: '#fff',
+    color: colors.primaryWhite,
     fontWeight: 'bold',
     fontSize: 16,
     fontFamily: 'Afacad-Bold',

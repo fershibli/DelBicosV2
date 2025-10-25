@@ -6,7 +6,6 @@ import {
   Text,
   View,
   Pressable,
-  Platform,
 } from 'react-native';
 import { Category } from '@stores/Category/types';
 import { useNavigation } from '@react-navigation/native';
@@ -60,7 +59,7 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
     styles.categoryTitle,
     isHovered && styles.categoryTitleHovered,
   ];
-  const iconColor = isHovered ? '#FFFFFF' : '#003366'; // Ícone branco no hover
+  const iconColor = isHovered ? colors.primaryWhite : '#003366'; // Ícone branco no hover
 
   return (
     // 8. Mude para Pressable e adicione eventos de hover
@@ -101,6 +100,7 @@ function CategorySlider() {
   }, [categories, fetchCategories]);
 
   const handleCategoryPress = (category: Category) => {
+    // @ts-ignore
     navigation.navigate('SubCategoryScreen', {
       categoryId: category.id,
       categoryTitle: category.title,

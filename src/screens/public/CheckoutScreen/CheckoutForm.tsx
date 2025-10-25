@@ -6,6 +6,7 @@ import {
   PaymentElement,
 } from '@stripe/react-stripe-js';
 import { styles } from './styles'; // Reutiliza os estilos da tela
+import colors from '@theme/colors';
 
 const CheckoutForm = () => {
   const stripe = useStripe();
@@ -60,7 +61,7 @@ const CheckoutForm = () => {
         onPress={handleSubmit}
         disabled={isLoading || !stripe || !elements}>
         {isLoading ? (
-          <ActivityIndicator color="#FFFFFF" />
+          <ActivityIndicator color={colors.primaryWhite} />
         ) : (
           <Text style={styles.checkoutButtonText}>Finalizar Compra</Text>
         )}
