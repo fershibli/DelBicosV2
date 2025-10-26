@@ -21,6 +21,7 @@ import CategoryScreen from './public/Category';
 import SubCategoryScreen from './public/SubCategoryScreen';
 import SearchResultScreen from './public/SearchResultScreen';
 import CheckoutScreen from './public/CheckoutScreen';
+import { PaymentCompletionScreen } from './private/client/PaymentCompletion';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -109,6 +110,15 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: ProfileScreen,
       linking: {
         path: 'client-profile',
+      },
+    },
+    PaymentCompletion: {
+      screen: PaymentCompletionScreen,
+      linking: {
+        path: 'payment-completion',
+      },
+      options: {
+        title: 'Pagamento Realizado',
       },
     },
     NotFound: {

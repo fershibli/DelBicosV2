@@ -4,7 +4,7 @@ import { styles } from './styles';
 import CategorySlider from '@components/CategorySlider';
 import ListProfessionals from '@components/ListProfessionals';
 
-function FeedScreen() {
+const FeedScreen: React.FC = () => {
   return (
     <ScrollView
       style={styles.container}
@@ -15,6 +15,6 @@ function FeedScreen() {
       <ListProfessionals />
     </ScrollView>
   );
-}
+};
 
 export default FeedScreen;

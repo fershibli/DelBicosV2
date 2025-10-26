@@ -21,4 +21,5 @@ export type NavigationParams = {
     imageUrl?: string;
     professionalName?: string;
   };
+  PaymentCompletion: undefined;
 };
