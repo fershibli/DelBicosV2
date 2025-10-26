@@ -12,13 +12,16 @@ const MOCK_DATA_MAP: Record<number, SubCategory[]> = {
     { id: 102, name: 'Psicólogo', categoryId: 1 },
     { id: 103, name: 'Nutricionista', categoryId: 1 },
     { id: 104, name: 'Personal Trainer', categoryId: 1 },
+    { id: 105, name: 'Cuidador de Idosos', categoryId: 1 },
   ],
   // Beleza & Estética (ID 2)
   2: [
-    { id: 201, name: 'Cabeleireiro', categoryId: 2 },
+    { id: 201, name: 'Cabeleireiro(a)', categoryId: 2 },
     { id: 202, name: 'Manicure & Pedicure', categoryId: 2 },
-    { id: 203, name: 'Maquiador', categoryId: 2 },
+    { id: 203, name: 'Maquiador(a)', categoryId: 2 },
     { id: 204, name: 'Designer de Sobrancelhas', categoryId: 2 },
+    { id: 205, name: 'Esteticista', categoryId: 2 },
+    { id: 206, name: 'Barbeiro', categoryId: 2 },
   ],
   // Reformas & Reparos (ID 3)
   3: [
@@ -32,8 +35,31 @@ const MOCK_DATA_MAP: Record<number, SubCategory[]> = {
     { id: 308, name: 'Pedreiro', categoryId: 3 },
     { id: 309, name: 'Pintor', categoryId: 3 },
     { id: 310, name: 'Vidraceiro', categoryId: 3 },
+    { id: 311, name: 'Montador de Móveis', categoryId: 3 },
+    { id: 312, name: 'Instalação de Ar Condicionado', categoryId: 3 },
   ],
-  // (Adicione mais mocks para as categorias 4, 5, 6 se desejar)
+  4: [
+    { id: 401, name: 'Motorista Particular', categoryId: 4 },
+    { id: 402, name: 'Fotógrafo', categoryId: 4 },
+    { id: 403, name: 'DJ para Eventos', categoryId: 4 },
+    { id: 404, name: 'Organizador de Eventos', categoryId: 4 },
+    { id: 405, name: 'Tradutor', categoryId: 4 },
+  ],
+  // Serviços Domésticos (ID 5)
+  5: [
+    { id: 501, name: 'Diarista / Faxineira', categoryId: 5 },
+    { id: 502, name: 'Cozinheiro(a)', categoryId: 5 },
+    { id: 503, name: 'Babá / Cuidador Infantil', categoryId: 5 },
+    { id: 504, name: 'Jardineiro', categoryId: 5 },
+    { id: 505, name: 'Passadeira', categoryId: 5 },
+  ],
+  // Pet (ID 6)
+  6: [
+    { id: 601, name: 'Dog Walker (Passeador)', categoryId: 6 },
+    { id: 602, name: 'Pet Sitter (Cuidador)', categoryId: 6 },
+    { id: 603, name: 'Banho e Tosa', categoryId: 6 },
+    { id: 604, name: 'Adestrador', categoryId: 6 },
+  ],
 };
 // --- FIM DOS DADOS MOCKADOS ---
 
