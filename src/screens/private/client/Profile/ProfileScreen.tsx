@@ -146,38 +146,11 @@ const UserProfileScreen: React.FC = () => {
     }
   };
 
-  const loadSavedAvatar = async (apiAvatarUri: string | null) => {
-    if (!apiAvatarUri) {
-      setAvatarUri(null);
-      return;
-    }
-
-    const fullAvatarUrl = `${HTTP_DOMAIN}/${apiAvatarUri}`;
-
-    if (Platform.OS === 'web') {
-      setAvatarUri(fullAvatarUrl);
-      console.log('💻 Imagem carregada via URL:', fullAvatarUrl);
-      return;
-    }
-
-    try {
-      const userImageDir = `${FileSystem.documentDirectory}userImages/${userId}`;
-      const avatarPath = `${userImageDir}/avatar.jpg`;
-      const fileInfo = await FileSystem.getInfoAsync(avatarPath);
-
-      if (fileInfo.exists) {
-        setAvatarUri(avatarPath);
-        console.log('📱 Imagem carregada do cache local:', avatarPath);
-      } else {
-        const downloadedFile = await FileSystem.downloadAsync(
-          fullAvatarUrl,
-          avatarPath,
-        );
-        setAvatarUri(downloadedFile.uri);
-        console.log(
-          '📱 Imagem baixada e carregada do servidor:',
-          downloadedFile.uri,
-        );
+  const loadSavedAvatar = useCallback(
+    async (apiAvatarUri: string | null) => {
+      if (!apiAvatarUri) {
+        setAvatarUri(null);
+        return;
       }
 
       const fullAvatarUrl = `http://localhost:3000/${apiAvatarUri}`;
