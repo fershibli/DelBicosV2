@@ -1,11 +1,13 @@
 version: '3.8'
 
+name: frontend-delbicos
+
 services:
-  delbicos-app:
+  delbicos-frontend:
     build:
       context: .
       dockerfile: ${DOCKERFILE:-Dockerfile}
-    container_name: frontend-delbicos
+    container_name: webapp-delbicos
     ports:
       - '8081:8081' # Metro bundler
       - '19000:19000' # Expo DevTools
