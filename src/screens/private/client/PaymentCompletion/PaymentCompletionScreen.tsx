@@ -131,7 +131,7 @@ export const PaymentCompletionScreen: React.FC = () => {
       }
     };
     loadInvoiceData();
-  }, []);
+  }, [fetchInvoice]);
 
   if (!invoiceData) {
     return null;
