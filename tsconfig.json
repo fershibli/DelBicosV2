@@ -5,7 +5,6 @@
     "noImplicitThis": true,
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
-    "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "react-native",
     "plugins": [
@@ -22,7 +21,8 @@
       "@lib/*": ["src/lib/*"],
       "@screens/*": ["src/screens/*"],
       "@stores/*": ["src/stores/*"],
-      "@theme/*": ["src/theme/*"]
+      "@theme/*": ["src/theme/*"],
+      "@utils/*": ["src/utils/*"]
     },
     "lib": ["dom", "es6", "es2017", "esnext.asynciterable"]
   }

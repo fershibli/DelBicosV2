@@ -8,6 +8,7 @@ import {
   Modal,
   Pressable,
 } from 'react-native';
+import colors from '@theme/colors';
 
 type Servico = {
   id: string;
@@ -87,9 +88,9 @@ export function ServicosContent({
 
       <Modal
         visible={modalVisible}
-        transparent
         animationType="slide"
-        onRequestClose={() => setModalVisible(false)}>
+        onRequestClose={() => setModalVisible(false)}
+        transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   bookButton: {
-    backgroundColor: '#FC8200',
+    backgroundColor: colors.primaryOrange,
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 6,
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   selectedDateButton: {
-    backgroundColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
   },
   dateText: {
     textAlign: 'center',
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedTimeButton: {
-    backgroundColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
   },
   timeText: {
     color: '#333',
@@ -282,7 +283,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   confirmButton: {
-    backgroundColor: '#FC8200',
+    backgroundColor: colors.primaryOrange,
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',

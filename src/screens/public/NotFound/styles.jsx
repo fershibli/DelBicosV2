@@ -1,11 +1,12 @@
 import { StyleSheet } from 'react-native';
+import colors from '@theme/colors';
 
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
     width: '100%',
     height: '100%',
-    backgroundColor: '#FC8200',
+    backgroundColor: colors.primaryOrange,
     borderRadius: 45,
     justifyContent: 'center',
     alignItems: 'center',
@@ -13,17 +14,17 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 36,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
     marginBottom: 10,
   },
   descriptionText: {
     fontSize: 18,
     fontWeight: '400',
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
     marginBottom: 30,
   },
   button: {
-    backgroundColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
     width: 260,
     height: 50,
     borderRadius: 35,
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     fontWeight: '400',
-    color: '#DDE6F0',
+    color: colors.secondaryGray,
   },
 });
 

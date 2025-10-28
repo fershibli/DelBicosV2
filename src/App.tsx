@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useFonts } from 'expo-font';
 import { Navigation } from '@screens/NavigationStack';
 import { LocationProvider } from '@lib/hooks/LocationContext';
+import { MenuProvider } from 'react-native-popup-menu';
 
 Asset.loadAsync([...NavigationAssets]);
 
@@ -32,16 +33,18 @@ export function App() {
   }
 
   return (
-    <LocationProvider>
-      <Navigation
-        linking={{
-          enabled: 'auto',
-          prefixes: ['delbicos://'],
-        }}
-        onReady={() => {
-          SplashScreen.hideAsync();
-        }}
-      />
-    </LocationProvider>
+    <MenuProvider>
+      <LocationProvider>
+        <Navigation
+          linking={{
+            enabled: 'auto',
+            prefixes: ['delbicos://'],
+          }}
+          onReady={() => {
+            SplashScreen.hideAsync();
+          }}
+        />
+      </LocationProvider>
+    </MenuProvider>
   );
 }

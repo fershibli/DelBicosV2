@@ -21,3 +21,6 @@ export const HTTP_DOMAIN = `${HTTP_PROTOCOL}://${DOMAIN}`;
 export const WS_DOMAIN = `${WS_PROTOCOL}://${DOMAIN}`;
 
 export const UNSPLASH_API_KEY = process.env.EXPO_PUBLIC_UNSPLASH_API_KEY || '';
+
+export const STRIPE_PUBLISHABLE_KEY =
+  process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';

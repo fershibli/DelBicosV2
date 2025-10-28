@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Platform, TouchableOpacity, Text, ActivityIndicator, View, StyleSheet, Modal as RNModal } from 'react-native';
+import {
+  Platform,
+  TouchableOpacity,
+  Text,
+  ActivityIndicator,
+  View,
+  StyleSheet,
+  Modal as RNModal,
+} from 'react-native';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -72,15 +80,18 @@ const rnModalStyle = StyleSheet.create({
   },
 });
 
-export const LocationButton: React.FC<LocationButtonProps> = ({ 
-  onPress, 
-  loading, 
+export const LocationButton: React.FC<LocationButtonProps> = ({
+  onPress,
+  loading,
   disabled = false,
-  onConfirm
+  onConfirm,
 }) => {
   const [open, setOpen] = useState(false);
   const [currentRegion, setCurrentRegion] = useState<Region | null>(null);
-  const [markerCoords, setMarkerCoords] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [markerCoords, setMarkerCoords] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
   const [mapLoading, setMapLoading] = useState(false);
 
   const handleOpen = async () => {
@@ -92,7 +103,7 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
           latitude: coords.latitude,
           longitude: coords.longitude,
           latitudeDelta: 0.01,
-          longitudeDelta: 0.01 * window.width / window.height,
+          longitudeDelta: (0.01 * window.width) / window.height,
         });
         setMarkerCoords(coords);
         setOpen(true);
@@ -115,9 +126,12 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
       latitude,
       longitude,
       latitudeDelta: 0.01,
-      longitudeDelta: 0.01 * window.width / window.height,
+      longitudeDelta: (0.01 * window.width) / window.height,
     });
-    console.log('🗺️ Mini mapa pressionado:', { latitude: latitude.toFixed(6), longitude: longitude.toFixed(6) });
+    console.log('🗺️ Mini mapa pressionado:', {
+      latitude: latitude.toFixed(6),
+      longitude: longitude.toFixed(6),
+    });
   };
 
   const handleConfirm = () => {
@@ -128,15 +142,14 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
   };
 
   return (
-    <View >
+    <View>
       <TouchableOpacity
         style={[
           globalStyles.button,
-          (loading || disabled || mapLoading) && { opacity: 0.6 }
+          (loading || disabled || mapLoading) && { opacity: 0.6 },
         ]}
         onPress={handleOpen}
-        disabled={loading || disabled || mapLoading}
-      >
+        disabled={loading || disabled || mapLoading}>
         {loading || mapLoading ? (
           <ActivityIndicator size="small" color="white" />
         ) : (
@@ -149,13 +162,19 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
           open={open}
           onClose={handleClose}
           aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
+          aria-describedby="modal-modal-description">
           <Box sx={modalStyle}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
               Sua Localização Atual
             </Typography>
-            <Box sx={{ height: 500, width: '100%', borderRadius: 8, overflow: 'hidden', mb: 2 }}>
+            <Box
+              sx={{
+                height: 500,
+                width: '100%',
+                borderRadius: 8,
+                overflow: 'hidden',
+                mb: 2,
+              }}>
               <MapComponent
                 region={currentRegion}
                 markerCoords={markerCoords}
@@ -165,8 +184,11 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
             <Button
               variant="contained"
               onClick={handleConfirm}
-              sx={{ width: '100%', bgcolor: '#3b82f6', '&:hover': { bgcolor: '#2563eb' } }}
-            >
+              sx={{
+                width: '100%',
+                bgcolor: '#3b82f6',
+                '&:hover': { bgcolor: '#2563eb' },
+              }}>
               Confirmar Localização
             </Button>
           </Box>
@@ -176,8 +198,7 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
           visible={open}
           transparent={true}
           animationType="fade"
-          onRequestClose={handleClose}
-        >
+          onRequestClose={handleClose}>
           <View style={rnModalStyle.modalContainer}>
             <View style={rnModalStyle.modalContent}>
               <Text style={rnModalStyle.title}>Sua Localização Atual</Text>
@@ -188,8 +209,12 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
                   onMapPress={handleMapPress}
                 />
               </View>
-              <TouchableOpacity style={rnModalStyle.confirmButton} onPress={handleConfirm}>
-                <Text style={rnModalStyle.confirmButtonText}>Confirmar Localização</Text>
+              <TouchableOpacity
+                style={rnModalStyle.confirmButton}
+                onPress={handleConfirm}>
+                <Text style={rnModalStyle.confirmButtonText}>
+                  Confirmar Localização
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
