@@ -1,8 +1,5 @@
 # Usar a versão do Node.js especificada no .nvmrc
 FROM node:22.15.1-alpine
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
 
 # Instalar dependências do sistema necessárias para Expo
 RUN apk add --no-cache \
@@ -17,17 +14,10 @@ WORKDIR /app
 RUN npm install -g expo-cli@latest eslint typescript
 
 # Copiar package.json e lockfile (se existir)
-COPY package.json ./
-COPY **/pnpm-lock.yaml* **/yarn.lock* **/package-lock.json* ./
+COPY package.json */package-lock.json* ./
 
 # Instalar dependências baseado no lockfile presente
-RUN if [ -f pnpm-lock.yaml ]; then \
-        pnpm install --no-frozen-lockfile; \
-    elif [ -f yarn.lock ]; then \
-        yarn install; \
-    else \
-        npm install; \
-    fi
+RUN npm install
 
 # Copiar o restante dos arquivos do projeto
 COPY . .
