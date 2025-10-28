@@ -10,7 +10,7 @@ on:
 # Permissões necessárias para ler os commits do PR.
 permissions:
   pull-requests: read
-  contents: read
+  contents: write
 
 jobs:
   analise-semantica:
@@ -27,7 +27,7 @@ jobs:
       - name: Checar repositório
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Configurar Node.js
@@ -44,7 +44,7 @@ jobs:
       - name: Criar nova tag caso não exista
         id: create_initial_tag
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -z "$(git tag)" ]; then
             git config --global user.name 'github-actions'
@@ -133,7 +133,7 @@ jobs:
       - name: Commit e push
         if: env.should_version == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
