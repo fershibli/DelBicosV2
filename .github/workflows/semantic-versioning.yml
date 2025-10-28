@@ -153,6 +153,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "Criando PR da branch release/v${{ env.new_version }} para main..."
+
+          # Verificar se a branch existe
+          git ls-remote --heads origin release/v${{ env.new_version }} || {
+            echo "Erro: Branch release/v${{ env.new_version }} não encontrada!"
+            exit 1
+          }
+
+          # Criar PR e capturar saída
           PR_URL=$(gh pr create \
             --base main \
             --head "release/v${{ env.new_version }}" \
@@ -161,10 +170,25 @@ jobs:
 
           **Tag criada:** \`v${{ env.new_version }}\`
 
-          Auto-gerado pelo workflow de versionamento semântico.")
+          Auto-gerado pelo workflow de versionamento semântico." 2>&1)
+
+          echo "Resultado: $PR_URL"
+
+          # Verificar se houve erro
+          if [[ "$PR_URL" == *"error"* ]] || [[ "$PR_URL" == *"Error"* ]]; then
+            echo "Erro ao criar PR: $PR_URL"
+            exit 1
+          fi
 
           # Extrair número da PR da URL
-          PR_NUMBER=$(echo $PR_URL | grep -oP '\d+$')
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Não foi possível extrair o número da PR de: $PR_URL"
+            exit 1
+          fi
+
+          echo "PR #$PR_NUMBER criada com sucesso!"
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
 
           # Tentar adicionar labels se existirem
