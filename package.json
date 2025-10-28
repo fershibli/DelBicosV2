@@ -21,7 +21,7 @@
     "docker:clean": "docker-compose down -v && docker system prune -f",
     "docker:rebuild": "docker-compose down && docker-compose build --no-cache && docker-compose up",
     "docker:copy:env": "docker cp .env delbicos-server:/app/.env",
-    "docker:external:network": "docker network create delbicos-shared-network"
+    "docker:network": "docker network create delbicos-shared-network"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
