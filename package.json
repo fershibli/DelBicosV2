@@ -1,6 +1,6 @@
 {
   "name": "delbicos",
-  "version": "1.3.1",
+  "version": "2.0.0",
   "main": "index.tsx",
   "scripts": {
     "start": "expo start --dev-client",
@@ -10,7 +10,18 @@
     "lint": "expo lint",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:start": "docker-compose exec delbicos-frontend npm run start",
+    "docker:exec": "docker-compose exec delbicos-frontend sh",
+    "docker:down": "docker-compose down",
+    "docker:stop": "docker-compose stop",
+    "docker:logs": "docker-compose logs -f",
+    "docker:clean": "docker-compose down -v && docker system prune -f",
+    "docker:rebuild": "docker-compose down && docker-compose build --no-cache && docker-compose up",
+    "docker:copy:env": "docker cp .env delbicos-server:/app/.env",
+    "docker:network": "docker network create delbicos-shared-network"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
