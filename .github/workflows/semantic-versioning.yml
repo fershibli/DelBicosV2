@@ -9,7 +9,7 @@ on:
 
 # Permissões necessárias para ler os commits do PR.
 permissions:
-  pull-requests: read
+  pull-requests: write # Mudado de 'read' para 'write'
   contents: write
 
 jobs:
@@ -138,12 +138,46 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Criar branch de release
+          BRANCH_NAME="release/v${{ env.new_version }}"
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
+          git checkout -b $BRANCH_NAME
           git add package.json
-          git commit -m "chore(release): version ${{ env.new_version }}"
+          git commit -m "chore(release): version ${{ env.new_version }}" --no-verify
           git tag v${{ env.new_version }}
-          git push origin main --tags
+          git push origin $BRANCH_NAME --tags
+
+      - name: Criar Pull Request
+        if: env.should_version == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release/v${{ env.new_version }}
+          base: main
+          title: 'chore(release): version ${{ env.new_version }}'
+          body: |
+            ## 🚀 Nova Versão: ${{ env.new_version }}
+
+            Atualização automática de versão baseada em Conventional Commits.
+
+            **Mudanças detectadas:**
+            - Major: ${{ env.MAJOR == '1' && '✅' || '❌' }}
+            - Minor: ${{ env.MINOR == '1' && '✅' || '❌' }}
+            - Patch: ${{ env.PATCH == '1' && '✅' || '❌' }}
+
+            Auto-gerado pelo workflow de versionamento semântico.
+          labels: release, automated
+
+      - name: Auto-merge Pull Request
+        if: env.should_version == 'true'
+        run: |
+          sleep 5  # Aguardar PR ser criada
+          PR_NUMBER=$(gh pr list --head "release/v${{ env.new_version }}" --json number --jq '.[0].number')
+          gh pr merge $PR_NUMBER --auto --squash --delete-branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Faz release no GitHub
         if: env.should_version == 'true'
         uses: softprops/action-gh-release@v1
