@@ -32,7 +32,7 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
       case 'MeusAgendamentos':
         return <MeusAgendamentos />;
       case 'Notificacoes':
-        return <NotificacoesContent userId={user.userId} />;
+        return <NotificacoesContent userId='1' />;
       default:
         return (
           <Text style={styles.contentText}>Selecione uma opção no menu</Text>
