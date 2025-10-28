@@ -30,6 +30,11 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           fetch-depth: 0
 
+      - name: Configurar Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22.15.1'
+
       - name: Instalar dependências
         run: npm install
 
