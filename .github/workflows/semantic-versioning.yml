@@ -148,3 +148,5 @@ jobs:
           tag_name: v${{ env.new_version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Finalizado
+        run: echo "Processo de versionamento concluído."
