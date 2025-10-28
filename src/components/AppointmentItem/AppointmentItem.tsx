@@ -126,7 +126,8 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
       <Modal
         visible={isReviewModalOpen}
         animationType="fade"
-        onRequestClose={() => setIsReviewModalOpen(false)}>
+        onRequestClose={() => setIsReviewModalOpen(false)}
+        transparent>
         <ReviewAppointment
           appointment={appointment}
           onClose={() => setIsReviewModalOpen(false)}

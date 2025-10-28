@@ -22,7 +22,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   confirmText = 'Confirmar',
 }) => {
   return (
-    <Modal animationType="fade" visible={visible} onRequestClose={onCancel}>
+    <Modal
+      animationType="fade"
+      visible={visible}
+      onRequestClose={onCancel}
+      transparent>
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>{title}</Text>

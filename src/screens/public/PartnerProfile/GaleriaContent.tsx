@@ -75,7 +75,7 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
             numColumns={numColumns}
             contentContainerStyle={styles.galleryContainer}
           />
-          <Modal visible={visible}>
+          <Modal visible={visible} transparent>
             <ImageViewer
               imageUrls={imagesForViewer}
               index={safeIndex}

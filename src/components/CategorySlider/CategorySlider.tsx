@@ -59,7 +59,7 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
     styles.categoryTitle,
     isHovered && styles.categoryTitleHovered,
   ];
-  const iconColor = isHovered ? colors.primaryWhite : '#003366'; // Ícone branco no hover
+  const iconColor = isHovered ? colors.primaryWhite : colors.primaryOrange; // Ícone branco no hover
 
   return (
     // 8. Mude para Pressable e adicione eventos de hover

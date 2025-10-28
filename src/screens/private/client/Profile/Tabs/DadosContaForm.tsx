@@ -69,7 +69,11 @@ const StatusModal = ({
   };
 
   return (
-    <Modal visible={visible} animationType="fade" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      animationType="fade"
+      onRequestClose={onClose}
+      transparent>
       <View style={statusModalStyles.overlay}>
         <View style={statusModalStyles.container}>
           <Text style={statusModalStyles.icon}>{getIcon()}</Text>
@@ -395,7 +399,11 @@ const AvatarOptionsModal = ({
   hasPhoto,
   uploading,
 }: AvatarOptionsModalProps) => (
-  <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
+  <Modal
+    visible={visible}
+    animationType="fade"
+    onRequestClose={onClose}
+    transparent>
     <TouchableOpacity
       style={styles.modalOverlay}
       activeOpacity={1}

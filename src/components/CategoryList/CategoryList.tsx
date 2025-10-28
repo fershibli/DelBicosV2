@@ -57,7 +57,7 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
     styles.categoryTitle,
     isHovered && styles.categoryTitleHovered,
   ];
-  const iconColor = isHovered ? colors.primaryWhite : '#003366';
+  const iconColor = isHovered ? colors.primaryWhite : colors.primaryOrange;
 
   return (
     <Pressable

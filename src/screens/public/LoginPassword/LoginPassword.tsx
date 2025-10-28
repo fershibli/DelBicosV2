@@ -168,7 +168,8 @@ export const LoginPassword = () => {
       <Modal
         animationType="fade"
         visible={errorModalVisible}
-        onRequestClose={() => setErrorModalVisible(false)}>
+        onRequestClose={() => setErrorModalVisible(false)}
+        transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Erro no Login</Text>

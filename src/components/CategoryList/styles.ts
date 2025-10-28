@@ -52,7 +52,7 @@ export const styles = StyleSheet.create({
   categoryTitle: {
     fontSize: 18,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryOrange,
     textAlign: 'center',
     marginTop: 10,
   },

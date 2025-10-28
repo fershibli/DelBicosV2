@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
   categoryTitle: {
     fontSize: 18,
     fontFamily: 'Afacad-SemiBold',
-    color: '#003366', // Texto azul
+    color: colors.primaryOrange,
     textAlign: 'left',
     flexShrink: 1,
     marginLeft: 12,
