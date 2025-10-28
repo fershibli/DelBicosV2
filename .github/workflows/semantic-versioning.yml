@@ -27,7 +27,7 @@ jobs:
       - name: Checar repositório
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
           fetch-depth: 0
 
       - name: Configurar Node.js
@@ -44,7 +44,7 @@ jobs:
       - name: Criar nova tag caso não exista
         id: create_initial_tag
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           if [ -z "$(git tag)" ]; then
             git config --global user.name 'github-actions'
@@ -136,7 +136,7 @@ jobs:
       - name: Commit e push
         if: env.should_version == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # Criar branch de release
           BRANCH_NAME="release/v${{ env.new_version }}"
@@ -151,7 +151,7 @@ jobs:
       - name: Criar Pull Request
         if: env.should_version == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           echo "Criando PR da branch release/v${{ env.new_version }} para main..."
 
@@ -198,7 +198,7 @@ jobs:
       - name: Auto-aprovar e mergear PR
         if: env.should_version == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # Aguardar processamento
           sleep 3
@@ -215,11 +215,11 @@ jobs:
         with:
           tag_name: v${{ env.new_version }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: Atualiza a stag a partir da main
         if: env.should_version == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
