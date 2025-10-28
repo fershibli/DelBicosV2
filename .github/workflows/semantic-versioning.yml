@@ -150,33 +150,36 @@ jobs:
 
       - name: Criar Pull Request
         if: env.should_version == 'true'
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: release/v${{ env.new_version }}
-          base: main
-          title: 'chore(release): version ${{ env.new_version }}'
-          body: |
-            ## 🚀 Nova Versão: ${{ env.new_version }}
-
-            Atualização automática de versão baseada em Conventional Commits.
-
-            **Mudanças detectadas:**
-            - Major: ${{ env.MAJOR == '1' && '✅' || '❌' }}
-            - Minor: ${{ env.MINOR == '1' && '✅' || '❌' }}
-            - Patch: ${{ env.PATCH == '1' && '✅' || '❌' }}
-
-            Auto-gerado pelo workflow de versionamento semântico.
-          labels: release, automated
-
-      - name: Auto-merge Pull Request
-        if: env.should_version == 'true'
-        run: |
-          sleep 5  # Aguardar PR ser criada
-          PR_NUMBER=$(gh pr list --head "release/v${{ env.new_version }}" --json number --jq '.[0].number')
-          gh pr merge $PR_NUMBER --auto --squash --delete-branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head "release/v${{ env.new_version }}" \
+            --title "chore(release): version ${{ env.new_version }}" \
+            --body "🚀 Atualização automática de versão para **v${{ env.new_version }}**
+
+          **Tag criada:** \`v${{ env.new_version }}\`
+
+          Auto-gerado pelo workflow de versionamento semântico." \
+            --label "release,automated"
+
+      - name: Auto-aprovar e mergear PR
+        if: env.should_version == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Aguardar PR ser criada
+          sleep 5
+
+          # Obter número da PR
+          PR_NUMBER=$(gh pr list --head "release/v${{ env.new_version }}" --json number --jq '.[0].number')
+
+          # Aprovar a PR (se necessário aprovação)
+          gh pr review $PR_NUMBER --approve
+
+          # Mergear a PR
+          gh pr merge $PR_NUMBER --squash --delete-branch --auto
 
       - name: Faz release no GitHub
         if: env.should_version == 'true'
@@ -185,5 +188,15 @@ jobs:
           tag_name: v${{ env.new_version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Atualiza a stag a partir da main
+        if: env.should_version == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git checkout stag
+          git pull origin main
+          git push origin stag
       - name: Finalizado
         run: echo "Processo de versionamento concluído."
