@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
     borderColor: '#DDD',
   },
   confirmButton: {
-    backgroundColor: '#D32F2F', // Cor vermelha para ação destrutiva
+    backgroundColor: '#D32F2F',
   },
   buttonText: {
     fontFamily: 'Afacad-Bold',

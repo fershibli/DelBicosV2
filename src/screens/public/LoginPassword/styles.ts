@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
@@ -25,11 +25,20 @@ export const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 24,
     alignItems: 'center',
-    shadowColor: colors.primaryBlack,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 8,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.primaryBlack,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 8,
+      },
+      web: {
+        boxShadow: `0px 4px 10px rgba(0, 0, 0, 0.2)`,
+      },
+    }),
   },
   title: {
     fontSize: 28,

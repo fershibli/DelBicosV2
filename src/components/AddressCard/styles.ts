@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
@@ -8,17 +8,26 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 20,
     marginBottom: 20,
-    shadowColor: colors.primaryBlack,
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 4,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.primaryBlack,
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: `0px 2px 8px rgba(0, 0, 0, 0.1)`,
+      },
+    }),
   },
   formRow: {
     flexDirection: 'row',
     gap: 16,
     width: '100%',
-    flexWrap: 'wrap', // Permite que os itens quebrem a linha em telas menores
+    flexWrap: 'wrap',
   },
   inputReadOnly: {
     backgroundColor: '#F4F7FA',
@@ -78,7 +87,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#CED4DA',
     borderRadius: 8,
-    justifyContent: 'center', // Centraliza o Picker verticalmente
+    justifyContent: 'center',
     backgroundColor: colors.primaryWhite,
   },
   pickerWrapper: {

@@ -1,5 +1,5 @@
 import colors from '@theme/colors';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
@@ -23,11 +23,20 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 10,
     alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: `0px 2px 4px rgba(0, 0, 0, 0.2)`,
+      },
+    }),
   },
   testButtonText: {
     color: 'white',
