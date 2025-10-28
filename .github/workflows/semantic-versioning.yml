@@ -82,16 +82,19 @@ jobs:
           PATCH=0
 
           # Analisando mensagens de commit
-          if echo "$COMMIT_MESSAGES" | grep -q -i -E "(^(refactor|refatorar|refatoração)|BREAKING CHANGE)"; then
-            MAJOR=1
-            echo "Encontrado refactor ou BREAKING CHANGE"
-          elif echo "$COMMIT_MESSAGES" | grep -q -i -E "^(feat|feature)"; then
-            MINOR=1
-            echo "Encontrado feat"
-          elif echo "$COMMIT_MESSAGES" | grep -q -i "^fix"; then
-            PATCH=1
-            echo "Encontrado fix"
-          fi
+          IFS='|' read -ra COMMITS <<< "$COMMIT_MESSAGES"
+          for COMMIT in "${COMMITS[@]}"; do
+            if echo "$COMMIT" | grep -q -i -E "(^(refactor|refatorar|refatoração)|BREAKING CHANGE)"; then
+              MAJOR=1
+              echo "Encontrado refactor ou BREAKING CHANGE"
+            elif echo "$COMMIT" | grep -q -i -E "^(feat|feature)"; then
+              MINOR=1
+              echo "Encontrado feat"
+            elif echo "$COMMIT" | grep -q -i "^fix"; then
+              PATCH=1
+              echo "Encontrado fix"
+            fi
+          done
 
           # Verificar se alguma mudança foi detectada
           if [[ $MAJOR -eq 0 && $MINOR -eq 0 && $PATCH -eq 0 ]]; then
