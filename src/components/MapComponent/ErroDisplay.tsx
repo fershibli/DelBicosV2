@@ -7,9 +7,9 @@ interface ErrorDisplayProps {
   onRetry?: () => void;
 }
 
-export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ 
-  error, 
-  onRetry 
+export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
+  error,
+  onRetry,
 }) => {
   if (!error) return null;
 

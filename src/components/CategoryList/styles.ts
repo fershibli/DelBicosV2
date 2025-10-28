@@ -45,8 +45,6 @@ export const styles = StyleSheet.create({
         borderColor: colors.primaryBlue,
         transform: [{ scale: 1.05 }],
       },
-      // No mobile, podemos adicionar um feedback de "ativo" diferente se quisermos
-      // Por enquanto, o hover é só para web
     }),
   },
   categoryTitle: {

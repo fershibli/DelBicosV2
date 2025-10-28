@@ -1,22 +1,27 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Platform, View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import React, { useRef, useState } from 'react';
+import {
+  Platform,
+  View,
+  ActivityIndicator,
+  Text,
+  StyleSheet,
+} from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { styles as globalStyles } from '../../lib/utils/styles';
 import { MapComponentProps } from '../../lib/hooks/types';
 import { MapErrorBoundary } from '../MapComponent/MapErrorBoundary';
 
 interface NativeMapRendererProps extends MapComponentProps {
-  
   style?: any;
 }
 
-const NativeMapRenderer: React.FC<NativeMapRendererProps> = ({ 
-  region, 
-  markerCoords, 
-  address, 
+const NativeMapRenderer: React.FC<NativeMapRendererProps> = ({
+  region,
+  markerCoords,
+  address,
   onMapPress,
-  
-  style
+
+  style,
 }) => {
   const mapRef = useRef<MapView>(null);
   const [mapReady, setMapReady] = useState(false);
@@ -62,13 +67,14 @@ const NativeMapRenderer: React.FC<NativeMapRendererProps> = ({
           pitchEnabled={false}
           rotateEnabled={false}
           scrollEnabled={true}
-          zoomEnabled={true}
-        >
+          zoomEnabled={true}>
           {markerCoords && mapReady && (
             <Marker
               coordinate={markerCoords}
               title="Localização Selecionada"
-              description={address?.formatted || "Clique para selecionar localização"}
+              description={
+                address?.formatted || 'Clique para selecionar localização'
+              }
               pinColor="blue"
             />
           )}
