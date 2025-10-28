@@ -188,5 +188,15 @@ jobs:
           tag_name: v${{ env.new_version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Atualiza a stag a partir da main
+        if: env.should_version == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git checkout stag
+          git pull origin main
+          git push origin stag
       - name: Finalizado
         run: echo "Processo de versionamento concluído."
