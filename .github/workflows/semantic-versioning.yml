@@ -161,8 +161,11 @@ jobs:
 
           **Tag criada:** \`v${{ env.new_version }}\`
 
-          Auto-gerado pelo workflow de versionamento semântico." \
-            --label "release,automated"
+          Auto-gerado pelo workflow de versionamento semântico." || true
+
+          # Tentar adicionar labels se existirem
+          PR_NUMBER=$(gh pr list --head "release/v${{ env.new_version }}" --json number --jq '.[0].number')
+          gh pr edit $PR_NUMBER --add-label "release,automated" 2>/dev/null || echo "Labels não encontradas, ignorando..."
 
       - name: Auto-aprovar e mergear PR
         if: env.should_version == 'true'
