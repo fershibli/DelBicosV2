@@ -20,8 +20,8 @@ services:
       # Variáveis de ambiente do .env
       - EXPO_PUBLIC_ENVIRONMENT=${EXPO_PUBLIC_ENVIRONMENT:-development}
       # Usar host.docker.internal para acessar o backend na máquina host
-      - EXPO_PUBLIC_DOMAIN_ANDROID=host.docker.internal
-      - EXPO_PUBLIC_DOMAIN_IOS=host.docker.internal
+      - EXPO_PUBLIC_DOMAIN_ANDROID=${EXPO_PUBLIC_DOMAIN_ANDROID:-host.docker.internal}
+      - EXPO_PUBLIC_DOMAIN_IOS=${EXPO_PUBLIC_DOMAIN_IOS:-host.docker.internal}
       - EXPO_PUBLIC_PORT=${EXPO_PUBLIC_PORT:-3000}
       - EXPO_PUBLIC_HTTP_PROTOCOL=${EXPO_PUBLIC_HTTP_PROTOCOL:-http}
       - EXPO_PUBLIC_WS_PROTOCOL=${EXPO_PUBLIC_WS_PROTOCOL:-ws}
@@ -36,7 +36,7 @@ services:
     extra_hosts:
       # Garante que host.docker.internal funciona em Linux também
       - 'host.docker.internal:host-gateway'
-
 networks:
   delbicos-network:
-    driver: bridge
+    external: true
+    name: delbicos-shared-network
