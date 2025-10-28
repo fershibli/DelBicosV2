@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   professionalContainer: {
@@ -10,19 +11,19 @@ export const styles = StyleSheet.create({
     fontWeight: '300',
     fontSize: 9,
     lineHeight: 11,
-    color: '#005A93',
+    color: colors.primaryBlue,
   },
   professionalName: {
     fontWeight: '700',
     fontSize: 15,
     lineHeight: 18,
-    color: '#000000',
+    color: colors.primaryBlack,
     marginBottom: 5,
   },
   serviceInfo: {
     fontWeight: '300',
     fontSize: 12,
-    color: '#000000',
+    color: colors.primaryBlack,
     marginBottom: 5,
   },
 

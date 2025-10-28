@@ -11,6 +11,8 @@ export const useUserStore = create<UserStore>()(
       user: null,
       address: null,
       token: null,
+      verificationEmail: null, // Adicionar estado inicial
+      setVerificationEmail: (email) => set({ verificationEmail: email }),
 
       signIn: () => {
         try {
@@ -96,7 +98,12 @@ export const useUserStore = create<UserStore>()(
           throw new Error('Erro ao fazer login. Por favor, tente novamente.');
         }
       },
-      signOut: () => set({ user: null }),
+      signOut: () =>
+        set({
+          user: null,
+          address: null,
+          token: null,
+        }),
     }),
     {
       name: 'user-storage',

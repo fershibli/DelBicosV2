@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, Image, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Modal,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Modal } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
 
-import { Button } from '@components/Button';
 import { useUserStore } from '@stores/User';
+import CustomTextInput from '@components/CustomTextInput';
 
 // @ts-ignore
 import IconPerson from '@assets/person.svg';
@@ -13,100 +21,164 @@ import IconPhone from '@assets/phone.svg';
 import LogoV3 from '@assets/LogoV3.png';
 
 import { styles } from './styles';
+import colors from '@theme/colors';
+
+type FormData = {
+  email: string;
+  password: string;
+};
 
 export const LoginPassword = () => {
-  //navigation
   const navigation = useNavigation();
   const { signInPassword } = useUserStore();
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const onLoginPress = async (email: string, password: string) => {
-    setIsLoading(true);
-    if (email && password) {
-      await signInPassword(email, password)
-        .then(() => {
-          setEmail('');
-          setPassword('');
-          setError(null);
-          navigation.navigate('Feed');
-        })
-        .catch((error) => {
-          setError(error.message);
-        });
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-      setError('Por favor, preencha todos os campos.');
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<FormData>({
+    mode: 'onTouched',
+    defaultValues: { email: '', password: '' },
+  });
+
+  const onLoginPress = async (data: FormData) => {
+    setIsSubmitting(true);
+    setErrorModalVisible(false);
+    try {
+      await signInPassword(data.email, data.password);
+      navigation.navigate('Feed');
+    } catch (error: any) {
+      setErrorMessage(
+        error.message || 'Ocorreu um erro ao tentar fazer login.',
+      );
+      setErrorModalVisible(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <View style={styles.wrapper}>
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.wrapper}>
+    <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="handled">
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Image source={LogoV3} style={styles.logo} />
-          <TextInput
-            style={styles.input}
-            placeholder="E-mail"
-            value={email}
-            onChangeText={setEmail}
+        </TouchableOpacity>
+
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Bem-vindo!</Text>
+          <Text style={styles.subtitle}>Acesse sua conta para continuar.</Text>
+
+          <Controller
+            control={control}
+            name="email"
+            rules={{
+              required: 'O e-mail é obrigatório.',
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Digite um e-mail válido.',
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <CustomTextInput
+                label="E-mail"
+                placeholder="seu@email.com"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                error={errors.email}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            )}
           />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Senha"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
+          <Controller
+            control={control}
+            name="password"
+            rules={{
+              required: 'A senha é obrigatória.',
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <CustomTextInput
+                label="Senha"
+                placeholder="Sua senha"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                error={errors.password}
+                secureTextEntry
+              />
+            )}
           />
 
-          <Button
-            colorVariant="primary"
-            sizeVariant="largePill"
-            fontVariant="AfacadRegular20"
-            onClick={() => onLoginPress(email, password)}
-            style={styles.buttonLogin}
-            loading={isLoading}
-            startIcon={<IconPerson width={21} height={29} color="#ffffff" />}>
-            Login
-          </Button>
-          <Button
-            colorVariant="primaryWhite"
-            sizeVariant="largePill"
-            fontVariant="AfacadRegular20"
-            onClick={() => navigation.navigate('PhoneConfirmation')}
-            style={styles.buttonLogin}
-            startIcon={<IconPhone width={21} height={29} stroke="#000000" />}>
-            Login por Telefone
-          </Button>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              (!isValid || isSubmitting) && styles.buttonDisabled,
+            ]}
+            onPress={handleSubmit(onLoginPress)}
+            disabled={!isValid || isSubmitting}>
+            {isSubmitting ? (
+              <ActivityIndicator color={colors.primaryWhite} />
+            ) : (
+              <Text style={styles.buttonText}>
+                <IconPerson
+                  width={16}
+                  height={16}
+                  color={colors.primaryWhite}
+                  style={{ marginRight: 8 }}
+                />{' '}
+                Login
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.buttonSecondary]}
+            onPress={() => navigation.navigate('PhoneConfirmation')}>
+            <Text style={[styles.buttonText, styles.buttonTextSecondary]}>
+              <IconPhone
+                width={16}
+                height={16}
+                stroke="#003366"
+                style={{ marginRight: 8 }}
+              />{' '}
+              Login por Telefone
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+            <Text style={styles.linkText}>
+              Não tem uma conta?{' '}
+              <Text style={styles.linkTextBold}>Cadastre-se</Text>
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
+
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
+
       <Modal
-        open={!!error}
-        onClose={() => setError(null)}
-        aria-labelledby="modal-title"
-        aria-describedby="modal-description"
-        style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <Text id="modal-title" style={styles.modalTitle}>
-            Erro
-          </Text>
-          <Text id="modal-description" style={styles.modalText}>
-            {error || 'Ocorreu um erro ao tentar fazer login.'}
-          </Text>
-          <View style={styles.modalActions}>
-            <Button
-              colorVariant="primary"
-              sizeVariant="medium"
-              onClick={() => setError(null)}>
-              Fechar
-            </Button>
+        animationType="fade"
+        visible={errorModalVisible}
+        onRequestClose={() => setErrorModalVisible(false)}
+        transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Erro no Login</Text>
+            <Text style={styles.modalText}>{errorMessage}</Text>
+            <TouchableOpacity
+              style={[styles.button, styles.modalButton]}
+              onPress={() => setErrorModalVisible(false)}>
+              <Text style={styles.buttonText}>Tentar Novamente</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>

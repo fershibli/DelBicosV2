@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   TouchableOpacity,
   Platform,
@@ -10,10 +9,13 @@ import {
   Image,
   Alert,
   Animated,
-  Easing,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import CustomTextInput from '@components/CustomTextInput';
+import { styles } from './styles';
+import colors from '@theme/colors';
 
 interface UserProfileProps {
   userId: string;
@@ -69,9 +71,9 @@ const StatusModal = ({
   return (
     <Modal
       visible={visible}
-      transparent
       animationType="fade"
-      onRequestClose={onClose}>
+      onRequestClose={onClose}
+      transparent>
       <View style={statusModalStyles.overlay}>
         <View style={statusModalStyles.container}>
           <Text style={statusModalStyles.icon}>{getIcon()}</Text>
@@ -80,7 +82,7 @@ const StatusModal = ({
           {isProgress && (
             <ActivityIndicator
               size="small"
-              color="#005A93"
+              color={colors.primaryBlue}
               style={statusModalStyles.activityIndicator}
             />
           )}
@@ -105,7 +107,6 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
   const [telefone, setTelefone] = useState('');
 
   const [showOptions, setShowOptions] = useState(false);
-  const [scaleAnim] = useState(new Animated.Value(1));
   const [overlayOpacity] = useState(new Animated.Value(0));
 
   const [showStatusModal, setShowStatusModal] = useState(false);
@@ -139,54 +140,19 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
     }
   };
 
-  const handleAvatarPress = () => setShowOptions(true);
-  const handleAvatarLongPress = () => {
-    Animated.sequence([
-      Animated.timing(scaleAnim, {
-        toValue: 0.95,
-        duration: 100,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 100,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }),
-    ]).start(() => setShowOptions(true));
-  };
   const handleHoverIn = () => {
-    Animated.parallel([
-      Animated.timing(scaleAnim, {
-        toValue: 1.05,
-        duration: 200,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }),
-      Animated.timing(overlayOpacity, {
-        toValue: 1,
-        duration: 200,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    Animated.timing(overlayOpacity, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
   };
   const handleHoverOut = () => {
-    Animated.parallel([
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 200,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }),
-      Animated.timing(overlayOpacity, {
-        toValue: 0,
-        duration: 200,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    Animated.timing(overlayOpacity, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
   };
 
   const handleImageSelection = async (asset: ImagePicker.ImagePickerAsset) => {
@@ -219,7 +185,7 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
       if (!result.canceled && result.assets?.length > 0) {
         handleImageSelection(result.assets[0]);
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Erro', 'Não foi possível acessar a câmera.');
     } finally {
       setShowOptions(false);
@@ -239,7 +205,7 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
       if (!result.canceled && result.assets?.length > 0) {
         handleImageSelection(result.assets[0]);
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Erro', 'Não foi possível acessar a galeria.');
     } finally {
       setShowOptions(false);
@@ -301,174 +267,83 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
   const avatarUriToDisplay = user?.avatarSource?.uri;
 
   return (
-    <View style={styles.formWrapper}>
-      <Text style={styles.headerTitle}>Dados da Conta</Text>
+    <ScrollView style={styles.container}>
+      <Text style={styles.pageTitle}>Dados da Conta</Text>
       <View style={styles.card}>
         <View style={styles.contentWrapper}>
-          <View style={styles.profileImageContainer}>
+          <View style={styles.avatarContainer}>
             <TouchableOpacity
-              style={styles.profileImagePlaceholder}
-              onPress={handleAvatarPress}
-              onLongPress={handleAvatarLongPress}
+              style={styles.avatarTouchable}
+              onPress={() => setShowOptions(true)}
               onPressIn={handleHoverIn}
               onPressOut={handleHoverOut}
               activeOpacity={0.9}
               disabled={user?.uploading}>
-              <Animated.View
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: 60,
-                  overflow: 'hidden',
-                  backgroundColor: 'orange',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transform: [{ scale: scaleAnim }],
-                }}>
+              <Animated.View style={styles.avatarAnimatedWrapper}>
                 {avatarUriToDisplay ? (
                   <Image
                     source={{ uri: avatarUriToDisplay }}
-                    style={{ width: '100%', height: '100%', borderRadius: 60 }}
-                    resizeMode="cover"
+                    style={styles.avatarImage}
                   />
                 ) : (
-                  <Text
-                    style={{ fontSize: 36, fontWeight: 'bold', color: '#fff' }}>
-                    {nome[0]}
-                    {sobrenome[0]}
-                  </Text>
+                  <Text style={styles.avatarInitials}>{nome[0] || ''}</Text>
                 )}
                 <Animated.View
-                  style={{
-                    ...StyleSheet.absoluteFillObject,
-                    backgroundColor: 'rgba(0,0,0,0.6)',
-                    borderRadius: 60,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    opacity: overlayOpacity,
-                  }}>
+                  style={[styles.avatarOverlay, { opacity: overlayOpacity }]}>
                   {user?.uploading ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator
+                      size="small"
+                      color={colors.primaryWhite}
+                    />
                   ) : (
-                    <Text
-                      style={{
-                        color: '#fff',
-                        fontSize: 16,
-                        fontWeight: '600',
-                        textAlign: 'center',
-                      }}>
-                      Alterar Foto
-                    </Text>
+                    <Text style={styles.avatarOverlayText}>Alterar Foto</Text>
                   )}
                 </Animated.View>
               </Animated.View>
             </TouchableOpacity>
-            <Modal
-              visible={showOptions}
-              transparent
-              animationType="fade"
-              onRequestClose={() => setShowOptions(false)}>
-              <View style={modalStyles.modalOverlay}>
-                <TouchableOpacity
-                  style={{
-                    flex: 1,
-                    position: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                  }}
-                  activeOpacity={1}
-                  onPress={() => setShowOptions(false)}
-                />
-                <View style={modalStyles.optionsContainer}>
-                  <TouchableOpacity
-                    style={modalStyles.optionButton}
-                    onPress={handleTakePhoto}
-                    disabled={user?.uploading}>
-                    <Text style={modalStyles.optionText}>
-                      {user?.uploading ? 'Processando...' : 'Tirar Foto'}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={modalStyles.optionButton}
-                    onPress={handlePickFromGallery}
-                    disabled={user?.uploading}>
-                    <Text style={modalStyles.optionText}>
-                      {user?.uploading
-                        ? 'Processando...'
-                        : 'Escolher da Galeria'}
-                    </Text>
-                  </TouchableOpacity>
-                  {avatarUriToDisplay && (
-                    <TouchableOpacity
-                      style={[
-                        modalStyles.optionButton,
-                        modalStyles.removeOption,
-                      ]}
-                      onPress={removePhoto}
-                      disabled={user?.uploading}>
-                      <Text
-                        style={[
-                          modalStyles.optionText,
-                          modalStyles.removeText,
-                        ]}>
-                        Remover Foto
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-                  <TouchableOpacity
-                    style={[modalStyles.optionButton, modalStyles.cancelOption]}
-                    onPress={() => setShowOptions(false)}
-                    disabled={user?.uploading}>
-                    <Text style={modalStyles.optionText}>Cancelar</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
           </View>
 
           <View style={styles.formGrid}>
-            <View style={styles.row}>
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Nome</Text>
-                <TextInput
-                  style={styles.input}
+            <View style={styles.formRow}>
+              <View style={styles.formCol}>
+                <CustomTextInput
+                  label="Nome"
                   value={nome}
                   onChangeText={setNome}
                 />
               </View>
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Sobrenome</Text>
-                <TextInput
-                  style={styles.input}
+              <View style={styles.formCol}>
+                <CustomTextInput
+                  label="Sobrenome"
                   value={sobrenome}
                   onChangeText={setSobrenome}
                 />
               </View>
             </View>
-            <View style={styles.row}>
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>CPF</Text>
-                <TextInput
-                  style={styles.input}
+
+            <View style={styles.formRow}>
+              <View style={styles.formCol}>
+                <CustomTextInput
+                  label="CPF"
                   value={cpf}
                   onChangeText={setCpf}
+                  editable={false}
                 />
               </View>
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>E-mail</Text>
-                <TextInput
-                  style={styles.input}
+              <View style={styles.formCol}>
+                <CustomTextInput
+                  label="E-mail"
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
                 />
               </View>
             </View>
-            <View style={styles.row}>
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Telefone</Text>
-                <TextInput
-                  style={[styles.input, styles.telefoneInput]}
+
+            <View style={styles.formRow}>
+              <View style={styles.formCol}>
+                <CustomTextInput
+                  label="Telefone"
                   value={telefone}
                   onChangeText={setTelefone}
                   keyboardType="phone-pad"
@@ -485,159 +360,91 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
           </View>
         </View>
       </View>
-      <View style={{ flexGrow: 1 }} />
-      <Text
-        style={{
-          fontSize: 13,
-          color: '#1877c9',
-          marginTop: 30,
-          alignSelf: 'center',
-          fontWeight: '500',
-        }}>
-        © DelBicos - 2025 - Todos os direitos reservados.
-      </Text>
+
+      <AvatarOptionsModal
+        visible={showOptions}
+        onClose={() => setShowOptions(false)}
+        onTakePhoto={handleTakePhoto}
+        onPickFromGallery={handlePickFromGallery}
+        onRemovePhoto={removePhoto}
+        hasPhoto={!!avatarUriToDisplay}
+        uploading={user?.uploading}
+      />
       <StatusModal
         visible={showStatusModal}
         status={status}
         message={statusMessage}
         onClose={handleCloseStatusModal}
       />
-    </View>
+    </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  formWrapper: {},
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1d2b36',
-    marginBottom: 12,
-  },
-  card: {
-    backgroundColor: '#f8fafd',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: 'rgba(51, 153, 255, 0.19)',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
-    padding: 24,
-  },
-  contentWrapper: {
-    flexDirection: 'row',
-  },
-  profileImageContainer: {
-    width: 120,
-    height: 120,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 20,
-  },
-  profileImagePlaceholder: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 60,
-    backgroundColor: 'orange',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  formGrid: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  inputGroup: {
-    width: '48%',
-  },
-  label: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    fontSize: 16,
-    backgroundColor: '#fff',
-  },
-  telefoneInput: {
-    borderWidth: 2,
-    width: '50%',
-  },
-  saveButtonContainer: {
-    width: '48%',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  saveButton: {
-    backgroundColor: '#005A93',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});
+interface AvatarOptionsModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onTakePhoto: () => void;
+  onPickFromGallery: () => void;
+  onRemovePhoto: () => void;
+  hasPhoto: boolean;
+  uploading?: boolean;
+}
 
-const modalStyles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  optionsContainer: {
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    padding: 20,
-    width: '80%',
-    maxWidth: 300,
-  },
-  optionButton: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.12)',
-  },
-  optionText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#000',
-    textAlign: 'center',
-  },
-  removeOption: {
-    borderBottomWidth: 0,
-    marginTop: 8,
-  },
-  removeText: {
-    color: '#FF3B30',
-  },
-  cancelOption: {
-    borderBottomWidth: 0,
-    marginTop: 16,
-    backgroundColor: '#F2F2F7',
-    borderRadius: 8,
-  },
-});
+const AvatarOptionsModal = ({
+  visible,
+  onClose,
+  onTakePhoto,
+  onPickFromGallery,
+  onRemovePhoto,
+  hasPhoto,
+  uploading,
+}: AvatarOptionsModalProps) => (
+  <Modal
+    visible={visible}
+    animationType="fade"
+    onRequestClose={onClose}
+    transparent>
+    <TouchableOpacity
+      style={styles.modalOverlay}
+      activeOpacity={1}
+      onPress={onClose}>
+      <View style={styles.optionsContainer}>
+        <TouchableOpacity
+          style={styles.optionButton}
+          onPress={onTakePhoto}
+          disabled={uploading}>
+          <Text style={styles.optionText}>
+            {uploading ? 'Processando...' : 'Tirar Foto'}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.optionButton}
+          onPress={onPickFromGallery}
+          disabled={uploading}>
+          <Text style={styles.optionText}>
+            {uploading ? 'Processando...' : 'Escolher da Galeria'}
+          </Text>
+        </TouchableOpacity>
+        {hasPhoto && (
+          <TouchableOpacity
+            style={[styles.optionButton, styles.removeOption]}
+            onPress={onRemovePhoto}
+            disabled={uploading}>
+            <Text style={[styles.optionText, styles.removeText]}>
+              Remover Foto
+            </Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity
+          style={[styles.optionButton, styles.cancelOption]}
+          onPress={onClose}
+          disabled={uploading}>
+          <Text style={[styles.optionText, styles.cancelText]}>Cancelar</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
+  </Modal>
+);
 
 const statusModalStyles = StyleSheet.create({
   overlay: {
@@ -655,7 +462,7 @@ const statusModalStyles = StyleSheet.create({
     maxWidth: 350,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: colors.primaryBlack,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
@@ -686,7 +493,7 @@ const statusModalStyles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
-    backgroundColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -694,7 +501,7 @@ const statusModalStyles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
+    color: colors.primaryWhite,
     fontWeight: 'bold',
     fontSize: 16,
   },

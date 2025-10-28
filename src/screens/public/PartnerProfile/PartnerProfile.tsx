@@ -18,6 +18,8 @@ import { Rating } from 'react-native-ratings';
 import { parceiros } from './parceiros.mock';
 import { comodidades } from './comodidades';
 
+import colors from '@theme/colors';
+
 function PartnerProfileScreen() {
   const navigation = useNavigation();
   const route = useRoute();
@@ -104,7 +106,11 @@ function PartnerProfileScreen() {
       </ImageBackground>
 
       <View style={styles.addressContainer}>
-        <MaterialCommunityIcons name="map-marker" size={16} color="#000" />
+        <MaterialCommunityIcons
+          name="map-marker"
+          size={16}
+          color={colors.primaryBlack}
+        />
         <Text style={styles.addressText}>
           {`${parceiro.endereco.rua} - ${parceiro.endereco.cep} - ${parceiro.endereco.bairro} - ${parceiro.endereco.cidade} / ${parceiro.endereco.estado}`}
         </Text>
@@ -150,7 +156,7 @@ function PartnerProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#DDE6F0',
+    backgroundColor: colors.secondaryGray,
   },
   headerImage: {
     height: 174,
@@ -203,14 +209,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: colors.secondaryBeige,
   },
   tab: {
     fontSize: 17,
-    color: '#000',
+    color: colors.primaryBlack,
   },
   activeTab: {
-    color: '#FC8200',
+    color: colors.primaryOrange,
     fontWeight: 'bold',
   },
 });
