@@ -17,7 +17,7 @@ function MeusAgendamentos() {
     };
 
     loadAppointments();
-  }, []);
+  }, [fetchAppointments]);
 
   return (
     <View style={{ gap: 10 }}>

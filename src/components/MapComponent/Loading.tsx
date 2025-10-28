@@ -7,9 +7,9 @@ interface LoadingIndicatorProps {
   message?: string;
 }
 
-export const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({ 
-  loading, 
-  message = 'Localizando...' 
+export const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
+  loading,
+  message = 'Localizando...',
 }) => {
   if (!loading) return null;
 

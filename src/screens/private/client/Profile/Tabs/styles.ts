@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
@@ -20,11 +20,20 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.primaryWhite,
     borderRadius: 16,
     padding: 24,
-    shadowColor: colors.primaryBlack,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.primaryBlack,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: `0px 2px 8px rgba(0, 0, 0, 0.1)`,
+      },
+    }),
   },
   contentWrapper: {
     flexDirection: 'row',
@@ -197,11 +206,20 @@ export const styles = StyleSheet.create({
   },
   activeMenuItem: {
     backgroundColor: colors.primaryOrange,
-    shadowColor: colors.primaryOrange,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-    elevation: 8,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.primaryOrange,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 6,
+      },
+      android: {
+        elevation: 8,
+      },
+      web: {
+        boxShadow: `0px 2px 6px ${colors.primaryOrange}80`,
+      },
+    }),
   },
   menuText: {
     fontSize: 18,
@@ -220,7 +238,7 @@ export const styles = StyleSheet.create({
   passwordRules: {
     fontSize: 14,
     fontFamily: 'Afacad-Regular',
-    color: '#007bff', // Cor azul para a dica
+    color: '#007bff',
     marginTop: -8,
     marginBottom: 16,
     paddingHorizontal: 4,
