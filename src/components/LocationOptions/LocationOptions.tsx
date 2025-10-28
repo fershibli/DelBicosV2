@@ -8,16 +8,15 @@ import {
   Image,
 } from 'react-native';
 import * as Location from 'expo-location';
+import { LocationButton } from '../LocationButton/LocationButton';
 import { styles } from './styles';
-// @ts-ignore
-import IconPin from '@assets/Local.svg';
 // @ts-ignore
 import IconSearch from '@assets/Search.svg';
 // @ts-ignore
 import IconPerson from '@assets/person.svg';
 
 interface Props {
-  onLocationRetrieved: (city: string, country: string) => void;
+  onLocationRetrieved: (latitude: number, longitude: number) => void;
   onCepRetrieved: (city: string, state: string) => void;
   onLoginPress: () => void;
 }
@@ -28,23 +27,31 @@ const LocationOptions: React.FC<Props> = ({
   onLoginPress,
 }) => {
   const [cep, setCep] = useState('');
+  const [loadingLocation, setLoadingLocation] = useState(false);
 
   const handleUseLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(
-        'Permissão negada',
-        'Não foi possível acessar sua localização',
-      );
-      return;
-    }
+    setLoadingLocation(true);
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permissão negada',
+          'Não foi possível acessar sua localização',
+        );
+        return null;
+      }
 
-    const location = await Location.getCurrentPositionAsync({});
-    const geocode = await Location.reverseGeocodeAsync(location.coords);
-
-    if (geocode.length > 0) {
-      const { city, region } = geocode[0];
-      onLocationRetrieved(city || '', region || '');
+      const location = await Location.getCurrentPositionAsync({});
+      return {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível obter a localização');
+      console.error('Erro ao obter localização:', error);
+      return null;
+    } finally {
+      setLoadingLocation(false);
     }
   };
 
@@ -63,10 +70,11 @@ const LocationOptions: React.FC<Props> = ({
 
   return (
     <View style={styles.wrapper}>
-      <TouchableOpacity style={styles.button} onPress={handleUseLocation}>
-        <Image source={IconPin} width={21} height={29} />
-        <Text style={styles.buttonText}>Usar minha localização</Text>
-      </TouchableOpacity>
+      <LocationButton
+        onPress={handleUseLocation}
+        loading={loadingLocation}
+        onConfirm={({ latitude, longitude }) => onLocationRetrieved(latitude, longitude)}
+      />
 
       <TextInput
         placeholder="Digite seu CEP"

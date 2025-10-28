@@ -28,6 +28,13 @@ export const PaymentCompletionScreen: React.FC = () => {
     try {
       setIsGeneratingPDF(true);
 
+      // Garante que os dados da nota existam antes de gerar
+      if (!invoiceData) {
+        Alert.alert('Erro', 'Dados da nota fiscal não estão disponíveis.');
+        setIsGeneratingPDF(false);
+        return;
+      }
+
       // Gera o HTML da nota fiscal
       const htmlContent = InvoiceTemplate(invoiceData);
 
@@ -61,6 +68,13 @@ export const PaymentCompletionScreen: React.FC = () => {
   const handleDownloadPDF = useCallback(async () => {
     try {
       setIsGeneratingPDF(true);
+
+      // Garante que os dados da nota existam antes de gerar
+      if (!invoiceData) {
+        Alert.alert('Erro', 'Dados da nota fiscal não estão disponíveis.');
+        setIsGeneratingPDF(false);
+        return;
+      }
 
       // Gera o HTML da nota fiscal
       const htmlContent = InvoiceTemplate(invoiceData);

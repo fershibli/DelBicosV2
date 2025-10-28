@@ -1,5 +1,6 @@
 import { Text } from '@react-navigation/elements';
 import { StyleSheet, View } from 'react-native';
+import colors from '@theme/colors';
 
 type SobreContentProps = {
   detalhes: string;
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: colors.secondaryBeige,
   },
   tab: {
     fontSize: 17,
@@ -59,10 +60,10 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   activeTab: {
-    color: '#FC8200',
+    color: colors.primaryOrange,
     fontWeight: 'bold',
     borderBottomWidth: 2,
-    borderBottomColor: '#FC8200',
+    borderBottomColor: colors.primaryOrange,
   },
   contentContainer: {
     padding: 16,

@@ -3,7 +3,7 @@ name: 01 - Análise Semântica Pós-Merge
 # Gatilho: Acionado QUANDO um Pull Request é FECHADO.
 on:
   pull_request:
-    types: [ closed ]
+    types: [closed]
     branches:
       - main # Apenas PRs direcionados à 'main'
 
@@ -20,81 +20,124 @@ jobs:
     if: |
       github.event.pull_request.merged == true &&
       github.event.pull_request.head.ref == 'stag'
-      
+
     runs-on: ubuntu-latest
-    
-    # Define saídas (outputs) para este job, que podem ser usadas por outros jobs
-    outputs:
-      bump_type: ${{ steps.analisar_versao.outputs.BUMP_TYPE }}
-      bump_reason: ${{ steps.analisar_versao.outputs.BUMP_REASON }}
 
     steps:
-      - name: 1. Listar Commits do PR (via API)
-        id: get_commits
-        uses: actions/github-script@v7
+      - name: Checar repositório
+        uses: actions/checkout@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string # Garante que a saída seja uma string
-          script: |
-            console.log(`Analisando commits do PR #${context.issue.number}`);
-            
-            const { data: commits } = await github.rest.pulls.listCommits({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number
-            });
+          token: ${{ secrets.GH_TOKEN }}
+          fetch-depth: 0
 
-            // Mapeia para uma lista de mensagens de commit
-            const messages = commits.map(c => c.commit.message.split('\n')[0]); // Pega apenas a primeira linha
-            
-            // Retorna a lista de mensagens, separadas por nova linha
-            const commitMessages = messages.join('\n');
-            console.log("Commits analisados:\n" + commitMessages);
-            return commitMessages;
+      - name: Configurar Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22.15.1'
 
-      - name: 2. Analisar Commits e Determinar Versão
-        id: analisar_versao
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Instalar semver (semantic versioning tool)
+        run: npm install -g semver
+
+      - name: Criar nova tag caso não exista
+        id: create_initial_tag
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          # Pega a string de commits do passo anterior
-          COMMITS=$(echo "${{ steps.get_commits.outputs.result }}")
-          
-          BUMP_TYPE="Nenhum"
-          BUMP_REASON=""
-
-          # Lógica de versionamento com as NOVAS regras (incluindo "refatorar" e "refatoração")
-          # A ordem de prioridade (MAJOR > MINOR > PATCH) é mantida.
-          
-          if echo "$COMMITS" | grep -q -i -E "^(refactor|refatorar|refatoração):"; then
-            BUMP_TYPE="MAJOR"
-            BUMP_REASON="Um commit 'refactor/refatorar/refatoração:' foi encontrado, indicando uma atualização MAJOR."
-          elif echo "$COMMITS" | grep -q -i -E "^(feat|feature):"; then
-            BUMP_TYPE="MINOR"
-            BUMP_REASON="Um commit 'feat:' ou 'feature:' foi encontrado, indicando uma atualização MINOR."
-          elif echo "$COMMITS" | grep -q -i "^fix:"; then
-            BUMP_TYPE="PATCH"
-            BUMP_REASON="Um commit 'fix:' foi encontrado, indicando uma atualização PATCH."
-          else
-            BUMP_TYPE="Nenhum"
-            BUMP_REASON="Nenhum commit semântico (fix, feature, refactor, refatorar, refatoração) foi detectado."
+          if [ -z "$(git tag)" ]; then
+            git config --global user.name 'github-actions'
+            git config --global user.email 'github-actions@github.com'
+            git tag -a v0.0.0 -m "Initial release"
+            git push origin v0.0.0
           fi
-          
-          # Exibe o resultado no log
-          echo "Tipo de Bump: $BUMP_TYPE"
-          echo "Razão: $BUMP_REASON"
-          
-          # Salva como 'output' do passo
-          echo "BUMP_TYPE=$BUMP_TYPE" >> $GITHUB_OUTPUT
-          echo "BUMP_REASON=$BUMP_REASON" >> $GITHUB_OUTPUT
 
-      - name: 3. Exibir Resultado da Análise
+      - name: Calcular nova versão
+        id: version
         run: |
-          echo "Merge de 'stag' para 'main' concluído."
-          echo "Bump de versão determinado: ${{ steps.analisar_versao.outputs.BUMP_TYPE }}"
-          echo "Justificativa: ${{ steps.analisar_versao.outputs.BUMP_REASON }}"
+          git fetch --tags
+          LAST_TAG=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "v0.0.0")
+          echo "Versão Atual: $LAST_TAG"
 
-      - name: 4. Falhar se nenhum commit semântico for encontrado
-        if: steps.analisar_versao.outputs.BUMP_TYPE == 'Nenhum'
+          # Obter commits desde a última tag
+          if [ "$LAST_TAG" = "v0.0.0" ]; then
+            COMMIT_MESSAGES=$(git log --pretty=format:"%s" | tr '\n' '|')
+          else
+            COMMIT_MESSAGES=$(git log ${LAST_TAG}..HEAD --pretty=format:"%s" | tr '\n' '|')
+          fi
+
+          echo "Commits desde a última tag: $COMMIT_MESSAGES"
+
+          # Verificar se há commits para processar
+          if [ -z "$COMMIT_MESSAGES" ]; then
+            echo "Nenhum commit encontrado desde a última tag"
+            echo "should_version=false" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          # Inicializando variáveis
+          MAJOR=0
+          MINOR=0
+          PATCH=0
+
+          # Analisando mensagens de commit
+          if echo "$COMMIT_MESSAGES" | grep -q -i -E "(^(refactor|refatorar|refatoração)|BREAKING CHANGE)"; then
+            MAJOR=1
+            echo "Encontrado refactor ou BREAKING CHANGE"
+          elif echo "$COMMIT_MESSAGES" | grep -q -i -E "^(feat|feature)"; then
+            MINOR=1
+            echo "Encontrado feat"
+          elif echo "$COMMIT_MESSAGES" | grep -q -i "^fix"; then
+            PATCH=1
+            echo "Encontrado fix"
+          fi
+
+          # Verificar se alguma mudança foi detectada
+          if [[ $MAJOR -eq 0 && $MINOR -eq 0 && $PATCH -eq 0 ]]; then
+            echo "Nenhuma mudança versionável detectada"
+            echo "should_version=false" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          # Calculando a nova versão usando semver
+          CURRENT_VERSION=${LAST_TAG#v}
+          if [[ $MAJOR -eq 1 ]]; then
+            NEW_VERSION=$(semver -i major $CURRENT_VERSION)
+            echo "Incrementando versão MAJOR"
+          elif [[ $MINOR -eq 1 ]]; then
+            NEW_VERSION=$(semver -i minor $CURRENT_VERSION)
+            echo "Incrementando versão MINOR"
+          elif [[ $PATCH -eq 1 ]]; then
+            NEW_VERSION=$(semver -i patch $CURRENT_VERSION)
+            echo "Incrementando versão PATCH"
+          fi
+
+          echo "Nova versão: $NEW_VERSION"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
+          echo "should_version=true" >> $GITHUB_ENV
+
+      - name: Verificar se deve atualizar versão
         run: |
-          echo "Erro: O merge foi concluído, mas nenhum commit semântico (fix, feature, refactor/refatorar/refatoração) foi encontrado."
-          echo "O pipeline de release não pode determinar a próxima versão."
-          exit 1
+          if [ "${{ env.should_version }}" = "false" ]; then
+            echo "Pulando atualização de versão - nenhuma mudança detectada"
+            exit 0
+          fi
+
+      - name: Atualizar versão no package.json
+        if: env.should_version == 'true'
+        run: |
+          echo "Atualizando versão para ${{ env.new_version }}"
+          npm version ${{ env.new_version }} --no-git-tag-version --allow-same-version
+
+      - name: Commit e push
+        if: env.should_version == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add package.json
+          git commit -m "chore(release): version ${{ env.new_version }}"
+          git tag v${{ env.new_version }}
+          git push origin main --tags

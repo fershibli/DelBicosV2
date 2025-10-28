@@ -1,15 +1,16 @@
 import { StyleSheet } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   itemsContainer: {
     borderWidth: 0.3,
-    borderColor: '#000000',
+    borderColor: colors.primaryBlack,
     borderRadius: 3,
     marginBottom: 10,
     overflow: 'hidden',
   },
   itemsHeader: {
-    backgroundColor: '#FC8200',
+    backgroundColor: colors.primaryOrange,
     paddingVertical: 2,
     paddingHorizontal: 10,
   },
@@ -17,7 +18,7 @@ export const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 9,
     lineHeight: 11,
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
   itemDetails: {
     backgroundColor: '#FFE092',
@@ -33,31 +34,31 @@ export const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 9,
     lineHeight: 11,
-    color: '#000000',
+    color: colors.primaryBlack,
   },
   itemDate: {
     fontWeight: '400',
     fontSize: 9,
     lineHeight: 11,
-    color: '#000000',
+    color: colors.primaryBlack,
   },
   itemTime: {
     fontWeight: '500',
     fontSize: 9,
     lineHeight: 11,
-    color: '#000000',
+    color: colors.primaryBlack,
   },
   itemPrice: {
     fontWeight: '800',
     fontSize: 9,
     lineHeight: 11,
-    color: '#000000',
+    color: colors.primaryBlack,
   },
   professionalText: {
     fontWeight: '500',
     fontSize: 9,
     lineHeight: 11,
-    color: '#000000',
+    color: colors.primaryBlack,
     marginTop: 5,
   },
 });

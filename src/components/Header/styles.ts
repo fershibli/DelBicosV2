@@ -1,9 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   headerContainer: {
     flexShrink: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     padding: 0,
     margin: 0,
   },
@@ -24,7 +25,7 @@ export const styles = StyleSheet.create({
   },
   divider: {
     height: 2,
-    backgroundColor: '#000000',
+    backgroundColor: colors.primaryBlack,
   },
   logoImage: {
     width: 476,
@@ -41,7 +42,7 @@ export const styles = StyleSheet.create({
   locationLabel: {
     fontFamily: 'Afacad-Regular',
     fontSize: 18,
-    color: '#000',
+    color: colors.primaryBlack,
     marginBottom: 0,
   },
   userContainer: {
@@ -59,11 +60,47 @@ export const styles = StyleSheet.create({
   userName: {
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
-    color: '#000',
+    color: colors.primaryBlack,
   },
   blueBar: {
     height: 42,
-    backgroundColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
     width: '100%',
+  },
+  menuOptionsContainer: {
+    borderRadius: 8,
+    marginTop: 40,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.primaryBlack,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.15)',
+      },
+    }),
+  },
+  menuOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  menuIcon: {
+    marginRight: 12,
+  },
+  menuOptionText: {
+    fontFamily: 'Afacad-Regular',
+    fontSize: 16,
+    color: '#333',
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: '#EFEFEF',
   },
 });

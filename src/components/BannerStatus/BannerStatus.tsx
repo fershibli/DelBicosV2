@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
+import colors from '@theme/colors';
 
 type StatusType = 'Agendado' | 'Executado' | 'Cancelado';
 
@@ -19,14 +20,14 @@ const BannerStatus: React.FC<BannerStatusProps> = ({ status }) => {
   const statusConfig: Record<StatusType, StatusConfig> = {
     Agendado: {
       backgroundColor: '#FFE092',
-      borderColor: '#FC8200',
-      textColor: '#000000',
+      borderColor: colors.primaryOrange,
+      textColor: colors.primaryBlack,
       message: 'Serviço Agendado',
     },
     Executado: {
-      backgroundColor: '#22843B',
-      borderColor: '#22843B',
-      textColor: '#FFFFFF',
+      backgroundColor: colors.primaryGreen,
+      borderColor: colors.primaryGreen,
+      textColor: colors.primaryWhite,
       message: 'Serviço Executado',
     },
     Cancelado: {

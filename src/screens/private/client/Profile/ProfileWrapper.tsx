@@ -6,6 +6,7 @@ import AlterarEnderecoForm from './Tabs/AlterarEnderecoForm';
 import DadosContaForm from './Tabs/DadosContaForm';
 import TrocarSenhaForm from './Tabs/TrocarSenhaForm';
 import MeusAgendamentos from './Tabs/MeusAgendamentos';
+import colors from '@theme/colors';
 
 interface UserProfileProps {
   userId: string;
@@ -64,14 +65,14 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#dde6f0',
+    backgroundColor: colors.secondaryGray,
   },
   header: {
     paddingVertical: 20,
-    backgroundColor: '#fff',
+    backgroundColor: colors.primaryWhite,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: colors.primaryBlack,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 8,
