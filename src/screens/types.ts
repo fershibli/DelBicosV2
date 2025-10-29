@@ -22,4 +22,6 @@ export type NavigationParams = {
     professionalName?: string;
   };
   PaymentCompletion: undefined;
+  PaymentStatus: undefined;
+  MySchedules: undefined;
 };
