@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Image,
@@ -30,9 +30,10 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const isWebOrLargeScreen = Platform.OS === 'web' || width > 768;
 
   const { user, signOut } = useUserStore();
-  const { address } = useLocation();
-  const city = address?.city;
-  const state = address?.state;
+  const { address: userAddress } = useUserStore();
+
+  const { city, state, setLocation } = useLocation();
+
   const navigation = useNavigation();
   const [search, setSearch] = useState('');
 
@@ -53,6 +54,15 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       }),
     );
   };
+
+  useEffect(() => {
+    if (user && userAddress && userAddress.city && !city) {
+      console.log(
+        `[Header] Sincronizando: Definindo localização de pesquisa para ${userAddress.city}.`,
+      );
+      setLocation(userAddress.city, userAddress.state);
+    }
+  }, [user, userAddress, city, setLocation]);
 
   const MenuItem: React.FC<{
     screen?: keyof NavigationParams;
