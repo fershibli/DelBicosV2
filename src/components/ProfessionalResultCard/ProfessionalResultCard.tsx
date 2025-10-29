@@ -22,22 +22,36 @@ export interface ProfessionalResult {
 
 interface ProfessionalResultCardProps {
   professional: ProfessionalResult;
+  selectedDate: string;
 }
 
 const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
   professional,
+  selectedDate,
 }) => {
   const navigation = useNavigation();
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedTime] = useState<string | null>(null);
 
   const handleTimeSlotPress = (time: string) => {
+    // 'time' será "09:30", "11:30", etc.
+
+    // 3. COMBINE a data (ex: "2025-10-28") com a hora (ex: "15:30")
+    // Isso cria uma string de data ISO 8601 completa e válida
+    // Ex: "2025-10-28T15:30:00.000Z" (assumindo UTC, ajuste fuso se necessário)
+    const dateTimeString = `${selectedDate}T${time}:00`;
+    // (Pode ser necessário adicionar :00 se a hora for só HH:MM)
+
+    console.log(
+      `[ProfessionalResultCard] Navegando com dateTimeString: ${dateTimeString}`,
+    );
+
     // @ts-ignore
     navigation.navigate('Checkout', {
-      professionalId: professional.id, // Passa o ID (número)
-      priceFrom: professional.priceFrom, // Passa o preço (número)
-      selectedTime: time, // Passa a hora (string)
-      imageUrl: professional.imageUrl, // Passa a URL da imagem (string, opcional)
-      professionalName: professional.name, // Passa o nome (string, opcional)
+      professionalId: professional.id,
+      priceFrom: professional.priceFrom,
+      selectedTime: dateTimeString,
+      imageUrl: professional.imageUrl,
+      professionalName: professional.name,
     });
   };
 
