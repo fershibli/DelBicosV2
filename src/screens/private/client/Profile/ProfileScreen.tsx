@@ -5,18 +5,7 @@ import ProfileWrapper from './ProfileWrapper';
 import { useUserStore } from '@stores/User';
 import colors from '@theme/colors';
 import { HTTP_DOMAIN } from '@config/varEnvs';
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  active: boolean;
-  avatar_uri: string | null;
-  banner_uri: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { User } from '@stores/User/types';
 
 const UserProfileScreen: React.FC = () => {
   const [userData, setUserData] = useState<User | null>(null);
