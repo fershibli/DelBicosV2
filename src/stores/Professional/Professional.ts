@@ -42,6 +42,7 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
             prof.User?.avatar_uri ||
             `https://picsum.photos/id/${prof.id}/200/200`,
           location: prof.MainAddress?.city || 'Local não informado',
+          Service: prof.Services,
         };
       });
 
