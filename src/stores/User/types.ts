@@ -34,4 +34,6 @@ export type UserStore = {
     newPassword: string,
   ) => Promise<void>;
   signOut: () => void;
+  uploadAvatar: (base64Image: string) => Promise<void>;
+  removeAvatar: () => Promise<void>;
 };
