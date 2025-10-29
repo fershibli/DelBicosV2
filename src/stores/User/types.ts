@@ -22,18 +22,37 @@ export type Address = {
   postal_code: string;
 };
 
+export type ErrorResponse = {
+  erro: boolean;
+  mensagem: string;
+};
+
+export type UploadAvatarResponse = {
+  erro: boolean;
+  mensagem: string;
+  avatar_uri?: string;
+};
+
 export type UserStore = {
   user: User | null;
   address: Address | null;
   token: string | null;
-  verificationEmail: string | null; // Adicionar esta linha
+  verificationEmail: string | null;
   setVerificationEmail: (email: string | null) => void;
   signIn: () => void;
   signInPassword: (email: string, password: string) => Promise<void>;
-  /** Altera a senha do usuário. Recebe a senha atual e a nova senha. */
   changePassword: (
     currentPassword: string,
     newPassword: string,
   ) => Promise<void>;
   signOut: () => void;
+  // Novas funções para gerenciamento de avatar
+  uploadAvatar: (
+    userId: string,
+    base64Image: string,
+  ) => Promise<UploadAvatarResponse>;
+  removeAvatar: (userId: string) => Promise<ErrorResponse>;
+  fetchUserById: (
+    userId: string,
+  ) => Promise<{ erro: boolean; mensagem: string; user?: User }>;
 };

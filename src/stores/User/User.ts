@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'expo-zustand-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserStore } from './types';
+import { UserStore, UploadAvatarResponse, ErrorResponse, User } from './types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { AxiosError } from 'axios';
+import { HTTP_DOMAIN } from '@config/varEnvs';
 
 export const useUserStore = create<UserStore>()(
   persist(
@@ -11,7 +12,7 @@ export const useUserStore = create<UserStore>()(
       user: null,
       address: null,
       token: null,
-      verificationEmail: null, // Adicionar estado inicial
+      verificationEmail: null,
       setVerificationEmail: (email) => set({ verificationEmail: email }),
 
       signIn: () => {
@@ -43,6 +44,7 @@ export const useUserStore = create<UserStore>()(
           return;
         }
       },
+
       signInPassword: async (email: string, password: string) => {
         try {
           const response = await backendHttpClient.post('/api/user/login', {
@@ -135,6 +137,168 @@ export const useUserStore = create<UserStore>()(
           );
         }
       },
+
+      uploadAvatar: async (
+        userId: string,
+        base64Image: string,
+      ): Promise<UploadAvatarResponse> => {
+        try {
+          console.log(
+            '📤 Base64 completo (primeiros 200 chars):',
+            base64Image.substring(0, 200),
+          );
+          console.log('📤 Tipo MIME detectado:', base64Image.substring(0, 50));
+          console.log('📤 Tamanho do base64:', base64Image.length);
+
+          const token = get().token;
+
+          const response = await fetch(
+            `${HTTP_DOMAIN}/api/user/${userId}/avatar`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                base64Image: base64Image,
+                userId: userId,
+              }),
+            },
+          );
+
+          console.log('📤 Status da resposta:', response.status);
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ Erro na resposta:', errorText);
+
+            try {
+              const errorData = JSON.parse(errorText);
+              return {
+                erro: true,
+                mensagem: errorData.error || `Erro ${response.status}`,
+              };
+            } catch {
+              return {
+                erro: true,
+                mensagem: `Erro ${response.status}: ${errorText}`,
+              };
+            }
+          }
+
+          const data = await response.json();
+          console.log('✅ Resposta do servidor:', data);
+
+          // Atualiza o avatar_uri do usuário na store
+          const currentUser = get().user;
+          if (currentUser) {
+            set({
+              user: {
+                ...currentUser,
+                avatar_uri: data.avatar_uri,
+              },
+            });
+          }
+
+          return {
+            erro: false,
+            mensagem: 'Avatar atualizado com sucesso!',
+            avatar_uri: data.avatar_uri,
+          };
+        } catch (error: any) {
+          console.error('❌ Erro no upload:', error);
+          return {
+            erro: true,
+            mensagem: error.message || 'Erro ao fazer upload do avatar',
+          };
+        }
+      },
+
+      removeAvatar: async (userId: string): Promise<ErrorResponse> => {
+        try {
+          const token = get().token;
+          const response = await fetch(
+            `${HTTP_DOMAIN}/api/user/${userId}/avatar`,
+            {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error(
+              '❌ Erro na remoção do avatar no servidor:',
+              errorText,
+            );
+            return {
+              erro: true,
+              mensagem: errorText || 'Erro ao remover avatar',
+            };
+          }
+
+          // Atualiza o avatar_uri do usuário na store
+          const currentUser = get().user;
+          if (currentUser) {
+            set({
+              user: {
+                ...currentUser,
+                avatar_uri: null,
+              },
+            });
+          }
+
+          return {
+            erro: false,
+            mensagem: 'Avatar removido com sucesso!',
+          };
+        } catch (error: any) {
+          console.error('Erro ao remover avatar:', error);
+          return {
+            erro: true,
+            mensagem: 'Falha ao remover o avatar',
+          };
+        }
+      },
+
+      fetchUserById: async (
+        userId: string,
+      ): Promise<{ erro: boolean; mensagem: string; user?: User }> => {
+        try {
+          const token = get().token;
+          const response = await fetch(`${HTTP_DOMAIN}/api/user/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            return {
+              erro: true,
+              mensagem: 'Erro ao buscar usuário',
+            };
+          }
+
+          const data = await response.json();
+
+          return {
+            erro: false,
+            mensagem: 'Usuário carregado com sucesso',
+            user: data,
+          };
+        } catch (error: any) {
+          console.error('Erro ao carregar dados do usuário:', error);
+          return {
+            erro: true,
+            mensagem: 'Não foi possível carregar os dados do usuário.',
+          };
+        }
+      },
+
       signOut: () =>
         set({
           user: null,
