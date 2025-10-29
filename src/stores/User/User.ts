@@ -53,7 +53,6 @@ export const useUserStore = create<UserStore>()(
               }
             : null;
           set({ user: userData, address: addressData, token });
-          console.log('Login successful:', userData);
           return;
         } catch (error: any | AxiosError) {
           if (error instanceof AxiosError) {
@@ -111,14 +110,11 @@ export const useUserStore = create<UserStore>()(
       },
       uploadAvatar: async (base64Image: string) => {
         try {
-          console.log('[UserStore] Enviando avatar para o backend...');
-
           const response = await backendHttpClient.post(`/api/user/avatar`, {
             base64Image: base64Image,
           });
 
           const data = response.data;
-          console.log('[UserStore] Avatar atualizado:', data);
 
           set({ user: data.user });
         } catch (error: any) {
@@ -133,30 +129,16 @@ export const useUserStore = create<UserStore>()(
         if (!userId) throw new Error('Usuário não autenticado.');
 
         try {
-          console.log('[UserStore] Chamando API DELETE /api/user/avatar...');
-
           const response = await backendHttpClient.delete(`/api/user/avatar`);
-          console.log(
-            '[UserStore] Resposta do backend (removeAvatar):',
-            response.data,
-          );
           if (!response.data || !response.data.user) {
             console.error(
               '[UserStore] Erro: O backend não retornou o objeto "user" atualizado.',
             );
-            // Se o backend não retornar o 'user', atualizamos o estado manualmente
             set((state) => ({
               user: state.user ? { ...state.user, avatar_uri: null } : null,
             }));
-            console.log(
-              '[UserStore] Avatar removido do estado local (manualmente).',
-            );
           } else {
-            // Se o backend retornou o 'user', nós o usamos
             set({ user: response.data.user });
-            console.log(
-              '[UserStore] Estado do usuário atualizado com dados do backend.',
-            );
           }
         } catch (error: any) {
           console.error('Erro no removeAvatar do UserStore:', error);
