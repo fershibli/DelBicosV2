@@ -39,10 +39,13 @@ const UserProfileScreen: React.FC = () => {
       console.log('📤 Tipo MIME detectado:', base64Image.substring(0, 50));
       console.log('📤 Tamanho do base64:', base64Image.length);
 
+      const { token } = useUserStore.getState();
+
       const response = await fetch(`${HTTP_DOMAIN}/api/user/${userId}/avatar`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           base64Image: base64Image,
@@ -98,9 +101,13 @@ const UserProfileScreen: React.FC = () => {
 
   const removeAvatar = async () => {
     try {
+      const { token } = useUserStore.getState();
       const response = await fetch(`${HTTP_DOMAIN}/api/user/${userId}/avatar`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
