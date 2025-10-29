@@ -111,7 +111,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
           <MenuItem>Ajuda</MenuItem>
           {!!user && (
             <>
-              <MenuItem>Meus Agendamentos</MenuItem>
+              <MenuItem screen={'MySchedules'}>Meus Agendamentos</MenuItem>
               <MenuItem>Portal do Parceiro</MenuItem>
             </>
           )}

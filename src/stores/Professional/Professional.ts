@@ -8,12 +8,12 @@ import {
 const MOCK_PROFESSIONALS_DB: Record<number, Professional> = {
   1: {
     id: 1,
-    user_id: 101,
+    user_id: 1,
     active: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     User: {
-      id: 101,
+      id: 1,
       name: 'Jefferson Santos',
       avatar_uri: 'url_avatar_jefferson.jpg',
       email: 'jefferson.santos@example.com',
@@ -22,11 +22,11 @@ const MOCK_PROFESSIONALS_DB: Record<number, Professional> = {
       cpf: '40560351801',
     },
     Service: {
-      id: 501,
+      id: 1,
       title: 'Instalação Elétrica Residencial',
       price: '250.00',
-      subcategory_id: 302,
-      Subcategory: { id: 302, name: 'Eletricista' },
+      subcategory_id: 1,
+      Subcategory: { id: 1, name: 'Eletricista' },
       description: 'Instalação completa para residências.',
       duration: 120,
       banner_uri: 'url_banner_servico_eletrica.jpg',
@@ -42,12 +42,12 @@ const MOCK_PROFESSIONALS_DB: Record<number, Professional> = {
   },
   2: {
     id: 2,
-    user_id: 102,
+    user_id: 2,
     active: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     User: {
-      id: 102,
+      id: 2,
       name: 'Maria Silva',
       avatar_uri: 'url_avatar_maria.jpg',
       email: 'maria.silva@example.com',
@@ -56,11 +56,11 @@ const MOCK_PROFESSIONALS_DB: Record<number, Professional> = {
       cpf: '12345678901',
     },
     Service: {
-      id: 601,
+      id: 2,
       title: 'Encanamento Geral',
       price: '180.00',
-      subcategory_id: 303,
-      Subcategory: { id: 303, name: 'Encanador' },
+      subcategory_id: 2,
+      Subcategory: { id: 2, name: 'Encanador' },
       description: 'Reparos hidráulicos gerais.',
       duration: 90,
       banner_uri: null,
@@ -75,9 +75,7 @@ const MOCK_PROFESSIONALS_DB: Record<number, Professional> = {
   },
 };
 
-const SIMULATED_DELAY_MS = 1000;
 const SIMULATED_DETAIL_DELAY_MS = 500;
-const MOCK_TOTAL_ITEMS = 80;
 
 // --- Funções Utilitárias ---
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -91,32 +89,31 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
   // --- Ações ---
   fetchProfessionals: async (filter = '', page = 0, limit = 12) => {
     try {
+      const allProfessionals = Object.values(MOCK_PROFESSIONALS_DB);
+
+      // Simula paginação
       const startIndex = page * limit;
+      const endIndex = startIndex + limit;
+      const pageData = allProfessionals.slice(startIndex, endIndex);
 
-      if (startIndex >= MOCK_TOTAL_ITEMS) {
-        await sleep(SIMULATED_DELAY_MS / 3);
-        return [];
-      }
+      // Mapeia do tipo 'Professional' (detalhado) para 'ListedProfessional' (simplificado)
+      const listedData: ListedProfessional[] = pageData.map((prof) => ({
+        id: prof.id,
+        name: prof.User.name,
+        category: prof.Service?.Subcategory?.name || 'Serviços',
+        rating: prof.rating || 0,
+        ratingsCount: prof.ratings_count || 0,
+        imageUrl:
+          prof.User.avatar_uri || `https://picsum.photos/id/${prof.id}/200/200`, // Fallback
+        location: 'Localização Mock', // TODO: Adicionar localização real
+      }));
 
-      const mockedData: ListedProfessional[] = [];
-      const endIndex = Math.min(startIndex + limit, MOCK_TOTAL_ITEMS);
+      await sleep(1000); // Simula delay de rede
 
-      for (let i = startIndex; i < endIndex; i++) {
-        const uniqueId = i + 1;
-        mockedData.push({
-          id: uniqueId,
-          name: `Profissional Mock ${uniqueId}`,
-          category: `Categoria ${Math.ceil(uniqueId / 5)}`,
-          rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
-          ratingsCount: Math.floor(Math.random() * 100) + 5,
-          imageUrl: `https://picsum.photos/id/${uniqueId}/200/200`,
-          location: `Localização Mock ${uniqueId}`,
-        });
-      }
-
-      await sleep(SIMULATED_DELAY_MS);
-
-      return mockedData;
+      console.log(
+        `[ProfessionalStore] Retornando ${listedData.length} itens REAIS para página ${page}.`,
+      );
+      return listedData;
     } catch (error) {
       console.error('[ProfessionalStore] Error fetching professionals:', error);
       return [];

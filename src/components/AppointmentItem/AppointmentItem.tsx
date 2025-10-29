@@ -6,12 +6,16 @@ import {
   Modal,
   TextInput,
   Alert,
+  Linking,
+  Platform,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Rating } from 'react-native-ratings'; // Usando a versão nativa
 import { Appointment } from '@stores/Appointment/types';
 import { useAppointmentStore } from '@stores/Appointment';
 import { styles, getStatusStyle } from './styles';
+import { HTTP_DOMAIN } from '@config/varEnvs';
+import { useUserStore } from '@stores/User';
 
 // Componente do Modal de Avaliação (agora nativo)
 const ReviewAppointment = ({
@@ -79,6 +83,7 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
     rating,
   } = appointment;
   const statusInfo = getStatusStyle(status);
+  const { user } = useUserStore();
 
   const renderStars = () => {
     const stars = [];
@@ -99,6 +104,41 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
     return stars;
   };
 
+  const handleViewReceipt = async () => {
+    if (!user) {
+      Alert.alert('Erro', 'Você precisa estar logado para ver um recibo.');
+      return;
+    }
+
+    try {
+      // 6. Chama o novo endpoint que testamos
+      // GET /api/appointments/:id/receipt?userId=...
+      const response = await fetch(
+        `${HTTP_DOMAIN}/api/appointments/${appointment.id}/receipt?userId=${user.id}`,
+        {
+          method: 'GET',
+          // (Se você REATIVAR o authMiddleware, adicione o header 'Authorization' aqui)
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Não foi possível buscar o recibo.');
+      }
+
+      // 7. Abre a URL do recibo em uma nova aba
+      if (Platform.OS === 'web') {
+        window.open(data.receiptUrl, '_blank');
+      } else {
+        // Tenta abrir no navegador padrão do celular
+        Linking.openURL(data.receiptUrl);
+      }
+    } catch (error: any) {
+      Alert.alert('Erro ao buscar recibo', error.message);
+    }
+  };
+
   return (
     <>
       <View style={styles.card}>
@@ -115,11 +155,31 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
             {statusInfo.text}
           </Text>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setIsReviewModalOpen(true)}>
-            <Text style={styles.buttonText}>Avaliar</Text>
-          </TouchableOpacity>
+          {(appointment.status === 'completed' ||
+            appointment.status === 'canceled') &&
+            appointment.payment_intent_id && (
+              <TouchableOpacity
+                style={[styles.button, styles.receiptButton]} // Estilo azul
+                onPress={handleViewReceipt}>
+                <Text style={styles.buttonText}>Ver Recibo</Text>
+              </TouchableOpacity>
+            )}
+          {appointment.status === 'completed' && !appointment.rating && (
+            <TouchableOpacity
+              style={styles.button} // Botão verde (ou azul escuro padrão)
+              onPress={() => setIsReviewModalOpen(true)}>
+              <Text style={styles.buttonText}>Avaliar</Text>
+            </TouchableOpacity>
+          )}
+          {(appointment.status === 'pending' ||
+            appointment.status === 'confirmed') && (
+            <TouchableOpacity
+              style={[styles.button, styles.detailsButton]} // Estilo cinza/desabilitado
+              disabled={true} // Opcional
+            >
+              <Text style={styles.buttonText}>Ver Detalhes</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 

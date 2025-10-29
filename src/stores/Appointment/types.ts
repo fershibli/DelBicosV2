@@ -75,6 +75,7 @@ export interface Appointment {
   updatedAt: string; // ISO date string
   Service: Service;
   Client: Client;
+  payment_intent_id?: string | null;
   Professional: Professional;
 }
 

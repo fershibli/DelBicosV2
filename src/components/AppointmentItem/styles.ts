@@ -129,4 +129,12 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
+  receiptButton: {
+    backgroundColor: '#005A93', // Um azul (botão de recibo)
+    marginBottom: 8,
+  },
+  detailsButton: {
+    backgroundColor: '#6c757d', // Um cinza (botão "detalhes" desabilitado)
+    opacity: 0.8,
+  },
 });

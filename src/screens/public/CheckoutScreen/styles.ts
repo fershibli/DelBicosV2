@@ -23,6 +23,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F4F7FA',
+    minHeight: 300, // Garante altura mínima
   },
   loadingText: {
     marginTop: 10,
@@ -60,8 +61,8 @@ export const styles = StyleSheet.create({
     fontFamily: 'Afacad-Regular',
     fontSize: 14,
     textAlign: 'center',
-    marginTop: 10,
-    marginBottom: -10, // Para aproximar do botão
+    marginTop: 12,
+    marginBottom: -12, // Puxa o botão para cima
   },
   contentContainer: {
     padding: 24,

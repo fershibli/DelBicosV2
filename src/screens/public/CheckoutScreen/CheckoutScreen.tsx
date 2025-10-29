@@ -13,33 +13,46 @@ import { Rating } from 'react-native-ratings';
 import { styles } from './styles';
 import { NavigationParams } from '@screens/types';
 
-import { loadStripe } from '@stripe/stripe-js';
+import { stripePromise } from '@lib/stripe/stripe';
 import { Elements } from '@stripe/react-stripe-js';
-import { STRIPE_PUBLISHABLE_KEY, HTTP_DOMAIN } from '@config/varEnvs'; // Importe chave e domínio
+import { HTTP_DOMAIN } from '@config/varEnvs'; // Importe chave e domínio
 import CheckoutForm from './CheckoutForm'; // O componente do formulário Stripe
+import { useUserStore } from '@stores/User';
 
 // Store Imports
 import { useProfessionalStore } from '@stores/Professional';
-
-// Carrega o Stripe.js fora do componente
-const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
 // Tipos da Rota
 type CheckoutRouteParams = NavigationParams['Checkout'];
 
 // Função para buscar o clientSecret do backend
-async function fetchPaymentIntent(amount: number): Promise<string | null> {
+async function fetchPaymentIntent(
+  amount: number,
+  professionalId: number,
+  serviceId: number, // Precisamos saber o serviceId
+  selectedTime: string,
+  addressId: number,
+): Promise<string | null> {
   try {
     const backendUrl = `${HTTP_DOMAIN}/api/payments/create-payment-intent`;
+    console.log(`[CheckoutScreen] Chamando backend em: ${backendUrl}`);
+
     const response = await fetch(backendUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // Envia o valor na unidade principal (ex: 50.00). O backend converterá.
-      body: JSON.stringify({ amount: amount, currency: 'brl' }), // Use 'brl' ou sua moeda
+      body: JSON.stringify({
+        amount: amount, // Ex: 250.00
+        currency: 'brl', // Defina sua moeda
+        professionalId: professionalId,
+        serviceId: serviceId,
+        selectedTime: selectedTime,
+        addressId: addressId,
+      }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
+      console.error('[CheckoutScreen] Erro do Backend:', errorData);
       throw new Error(
         errorData.error || `Erro do servidor: ${response.status}`,
       );
@@ -49,9 +62,11 @@ async function fetchPaymentIntent(amount: number): Promise<string | null> {
     if (!data.clientSecret) {
       throw new Error('Client Secret não encontrado na resposta.');
     }
+
+    console.log('[CheckoutScreen] clientSecret recebido com sucesso.');
     return data.clientSecret;
   } catch (e: any) {
-    console.error('Erro ao buscar Payment Intent:', e.message);
+    console.error('[CheckoutScreen] Erro ao buscar Payment Intent:', e.message);
     return null;
   }
 }
@@ -60,13 +75,7 @@ function CheckoutScreen() {
   const navigation = useNavigation();
   const route =
     useRoute<RouteProp<{ params: CheckoutRouteParams }, 'params'>>();
-  const {
-    professionalId,
-    priceFrom,
-    selectedTime,
-    imageUrl,
-    professionalName,
-  } = route.params;
+  const { professionalId, priceFrom, selectedTime, imageUrl } = route.params;
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loadingIntent, setLoadingIntent] = useState(true);
@@ -75,6 +84,8 @@ function CheckoutScreen() {
 
   const { selectedProfessional, fetchProfessionalById } =
     useProfessionalStore();
+
+  const { address: userAddress } = useUserStore();
 
   // Busca detalhes do profissional
   useEffect(() => {
@@ -88,11 +99,42 @@ function CheckoutScreen() {
 
   // Busca o Payment Intent (clientSecret)
   useEffect(() => {
-    if (priceFrom && priceFrom > 0) {
+    // Só executa se tivermos o preço e os dados do profissional
+    if (priceFrom && priceFrom > 0 && selectedProfessional && userAddress) {
+      if (!priceFrom || !selectedProfessional || !userAddress) {
+        console.log(
+          '[CheckoutScreen Debug] useEffect NÃO DISPARADO, dados faltantes:',
+          {
+            hasPrice: !!(priceFrom && priceFrom > 0),
+            hasProfessional: !!selectedProfessional,
+            hasUserAddress: !!userAddress,
+          },
+        );
+        return; // Sai se os dados básicos não estiverem prontos
+      }
+
       const initializePayment = async () => {
         setLoadingIntent(true);
         setErrorIntent(null);
-        const secret = await fetchPaymentIntent(priceFrom);
+
+        // Precisamos do serviceId. Vamos pegá-lo do profissional buscado.
+        const serviceId = selectedProfessional.Service?.id;
+        const addressId = userAddress.id;
+
+        if (!serviceId) {
+          setErrorIntent('ID do serviço não encontrado.');
+          setLoadingIntent(false);
+          return;
+        }
+
+        const secret = await fetchPaymentIntent(
+          priceFrom,
+          professionalId,
+          serviceId,
+          selectedTime,
+          addressId,
+        );
+
         if (secret) {
           setClientSecret(secret);
         } else {
@@ -103,14 +145,18 @@ function CheckoutScreen() {
         setLoadingIntent(false);
       };
       initializePayment();
-    } else {
-      setErrorIntent('Valor do serviço inválido.');
-      setLoadingIntent(false);
     }
-  }, [priceFrom]);
+  }, [
+    priceFrom,
+    professionalId,
+    selectedTime,
+    selectedProfessional,
+    userAddress,
+    fetchProfessionalById,
+  ]);
 
   // Configurações para o Stripe Elements
-  const appearance = { theme: 'stripe', labels: 'floating' };
+  const appearance = { theme: 'stripe', labels: 'floating' } as const;
   const options = clientSecret ? { clientSecret, appearance } : {};
 
   // Renderização de Loading/Erro
@@ -138,7 +184,6 @@ function CheckoutScreen() {
     );
   }
 
-  // Se chegou aqui, temos os dados necessários
   const professional = selectedProfessional;
 
   return (
@@ -170,7 +215,7 @@ function CheckoutScreen() {
                 <View style={styles.summaryHeader}>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.summaryTitle} numberOfLines={1}>
-                      {professionalName || professional.User?.name}
+                      {professional.User.name}
                     </Text>
                     <Text style={styles.summarySubtitle} numberOfLines={1}>
                       {professional.Service?.title}
@@ -194,9 +239,7 @@ function CheckoutScreen() {
                 <Text style={styles.summaryServiceTitle}>
                   {professional.Service?.Subcategory?.name || 'Serviço'}
                 </Text>
-                <Text style={styles.summaryServiceDate}>
-                  {/* Formate a data aqui se precisar */} {selectedTime}
-                </Text>
+                <Text style={styles.summaryServiceDate}>{selectedTime}</Text>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                   <Text style={styles.summaryLink}>Alterar seleção</Text>
                 </TouchableOpacity>
@@ -208,14 +251,14 @@ function CheckoutScreen() {
           <View style={styles.rightColumn}>
             <View style={styles.paymentContainer}>
               <Text style={styles.sectionTitle}>Pagamento Seguro</Text>
-              {clientSecret && stripePromise ? (
+
+              {/* O Stripe Elements será renderizado aqui */}
+              {clientSecret && stripePromise && (
                 <Elements options={options} stripe={stripePromise}>
-                  {/* O formulário do Stripe será renderizado aqui */}
                   <CheckoutForm />
                 </Elements>
-              ) : (
-                <ActivityIndicator color="#003366" /> // Mostra loading se o clientSecret ainda não chegou
               )}
+
               {/* Resumo do Pedido (Total) */}
               <View style={styles.orderSummaryContainer}>
                 <View style={styles.summaryRow}>
@@ -224,7 +267,6 @@ function CheckoutScreen() {
                     R$ {priceFrom.toFixed(2)}
                   </Text>
                 </View>
-                {/* Adicione linhas para taxas ou descontos se aplicável */}
                 <View style={styles.totalRow}>
                   <Text style={styles.totalLabel}>Total</Text>
                   <Text style={styles.totalValue}>
@@ -232,7 +274,6 @@ function CheckoutScreen() {
                   </Text>
                 </View>
               </View>
-              {/* O botão Finalizar está DENTRO do CheckoutForm */}
             </View>
           </View>
         </View>
