@@ -165,11 +165,6 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
       try {
         const url = `https://us1.locationiq.com/v1/reverse?key=${LOCATIONIQ_API_KEY}&lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`;
 
-        console.log('🔍 Buscando endereço para:', {
-          latitude: latitude.toFixed(6),
-          longitude: longitude.toFixed(6),
-        });
-
         const res = await fetch(url);
         if (!res.ok) {
           const text = await res.text();
@@ -183,18 +178,6 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
         }
 
         const addressData = formatBrazilianAddress(json);
-
-        console.log('📍 Endereço formatado:', {
-          original: json.display_name,
-          brasileiro: addressData.formatted,
-          componentes: {
-            rua: addressData.road,
-            bairro: addressData.neighbourhood,
-            cidade: addressData.city,
-            estado: addressData.state,
-            cep: addressData.postcode,
-          },
-        });
 
         setAddress(addressData);
         setLoading(false);
