@@ -1,25 +1,28 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
+import { useUserStore } from '@stores/User';
 import CustomTextInput from '@components/CustomTextInput';
 import PasswordInput from '@components/PasswordInput';
 import { styles } from './styles';
 import colors from '@theme/colors';
 
+type MessageType = 'success' | 'error' | null;
+
 const TrocarSenhaForm: React.FC = () => {
+  const [message, setMessage] = useState<{
+    type: MessageType;
+    text: string;
+  } | null>(null);
+
   const {
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isSubmitting, isValid },
   } = useForm({
-    mode: 'onTouched',
+    mode: 'onChange',
     defaultValues: {
       senhaAtual: '',
       novaSenha: '',
@@ -30,16 +33,67 @@ const TrocarSenhaForm: React.FC = () => {
   // Observa o valor do campo 'novaSenha' para usar na validação de confirmação
   const novaSenha = watch('novaSenha');
 
+  const { changePassword } = useUserStore();
+
   const handleSalvar = async (data: any) => {
-    // Simula uma chamada de API
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log('Dados enviados:', data);
-    Alert.alert('Sucesso', 'Sua senha foi alterada.');
+    // Limpa mensagens anteriores
+    setMessage(null);
+
+    // proteção adicional: alerta se as senhas não coincidirem (caso a validação não bloqueie)
+    if (data.novaSenha !== data.confirmarSenha) {
+      setMessage({ type: 'error', text: 'As senhas não coincidem.' });
+      return;
+    }
+
+    try {
+      // chama a store para alterar a senha
+      await changePassword(data.senhaAtual, data.novaSenha);
+      setMessage({
+        type: 'success',
+        text: 'Sua senha foi alterada com sucesso!',
+      });
+
+      // Limpa o formulário após sucesso
+      reset();
+
+      // Remove a mensagem após 5 segundos
+      setTimeout(() => setMessage(null), 5000);
+    } catch (error: any) {
+      setMessage({
+        type: 'error',
+        text: error?.message || 'Erro ao alterar a senha. Tente novamente.',
+      });
+
+      // Remove a mensagem de erro após 7 segundos
+      setTimeout(() => setMessage(null), 7000);
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.pageTitle}>Trocar Senha</Text>
+
+      {/* Banner de Mensagem */}
+      {message && (
+        <View
+          style={[
+            styles.messageBanner,
+            message.type === 'success'
+              ? styles.successBanner
+              : styles.errorBanner,
+          ]}>
+          <Text
+            style={[
+              styles.messageText,
+              message.type === 'success'
+                ? styles.successText
+                : styles.errorText,
+            ]}>
+            {message.text}
+          </Text>
+        </View>
+      )}
+
       <View style={styles.card}>
         <View style={styles.formContainer}>
           <Controller

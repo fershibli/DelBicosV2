@@ -7,7 +7,7 @@ import { AxiosError } from 'axios';
 
 export const useUserStore = create<UserStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       address: null,
       token: null,
@@ -96,6 +96,43 @@ export const useUserStore = create<UserStore>()(
             }
           }
           throw new Error('Erro ao fazer login. Por favor, tente novamente.');
+        }
+      },
+
+      changePassword: async (currentPassword: string, newPassword: string) => {
+        try {
+          const token = get().token;
+          const headers = token
+            ? { Authorization: `Bearer ${token}` }
+            : undefined;
+
+          const response = await backendHttpClient.post(
+            '/api/user/change-password',
+            {
+              current_password: currentPassword,
+              new_password: newPassword,
+            },
+            { headers },
+          );
+
+          if (!response.status.toString().startsWith('2')) {
+            throw new Error('Não foi possível alterar a senha.');
+          }
+          return;
+        } catch (error: any | AxiosError) {
+          if (error instanceof AxiosError && error.status) {
+            if (error.status.toString().startsWith('4')) {
+              throw new Error('Dados inválidos. Verifique e tente novamente.');
+            }
+            if (error.status.toString().startsWith('5')) {
+              throw new Error(
+                'Erro interno do servidor. Tente novamente mais tarde.',
+              );
+            }
+          }
+          throw new Error(
+            'Erro ao alterar a senha. Por favor, tente novamente.',
+          );
         }
       },
       signOut: () =>

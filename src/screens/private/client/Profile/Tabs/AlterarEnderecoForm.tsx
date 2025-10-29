@@ -1,51 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator,
+  View,
 } from 'react-native';
-import { AddressCard, Address } from '@components/AddressCard';
+import { AddressCard } from '@components/AddressCard';
 import ConfirmationModal from '@components/ConfirmationModal';
 import colors from '@theme/colors';
-
-// Dados de exemplo
-const initialAddresses: Address[] = [
-  {
-    id: 1,
-    cep: '23585-500',
-    endereco: 'Rua Alvorada de Minas',
-    numero: '1972',
-    bairro: 'Jardim Alvorada',
-    uf: 'RJ',
-    cidade: 'Rio de Janeiro',
-    isPrimary: true,
-  },
-  {
-    id: 2,
-    cep: '01310-200',
-    endereco: 'Av. Paulista',
-    numero: '1000',
-    bairro: 'Bela Vista',
-    uf: 'SP',
-    cidade: 'São Paulo',
-    isPrimary: false,
-  },
-];
+import { Address, useAddressStore } from '@stores/Address';
+import { useUserStore } from '@stores/User';
 
 export default function AlterarEnderecoForm() {
-  const [addresses, setAddresses] = useState<Address[]>(initialAddresses);
+  const {
+    addresses,
+    isLoading,
+    error,
+    fetchAddressesByUserId,
+    updateAddress,
+    deleteAddress,
+    setPrimaryAddress,
+    addAddress,
+  } = useAddressStore();
+  const { user } = useUserStore();
   const [isModalVisible, setModalVisible] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<Address | null>(null);
 
-  const handleUpdate = (id: number, data: Partial<Address>) => {
-    setAddresses((currentAddresses) =>
-      currentAddresses.map((addr) =>
-        addr.id === id ? { ...addr, ...data } : addr,
-      ),
-    );
-    Alert.alert('Sucesso', 'Endereço atualizado!');
+  useEffect(() => {
+    if (user?.id) {
+      fetchAddressesByUserId(user.id);
+    }
+  }, [user?.id, fetchAddressesByUserId]);
+
+  const handleUpdate = async (id: number, data: Partial<Address>) => {
+    try {
+      await updateAddress(id, data);
+      Alert.alert('Sucesso', 'Endereço atualizado!');
+    } catch {
+      Alert.alert('Erro', 'Não foi possível atualizar o endereço.');
+    }
   };
 
   const handleDelete = (id: number) => {
@@ -56,33 +52,53 @@ export default function AlterarEnderecoForm() {
     }
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (addressToDelete) {
-      setAddresses((currentAddresses) =>
-        currentAddresses.filter((addr) => addr.id !== addressToDelete.id),
-      );
-      setModalVisible(false);
-      setAddressToDelete(null);
+      try {
+        await deleteAddress(addressToDelete.id);
+        setModalVisible(false);
+        setAddressToDelete(null);
+        Alert.alert('Sucesso', 'Endereço excluído!');
+      } catch {
+        Alert.alert('Erro', 'Não foi possível excluir o endereço.');
+      }
     }
   };
 
-  const handleSetPrimary = (id: number) => {
-    setAddresses((currentAddresses) =>
-      currentAddresses.map((addr) => ({ ...addr, isPrimary: addr.id === id })),
-    );
+  const handleSetPrimary = async (id: number) => {
+    try {
+      await setPrimaryAddress(id);
+      Alert.alert('Sucesso', 'Endereço principal atualizado!');
+    } catch {
+      Alert.alert('Erro', 'Não foi possível definir o endereço principal.');
+    }
   };
 
-  const handleAddNewAddress = () => {
-    const newAddress: Address = {
-      id: Date.now(), // ID simples para o exemplo
-      cep: '',
-      endereco: '',
-      numero: '',
-      bairro: '',
-      uf: 'SP',
-      cidade: '',
-    };
-    setAddresses((currentAddresses) => [...currentAddresses, newAddress]);
+  const handleAddNewAddress = async () => {
+    try {
+      if (!user?.id) {
+        Alert.alert('Erro', 'Usuário não identificado.');
+        return;
+      }
+
+      const newAddress: Omit<Address, 'id'> = {
+        lat: 0, // Você pode integrar com um serviço de geolocalização
+        lng: 0,
+        street: '',
+        number: '',
+        complement: '',
+        neighborhood: '',
+        city: '',
+        state: 'SP',
+        country_iso: 'BR',
+        postal_code: '',
+        user_id: user.id,
+        active: true,
+      };
+      await addAddress(newAddress);
+    } catch {
+      Alert.alert('Erro', 'Não foi possível adicionar o endereço.');
+    }
   };
 
   return (
@@ -91,15 +107,37 @@ export default function AlterarEnderecoForm() {
       contentContainerStyle={styles.contentContainer}>
       <Text style={styles.pageTitle}>Meus Endereços</Text>
 
-      {addresses.map((address) => (
-        <AddressCard
-          key={address.id}
-          addressData={address}
-          onUpdate={handleUpdate}
-          onDelete={handleDelete}
-          onSetPrimary={handleSetPrimary}
-        />
-      ))}
+      {isLoading && addresses.length === 0 ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primaryOrange} />
+          <Text style={styles.loadingText}>Carregando endereços...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity
+            style={styles.retryButton}
+            onPress={() => user?.id && fetchAddressesByUserId(user.id)}>
+            <Text style={styles.retryButtonText}>Tentar novamente</Text>
+          </TouchableOpacity>
+        </View>
+      ) : addresses.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            Você ainda não possui endereços cadastrados
+          </Text>
+        </View>
+      ) : (
+        addresses.map((address) => (
+          <AddressCard
+            key={address.id}
+            addressData={address}
+            onUpdate={handleUpdate}
+            onDelete={handleDelete}
+            onSetPrimary={handleSetPrimary}
+          />
+        ))
+      )}
 
       <TouchableOpacity style={styles.newButton} onPress={handleAddNewAddress}>
         <Text style={styles.newButtonText}>+ Adicionar Novo Endereço</Text>
@@ -109,7 +147,7 @@ export default function AlterarEnderecoForm() {
         <ConfirmationModal
           visible={isModalVisible}
           title="Confirmar Exclusão"
-          message={`Você tem certeza que deseja excluir o endereço "${addressToDelete.endereco}, ${addressToDelete.numero}"?`}
+          message={`Você tem certeza que deseja excluir o endereço "${addressToDelete.street}, ${addressToDelete.number}"?`}
           cancelText="Cancelar"
           confirmText="Excluir"
           onCancel={() => setModalVisible(false)}
@@ -134,6 +172,55 @@ const styles = StyleSheet.create({
     color: '#003366',
     marginBottom: 24,
     fontFamily: 'Afacad-Bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#666',
+    fontFamily: 'Afacad-Regular',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#dc3545',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontFamily: 'Afacad-Regular',
+  },
+  retryButton: {
+    backgroundColor: '#007bff',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: colors.primaryWhite,
+    fontWeight: 'bold',
+    fontSize: 16,
+    fontFamily: 'Afacad-Bold',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    fontFamily: 'Afacad-Regular',
   },
   newButton: {
     backgroundColor: '#ff7f00',

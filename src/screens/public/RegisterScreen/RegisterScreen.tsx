@@ -80,8 +80,8 @@ function RegisterScreen() {
       );
       const data = await response.json();
       if (data && data.address) {
-        const { city, state, town, village } = data.address;
-        const cityName = city || town || village || '';
+        const { city, state, town, village, municipality } = data.address;
+        const cityName = city || town || village || municipality || '';
         const stateName = state || '';
         const newLocation = `${cityName}, ${stateName}`;
         setValue('location', newLocation, { shouldValidate: true });

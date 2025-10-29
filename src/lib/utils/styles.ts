@@ -1,5 +1,5 @@
 import colors from '@theme/colors';
-import { Platform, StyleSheet, Dimensions, StatusBar } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   // Container principal
