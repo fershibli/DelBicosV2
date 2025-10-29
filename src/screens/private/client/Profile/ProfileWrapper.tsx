@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     width: 250,
     backgroundColor: '#f0f2f5',
     paddingVertical: 20,
+    paddingHorizontal: 18, // aumentei o espaçamento interno para afastar mais da borda
   },
   mainContent: {
     flex: 1,
