@@ -24,64 +24,9 @@ const UserProfileScreen: React.FC = () => {
   const [avatarUri, setAvatarUri] = useState<string | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
 
-  const { user } = useUserStore();
+  const { user, uploadAvatar, removeAvatar, fetchUserById } = useUserStore();
 
   const userId = user?.id.toString() || '';
-
-  const uploadAvatarToServer = async (base64Image: string) => {
-    try {
-      setUploading(true);
-
-      console.log(
-        '📤 Base64 completo (primeiros 200 chars):',
-        base64Image.substring(0, 200),
-      );
-      console.log('📤 Tipo MIME detectado:', base64Image.substring(0, 50));
-      console.log('📤 Tamanho do base64:', base64Image.length);
-
-      const { token } = useUserStore.getState();
-
-      const response = await fetch(`${HTTP_DOMAIN}/api/user/${userId}/avatar`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          base64Image: base64Image,
-          userId: userId,
-        }),
-      });
-
-      console.log('📤 Status da resposta:', response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Erro na resposta:', errorText);
-
-        try {
-          const errorData = JSON.parse(errorText);
-          throw new Error(errorData.error || `Erro ${response.status}`);
-        } catch {
-          throw new Error(`Erro ${response.status}: ${errorText}`);
-        }
-      }
-
-      const data = await response.json();
-      console.log('✅ Resposta do servidor:', data);
-
-      const newUri = `${HTTP_DOMAIN}/${data.avatar_uri}`;
-      setAvatarUri(newUri);
-      Alert.alert('Sucesso', 'Avatar atualizado com sucesso!');
-      return data;
-    } catch (error: any) {
-      console.error('❌ Erro no upload:', error);
-      Alert.alert('Erro', error.message || 'Erro ao fazer upload do avatar');
-      throw error;
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const saveAvatarLocally = async (userId: string, apiAvatarUri: string) => {
     try {
@@ -99,57 +44,55 @@ const UserProfileScreen: React.FC = () => {
     }
   };
 
-  const removeAvatar = async () => {
-    try {
-      const { token } = useUserStore.getState();
-      const response = await fetch(`${HTTP_DOMAIN}/api/user/${userId}/avatar`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Erro na remoção do avatar no servidor:', errorText);
-        throw new Error(errorText);
-      }
-
-      if (Platform.OS === 'web') {
-        const storageKey = `userImages/${userId}/avatar.uri`;
-        localStorage.removeItem(storageKey);
-      } else {
-        const userImageDir = new Directory(Paths.cache, 'userImages', userId);
-        const avatarFile = new File(userImageDir, 'avatar.jpg');
-        if (avatarFile.exists) {
-          avatarFile.delete();
-        }
-      }
-
-      setAvatarUri(null);
-      Alert.alert('Sucesso', 'Avatar removido com sucesso!');
-    } catch (error) {
-      console.error('Erro ao remover avatar:', error);
-      Alert.alert('Erro', 'Falha ao remover o avatar');
-    }
-  };
-
   const handleAvatarChange = async (base64Image: string | null) => {
     console.log('Mudando o avatar:', base64Image ? 'SIM' : 'NÃO');
     if (uploading) return;
 
+    setUploading(true);
+
     try {
       if (base64Image) {
-        const response = await uploadAvatarToServer(base64Image);
-        if (response.avatarUrl) {
-          await saveAvatarLocally(userId, response.avatarUrl);
+        const response = await uploadAvatar(userId, base64Image);
+
+        if (response.erro) {
+          Alert.alert('Erro', response.mensagem);
+        } else {
+          if (response.avatar_uri) {
+            const newUri = `${HTTP_DOMAIN}/${response.avatar_uri}`;
+            setAvatarUri(newUri);
+            await saveAvatarLocally(userId, response.avatar_uri);
+          }
+          Alert.alert('Sucesso', response.mensagem);
         }
       } else {
-        await removeAvatar();
+        const response = await removeAvatar(userId);
+
+        if (response.erro) {
+          Alert.alert('Erro', response.mensagem);
+        } else {
+          if (Platform.OS === 'web') {
+            const storageKey = `userImages/${userId}/avatar.uri`;
+            localStorage.removeItem(storageKey);
+          } else {
+            const userImageDir = new Directory(
+              Paths.cache,
+              'userImages',
+              userId,
+            );
+            const avatarFile = new File(userImageDir, 'avatar.jpg');
+            if (avatarFile.exists) {
+              avatarFile.delete();
+            }
+          }
+          setAvatarUri(null);
+          Alert.alert('Sucesso', response.mensagem);
+        }
       }
     } catch (error) {
       console.error('Erro ao processar avatar:', error);
+      Alert.alert('Erro', 'Erro inesperado ao processar avatar');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -160,7 +103,7 @@ const UserProfileScreen: React.FC = () => {
         return;
       }
 
-      const fullAvatarUrl = `http://localhost:3000/${apiAvatarUri}`;
+      const fullAvatarUrl = `${HTTP_DOMAIN}/${apiAvatarUri}`;
 
       if (Platform.OS === 'web') {
         setAvatarUri(fullAvatarUrl);
@@ -196,30 +139,22 @@ const UserProfileScreen: React.FC = () => {
   );
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const { token } = useUserStore.getState();
-        const response = await fetch(`${HTTP_DOMAIN}/api/user/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) throw new Error('Erro ao buscar usuário');
+    const loadUserData = async () => {
+      const response = await fetchUserById(userId);
 
-        const data: User = await response.json();
-        setUserData(data);
-
-        await loadSavedAvatar(data.avatar_uri);
-      } catch (error) {
-        console.error('Erro ao carregar dados do usuário:', error);
-        Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
-      } finally {
-        setLoading(false);
+      if (response.erro) {
+        console.error('Erro ao carregar dados do usuário:', response.mensagem);
+        Alert.alert('Erro', response.mensagem);
+      } else if (response.user) {
+        setUserData(response.user);
+        await loadSavedAvatar(response.user.avatar_uri);
       }
+
+      setLoading(false);
     };
 
-    fetchUserData();
-  }, [userId, loadSavedAvatar]);
+    loadUserData();
+  }, [userId, loadSavedAvatar, fetchUserById]);
 
   if (loading) {
     return (
