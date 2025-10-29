@@ -31,7 +31,7 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
   fetchInvoice: async (appointmentId) => {
     try {
       const response = await backendHttpClient.get(
-        `api/appointments/${appointmentId}/invoice`,
+        `api/appointments/${appointmentId}/receipt`,
       );
       return response.data;
     } catch (error) {
