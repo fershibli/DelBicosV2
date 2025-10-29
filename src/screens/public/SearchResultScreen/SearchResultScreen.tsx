@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-// import { useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import { styles } from './styles';
 import { FontAwesome } from '@expo/vector-icons';
 import ProfessionalResultCard, {
@@ -57,8 +57,11 @@ const MOCK_RESULTS: ProfessionalResult[] = [
 // --- FIM PLACEHOLDERS ---
 
 function SearchResultScreen() {
-  //   const route = useRoute();
-  // const { categoryId, subCategoryId, date } = route.params; // Você receberá isso
+  const route = useRoute();
+  const { subCategoryId, date } = route.params as {
+    subCategoryId: number;
+    date: string;
+  };
 
   const [isLoading, setIsLoading] = useState(true);
   const [results, setResults] = useState<ProfessionalResult[]>([]);
@@ -119,7 +122,10 @@ function SearchResultScreen() {
             </>
           }
           renderItem={({ item }) => (
-            <ProfessionalResultCard professional={item} />
+            <ProfessionalResultCard
+              professional={item}
+              selectedDate={date} // <-- Adicione esta prop
+            />
           )}
           ListFooterComponent={
             <Text style={styles.footer}>
