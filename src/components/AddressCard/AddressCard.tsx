@@ -4,18 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import { FontAwesome } from '@expo/vector-icons';
 import CustomTextInput from '@components/CustomTextInput';
 import { styles } from './styles';
-
-// Definindo a interface para os dados de um endereço
-export interface Address {
-  id: number;
-  cep: string;
-  endereco: string;
-  numero: string;
-  bairro: string;
-  uf: string;
-  cidade: string;
-  isPrimary?: boolean;
-}
+import { Address } from '@stores/Address';
 
 interface AddressCardProps {
   addressData: Address;
@@ -83,15 +72,15 @@ export const AddressCard: React.FC<AddressCardProps> = ({
       <View style={styles.formRow}>
         <CustomTextInput
           label="CEP"
-          value={localData.cep}
-          onChangeText={(text) => handleInputChange('cep', text)}
+          value={localData.postal_code}
+          onChangeText={(text) => handleInputChange('postal_code', text)}
           editable={isEditing}
           style={!isEditing ? styles.inputReadOnly : styles.input}
         />
         <CustomTextInput
           label="Endereço"
-          value={localData.endereco}
-          onChangeText={(text) => handleInputChange('endereco', text)}
+          value={localData.street}
+          onChangeText={(text) => handleInputChange('street', text)}
           editable={isEditing}
           style={!isEditing ? styles.inputReadOnly : styles.input}
           containerStyle={{ flex: 2 }} // Ocupa mais espaço
@@ -101,8 +90,8 @@ export const AddressCard: React.FC<AddressCardProps> = ({
       <View style={styles.formRow}>
         <CustomTextInput
           label="Número"
-          value={localData.numero}
-          onChangeText={(text) => handleInputChange('numero', text)}
+          value={localData.number}
+          onChangeText={(text) => handleInputChange('number', text)}
           editable={isEditing}
           keyboardType="numeric"
           style={!isEditing ? styles.inputReadOnly : styles.input}
@@ -110,8 +99,8 @@ export const AddressCard: React.FC<AddressCardProps> = ({
         />
         <CustomTextInput
           label="Bairro"
-          value={localData.bairro}
-          onChangeText={(text) => handleInputChange('bairro', text)}
+          value={localData.neighborhood}
+          onChangeText={(text) => handleInputChange('neighborhood', text)}
           editable={isEditing}
           style={!isEditing ? styles.inputReadOnly : styles.input}
           containerStyle={{ flex: 2 }}
@@ -121,7 +110,7 @@ export const AddressCard: React.FC<AddressCardProps> = ({
       <View style={styles.formRow}>
         <CustomTextInput
           label="UF"
-          value={localData.uf}
+          value={localData.state}
           editable={false} // O CustomTextInput nunca será editável diretamente
           style={styles.inputReadOnly} // Aplica sempre o estilo de leitura
           containerStyle={{ flex: 1 }}>
@@ -129,9 +118,9 @@ export const AddressCard: React.FC<AddressCardProps> = ({
           {isEditing ? (
             <View style={styles.pickerContainer}>
               <Picker
-                selectedValue={localData.uf}
+                selectedValue={localData.state}
                 onValueChange={(itemValue) =>
-                  handleInputChange('uf', itemValue as string)
+                  handleInputChange('state', itemValue as string)
                 }
                 style={styles.picker}>
                 {UFs.map((uf) => (
@@ -143,7 +132,27 @@ export const AddressCard: React.FC<AddressCardProps> = ({
           // Portanto, não precisamos renderizar nada aqui.
           null}
         </CustomTextInput>
+        <CustomTextInput
+          label="Cidade"
+          value={localData.city}
+          onChangeText={(text) => handleInputChange('city', text)}
+          editable={isEditing}
+          style={!isEditing ? styles.inputReadOnly : styles.input}
+          containerStyle={{ flex: 2 }}
+        />
       </View>
+
+      {localData.complement && (
+        <View style={styles.formRow}>
+          <CustomTextInput
+            label="Complemento"
+            value={localData.complement || ''}
+            onChangeText={(text) => handleInputChange('complement', text)}
+            editable={isEditing}
+            style={!isEditing ? styles.inputReadOnly : styles.input}
+          />
+        </View>
+      )}
 
       {isEditing && (
         <View style={styles.saveRow}>
