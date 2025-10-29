@@ -5,6 +5,7 @@ export type User = {
   name: string;
   phone: string;
   cpf: string;
+  avatar_uri?: string | null;
 };
 
 export type Address = {
@@ -25,7 +26,14 @@ export type UserStore = {
   user: User | null;
   address: Address | null;
   token: string | null;
+  verificationEmail: string | null; // Adicionar esta linha
+  setVerificationEmail: (email: string | null) => void;
   signIn: () => void;
   signInPassword: (email: string, password: string) => Promise<void>;
+  /** Altera a senha do usuário. Recebe a senha atual e a nova senha. */
+  changePassword: (
+    currentPassword: string,
+    newPassword: string,
+  ) => Promise<void>;
   signOut: () => void;
 };

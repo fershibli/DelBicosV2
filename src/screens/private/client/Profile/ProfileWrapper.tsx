@@ -7,6 +7,7 @@ import DadosContaForm from './Tabs/DadosContaForm';
 import TrocarSenhaForm from './Tabs/TrocarSenhaForm';
 import MeusAgendamentos from './Tabs/MeusAgendamentos';
 import NotificacoesContent from './Tabs/NotificacoesContent';
+import colors from '@theme/colors';
 
 interface UserProfileProps {
   userId: string;
@@ -32,7 +33,7 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
       case 'MeusAgendamentos':
         return <MeusAgendamentos />;
       case 'Notificacoes':
-        return <NotificacoesContent userId='1' />;
+        return <NotificacoesContent userId={user.userId} />;
       default:
         return (
           <Text style={styles.contentText}>Selecione uma opção no menu</Text>
@@ -67,14 +68,14 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#dde6f0',
+    backgroundColor: colors.secondaryGray,
   },
   header: {
     paddingVertical: 20,
-    backgroundColor: '#fff',
+    backgroundColor: colors.primaryWhite,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: colors.primaryBlack,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 8,
@@ -92,6 +93,7 @@ const styles = StyleSheet.create({
     width: 250,
     backgroundColor: '#f0f2f5',
     paddingVertical: 20,
+    paddingHorizontal: 18, // aumentei o espaçamento interno para afastar mais da borda
   },
   mainContent: {
     flex: 1,

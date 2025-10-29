@@ -10,11 +10,16 @@ import {
   Modal,
 } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import colors from '@theme/colors';
 
-type GaleriaContentProps = {
-  imagens: string[];
+type Imagem = {
+  id: string;
+  url: string;
 };
 
+type GaleriaContentProps = {
+  imagens: Imagem[];
+};
 export function GaleriaContent({ imagens }: GaleriaContentProps) {
   const [visible, setVisible] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -28,12 +33,12 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
     setVisible(true);
   };
 
-  const renderItem = ({ item, index }: { item: string; index: number }) => (
+  const renderItem = ({ item, index }: { item: Imagem; index: number }) => (
     <TouchableOpacity
       onPress={() => openImageViewer(index)}
       activeOpacity={0.8}>
       <Image
-        source={{ uri: item }}
+        source={{ uri: item.url }}
         style={{
           width: imageSize,
           height: imageSize,
@@ -45,10 +50,10 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
     </TouchableOpacity>
   );
 
-  const imagesForViewer = imagens.map((url) => ({
-    url: url,
+  const imagesForViewer = imagens.map((img) => ({
+    url: img.url,
     props: {
-      source: { uri: url },
+      source: { uri: img.url },
     },
   }));
 
@@ -66,11 +71,11 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
             ref={flatListRef}
             data={imagens}
             renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item: Imagem) => item.id}
             numColumns={numColumns}
             contentContainerStyle={styles.galleryContainer}
           />
-          <Modal visible={visible} transparent={true}>
+          <Modal visible={visible} transparent>
             <ImageViewer
               imageUrls={imagesForViewer}
               index={safeIndex}
@@ -105,7 +110,7 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.primaryWhite,
   },
   galleryContainer: {
     padding: 8,

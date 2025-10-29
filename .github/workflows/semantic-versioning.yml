@@ -3,14 +3,14 @@ name: 01 - Análise Semântica Pós-Merge
 # Gatilho: Acionado QUANDO um Pull Request é FECHADO.
 on:
   pull_request:
-    types: [ closed ]
+    types: [closed]
     branches:
       - main # Apenas PRs direcionados à 'main'
 
 # Permissões necessárias para ler os commits do PR.
 permissions:
-  pull-requests: read
-  contents: read
+  pull-requests: write # Mudado de 'read' para 'write'
+  contents: write
 
 jobs:
   analise-semantica:
@@ -20,81 +20,208 @@ jobs:
     if: |
       github.event.pull_request.merged == true &&
       github.event.pull_request.head.ref == 'stag'
-      
+
     runs-on: ubuntu-latest
-    
-    # Define saídas (outputs) para este job, que podem ser usadas por outros jobs
-    outputs:
-      bump_type: ${{ steps.analisar_versao.outputs.BUMP_TYPE }}
-      bump_reason: ${{ steps.analisar_versao.outputs.BUMP_REASON }}
 
     steps:
-      - name: 1. Listar Commits do PR (via API)
-        id: get_commits
-        uses: actions/github-script@v7
+      - name: Checar repositório
+        uses: actions/checkout@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string # Garante que a saída seja uma string
-          script: |
-            console.log(`Analisando commits do PR #${context.issue.number}`);
-            
-            const { data: commits } = await github.rest.pulls.listCommits({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number
-            });
+          token: ${{ secrets.GH_TOKEN }}
+          fetch-depth: 0
 
-            // Mapeia para uma lista de mensagens de commit
-            const messages = commits.map(c => c.commit.message.split('\n')[0]); // Pega apenas a primeira linha
-            
-            // Retorna a lista de mensagens, separadas por nova linha
-            const commitMessages = messages.join('\n');
-            console.log("Commits analisados:\n" + commitMessages);
-            return commitMessages;
+      - name: Configurar Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22.15.1'
 
-      - name: 2. Analisar Commits e Determinar Versão
-        id: analisar_versao
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Instalar semver (semantic versioning tool)
+        run: npm install -g semver
+
+      - name: Criar nova tag caso não exista
+        id: create_initial_tag
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          # Pega a string de commits do passo anterior
-          COMMITS=$(echo "${{ steps.get_commits.outputs.result }}")
-          
-          BUMP_TYPE="Nenhum"
-          BUMP_REASON=""
-
-          # Lógica de versionamento com as NOVAS regras (incluindo "refatorar" e "refatoração")
-          # A ordem de prioridade (MAJOR > MINOR > PATCH) é mantida.
-          
-          if echo "$COMMITS" | grep -q -i -E "^(refactor|refatorar|refatoração):"; then
-            BUMP_TYPE="MAJOR"
-            BUMP_REASON="Um commit 'refactor/refatorar/refatoração:' foi encontrado, indicando uma atualização MAJOR."
-          elif echo "$COMMITS" | grep -q -i -E "^(feat|feature):"; then
-            BUMP_TYPE="MINOR"
-            BUMP_REASON="Um commit 'feat:' ou 'feature:' foi encontrado, indicando uma atualização MINOR."
-          elif echo "$COMMITS" | grep -q -i "^fix:"; then
-            BUMP_TYPE="PATCH"
-            BUMP_REASON="Um commit 'fix:' foi encontrado, indicando uma atualização PATCH."
-          else
-            BUMP_TYPE="Nenhum"
-            BUMP_REASON="Nenhum commit semântico (fix, feature, refactor, refatorar, refatoração) foi detectado."
+          if [ -z "$(git tag)" ]; then
+            git config --global user.name 'github-actions'
+            git config --global user.email 'github-actions@github.com'
+            git tag -a v0.0.0 -m "Initial release"
+            git push origin v0.0.0
           fi
-          
-          # Exibe o resultado no log
-          echo "Tipo de Bump: $BUMP_TYPE"
-          echo "Razão: $BUMP_REASON"
-          
-          # Salva como 'output' do passo
-          echo "BUMP_TYPE=$BUMP_TYPE" >> $GITHUB_OUTPUT
-          echo "BUMP_REASON=$BUMP_REASON" >> $GITHUB_OUTPUT
 
-      - name: 3. Exibir Resultado da Análise
+      - name: Calcular nova versão
+        id: version
         run: |
-          echo "Merge de 'stag' para 'main' concluído."
-          echo "Bump de versão determinado: ${{ steps.analisar_versao.outputs.BUMP_TYPE }}"
-          echo "Justificativa: ${{ steps.analisar_versao.outputs.BUMP_REASON }}"
+          git fetch --tags
+          LAST_TAG=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "v0.0.0")
+          echo "Versão Atual: $LAST_TAG"
 
-      - name: 4. Falhar se nenhum commit semântico for encontrado
-        if: steps.analisar_versao.outputs.BUMP_TYPE == 'Nenhum'
+          # Obter commits desde a última tag
+          if [ "$LAST_TAG" = "v0.0.0" ]; then
+            COMMIT_MESSAGES=$(git log --pretty=format:"%s" | tr '\n' '|')
+          else
+            COMMIT_MESSAGES=$(git log ${LAST_TAG}..HEAD --pretty=format:"%s" | tr '\n' '|')
+          fi
+
+          echo "Commits desde a última tag: $COMMIT_MESSAGES"
+
+          # Verificar se há commits para processar
+          if [ -z "$COMMIT_MESSAGES" ]; then
+            echo "Nenhum commit encontrado desde a última tag"
+            echo "should_version=false" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          # Inicializando variáveis
+          MAJOR=0
+          MINOR=0
+          PATCH=0
+
+          # Analisando mensagens de commit
+          IFS='|' read -ra COMMITS <<< "$COMMIT_MESSAGES"
+          for COMMIT in "${COMMITS[@]}"; do
+            if echo "$COMMIT" | grep -q -i -E "(^(refactor|refatorar|refatoração)|BREAKING CHANGE)"; then
+              MAJOR=1
+              echo "Encontrado refactor ou BREAKING CHANGE"
+            elif echo "$COMMIT" | grep -q -i -E "^(feat|feature)"; then
+              MINOR=1
+              echo "Encontrado feat"
+            elif echo "$COMMIT" | grep -q -i "^fix"; then
+              PATCH=1
+              echo "Encontrado fix"
+            fi
+          done
+
+          # Verificar se alguma mudança foi detectada
+          if [[ $MAJOR -eq 0 && $MINOR -eq 0 && $PATCH -eq 0 ]]; then
+            echo "Nenhuma mudança versionável detectada"
+            echo "should_version=false" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          # Calculando a nova versão usando semver
+          CURRENT_VERSION=${LAST_TAG#v}
+          if [[ $MAJOR -eq 1 ]]; then
+            NEW_VERSION=$(semver -i major $CURRENT_VERSION)
+            echo "Incrementando versão MAJOR"
+          elif [[ $MINOR -eq 1 ]]; then
+            NEW_VERSION=$(semver -i minor $CURRENT_VERSION)
+            echo "Incrementando versão MINOR"
+          elif [[ $PATCH -eq 1 ]]; then
+            NEW_VERSION=$(semver -i patch $CURRENT_VERSION)
+            echo "Incrementando versão PATCH"
+          fi
+
+          echo "Nova versão: $NEW_VERSION"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
+          echo "should_version=true" >> $GITHUB_ENV
+
+      - name: Verificar se deve atualizar versão
         run: |
-          echo "Erro: O merge foi concluído, mas nenhum commit semântico (fix, feature, refactor/refatorar/refatoração) foi encontrado."
-          echo "O pipeline de release não pode determinar a próxima versão."
-          exit 1
+          if [ "${{ env.should_version }}" = "false" ]; then
+            echo "Pulando atualização de versão - nenhuma mudança detectada"
+            exit 0
+          fi
+
+      - name: Atualizar versão no package.json
+        if: env.should_version == 'true'
+        run: |
+          echo "Atualizando versão para ${{ env.new_version }}"
+          npm version ${{ env.new_version }} --no-git-tag-version --allow-same-version
+
+      - name: Commit e push
+        if: env.should_version == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          # Criar branch de release
+          BRANCH_NAME="release/v${{ env.new_version }}"
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git checkout -b $BRANCH_NAME
+          git add package.json
+          git commit -m "chore(release): version ${{ env.new_version }}" --no-verify
+          git tag v${{ env.new_version }}
+          git push origin $BRANCH_NAME --tags
+
+      - name: Criar Pull Request
+        if: env.should_version == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          echo "Criando PR da branch release/v${{ env.new_version }} para main..."
+
+          # Verificar se a branch existe
+          git ls-remote --heads origin release/v${{ env.new_version }} || {
+            echo "Erro: Branch release/v${{ env.new_version }} não encontrada!"
+            exit 1
+          }
+
+          # Criar PR e capturar saída
+          PR_URL=$(gh pr create \
+            --base main \
+            --head "release/v${{ env.new_version }}" \
+            --title "chore(release): version ${{ env.new_version }}" \
+            --body "🚀 Atualização automática de versão para **v${{ env.new_version }}**
+
+          **Tag criada:** \`v${{ env.new_version }}\`
+
+          Auto-gerado pelo workflow de versionamento semântico." 2>&1)
+
+          echo "Resultado: $PR_URL"
+
+          # Verificar se houve erro
+          if [[ "$PR_URL" == *"error"* ]] || [[ "$PR_URL" == *"Error"* ]]; then
+            echo "Erro ao criar PR: $PR_URL"
+            exit 1
+          fi
+
+          # Extrair número da PR da URL
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Não foi possível extrair o número da PR de: $PR_URL"
+            exit 1
+          fi
+
+          echo "PR #$PR_NUMBER criada com sucesso!"
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+
+          # Tentar adicionar labels se existirem
+          gh pr edit $PR_NUMBER --add-label "release" 2>/dev/null || echo "Label release não encontrada, ignorando..."
+          gh pr edit $PR_NUMBER --add-label "automated" 2>/dev/null || echo "Label automated não encontrada, ignorando..."
+
+      - name: Auto-mergear PR
+        if: env.should_version == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          # Aguardar processamento
+          sleep 3
+
+          # Mergear a PR diretamente (sem aprovação)
+          gh pr merge ${{ env.PR_NUMBER }} --squash --delete-branch --auto
+
+      - name: Faz release no GitHub
+        if: env.should_version == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.new_version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Atualiza a stag a partir da main
+        if: env.should_version == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git checkout stag
+          git pull origin main
+          git push origin stag
+      - name: Finalizado
+        run: echo "Processo de versionamento concluído."

@@ -1,13 +1,14 @@
 import { StyleSheet } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   statusContainer: {
     marginBottom: 20,
   },
   statusBanner: {
-    backgroundColor: '#22843B',
+    backgroundColor: colors.primaryGreen,
     borderWidth: 1,
-    borderColor: '#22843B',
+    borderColor: colors.primaryGreen,
     borderRadius: 3,
     width: '40%',
     paddingVertical: 10,
@@ -18,7 +19,7 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 10,
     lineHeight: 18,
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
   reminderButton: {
     alignSelf: 'flex-end',
@@ -27,6 +28,6 @@ export const styles = StyleSheet.create({
   reminderText: {
     fontSize: 9,
     lineHeight: 11,
-    color: '#000000',
+    color: colors.primaryBlack,
   },
 });

@@ -17,6 +17,12 @@ export interface Service {
   professional_id: number;
   createdAt: string;
   updatedAt: string;
+  Subcategory: Subcategory;
+}
+
+export interface Subcategory {
+  id: number;
+  name: string;
 }
 
 export interface User {
@@ -69,6 +75,7 @@ export interface Appointment {
   updatedAt: string; // ISO date string
   Service: Service;
   Client: Client;
+  payment_intent_id?: string | null;
   Professional: Professional;
 }
 

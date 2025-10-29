@@ -3,6 +3,8 @@ import { View, ActivityIndicator, Alert, Platform } from 'react-native';
 import { Paths, Directory, File } from 'expo-file-system';
 import ProfileWrapper from './ProfileWrapper';
 import { useUserStore } from '@stores/User';
+import colors from '@theme/colors';
+import { HTTP_DOMAIN } from '@config/varEnvs';
 
 interface User {
   id: number;
@@ -37,19 +39,16 @@ const UserProfileScreen: React.FC = () => {
       console.log('📤 Tipo MIME detectado:', base64Image.substring(0, 50));
       console.log('📤 Tamanho do base64:', base64Image.length);
 
-      const response = await fetch(
-        `192.168.1.136/api/user/${userId}/avatar`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            base64Image: base64Image,
-            userId: userId,
-          }),
+      const response = await fetch(`${HTTP_DOMAIN}/api/user/${userId}/avatar`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          base64Image: base64Image,
+          userId: userId,
+        }),
+      });
 
       console.log('📤 Status da resposta:', response.status);
 
@@ -68,7 +67,7 @@ const UserProfileScreen: React.FC = () => {
       const data = await response.json();
       console.log('✅ Resposta do servidor:', data);
 
-      const newUri = `http://localhost:3000/${data.avatar_uri}`;
+      const newUri = `${HTTP_DOMAIN}/${data.avatar_uri}`;
       setAvatarUri(newUri);
       Alert.alert('Sucesso', 'Avatar atualizado com sucesso!');
       return data;
@@ -99,13 +98,10 @@ const UserProfileScreen: React.FC = () => {
 
   const removeAvatar = async () => {
     try {
-      const response = await fetch(
-        `http://192.168.1.136:3000/api/user/${userId}/avatar`,
-        {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-        },
-      );
+      const response = await fetch(`${HTTP_DOMAIN}/api/user/${userId}/avatar`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -195,9 +191,7 @@ const UserProfileScreen: React.FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(
-          `http://192.168.1.136:3000/api/user/${userId}`,
-        );
+        const response = await fetch(`${HTTP_DOMAIN}/api/user/${userId}`);
         if (!response.ok) throw new Error('Erro ao buscar usuário');
 
         const data: User = await response.json();
@@ -218,7 +212,7 @@ const UserProfileScreen: React.FC = () => {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#FC8200" />
+        <ActivityIndicator size="large" color={colors.primaryOrange} />
       </View>
     );
   }

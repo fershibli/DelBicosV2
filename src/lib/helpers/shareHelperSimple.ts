@@ -18,7 +18,7 @@ export const shareContent = async (uri: string): Promise<boolean> => {
     }
     await shareAsync(uri);
     return true;
-  } catch (error) {
+  } catch {
     Alert.alert(
       'Erro ao compartilhar',
       'Não foi possível compartilhar o arquivo.',

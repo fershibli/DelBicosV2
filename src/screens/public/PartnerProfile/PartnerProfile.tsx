@@ -114,7 +114,9 @@ const todasComodidades = [
   { id: 5, nome: 'Atendimento 24h' },
 ];
 
-const gerarDisponibilidades = (availabilities: any[]): Array<{ data: string; horarios: string[] }> => {
+const gerarDisponibilidades = (
+  availabilities: any[],
+): Array<{ data: string; horarios: string[] }> => {
   const disponibilidades: Array<{ data: string; horarios: string[] }> = [];
   const diasNoFuturo = 7;
 
@@ -122,23 +124,34 @@ const gerarDisponibilidades = (availabilities: any[]): Array<{ data: string; hor
     const data = new Date();
     data.setDate(data.getDate() + i);
     const dataString = data.toISOString().split('T')[0];
-    const dayOfWeek = data.getDay(); 
+    const dayOfWeek = data.getDay();
 
     const horariosDoDia: string[] = [];
 
-    availabilities.forEach(avail => {
+    availabilities.forEach((avail) => {
       if (avail.is_available) {
         if (avail.recurrence_pattern === 'weekly' && avail.days_of_week) {
           if (avail.days_of_week[dayOfWeek] === '1') {
-            const horarios = gerarHorariosDisponiveis(avail.start_time, avail.end_time);
+            const horarios = gerarHorariosDisponiveis(
+              avail.start_time,
+              avail.end_time,
+            );
             horariosDoDia.push(...horarios);
           }
-        } 
-        else if (avail.recurrence_pattern === 'none' && avail.start_day && avail.end_day) {
-          const startDay = new Date(avail.start_day).toISOString().split('T')[0];
+        } else if (
+          avail.recurrence_pattern === 'none' &&
+          avail.start_day &&
+          avail.end_day
+        ) {
+          const startDay = new Date(avail.start_day)
+            .toISOString()
+            .split('T')[0];
           const endDay = new Date(avail.end_day).toISOString().split('T')[0];
           if (dataString >= startDay && dataString <= endDay) {
-            const horarios = gerarHorariosDisponiveis(avail.start_time, avail.end_time);
+            const horarios = gerarHorariosDisponiveis(
+              avail.start_time,
+              avail.end_time,
+            );
             horariosDoDia.push(...horarios);
           }
         }
@@ -157,7 +170,10 @@ const gerarDisponibilidades = (availabilities: any[]): Array<{ data: string; hor
   return disponibilidades;
 };
 
-const gerarHorariosDisponiveis = (startTime: string, endTime: string): string[] => {
+const gerarHorariosDisponiveis = (
+  startTime: string,
+  endTime: string,
+): string[] => {
   const horarios: string[] = [];
   const start = parseInt(startTime.split(':')[0]);
   const end = parseInt(endTime.split(':')[0]);
@@ -199,13 +215,15 @@ function PartnerProfileScreen() {
     try {
       setLoading(true);
       console.log('🔄 Buscando profissional com ID:', id);
-      
-      const response = await fetch(`http://localhost:3000/api/professionals/${id}`);
-      
+
+      const response = await fetch(
+        `http://localhost:3000/api/professionals/${id}`,
+      );
+
       if (!response.ok) {
         throw new Error(`Erro ${response.status}: ${response.statusText}`);
       }
-      
+
       const data: Professional = await response.json();
       console.log('📦 Dados brutos da API:', data);
       setProfessional(data);
@@ -220,7 +238,9 @@ function PartnerProfileScreen() {
   const mapProfessionalToParceiro = (prof: Professional): Parceiro => {
     console.log('🗺️ Mapeando profissional para parceiro:', prof);
 
-    const disponibilidades = prof.Availabilities ? gerarDisponibilidades(prof.Availabilities) : [];
+    const disponibilidades = prof.Availabilities
+      ? gerarDisponibilidades(prof.Availabilities)
+      : [];
 
     const parceiroMapeado = {
       id: prof.id.toString(),
@@ -237,7 +257,7 @@ function PartnerProfileScreen() {
         estado: prof.MainAddress?.state || 'UF',
         cep: prof.MainAddress?.postal_code || '00000-000',
       },
-      servicos: (prof.Services || []).map(service => ({
+      servicos: (prof.Services || []).map((service) => ({
         id: service.id,
         nome: service.title,
         titulo: service.title,
@@ -246,8 +266,10 @@ function PartnerProfileScreen() {
         duracao: service.duration,
         imagem: service.banner_uri,
       })),
-      comodidadesIds: (prof.Amenities || []).map(amenity => amenity.id),
-      galeria: (prof.Gallery || []).map(item => item.image_uri || item.uri || '').filter(Boolean),
+      comodidadesIds: (prof.Amenities || []).map((amenity) => amenity.id),
+      galeria: (prof.Gallery || [])
+        .map((item) => item.image_uri || item.uri || '')
+        .filter(Boolean),
       avaliacoes: [],
       agenda: prof.Availabilities || [],
       disponibilidades: disponibilidades,
@@ -272,7 +294,9 @@ function PartnerProfileScreen() {
         <Text style={{ margin: 20, fontSize: 16, color: 'red' }}>
           Erro: {error}
         </Text>
-        <TouchableOpacity style={styles.retryButton} onPress={fetchProfessional}>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={fetchProfessional}>
           <Text style={styles.retryButtonText}>Tentar Novamente</Text>
         </TouchableOpacity>
       </View>
@@ -293,7 +317,7 @@ function PartnerProfileScreen() {
 
   const renderContent = () => {
     console.log('📱 Renderizando conteúdo da aba:', activeTab);
-    
+
     switch (activeTab) {
       case 'sobre':
         return (
@@ -333,8 +357,7 @@ function PartnerProfileScreen() {
       <ImageBackground
         source={{ uri: parceiro.imagemCapa }}
         style={styles.headerImage}
-        resizeMode="cover"
-      >
+        resizeMode="cover">
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.8)']}
           style={styles.gradientOverlay}>

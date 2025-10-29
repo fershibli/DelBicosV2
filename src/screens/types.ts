@@ -11,5 +11,17 @@ export type NavigationParams = {
   NotFound: undefined;
   VerificationScreen: { email: string };
   ClientProfile: undefined;
+  Category: undefined;
+  SubCategoryScreen: { categoryId: string };
+  SearchResult: { subcategoryId: number; date: string };
+  Checkout: {
+    professionalId: number;
+    priceFrom: number;
+    selectedTime: string;
+    imageUrl?: string;
+    professionalName?: string;
+  };
   PaymentCompletion: undefined;
+  PaymentStatus: undefined;
+  MySchedules: undefined;
 };

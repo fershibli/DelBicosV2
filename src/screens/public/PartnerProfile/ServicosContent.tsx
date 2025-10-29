@@ -52,8 +52,8 @@ export function ServicosContent({
   servicos,
   disponibilidades,
   professionalId,
-  clientId = "5",
-  userId = "1",
+  clientId = '5',
+  userId = '1',
 }: ServicosContentProps) {
   const [addressModalVisible, setAddressModalVisible] = useState(false);
   const [agendamentoModalVisible, setAgendamentoModalVisible] = useState(false);
@@ -65,13 +65,13 @@ export function ServicosContent({
   const selectedServicoRef = useRef<Servico | null>(null);
 
   const isButtonEnabled = Boolean(
-    selectedDate && 
-    selectedTime && 
-    selectedServicoRef.current && 
-    selectedAddress && 
-    !loading
+    selectedDate &&
+      selectedTime &&
+      selectedServicoRef.current &&
+      selectedAddress &&
+      !loading,
   );
-  
+
   useEffect(() => {
     console.log('🔍 Estado atualizado - Botão:', {
       selectedDate: !!selectedDate,
@@ -79,7 +79,7 @@ export function ServicosContent({
       servico: !!selectedServicoRef.current,
       address: !!selectedAddress,
       loading,
-      isButtonEnabled
+      isButtonEnabled,
     });
   }, [selectedDate, selectedTime, selectedAddress, loading]);
 
@@ -112,108 +112,123 @@ export function ServicosContent({
 
   const handleAddressSelect = (address: Address) => {
     console.log('📍 Endereço selecionado:', address);
-    console.log('📦 Serviço no ref ANTES de fechar modal:', selectedServicoRef.current);
+    console.log(
+      '📦 Serviço no ref ANTES de fechar modal:',
+      selectedServicoRef.current,
+    );
     setSelectedAddress(address);
     setAddressModalVisible(false);
-    
+
     setTimeout(() => {
       setAgendamentoModalVisible(true);
-      console.log('📦 Serviço no ref DEPOIS de abrir modal:', selectedServicoRef.current);
+      console.log(
+        '📦 Serviço no ref DEPOIS de abrir modal:',
+        selectedServicoRef.current,
+      );
     }, 100);
   };
 
-const handleConfirmAgendamento = async () => {
-  const selectedServico = selectedServicoRef.current;
-  
-  console.log('🎯 Iniciando confirmação do agendamento');
-  console.log('📋 Dados disponíveis:', {
-    selectedServico: selectedServico,
-    selectedAddress: !!selectedAddress,
-    selectedDate: !!selectedDate,
-    selectedTime: !!selectedTime
-  });
-  
-  if (!selectedDate || !selectedTime || !selectedServico || !selectedAddress) {
-    console.log('❌ Campos faltantes:', {
-      selectedDate, 
-      selectedTime, 
-      selectedServico: selectedServico, 
-      selectedAddress: !!selectedAddress 
-    });
-    Alert.alert('Atenção', 'Por favor, selecione data, horário e endereço');
-    return;
-  }
+  const handleConfirmAgendamento = async () => {
+    const selectedServico = selectedServicoRef.current;
 
-  setLoading(true);
-  console.log('🔄 Iniciando processo de agendamento...');
-
-  try {
-    const startDateTime = new Date(`${selectedDate}T${selectedTime}`);
-    
-    if (isNaN(startDateTime.getTime())) {
-      throw new Error('Data ou horário inválido');
-    }
-
-    const duration = Number(selectedServico.duracao);
-    const endDateTime = new Date(startDateTime.getTime() + duration * 60000);
-
-    const appointmentData = {
-      professional_id: parseInt(professionalId),
-      service_id: Number(selectedServico.id),
-      client_id: parseInt(clientId),
-      address_id: selectedAddress.id,
-      start_time: startDateTime.toISOString(), 
-      end_time: endDateTime.toISOString(),
-      status: 'pending',
-      notes: `Agendamento via app - ${getServicoNome(selectedServico)}`
-    };
-
-    console.log('📤 Enviando dados do agendamento:', appointmentData);
-    console.log('📅 Start time (ISO):', startDateTime.toISOString());
-    console.log('📅 End time (ISO):', endDateTime.toISOString());
-
-    const response = await fetch('http://localhost:3000/api/appointments', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(appointmentData),
+    console.log('🎯 Iniciando confirmação do agendamento');
+    console.log('📋 Dados disponíveis:', {
+      selectedServico: selectedServico,
+      selectedAddress: !!selectedAddress,
+      selectedDate: !!selectedDate,
+      selectedTime: !!selectedTime,
     });
 
-    console.log('📨 Resposta da API:', response.status, response.statusText);
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('❌ Erro da API:', errorData);
-      throw new Error(errorData.error || `Erro ${response.status}: ${response.statusText}`);
+    if (
+      !selectedDate ||
+      !selectedTime ||
+      !selectedServico ||
+      !selectedAddress
+    ) {
+      console.log('❌ Campos faltantes:', {
+        selectedDate,
+        selectedTime,
+        selectedServico: selectedServico,
+        selectedAddress: !!selectedAddress,
+      });
+      Alert.alert('Atenção', 'Por favor, selecione data, horário e endereço');
+      return;
     }
 
-    const appointment = await response.json();
-    console.log('✅ Agendamento criado com sucesso:', appointment);
-    
-    Alert.alert(
-      'Sucesso!', 
-      `Agendamento confirmado!\n\nServiço: ${getServicoNome(selectedServico)}\nData: ${formatDate(selectedDate)}\nHorário: ${selectedTime}\nEndereço: ${formatAddressLine(selectedAddress)}`,
-      [{ 
-        text: 'OK', 
-        onPress: () => {
-          console.log('🎉 Usuário confirmou o sucesso');
-          resetSelection();
-        }
-      }]
-    );
-    
-  } catch (error: any) {
-    console.error('💥 Erro completo no agendamento:', error);
-    Alert.alert(
-      'Erro no Agendamento', 
-      error.message || 'Não foi possível realizar o agendamento. Tente novamente.'
-    );
-  } finally {
-    setLoading(false);
-    console.log('🏁 Processo de agendamento finalizado');
-  }
-};
+    setLoading(true);
+    console.log('🔄 Iniciando processo de agendamento...');
+
+    try {
+      const startDateTime = new Date(`${selectedDate}T${selectedTime}`);
+
+      if (isNaN(startDateTime.getTime())) {
+        throw new Error('Data ou horário inválido');
+      }
+
+      const duration = Number(selectedServico.duracao);
+      const endDateTime = new Date(startDateTime.getTime() + duration * 60000);
+
+      const appointmentData = {
+        professional_id: parseInt(professionalId),
+        service_id: Number(selectedServico.id),
+        client_id: parseInt(clientId),
+        address_id: selectedAddress.id,
+        start_time: startDateTime.toISOString(),
+        end_time: endDateTime.toISOString(),
+        status: 'pending',
+        notes: `Agendamento via app - ${getServicoNome(selectedServico)}`,
+      };
+
+      console.log('📤 Enviando dados do agendamento:', appointmentData);
+      console.log('📅 Start time (ISO):', startDateTime.toISOString());
+      console.log('📅 End time (ISO):', endDateTime.toISOString());
+
+      const response = await fetch('http://localhost:3000/api/appointments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(appointmentData),
+      });
+
+      console.log('📨 Resposta da API:', response.status, response.statusText);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('❌ Erro da API:', errorData);
+        throw new Error(
+          errorData.error || `Erro ${response.status}: ${response.statusText}`,
+        );
+      }
+
+      const appointment = await response.json();
+      console.log('✅ Agendamento criado com sucesso:', appointment);
+
+      Alert.alert(
+        'Sucesso!',
+        `Agendamento confirmado!\n\nServiço: ${getServicoNome(selectedServico)}\nData: ${formatDate(selectedDate)}\nHorário: ${selectedTime}\nEndereço: ${formatAddressLine(selectedAddress)}`,
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              console.log('🎉 Usuário confirmou o sucesso');
+              resetSelection();
+            },
+          },
+        ],
+      );
+    } catch (error: any) {
+      console.error('💥 Erro completo no agendamento:', error);
+      Alert.alert(
+        'Erro no Agendamento',
+        error.message ||
+          'Não foi possível realizar o agendamento. Tente novamente.',
+      );
+    } finally {
+      setLoading(false);
+      console.log('🏁 Processo de agendamento finalizado');
+    }
+  };
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -296,18 +311,24 @@ const handleConfirmAgendamento = async () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
-              Agendar {getCurrentServico() ? getServicoNome(getCurrentServico()!) : 'Serviço'}
+              Agendar{' '}
+              {getCurrentServico()
+                ? getServicoNome(getCurrentServico()!)
+                : 'Serviço'}
             </Text>
 
             {/* Informações do endereço selecionado */}
             {selectedAddress && (
               <View style={styles.selectedAddressContainer}>
-                <Text style={styles.selectedAddressLabel}>Endereço selecionado:</Text>
+                <Text style={styles.selectedAddressLabel}>
+                  Endereço selecionado:
+                </Text>
                 <Text style={styles.selectedAddressText}>
                   {formatAddressLine(selectedAddress)}
                 </Text>
                 <Text style={styles.selectedAddressNeighborhood}>
-                  {selectedAddress.neighborhood}, {selectedAddress.city} - {selectedAddress.state}
+                  {selectedAddress.neighborhood}, {selectedAddress.city} -{' '}
+                  {selectedAddress.state}
                 </Text>
               </View>
             )}
@@ -315,12 +336,15 @@ const handleConfirmAgendamento = async () => {
             {/* Informações do serviço selecionado */}
             {getCurrentServico() && (
               <View style={styles.serviceInfoModal}>
-                <Text style={styles.serviceInfoLabel}>Serviço selecionado:</Text>
+                <Text style={styles.serviceInfoLabel}>
+                  Serviço selecionado:
+                </Text>
                 <Text style={styles.serviceInfoText}>
                   {getServicoNome(getCurrentServico()!)}
                 </Text>
                 <Text style={styles.serviceInfoDetails}>
-                  {formatPreco(getCurrentServico()!.preco)} • {formatDuracao(getCurrentServico()!.duracao)}
+                  {formatPreco(getCurrentServico()!.preco)} •{' '}
+                  {formatDuracao(getCurrentServico()!.duracao)}
                 </Text>
               </View>
             )}
@@ -356,7 +380,9 @@ const handleConfirmAgendamento = async () => {
 
                 {selectedDate && (
                   <>
-                    <Text style={styles.sectionTitle}>Horários disponíveis:</Text>
+                    <Text style={styles.sectionTitle}>
+                      Horários disponíveis:
+                    </Text>
                     <View style={styles.timesContainer}>
                       {disponibilidades
                         .find((d) => d.data === selectedDate)
@@ -365,7 +391,8 @@ const handleConfirmAgendamento = async () => {
                             key={time}
                             style={[
                               styles.timeButton,
-                              selectedTime === time && styles.selectedTimeButton,
+                              selectedTime === time &&
+                                styles.selectedTimeButton,
                             ]}
                             onPress={() => {
                               console.log('⏰ Horário selecionado:', time);
@@ -404,7 +431,9 @@ const handleConfirmAgendamento = async () => {
                   <ActivityIndicator color="white" size="small" />
                 ) : (
                   <Text style={styles.confirmButtonText}>
-                    {isButtonEnabled ? 'Confirmar Agendamento' : 'Selecione todos os campos'}
+                    {isButtonEnabled
+                      ? 'Confirmar Agendamento'
+                      : 'Selecione todos os campos'}
                   </Text>
                 )}
               </TouchableOpacity>
