@@ -261,4 +261,46 @@ export const styles = StyleSheet.create({
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
   },
+
+  // Message Banner (Success/Error)
+  messageBanner: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginBottom: 16,
+    borderWidth: 2,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.primaryBlack,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+      web: {
+        boxShadow: `0px 2px 4px rgba(0, 0, 0, 0.15)`,
+      },
+    }),
+  },
+  successBanner: {
+    backgroundColor: '#D4EDDA',
+    borderColor: '#28A745',
+  },
+  errorBanner: {
+    backgroundColor: '#F8D7DA',
+    borderColor: '#DC3545',
+  },
+  messageText: {
+    fontSize: 16,
+    fontFamily: 'Afacad-SemiBold',
+    textAlign: 'center',
+  },
+  successText: {
+    color: '#155724',
+  },
+  errorText: {
+    color: '#721C24',
+  },
 });
