@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'expo-zustand-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserStore } from './types';
+import { UserStore, Address } from './types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { AxiosError } from 'axios';
 
@@ -11,38 +11,9 @@ export const useUserStore = create<UserStore>()(
       user: null,
       address: null,
       token: null,
-      verificationEmail: null, // Adicionar estado inicial
+      verificationEmail: null,
       setVerificationEmail: (email) => set({ verificationEmail: email }),
 
-      signIn: () => {
-        try {
-          const mockedUser = {
-            id: 1,
-            client_id: 1,
-            name: 'Douglas W.',
-            email: 'douglas@delbicos.com',
-            phone: '+55 11 99999-9999',
-            cpf: '123.456.789-00',
-          };
-          const mockedAddress = {
-            id: 2,
-            lat: '-22.90684700',
-            lng: '-43.17289600',
-            street: 'Rua B',
-            number: '456',
-            complement: 'Casa 2',
-            neighborhood: 'Bairro B',
-            city: 'Cidade B',
-            state: 'RJ',
-            country_iso: 'BR',
-            postal_code: '23456789',
-          };
-          set({ user: mockedUser, address: mockedAddress });
-        } catch (error) {
-          console.error('Error during login:', error);
-          return;
-        }
-      },
       signInPassword: async (email: string, password: string) => {
         try {
           const response = await backendHttpClient.post('/api/user/login', {
@@ -66,32 +37,37 @@ export const useUserStore = create<UserStore>()(
             phone: user.phone,
             cpf: user.cpf,
           };
-          const addressData = {
-            id: user.address.id,
-            lat: user.address.lat,
-            lng: user.address.lng,
-            street: user.address.street,
-            number: user.address.number,
-            complement: user.address.complement,
-            neighborhood: user.address.neighborhood,
-            city: user.address.city,
-            state: user.address.state,
-            country_iso: user.address.country_iso,
-            postal_code: user.address.postal_code,
-          };
+          const addressData: Address | null = user.address
+            ? {
+                id: user.address.id,
+                lat: user.address.lat,
+                lng: user.address.lng,
+                street: user.address.street,
+                number: user.address.number,
+                complement: user.address.complement,
+                neighborhood: user.address.neighborhood,
+                city: user.address.city,
+                state: user.address.state,
+                country_iso: user.address.country_iso,
+                postal_code: user.address.postal_code,
+              }
+            : null;
           set({ user: userData, address: addressData, token });
           console.log('Login successful:', userData);
           return;
         } catch (error: any | AxiosError) {
-          if (error instanceof AxiosError && error.status) {
-            if (error.status.toString().startsWith('4')) {
+          if (error instanceof AxiosError) {
+            if (
+              error.response?.status === 401 ||
+              error.response?.status === 404
+            ) {
               throw new Error(
-                'Credenciais inválidas. Por favor, tente novamente.',
+                'Credenciais inválidas. Verifique seu e-mail e senha.',
               );
             }
-            if (error.status.toString().startsWith('5')) {
+            if (error.response?.status.toString().startsWith('5')) {
               throw new Error(
-                'Erro interno do servidor. Por favor, tente novamente mais tarde.',
+                'Erro interno do servidor. Tente novamente mais tarde.',
               );
             }
           }
@@ -101,38 +77,36 @@ export const useUserStore = create<UserStore>()(
 
       changePassword: async (currentPassword: string, newPassword: string) => {
         try {
-          const token = get().token;
-          const headers = token
-            ? { Authorization: `Bearer ${token}` }
-            : undefined;
-
           const response = await backendHttpClient.post(
             '/api/user/change-password',
             {
               current_password: currentPassword,
               new_password: newPassword,
             },
-            { headers },
+            // O interceptor do httpClient adiciona o 'Authorization: Bearer ...'
           );
 
-          if (!response.status.toString().startsWith('2')) {
+          if (response.status !== 200) {
             throw new Error('Não foi possível alterar a senha.');
           }
           return;
         } catch (error: any | AxiosError) {
-          if (error instanceof AxiosError && error.status) {
-            if (error.status.toString().startsWith('4')) {
-              throw new Error('Dados inválidos. Verifique e tente novamente.');
+          if (error instanceof AxiosError) {
+            if (error.response?.status === 401) {
+              throw new Error('Senha atual incorreta.');
             }
-            if (error.status.toString().startsWith('5')) {
+            if (error.response?.status === 400) {
+              throw new Error(
+                'Dados inválidos. Verifique os requisitos da nova senha.',
+              );
+            }
+            if (error.response?.status.toString().startsWith('5')) {
               throw new Error(
                 'Erro interno do servidor. Tente novamente mais tarde.',
               );
             }
           }
-          throw new Error(
-            'Erro ao alterar a senha. Por favor, tente novamente.',
-          );
+          throw new Error('Erro ao alterar a senha. Tente novamente.');
         }
       },
       signOut: () =>
@@ -140,6 +114,7 @@ export const useUserStore = create<UserStore>()(
           user: null,
           address: null,
           token: null,
+          verificationEmail: null,
         }),
     }),
     {
