@@ -5,143 +5,140 @@ import {
   Professional,
 } from '@stores/Professional/types';
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const MOCK_PROFESSIONALS_DB: Record<number, Professional> = {
-  // Exemplo para Jefferson Santos (ID 1)
   1: {
     id: 1,
-    user_id: 101, // ID do usuário associado
+    user_id: 1,
     active: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     User: {
-      // Dados do Usuário
-      id: 101,
+      id: 1,
       name: 'Jefferson Santos',
       avatar_uri: 'url_avatar_jefferson.jpg',
-      // --- ADICIONE OS CAMPOS FALTANTES ABAIXO ---
-      email: 'jefferson.santos@example.com', // Exemplo
-      phone: '+5515999991111', // Exemplo
-      // Assumindo que Professional não tem cpf ou client_id diretamente,
-      // mas se sua interface User exige, adicione como null ou valor mockado.
-      // Se esses campos pertencem a uma interface Client separada,
-      // ajuste sua interface Professional para não exigir User com esses campos.
-      // Vou adicionar como null/exemplo para satisfazer o TS por agora:
-      client_id: 1, // Ou um ID de cliente mockado se aplicável
-      cpf: '40560351801', // Ou um CPF mockado se aplicável
-      // --- FIM DOS CAMPOS ADICIONADOS ---
+      email: 'jefferson.santos@example.com',
+      phone: '+5515999991111',
+      client_id: 1,
+      cpf: '40560351801',
     },
     Service: {
-      // Dados do Serviço principal
-      id: 501,
+      id: 1,
       title: 'Instalação Elétrica Residencial',
       price: '250.00',
-      subcategory_id: 302,
-      Subcategory: { id: 302, name: 'Eletricista' },
-      // --- ADICIONE OS CAMPOS FALTANTES ABAIXO ---
-      description: 'Instalação completa para residências.', // Exemplo
-      duration: 120, // Exemplo: 120 minutos
-      banner_uri: 'url_banner_servico_eletrica.jpg', // Exemplo
-      active: true, // Exemplo
-      professional_id: 1, // Exemplo (ID do profissional)
-      createdAt: new Date().toISOString(), // Exemplo
-      updatedAt: new Date().toISOString(), // Exemplo
-      // --- FIM DOS CAMPOS ADICIONADOS ---
+      subcategory_id: 1,
+      Subcategory: { id: 1, name: 'Eletricista' },
+      description: 'Instalação completa para residências.',
+      duration: 120,
+      banner_uri: 'url_banner_servico_eletrica.jpg',
+      active: true,
+      professional_id: 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
     rating: 4.8,
     ratings_count: 13,
     description:
       'Eletricista experiente para todos os tipos de reparos e instalações.',
   },
-  // Exemplo para Outro Profissional (ID 2)
   2: {
     id: 2,
-    user_id: 102,
+    user_id: 2,
     active: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     User: {
-      id: 102,
+      id: 2,
       name: 'Maria Silva',
       avatar_uri: 'url_avatar_maria.jpg',
-      // --- ADICIONE OS CAMPOS FALTANTES ABAIXO ---
-      email: 'maria.silva@example.com', // Exemplo
-      phone: '+5511988882222', // Exemplo
+      email: 'maria.silva@example.com',
+      phone: '+5511988882222',
       client_id: 2,
       cpf: '12345678901',
-      // --- FIM DOS CAMPOS ADICIONADOS ---
     },
     Service: {
-      id: 601,
+      id: 2,
       title: 'Encanamento Geral',
       price: '180.00',
-      subcategory_id: 303,
-      Subcategory: { id: 303, name: 'Encanador' },
-      // --- ADICIONE OS CAMPOS FALTANTES ABAIXO ---
-      description: 'Reparos hidráulicos gerais.', // Exemplo
-      duration: 90, // Exemplo
-      banner_uri: null, // Exemplo
-      active: true, // Exemplo
-      professional_id: 2, // Exemplo
-      createdAt: new Date().toISOString(), // Exemplo
-      updatedAt: new Date().toISOString(), // Exemplo
-      // --- FIM DOS CAMPOS ADICIONADOS ---
+      subcategory_id: 2,
+      Subcategory: { id: 2, name: 'Encanador' },
+      description: 'Reparos hidráulicos gerais.',
+      duration: 90,
+      banner_uri: null,
+      active: true,
+      professional_id: 2,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
     rating: 4.5,
     ratings_count: 8,
     description: 'Soluções rápidas e eficientes para problemas hidráulicos.',
   },
-  // Adicione mais profissionais mockados se precisar testar outros IDs
 };
 
+const SIMULATED_DETAIL_DELAY_MS = 500;
+
+// --- Funções Utilitárias ---
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// --- Store Implementation ---
 export const useProfessionalStore = create<ProfessionalStore>((set) => ({
+  // --- Estado ---
   professionals: [],
   selectedProfessional: null,
 
-  fetchProfessionals: async (filter = '', page = 1, limit = 10) => {
+  // --- Ações ---
+  fetchProfessionals: async (filter = '', page = 0, limit = 12) => {
     try {
-      const mockedData: ListedProfessional[] = [];
-      for (let i = 1; i <= limit; i++) {
-        mockedData.push({
-          id: i,
-          name: `Professional ${i + (page - 1) * limit}`,
-          category: 'Category',
-          rating: Math.random() * 5,
-          ratingsCount: Math.floor(Math.random() * 100),
-          imageUrl: `https://picsum.photos/200/300?random=${i}`,
-          location: `Location ${i}`,
-        });
-      }
+      const allProfessionals = Object.values(MOCK_PROFESSIONALS_DB);
 
-      sleep(1000); // Simulate network delay
+      // Simula paginação
+      const startIndex = page * limit;
+      const endIndex = startIndex + limit;
+      const pageData = allProfessionals.slice(startIndex, endIndex);
 
-      return mockedData;
+      // Mapeia do tipo 'Professional' (detalhado) para 'ListedProfessional' (simplificado)
+      const listedData: ListedProfessional[] = pageData.map((prof) => ({
+        id: prof.id,
+        name: prof.User.name,
+        category: prof.Service?.Subcategory?.name || 'Serviços',
+        rating: prof.rating || 0,
+        ratingsCount: prof.ratings_count || 0,
+        imageUrl:
+          prof.User.avatar_uri || `https://picsum.photos/id/${prof.id}/200/200`, // Fallback
+        location: 'Localização Mock', // TODO: Adicionar localização real
+      }));
+
+      await sleep(1000); // Simula delay de rede
+
+      console.log(
+        `[ProfessionalStore] Retornando ${listedData.length} itens REAIS para página ${page}.`,
+      );
+      return listedData;
     } catch (error) {
-      console.error('Error fetching professionals:', error);
+      console.error('[ProfessionalStore] Error fetching professionals:', error);
       return [];
     }
   },
+
   fetchProfessionalById: async (id: number): Promise<Professional | null> => {
-    console.log(`[ProfessionalStore] Buscando profissional com ID: ${id}`);
+    set({ selectedProfessional: null });
     try {
-      // --- LÓGICA MOCKADA (ou sua lógica real) ---
-      await sleep(500);
-      const professional = MOCK_PROFESSIONALS_DB[id]; // Assumindo MOCK_PROFESSIONALS_DB definido
+      await sleep(SIMULATED_DETAIL_DELAY_MS);
+
+      const professional = MOCK_PROFESSIONALS_DB[id];
+
       if (!professional) {
-        console.error(`[ProfessionalStore] Mock para ID ${id} não encontrado.`);
-        set({ selectedProfessional: null });
+        console.warn(`[ProfessionalStore] Mock data for ID ${id} not found.`);
         return null;
       }
-      console.log(
-        '[ProfessionalStore] Profissional encontrado (mock):',
-        professional,
-      );
-      set({ selectedProfessional: professional }); // Define o estado
+
+      set({ selectedProfessional: professional });
       return professional;
-      // --- FIM MOCK ---
     } catch (error) {
-      console.error('Falha ao buscar profissional por ID:', error);
+      console.error(
+        '[ProfessionalStore] Error fetching professional by ID:',
+        error,
+      );
       set({ selectedProfessional: null });
       return null;
     }

@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { styles as globalStyles } from '../../lib/utils/styles';
 
 interface Props {
@@ -28,18 +28,20 @@ export class MapErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback || (
-        <View style={[globalStyles.mapContainer, styles.errorContainer]}>
-          <View style={styles.errorContent}>
-            <Text style={styles.errorTitle}>🗺️ Mapa Indisponível</Text>
-            <Text style={styles.errorText}>
-              Erro ao carregar o mapa nativo
-            </Text>
-            <Text style={styles.errorSubtext}>
-              A funcionalidade de geolocalização continua funcionando
-            </Text>
+      return (
+        this.props.fallback || (
+          <View style={[globalStyles.mapContainer, styles.errorContainer]}>
+            <View style={styles.errorContent}>
+              <Text style={styles.errorTitle}>🗺️ Mapa Indisponível</Text>
+              <Text style={styles.errorText}>
+                Erro ao carregar o mapa nativo
+              </Text>
+              <Text style={styles.errorSubtext}>
+                A funcionalidade de geolocalização continua funcionando
+              </Text>
+            </View>
           </View>
-        </View>
+        )
       );
     }
 

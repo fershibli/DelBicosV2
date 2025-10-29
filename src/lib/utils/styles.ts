@@ -1,6 +1,5 @@
-import { Platform, StyleSheet, Dimensions, StatusBar } from 'react-native';
-
-const window = Dimensions.get('window');
+import colors from '@theme/colors';
+import { Platform, StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   // Container principal
@@ -17,7 +16,7 @@ export const styles = StyleSheet.create({
   button: {
     gap: 10,
     flexDirection: 'row',
-    backgroundColor: '#005A93',
+    backgroundColor: colors.primaryBlue,
     paddingHorizontal: 12,
     paddingTop: 4,
     paddingBottom: 7,
@@ -33,7 +32,7 @@ export const styles = StyleSheet.create({
     fontFamily: 'Afacad-Regular',
     textAlign: 'center',
   },
-  
+
   buttonLogin: {
     gap: 10,
     flexDirection: 'row',
@@ -47,7 +46,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
   buttonLoginText: {
     color: '#000000',
     fontSize: 32,

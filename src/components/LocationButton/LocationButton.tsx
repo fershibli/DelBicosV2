@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Platform,
   TouchableOpacity,
@@ -7,6 +7,7 @@ import {
   View,
   StyleSheet,
   Modal as RNModal,
+  Dimensions,
 } from 'react-native';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
@@ -14,8 +15,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { styles as globalStyles } from '../../lib/utils/styles';
 import { MapComponent } from '../MapComponent/MapComponent';
-import { Region, AddressData } from '../../lib/hooks/types';
-import { Dimensions } from 'react-native';
+import { Region } from '../../lib/hooks/types';
 
 const window = Dimensions.get('window');
 

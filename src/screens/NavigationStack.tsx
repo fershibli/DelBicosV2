@@ -22,6 +22,8 @@ import SubCategoryScreen from './public/SubCategoryScreen';
 import SearchResultScreen from './public/SearchResultScreen';
 import CheckoutScreen from './public/CheckoutScreen';
 import { PaymentCompletionScreen } from './private/client/PaymentCompletion';
+import PaymentStatusScreen from './public/PaymentStatusScreen';
+import MySchedulesScreen from './private/client/MySchedulesScreen';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -164,6 +166,21 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       },
       options: {
         headerShown: false, // Opcional: Esconde o header padrão
+      },
+    },
+    PaymentStatus: {
+      screen: PaymentStatusScreen,
+      linking: {
+        path: 'payment-status', // <-- Esta é a URL de retorno
+      },
+      options: {
+        headerShown: false, // Sem header
+      },
+    },
+    MySchedules: {
+      screen: MySchedulesScreen,
+      options: {
+        title: 'Meus Agendamentos',
       },
     },
   },

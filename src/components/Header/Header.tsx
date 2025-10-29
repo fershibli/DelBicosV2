@@ -1,12 +1,21 @@
-import React from 'react';
-import { View, Image, Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  useWindowDimensions,
+  Platform,
+  Pressable,
+} from 'react-native';
 import { styles } from './styles';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
+import { useLocation } from '@lib/hooks/LocationContext';
 import DelBicosLogo from '@assets/DelBicos_LogoH.png';
-import { Button, ButtonProps } from '@components/Button';
+import { Button } from '@components/Button';
 import { NavigationParams } from '@screens/types';
-import SouthIcon from '@mui/icons-material/South';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import { FontAwesome } from '@expo/vector-icons';
 import {
@@ -17,33 +26,26 @@ import {
 } from 'react-native-popup-menu';
 
 const Header: React.FC<NativeStackHeaderProps> = (props) => {
-  const { user, address, signOut } = useUserStore();
+  const { width } = useWindowDimensions();
+  const isWebOrLargeScreen = Platform.OS === 'web' || width > 768;
+
+  const { user, signOut } = useUserStore();
+  const { address } = useLocation();
+  const city = address?.city;
+  const state = address?.state;
   const navigation = useNavigation();
+  const [search, setSearch] = useState('');
+
+  const [loginHovered, setLoginHovered] = useState(false);
+  const [registerHovered, setRegisterHovered] = useState(false);
 
   const navigateTo = (screen?: keyof NavigationParams) => {
-    if (!screen) return; // remove this later, when all screens are defined
+    if (!screen) return;
     navigation.navigate(screen);
   };
 
-  interface NavbarButtonProps extends Partial<ButtonProps> {
-    screen?: keyof NavigationParams;
-    children: React.ReactNode;
-  }
-
-  const NavbarButton = ({ screen, children, ...props }: NavbarButtonProps) => (
-    <Button
-      onClick={() => navigateTo(screen)}
-      sizeVariant="large"
-      colorVariant="primaryWhite"
-      noWrap
-      {...props}>
-      {children}
-    </Button>
-  );
-
   const handleSignOut = () => {
     signOut();
-
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -52,54 +54,100 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
     );
   };
 
+  const MenuItem: React.FC<{
+    screen?: keyof NavigationParams;
+    children: React.ReactNode;
+  }> = ({ screen, children }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+      <Pressable
+        onPress={() => navigateTo(screen)}
+        onHoverIn={() => setIsHovered(true)}
+        onHoverOut={() => setIsHovered(false)}
+        style={({ pressed }) => [
+          styles.menuItemPressable,
+          isHovered && styles.menuItemHovered,
+        ]}>
+        <Text
+          style={[
+            styles.menuItemText,
+            isHovered && styles.menuItemTextHovered,
+          ]}>
+          {children}
+        </Text>
+      </Pressable>
+    );
+  };
+
+  // --- RENDERIZAÇÃO PARA MOBILE (SIMPLES) ---
+  if (!isWebOrLargeScreen) {
+    return (
+      <View style={styles.mobileHeader}>
+        <Image source={DelBicosLogo} style={styles.mobileLogo} />
+        {/* Adicionar um ícone de menu hambúrguer aqui seria o ideal no futuro */}
+      </View>
+    );
+  }
+
+  // --- RENDERIZAÇÃO PARA WEB/TELAS GRANDES ---
   return (
     <View style={styles.headerContainer}>
-      <TouchableOpacity onPress={() => navigateTo('Feed')}>
-        <Image
-          source={DelBicosLogo}
-          resizeMode="contain"
-          style={styles.logoImage}
-        />
-      </TouchableOpacity>
+      {/* Topo com Logo, Menu, Localização, Usuário */}
+      <View style={styles.topBar}>
+        {/* Logo */}
+        <TouchableOpacity onPress={() => navigateTo('Feed')}>
+          <Image
+            source={DelBicosLogo}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
 
-      <View style={styles.divider} />
-
-      <View style={styles.navContainer}>
-        <View style={styles.navButtonsContainer}>
-          <NavbarButton screen={'Feed'}>Página Inicial</NavbarButton>
-          <NavbarButton screen={'Category'}>Categorias</NavbarButton>
-          <NavbarButton>Ajuda</NavbarButton>
+        {/* Menu Centralizado (Adaptado) */}
+        <View style={styles.menu}>
+          <MenuItem screen={'Feed'}>Página Inicial</MenuItem>
+          <MenuItem screen={'Category'}>Categorias</MenuItem>
+          <MenuItem>Ajuda</MenuItem>
           {!!user && (
             <>
-              <NavbarButton>Meus Agendamentos</NavbarButton>
-              <NavbarButton>Portal do Parceiro</NavbarButton>
+              <MenuItem screen={'MySchedules'}>Meus Agendamentos</MenuItem>
+              <MenuItem>Portal do Parceiro</MenuItem>
             </>
           )}
         </View>
 
-        <View style={styles.navButtonsContainer}>
+        {/* Localização + Usuário */}
+        <View style={styles.rightSection}>
           <View style={styles.locationContainer}>
             <Text style={styles.locationLabel}>Estou em:</Text>
+            {/* Usando o seu componente Button adaptado */}
             <Button
-              colorVariant="secondary"
+              colorVariant="secondary" // Laranja
               sizeVariant="smallPill"
               fontVariant="AfacadRegular15"
-              onClick={() => {}}
-              endIcon={<SouthIcon />}>
-              {!!address
-                ? `${address.street}, ${address.city} - ${address.state}`
-                : 'Localização não definida'}
+              onClick={() => {
+                /* Abrir modal de localização */
+              }}
+              endIcon={
+                <FontAwesome name="chevron-down" size={12} color="#FFFFFF" />
+              }>
+              {/* Usa a localização do useLocation */}
+              {!!city && !!state ? `${city} - ${state}` : 'Localização'}
             </Button>
           </View>
+
+          {/* Lógica de Usuário Logado/Deslogado */}
           {!!user ? (
             <Menu>
               <MenuTrigger>
                 <View style={styles.userContainer}>
+                  {/* Idealmente, usar user.avatar_uri aqui */}
                   <Image
                     source={require('../../assets/logo.png')}
                     style={styles.profileImage}
                   />
-                  <Text style={styles.userName}>{user.name}</Text>
+                  {/* <Text style={styles.userName}>{user.name}</Text> // Nome pode ser removido se só a imagem for usada */}
                 </View>
               </MenuTrigger>
               <MenuOptions
@@ -111,7 +159,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                   <View style={styles.menuOption}>
                     <FontAwesome
                       name="user-circle-o"
-                      size={20}
+                      size={18}
                       color="#333"
                       style={styles.menuIcon}
                     />
@@ -123,7 +171,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                   <View style={styles.menuOption}>
                     <FontAwesome
                       name="sign-out"
-                      size={20}
+                      size={18}
                       color="#D32F2F"
                       style={styles.menuIcon}
                     />
@@ -135,17 +183,67 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
               </MenuOptions>
             </Menu>
           ) : (
-            <>
-              <NavbarButton screen="Login">Fazer login</NavbarButton>
-              <NavbarButton screen="Register" colorVariant="secondary">
-                Cadastre-se
-              </NavbarButton>
-            </>
+            <View style={styles.authButtons}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.authButton,
+                  loginHovered && styles.authButtonHovered,
+                  pressed && styles.authButtonPressed,
+                ]}
+                onPress={() => navigateTo('Login')}
+                onHoverIn={() => setLoginHovered(true)}
+                onHoverOut={() => setLoginHovered(false)}>
+                <Text
+                  style={[
+                    styles.authButtonText,
+                    loginHovered && styles.authButtonTextHovered,
+                  ]}>
+                  Fazer login
+                </Text>
+              </Pressable>
+
+              {/* Botão Cadastre-se */}
+              <Pressable
+                style={({ pressed }) => [
+                  styles.authButton,
+                  styles.authButtonSecondary,
+                  registerHovered && styles.authButtonSecondaryHovered,
+                  pressed && styles.authButtonPressed,
+                ]}
+                onPress={() => navigateTo('Register')}
+                onHoverIn={() => setRegisterHovered(true)}
+                onHoverOut={() => setRegisterHovered(false)}>
+                <Text
+                  style={[
+                    styles.authButtonText,
+                    styles.authButtonTextSecondary,
+                  ]}>
+                  Cadastre-se
+                </Text>
+              </Pressable>
+            </View>
           )}
         </View>
       </View>
 
-      <View style={styles.blueBar} />
+      {/* Barra Azul de busca */}
+      <View style={styles.searchBar}>
+        <Text style={styles.searchText}>
+          Olá, {user ? user.name.split(' ')[0] : ''}! Como podemos te ajudar
+          hoje?
+        </Text>
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Eletricista, Encanador, Diarista..."
+            value={search}
+            onChangeText={setSearch}
+          />
+          <TouchableOpacity style={styles.searchButton}>
+            <FontAwesome name="search" size={16} color="#666" />
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 };

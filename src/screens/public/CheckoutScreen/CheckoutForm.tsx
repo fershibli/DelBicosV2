@@ -22,7 +22,7 @@ const CheckoutForm = () => {
 
     // Usa a URL atual + /payment-success como exemplo de retorno
     // CRIE UMA ROTA E TELA SIMPLES PARA '/payment-success' no seu NavigationStack
-    const returnUrl = `${window.location.origin}/payment-success`;
+    const returnUrl = `${window.location.origin}/payment-status`;
 
     const { error } = await stripe.confirmPayment({
       elements,
@@ -49,14 +49,17 @@ const CheckoutForm = () => {
 
   return (
     <View>
+      {/* O PaymentElement renderiza o formulário (Cartão, Pix, etc.) */}
       <PaymentElement id="payment-element" />
 
+      {/* Exibe mensagens de erro */}
       {message && <Text style={styles.errorMessageText}>{message}</Text>}
 
+      {/* Botão Finalizar Compra */}
       <TouchableOpacity
         style={[
           styles.checkoutButton,
-          isLoading && styles.checkoutButtonDisabled,
+          (isLoading || !stripe) && styles.checkoutButtonDisabled,
         ]}
         onPress={handleSubmit}
         disabled={isLoading || !stripe || !elements}>

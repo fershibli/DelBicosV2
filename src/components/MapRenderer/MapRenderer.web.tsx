@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Platform, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { Region, AddressData } from '../../lib/hooks/types';
 
@@ -24,8 +24,16 @@ const mapOptions = {
   fullscreenControl: false,
   zoomControl: true,
   styles: [
-    { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-    { featureType: 'poi', elementType: 'labels.text', stylers: [{ visibility: 'on' }] },
+    {
+      featureType: 'poi',
+      elementType: 'labels',
+      stylers: [{ visibility: 'off' }],
+    },
+    {
+      featureType: 'poi',
+      elementType: 'labels.text',
+      stylers: [{ visibility: 'on' }],
+    },
   ],
 };
 
@@ -72,9 +80,13 @@ const WebMapWrapper: React.FC<WebMapWrapperProps> = ({
     return (
       <View style={[styles.mapContainer, style]}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>🔑 Google Maps API Key não configurada</Text>
+          <Text style={styles.errorText}>
+            🔑 Google Maps API Key não configurada
+          </Text>
           <Text style={styles.errorSubtext}>
-            Defina <Text style={{ fontWeight: '700' }}>GOOGLE_MAPS_API_KEY</Text> no arquivo .env
+            Defina{' '}
+            <Text style={{ fontWeight: '700' }}>GOOGLE_MAPS_API_KEY</Text> no
+            arquivo .env
           </Text>
         </View>
       </View>
@@ -93,21 +105,30 @@ const WebMapWrapper: React.FC<WebMapWrapperProps> = ({
 
   return (
     <View style={[styles.mapContainer, style]}>
-      <LoadScript googleMapsApiKey={apiKey} onError={handleLoadError} onLoad={() => setMapLoaded(true)}>
+      <LoadScript
+        googleMapsApiKey={apiKey}
+        onError={handleLoadError}
+        onLoad={() => setMapLoaded(true)}>
         <GoogleMap
           mapContainerStyle={containerStyle}
-          center={region ? { lat: region.latitude, lng: region.longitude } : defaultCenter}
+          center={
+            region
+              ? { lat: region.latitude, lng: region.longitude }
+              : defaultCenter
+          }
           zoom={region ? 15 : 10}
           onLoad={(map) => {
             mapRef.current = map;
             setMapLoaded(true);
           }}
           onClick={handleMapClick}
-          options={mapOptions}
-        >
+          options={mapOptions}>
           {markerCoords && mapLoaded && (
             <Marker
-              position={{ lat: markerCoords.latitude, lng: markerCoords.longitude }}
+              position={{
+                lat: markerCoords.latitude,
+                lng: markerCoords.longitude,
+              }}
               title="Localização Selecionada"
               label={
                 address?.formatted

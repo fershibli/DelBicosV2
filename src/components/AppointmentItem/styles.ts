@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import colors from '@theme/colors';
 
 // Função para retornar o texto e a cor com base no status
@@ -25,12 +25,21 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.primaryWhite,
     borderRadius: 12,
     margin: 8,
-    shadowColor: colors.primaryBlack,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
-    overflow: 'hidden', // Garante que a imagem não vaze das bordas
+    overflow: 'hidden',
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.primaryBlack,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: `0px 2px 6px rgba(0, 0, 0, 0.1)`,
+      },
+    }),
   },
   content: {
     padding: 16,
@@ -51,7 +60,7 @@ export const styles = StyleSheet.create({
     fontFamily: 'Afacad-SemiBold',
     color: '#212529',
     marginVertical: 8,
-    minHeight: 40, // Garante altura mínima para alinhamento
+    minHeight: 40,
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -78,7 +87,6 @@ export const styles = StyleSheet.create({
     fontFamily: 'Afacad-Bold',
     fontSize: 14,
   },
-  // Estilos para o Modal de Avaliação
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
@@ -120,5 +128,13 @@ export const styles = StyleSheet.create({
   modalButton: {
     paddingVertical: 10,
     paddingHorizontal: 20,
+  },
+  receiptButton: {
+    backgroundColor: '#005A93', // Um azul (botão de recibo)
+    marginBottom: 8,
+  },
+  detailsButton: {
+    backgroundColor: '#6c757d', // Um cinza (botão "detalhes" desabilitado)
+    opacity: 0.8,
   },
 });

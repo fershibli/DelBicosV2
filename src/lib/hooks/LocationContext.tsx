@@ -5,7 +5,9 @@ import { AddressData } from './types';
 const LOCATIONIQ_API_KEY = process.env.EXPO_PUBLIC_LOCATIONIQ_API_KEY || '';
 
 if (!LOCATIONIQ_API_KEY) {
-  console.warn('⚠️ A chave da API LocationIQ não está definida no arquivo .env (EXPO_PUBLIC_LOCATIONIQ_API_KEY)');
+  console.warn(
+    '⚠️ A chave da API LocationIQ não está definida no arquivo .env (EXPO_PUBLIC_LOCATIONIQ_API_KEY)',
+  );
 }
 
 interface LocationContextType {
@@ -16,7 +18,9 @@ interface LocationContextType {
   error: string | null;
 }
 
-const LocationContext = createContext<LocationContextType | undefined>(undefined);
+const LocationContext = createContext<LocationContextType | undefined>(
+  undefined,
+);
 
 /**
  * Função para formatar endereço brasileiro
@@ -25,56 +29,63 @@ const LocationContext = createContext<LocationContextType | undefined>(undefined
 function formatBrazilianAddress(data: any): AddressData {
   try {
     const components = data.address || {};
-    
+
     // Cidade (prioridade: city > town > suburb)
-    const city = components.city || components.town || components.suburb || components.village || '';
-    
+    const city =
+      components.city ||
+      components.town ||
+      components.suburb ||
+      components.village ||
+      '';
+
     // Estado (prioridade: state > state_district)
     const state = components.state || components.state_district || '';
-    
+
     // Bairro (prioridade: neighbourhood > suburb)
     const neighbourhood = components.neighbourhood || components.suburb || '';
-    
+
     // Rua (prioridade: road > street > pedestrian)
-    const road = components.road || components.street || components.pedestrian || '';
-    
+    const road =
+      components.road || components.street || components.pedestrian || '';
+
     // Número da casa
     const houseNumber = components.house_number || components.road_number || '';
-    
+
     // CEP
     const cep = components.postcode || '';
-    
+
     // Construir endereço formatado
     let formattedParts: string[] = [];
-    
+
     // Rua + Número
     if (road) {
       const streetPart = houseNumber ? `${road}, ${houseNumber}` : road;
       formattedParts.push(streetPart);
     }
-    
+
     // Bairro
     if (neighbourhood && neighbourhood !== city) {
       formattedParts.push(neighbourhood);
     }
-    
+
     // Cidade - Estado
     if (city) {
       const locationPart = state ? `${city} - ${state}` : city;
       formattedParts.push(locationPart);
     }
-    
+
     // CEP
     if (cep) {
       const formattedCep = formatCEP(cep);
       formattedParts.push(formattedCep);
     }
-    
+
     // Montar endereço final
-    const formattedAddress = formattedParts.length > 0 
-      ? formattedParts.join(', ')
-      : components.display_name || 'Endereço não identificado';
-    
+    const formattedAddress =
+      formattedParts.length > 0
+        ? formattedParts.join(', ')
+        : components.display_name || 'Endereço não identificado';
+
     // Retornar todos os dados com formatação customizada
     return {
       display_name: components.display_name || formattedAddress,
@@ -95,15 +106,14 @@ function formatBrazilianAddress(data: any): AddressData {
       state,
       postcode: cep,
       house_number: houseNumber,
-      ...components
+      ...components,
     };
-    
   } catch (error) {
     console.error('Erro ao formatar endereço brasileiro:', error);
     return {
       display_name: data.display_name || 'Endereço não identificado',
       formatted: data.display_name || 'Endereço não identificado',
-      ...data
+      ...data,
     };
   }
 }
@@ -123,7 +133,9 @@ function formatCEP(cep: string): string {
   return cep;
 }
 
-export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [address, setAddress] = useState<AddressData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -134,26 +146,30 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       city,
       state,
       formatted: `${city} - ${state}`,
-      display_name: `${city} - ${state}`
+      display_name: `${city} - ${state}`,
     } as AddressData);
   };
 
   const lookupByCoordinates = useCallback(
     async (latitude: number, longitude: number): Promise<void> => {
       if (!LOCATIONIQ_API_KEY) {
-        const errorMessage = 'Chave da API LocationIQ não configurada (EXPO_PUBLIC_LOCATIONIQ_API_KEY)';
+        const errorMessage =
+          'Chave da API LocationIQ não configurada (EXPO_PUBLIC_LOCATIONIQ_API_KEY)';
         setError(errorMessage);
         throw new Error(errorMessage);
       }
 
       setError(null);
       setLoading(true);
-      
+
       try {
         const url = `https://us1.locationiq.com/v1/reverse?key=${LOCATIONIQ_API_KEY}&lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`;
-        
-        console.log('🔍 Buscando endereço para:', { latitude: latitude.toFixed(6), longitude: longitude.toFixed(6) });
-        
+
+        console.log('🔍 Buscando endereço para:', {
+          latitude: latitude.toFixed(6),
+          longitude: longitude.toFixed(6),
+        });
+
         const res = await fetch(url);
         if (!res.ok) {
           const text = await res.text();
@@ -161,13 +177,13 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
 
         const json = await res.json();
-        
+
         if (!json || json.error) {
           throw new Error(json.error?.message || 'Resposta inválida da API');
         }
 
         const addressData = formatBrazilianAddress(json);
-        
+
         console.log('📍 Endereço formatado:', {
           original: json.display_name,
           brasileiro: addressData.formatted,
@@ -176,26 +192,27 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             bairro: addressData.neighbourhood,
             cidade: addressData.city,
             estado: addressData.state,
-            cep: addressData.postcode
-          }
+            cep: addressData.postcode,
+          },
         });
 
         setAddress(addressData);
         setLoading(false);
-        
       } catch (err: any) {
-        const errorMessage = err?.message ?? 'Erro desconhecido no reverse geocoding';
+        const errorMessage =
+          err?.message ?? 'Erro desconhecido no reverse geocoding';
         console.error('❌ Erro no geocoding:', errorMessage);
         setError(errorMessage);
         setLoading(false);
         throw new Error(errorMessage);
       }
     },
-    []
+    [],
   );
 
   return (
-    <LocationContext.Provider value={{ address, setLocation, lookupByCoordinates, loading, error }}>
+    <LocationContext.Provider
+      value={{ address, setLocation, lookupByCoordinates, loading, error }}>
       {children}
     </LocationContext.Provider>
   );
