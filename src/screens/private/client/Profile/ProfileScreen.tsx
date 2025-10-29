@@ -191,7 +191,12 @@ const UserProfileScreen: React.FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`${HTTP_DOMAIN}/api/user/${userId}`);
+        const { token } = useUserStore.getState();
+        const response = await fetch(`${HTTP_DOMAIN}/api/user/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!response.ok) throw new Error('Erro ao buscar usuário');
 
         const data: User = await response.json();
