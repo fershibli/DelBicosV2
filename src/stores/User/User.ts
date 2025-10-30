@@ -205,41 +205,6 @@ export const useUserStore = create<UserStore>()(
         }
       },
 
-      fetchUserById: async (
-        userId: string,
-      ): Promise<{ erro: boolean; mensagem: string; user?: User }> => {
-        try {
-          const token = get().token;
-
-          const response = await backendHttpClient.get(`/api/user/${userId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          return {
-            erro: false,
-            mensagem: 'Usuário carregado com sucesso',
-            user: response.data,
-          };
-        } catch (error: any) {
-          console.error('Erro ao carregar dados do usuário:', error);
-
-          if (error instanceof AxiosError) {
-            const errorMessage = error.response?.data?.error || error.message;
-            return {
-              erro: true,
-              mensagem: errorMessage || 'Erro ao buscar usuário',
-            };
-          }
-
-          return {
-            erro: true,
-            mensagem: 'Não foi possível carregar os dados do usuário.',
-          };
-        }
-      },
-
       signOut: () =>
         set({
           user: null,
