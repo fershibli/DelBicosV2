@@ -5,6 +5,7 @@ import { UserStore, UploadAvatarResponse, ErrorResponse, User } from './types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { AxiosError } from 'axios';
 import { HTTP_DOMAIN } from '@config/varEnvs';
+import { Platform } from 'react-native';
 
 export const useUserStore = create<UserStore>()(
   persist(
@@ -13,6 +14,7 @@ export const useUserStore = create<UserStore>()(
       address: null,
       token: null,
       verificationEmail: null,
+      avatarLocalUri: null,
       setVerificationEmail: (email) => set({ verificationEmail: email }),
 
       signIn: () => {
@@ -152,43 +154,21 @@ export const useUserStore = create<UserStore>()(
 
           const token = get().token;
 
-          const response = await fetch(
-            `${HTTP_DOMAIN}/api/user/${userId}/avatar`,
+          const response = await backendHttpClient.post(
+            `/api/user/${userId}/avatar`,
             {
-              method: 'POST',
+              base64Image: base64Image,
+              userId: userId,
+            },
+            {
               headers: {
-                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
               },
-              body: JSON.stringify({
-                base64Image: base64Image,
-                userId: userId,
-              }),
             },
           );
 
           console.log('📤 Status da resposta:', response.status);
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error('❌ Erro na resposta:', errorText);
-
-            try {
-              const errorData = JSON.parse(errorText);
-              return {
-                erro: true,
-                mensagem: errorData.error || `Erro ${response.status}`,
-              };
-            } catch {
-              return {
-                erro: true,
-                mensagem: `Erro ${response.status}: ${errorText}`,
-              };
-            }
-          }
-
-          const data = await response.json();
-          console.log('✅ Resposta do servidor:', data);
+          console.log('✅ Resposta do servidor:', response.data);
 
           // Atualiza o avatar_uri do usuário na store
           const currentUser = get().user;
@@ -196,18 +176,34 @@ export const useUserStore = create<UserStore>()(
             set({
               user: {
                 ...currentUser,
-                avatar_uri: data.avatar_uri,
+                avatar_uri: response.data.avatar_uri,
               },
             });
+          }
+
+          // Salva localmente
+          if (Platform.OS === 'web' && response.data.avatar_uri) {
+            const storageKey = `userImages/${userId}/avatar.uri`;
+            localStorage.setItem(storageKey, response.data.avatar_uri);
+            console.log('✅ URI do avatar salva localmente no localStorage!');
           }
 
           return {
             erro: false,
             mensagem: 'Avatar atualizado com sucesso!',
-            avatar_uri: data.avatar_uri,
+            avatar_uri: response.data.avatar_uri,
           };
         } catch (error: any) {
           console.error('❌ Erro no upload:', error);
+
+          if (error instanceof AxiosError) {
+            const errorMessage = error.response?.data?.error || error.message;
+            return {
+              erro: true,
+              mensagem: errorMessage || 'Erro ao fazer upload do avatar',
+            };
+          }
+
           return {
             erro: true,
             mensagem: error.message || 'Erro ao fazer upload do avatar',
@@ -218,28 +214,12 @@ export const useUserStore = create<UserStore>()(
       removeAvatar: async (userId: string): Promise<ErrorResponse> => {
         try {
           const token = get().token;
-          const response = await fetch(
-            `${HTTP_DOMAIN}/api/user/${userId}/avatar`,
-            {
-              method: 'DELETE',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          );
 
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error(
-              '❌ Erro na remoção do avatar no servidor:',
-              errorText,
-            );
-            return {
-              erro: true,
-              mensagem: errorText || 'Erro ao remover avatar',
-            };
-          }
+          await backendHttpClient.delete(`/api/user/${userId}/avatar`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
           // Atualiza o avatar_uri do usuário na store
           const currentUser = get().user;
@@ -249,7 +229,14 @@ export const useUserStore = create<UserStore>()(
                 ...currentUser,
                 avatar_uri: null,
               },
+              avatarLocalUri: null,
             });
+          }
+
+          // Remove do localStorage
+          if (Platform.OS === 'web') {
+            const storageKey = `userImages/${userId}/avatar.uri`;
+            localStorage.removeItem(storageKey);
           }
 
           return {
@@ -258,6 +245,15 @@ export const useUserStore = create<UserStore>()(
           };
         } catch (error: any) {
           console.error('Erro ao remover avatar:', error);
+
+          if (error instanceof AxiosError) {
+            const errorMessage = error.response?.data?.error || error.message;
+            return {
+              erro: true,
+              mensagem: errorMessage || 'Erro ao remover avatar',
+            };
+          }
+
           return {
             erro: true,
             mensagem: 'Falha ao remover o avatar',
@@ -270,28 +266,29 @@ export const useUserStore = create<UserStore>()(
       ): Promise<{ erro: boolean; mensagem: string; user?: User }> => {
         try {
           const token = get().token;
-          const response = await fetch(`${HTTP_DOMAIN}/api/user/${userId}`, {
+
+          const response = await backendHttpClient.get(`/api/user/${userId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
 
-          if (!response.ok) {
-            return {
-              erro: true,
-              mensagem: 'Erro ao buscar usuário',
-            };
-          }
-
-          const data = await response.json();
-
           return {
             erro: false,
             mensagem: 'Usuário carregado com sucesso',
-            user: data,
+            user: response.data,
           };
         } catch (error: any) {
           console.error('Erro ao carregar dados do usuário:', error);
+
+          if (error instanceof AxiosError) {
+            const errorMessage = error.response?.data?.error || error.message;
+            return {
+              erro: true,
+              mensagem: errorMessage || 'Erro ao buscar usuário',
+            };
+          }
+
           return {
             erro: true,
             mensagem: 'Não foi possível carregar os dados do usuário.',
@@ -299,11 +296,43 @@ export const useUserStore = create<UserStore>()(
         }
       },
 
+      loadAvatarFromCache: async (
+        userId: string,
+        avatarUri: string | null,
+      ): Promise<string | null> => {
+        if (!avatarUri) {
+          set({ avatarLocalUri: null });
+          return null;
+        }
+
+        const fullAvatarUrl = `${HTTP_DOMAIN}/${avatarUri}`;
+
+        if (Platform.OS === 'web') {
+          set({ avatarLocalUri: fullAvatarUrl });
+          console.log('💻 Imagem carregada via URL:', fullAvatarUrl);
+          return fullAvatarUrl;
+        }
+
+        // Para mobile, você pode implementar o cache local aqui se necessário
+        // Por enquanto, retorna a URL completa
+        set({ avatarLocalUri: fullAvatarUrl });
+        return fullAvatarUrl;
+      },
+
+      clearAvatarCache: async (userId: string): Promise<void> => {
+        if (Platform.OS === 'web') {
+          const storageKey = `userImages/${userId}/avatar.uri`;
+          localStorage.removeItem(storageKey);
+        }
+        set({ avatarLocalUri: null });
+      },
+
       signOut: () =>
         set({
           user: null,
           address: null,
           token: null,
+          avatarLocalUri: null,
         }),
     }),
     {
@@ -314,6 +343,7 @@ export const useUserStore = create<UserStore>()(
         user: state.user,
         address: state.address,
         token: state.token,
+        avatarLocalUri: state.avatarLocalUri,
       }),
     },
   ),
