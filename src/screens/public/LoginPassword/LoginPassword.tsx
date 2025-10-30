@@ -17,7 +17,7 @@ import CustomTextInput from '@components/CustomTextInput';
 // @ts-ignore
 import IconPerson from '@assets/person.svg';
 // @ts-ignore
-import IconPhone from '@assets/phone.svg';
+// import IconPhone from '@assets/phone.svg';
 import LogoV3 from '@assets/LogoV3.png';
 
 import { styles } from './styles';
@@ -138,7 +138,7 @@ export const LoginPassword = () => {
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[
               styles.button,
               styles.buttonSecondary,
@@ -152,7 +152,7 @@ export const LoginPassword = () => {
                 Login por Telefone
               </Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>
             <Text style={styles.linkText}>

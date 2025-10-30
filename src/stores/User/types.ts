@@ -41,6 +41,11 @@ export type UserStore = {
   verificationEmail: string | null;
   avatarBase64: string | null;
   setVerificationEmail: (email: string | null) => void;
+  setLoggedInUser: (data: {
+    token: string;
+    user: User;
+    address: Address | null;
+  }) => void;
   signInPassword: (email: string, password: string) => Promise<void>;
   changePassword: (
     currentPassword: string,

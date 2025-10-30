@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   // ===== CARD PRINCIPAL =====
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 8,
     padding: 0,
     marginVertical: 0,
@@ -93,7 +94,7 @@ export const styles = StyleSheet.create({
   statusText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
     letterSpacing: 0.3,
   },
 
@@ -179,7 +180,7 @@ export const styles = StyleSheet.create({
   },
 
   viewProfileText: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
     fontSize: 11,
     fontWeight: '700',
     textTransform: 'uppercase',
@@ -210,7 +211,7 @@ export const styles = StyleSheet.create({
   },
 
   modalContent: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 16,
     width: '85%',
     maxWidth: 400,
@@ -315,14 +316,34 @@ export const getStatusStyle = (
 ) => {
   switch (status) {
     case 'pending':
-      return { text: '⏱ Pendente', color: '#FC8200', backgroundColor: '#FC8200' };
+      return {
+        text: '⏱ Pendente',
+        color: '#FC8200',
+        backgroundColor: '#FC8200',
+      };
     case 'confirmed':
-      return { text: '✓ Confirmado', color: '#22843B', backgroundColor: '#22843B' };
+      return {
+        text: '✓ Confirmado',
+        color: '#22843B',
+        backgroundColor: '#22843B',
+      };
     case 'completed':
-      return { text: '✓ Concluído', color: '#005A93', backgroundColor: '#005A93' };
+      return {
+        text: '✓ Concluído',
+        color: '#005A93',
+        backgroundColor: '#005A93',
+      };
     case 'canceled':
-      return { text: '✕ Cancelado', color: '#DC2626', backgroundColor: '#DC2626' };
+      return {
+        text: '✕ Cancelado',
+        color: '#DC2626',
+        backgroundColor: '#DC2626',
+      };
     default:
-      return { text: 'Desconhecido', color: '#666666', backgroundColor: '#666666' };
+      return {
+        text: 'Desconhecido',
+        color: '#666666',
+        backgroundColor: '#666666',
+      };
   }
 };

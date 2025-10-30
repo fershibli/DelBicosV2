@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 28,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 24,
   },
 
@@ -98,7 +98,7 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   saveButton: {
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -247,7 +247,7 @@ export const styles = StyleSheet.create({
   menuText: {
     fontSize: 18,
     fontFamily: 'Afacad-SemiBold',
-    color: '#003366',
+    color: colors.primaryBlue,
   },
   activeMenuText: {
     color: colors.primaryWhite,
@@ -271,7 +271,7 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   button: {
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
