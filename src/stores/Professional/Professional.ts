@@ -4,81 +4,7 @@ import {
   ProfessionalStore,
   Professional,
 } from '@stores/Professional/types';
-
-const MOCK_PROFESSIONALS_DB: Record<number, Professional> = {
-  1: {
-    id: 1,
-    user_id: 1,
-    active: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    User: {
-      id: 1,
-      name: 'Jefferson Santos',
-      avatar_uri: 'url_avatar_jefferson.jpg',
-      email: 'jefferson.santos@example.com',
-      phone: '+5515999991111',
-      client_id: 1,
-      cpf: '40560351801',
-    },
-    Service: {
-      id: 1,
-      title: 'Instalação Elétrica Residencial',
-      price: '250.00',
-      subcategory_id: 1,
-      Subcategory: { id: 1, name: 'Eletricista' },
-      description: 'Instalação completa para residências.',
-      duration: 120,
-      banner_uri: 'url_banner_servico_eletrica.jpg',
-      active: true,
-      professional_id: 1,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    rating: 4.8,
-    ratings_count: 13,
-    description:
-      'Eletricista experiente para todos os tipos de reparos e instalações.',
-  },
-  2: {
-    id: 2,
-    user_id: 2,
-    active: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    User: {
-      id: 2,
-      name: 'Maria Silva',
-      avatar_uri: 'url_avatar_maria.jpg',
-      email: 'maria.silva@example.com',
-      phone: '+5511988882222',
-      client_id: 2,
-      cpf: '12345678901',
-    },
-    Service: {
-      id: 2,
-      title: 'Encanamento Geral',
-      price: '180.00',
-      subcategory_id: 2,
-      Subcategory: { id: 2, name: 'Encanador' },
-      description: 'Reparos hidráulicos gerais.',
-      duration: 90,
-      banner_uri: null,
-      active: true,
-      professional_id: 2,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    rating: 4.5,
-    ratings_count: 8,
-    description: 'Soluções rápidas e eficientes para problemas hidráulicos.',
-  },
-};
-
-const SIMULATED_DETAIL_DELAY_MS = 500;
-
-// --- Funções Utilitárias ---
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+import { HTTP_DOMAIN } from '@config/varEnvs';
 
 // --- Store Implementation ---
 export const useProfessionalStore = create<ProfessionalStore>((set) => ({
@@ -89,29 +15,54 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
   // --- Ações ---
   fetchProfessionals: async (filter = '', page = 0, limit = 12) => {
     try {
-      const allProfessionals = Object.values(MOCK_PROFESSIONALS_DB);
+      const url = new URL(`${HTTP_DOMAIN}/api/professionals`);
+      url.searchParams.append('page', page.toString());
+      url.searchParams.append('limit', limit.toString());
+      if (filter) {
+        url.searchParams.append('filter', filter);
+      }
 
-      // Simula paginação
-      const startIndex = page * limit;
-      const endIndex = startIndex + limit;
-      const pageData = allProfessionals.slice(startIndex, endIndex);
+      console.log(`[ProfessionalStore] Fetching professionals from: ${url}`);
 
-      // Mapeia do tipo 'Professional' (detalhado) para 'ListedProfessional' (simplificado)
-      const listedData: ListedProfessional[] = pageData.map((prof) => ({
-        id: prof.id,
-        name: prof.User.name,
-        category: prof.Service?.Subcategory?.name || 'Serviços',
-        rating: prof.rating || 0,
-        ratingsCount: prof.ratings_count || 0,
-        imageUrl:
-          prof.User.avatar_uri || `https://picsum.photos/id/${prof.id}/200/200`, // Fallback
-        location: 'Localização Mock', // TODO: Adicionar localização real
-      }));
+      const response = await fetch(url.toString());
 
-      await sleep(1000); // Simula delay de rede
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(
+          `[ProfessionalStore] Backend error ${response.status}:`,
+          errorText,
+        );
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Espera-se que o backend retorne um array de profissionais
+      // ou um objeto com { professionals: [], total: number }
+      const professionals = Array.isArray(data)
+        ? data
+        : data.professionals || [];
+
+      // Mapeia para o formato ListedProfessional
+      const listedData: ListedProfessional[] = professionals.map(
+        (prof: any) => ({
+          id: prof.id,
+          name: prof.User?.name || prof.name || 'Nome não disponível',
+          category:
+            prof.Service?.Subcategory?.name || prof.category || 'Serviços',
+          rating: prof.rating || 0,
+          ratingsCount: prof.ratings_count || prof.ratingsCount || 0,
+          imageUrl:
+            prof.User?.avatar_uri ||
+            prof.Service?.banner_uri ||
+            prof.imageUrl ||
+            `https://picsum.photos/seed/${prof.id}/400/400`,
+          location: prof.location || 'São Paulo, SP',
+        }),
+      );
 
       console.log(
-        `[ProfessionalStore] Retornando ${listedData.length} itens REAIS para página ${page}.`,
+        `[ProfessionalStore] Retornando ${listedData.length} profissionais para página ${page}.`,
       );
       return listedData;
     } catch (error) {
@@ -123,17 +74,45 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
   fetchProfessionalById: async (id: number): Promise<Professional | null> => {
     set({ selectedProfessional: null });
     try {
-      await sleep(SIMULATED_DETAIL_DELAY_MS);
+      const url = `${HTTP_DOMAIN}/api/professionals/${id}`;
+      console.log(`[ProfessionalStore] Fetching professional from: ${url}`);
 
-      const professional = MOCK_PROFESSIONALS_DB[id];
+      const response = await fetch(url);
 
-      if (!professional) {
-        console.warn(`[ProfessionalStore] Mock data for ID ${id} not found.`);
-        return null;
+      if (!response.ok) {
+        if (response.status === 404) {
+          console.warn(
+            `[ProfessionalStore] Professional with ID ${id} not found.`,
+          );
+          return null;
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      set({ selectedProfessional: professional });
-      return professional;
+      const professional: Professional = await response.json();
+
+      // Calcula a média de avaliações
+      const ratings = professional.Appointments?.filter((a) => a.rating) || [];
+      const averageRating =
+        ratings.length > 0
+          ? ratings.reduce((sum, a) => sum + (a.rating || 0), 0) /
+            ratings.length
+          : 0;
+
+      // Adiciona a média calculada ao objeto
+      const professionalWithRating = {
+        ...professional,
+        rating: averageRating,
+        ratings_count: ratings.length,
+      };
+
+      console.log(
+        `[ProfessionalStore] Professional loaded:`,
+        professionalWithRating,
+      );
+
+      set({ selectedProfessional: professionalWithRating });
+      return professionalWithRating;
     } catch (error) {
       console.error(
         '[ProfessionalStore] Error fetching professional by ID:',
