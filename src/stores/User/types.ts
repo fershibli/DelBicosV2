@@ -38,8 +38,8 @@ export type UserStore = {
   address: Address | null;
   token: string | null;
   verificationEmail: string | null;
-  // Cache local do avatar
-  avatarLocalUri: string | null;
+  // Base64 completo do avatar
+  avatarBase64: string | null;
   setVerificationEmail: (email: string | null) => void;
   signIn: () => void;
   signInPassword: (email: string, password: string) => Promise<void>;
@@ -57,10 +57,6 @@ export type UserStore = {
   fetchUserById: (
     userId: string,
   ) => Promise<{ erro: boolean; mensagem: string; user?: User }>;
-  // Funções de cache do avatar
-  loadAvatarFromCache: (
-    userId: string,
-    avatarUri: string | null,
-  ) => Promise<string | null>;
-  clearAvatarCache: (userId: string) => Promise<void>;
+  // Função para definir o base64 do avatar
+  setAvatarBase64: (base64: string | null) => void;
 };

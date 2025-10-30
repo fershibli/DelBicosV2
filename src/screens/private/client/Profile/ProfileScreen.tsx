@@ -12,12 +12,11 @@ const UserProfileScreen: React.FC = () => {
 
   const {
     user,
-    avatarLocalUri,
+    avatarBase64,
     uploadAvatar,
     removeAvatar,
     fetchUserById,
-    loadAvatarFromCache,
-    clearAvatarCache,
+    setAvatarBase64,
   } = useUserStore();
 
   const userId = user?.id.toString() || '';
@@ -35,9 +34,6 @@ const UserProfileScreen: React.FC = () => {
         if (response.erro) {
           Alert.alert('Erro', response.mensagem);
         } else {
-          if (response.avatar_uri) {
-            await loadAvatarFromCache(userId, response.avatar_uri);
-          }
           Alert.alert('Sucesso', response.mensagem);
         }
       } else {
@@ -46,7 +42,6 @@ const UserProfileScreen: React.FC = () => {
         if (response.erro) {
           Alert.alert('Erro', response.mensagem);
         } else {
-          await clearAvatarCache(userId);
           Alert.alert('Sucesso', response.mensagem);
         }
       }
@@ -67,14 +62,13 @@ const UserProfileScreen: React.FC = () => {
         Alert.alert('Erro', response.mensagem);
       } else if (response.user) {
         setUserData(response.user);
-        await loadAvatarFromCache(userId, response.user.avatar_uri || null);
       }
 
       setLoading(false);
     };
 
     loadUserData();
-  }, [userId, fetchUserById, loadAvatarFromCache]);
+  }, [userId, fetchUserById]);
 
   if (loading) {
     return (
@@ -93,7 +87,7 @@ const UserProfileScreen: React.FC = () => {
         userName: userData.name,
         userEmail: userData.email,
         userPhone: userData.phone,
-        avatarSource: { uri: avatarLocalUri },
+        avatarSource: { uri: avatarBase64 },
         onAvatarChange: handleAvatarChange,
         uploading: uploading,
       }}

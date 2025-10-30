@@ -4,8 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserStore, UploadAvatarResponse, ErrorResponse, User } from './types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { AxiosError } from 'axios';
-import { HTTP_DOMAIN } from '@config/varEnvs';
-import { Platform } from 'react-native';
 
 export const useUserStore = create<UserStore>()(
   persist(
@@ -14,8 +12,9 @@ export const useUserStore = create<UserStore>()(
       address: null,
       token: null,
       verificationEmail: null,
-      avatarLocalUri: null,
+      avatarBase64: null,
       setVerificationEmail: (email) => set({ verificationEmail: email }),
+      setAvatarBase64: (base64) => set({ avatarBase64: base64 }),
 
       signIn: () => {
         try {
@@ -181,12 +180,8 @@ export const useUserStore = create<UserStore>()(
             });
           }
 
-          // Salva localmente
-          if (Platform.OS === 'web' && response.data.avatar_uri) {
-            const storageKey = `userImages/${userId}/avatar.uri`;
-            localStorage.setItem(storageKey, response.data.avatar_uri);
-            console.log('✅ URI do avatar salva localmente no localStorage!');
-          }
+          // Armazena o base64 na store
+          set({ avatarBase64: base64Image });
 
           return {
             erro: false,
@@ -229,14 +224,8 @@ export const useUserStore = create<UserStore>()(
                 ...currentUser,
                 avatar_uri: null,
               },
-              avatarLocalUri: null,
+              avatarBase64: null,
             });
-          }
-
-          // Remove do localStorage
-          if (Platform.OS === 'web') {
-            const storageKey = `userImages/${userId}/avatar.uri`;
-            localStorage.removeItem(storageKey);
           }
 
           return {
@@ -296,43 +285,12 @@ export const useUserStore = create<UserStore>()(
         }
       },
 
-      loadAvatarFromCache: async (
-        userId: string,
-        avatarUri: string | null,
-      ): Promise<string | null> => {
-        if (!avatarUri) {
-          set({ avatarLocalUri: null });
-          return null;
-        }
-
-        const fullAvatarUrl = `${HTTP_DOMAIN}/${avatarUri}`;
-
-        if (Platform.OS === 'web') {
-          set({ avatarLocalUri: fullAvatarUrl });
-          console.log('💻 Imagem carregada via URL:', fullAvatarUrl);
-          return fullAvatarUrl;
-        }
-
-        // Para mobile, você pode implementar o cache local aqui se necessário
-        // Por enquanto, retorna a URL completa
-        set({ avatarLocalUri: fullAvatarUrl });
-        return fullAvatarUrl;
-      },
-
-      clearAvatarCache: async (userId: string): Promise<void> => {
-        if (Platform.OS === 'web') {
-          const storageKey = `userImages/${userId}/avatar.uri`;
-          localStorage.removeItem(storageKey);
-        }
-        set({ avatarLocalUri: null });
-      },
-
       signOut: () =>
         set({
           user: null,
           address: null,
           token: null,
-          avatarLocalUri: null,
+          avatarBase64: null,
         }),
     }),
     {
@@ -343,7 +301,7 @@ export const useUserStore = create<UserStore>()(
         user: state.user,
         address: state.address,
         token: state.token,
-        avatarLocalUri: state.avatarLocalUri,
+        avatarBase64: state.avatarBase64,
       }),
     },
   ),
