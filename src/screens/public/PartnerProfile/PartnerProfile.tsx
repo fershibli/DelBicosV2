@@ -15,6 +15,7 @@ import { ServicosContent } from './ServicosContent';
 import { GaleriaContent } from './GaleriaContent';
 import { AvaliacoesContent } from './AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
+import { useUserStore } from '@stores/User';
 
 interface Professional {
   id: number;
@@ -188,6 +189,13 @@ const gerarHorariosDisponiveis = (
 function PartnerProfileScreen() {
   const navigation = useNavigation();
   const route = useRoute();
+
+  const { user } = useUserStore();
+
+  const clientIdFromContext = user?.id ? user.id.toString() : undefined;
+
+
+
   const { id } = route.params as { id: string };
 
   const [activeTab, setActiveTab] = useState<
@@ -196,6 +204,8 @@ function PartnerProfileScreen() {
   const [professional, setProfessional] = useState<Professional | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const partnerIdFromContext = professional?.user_id.toString();
 
   useEffect(() => {
     fetchProfessional();
@@ -333,8 +343,8 @@ function PartnerProfileScreen() {
             servicos={parceiro.servicos}
             disponibilidades={parceiro.disponibilidades}
             professionalId={parceiro.id}
-            clientId="5"
-            userId="1"
+            clientId={clientIdFromContext}
+            userId={partnerIdFromContext}
           />
         );
       case 'galeria':
