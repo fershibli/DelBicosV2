@@ -92,7 +92,7 @@ export const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 28,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 16, // Espaço antes do card/conteúdo
   },
   // Card de Resumo (Coluna Esquerda)
@@ -170,7 +170,7 @@ export const styles = StyleSheet.create({
     // Preço
     fontSize: 20,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
   },
   summaryDivider: {
     height: 1,
@@ -187,7 +187,7 @@ export const styles = StyleSheet.create({
     // Ex: Qui, 17/10 - 10:00
     fontSize: 16,
     fontFamily: 'Afacad-Regular',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginTop: 4,
   },
   summaryLink: {
@@ -224,7 +224,7 @@ export const styles = StyleSheet.create({
     // Título "Selecionar Pagamento"
     fontSize: 22,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 16,
   },
   orderSummaryContainer: {
@@ -261,12 +261,12 @@ export const styles = StyleSheet.create({
     // "Total"
     fontSize: 18,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
   },
   totalValue: {
     // Valor Total Final
     fontSize: 18,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
   },
 });

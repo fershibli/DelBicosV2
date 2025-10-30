@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   modalOverlay: {
@@ -18,7 +19,7 @@ export const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 22,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 16,
     textAlign: 'center',
   },

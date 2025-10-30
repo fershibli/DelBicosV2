@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 24,
     fontFamily: 'Afacad-Bold',
   },

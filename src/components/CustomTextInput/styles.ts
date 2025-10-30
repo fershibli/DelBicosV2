@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
   label: {
     marginBottom: 8,
     fontSize: 16,
-    color: '#003366',
+    color: colors.primaryBlue,
     fontFamily: 'Afacad-SemiBold',
   },
   input: {

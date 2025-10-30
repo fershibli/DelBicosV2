@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -94,7 +94,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
   },
   locationButton: {
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
     paddingHorizontal: 16,
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
@@ -137,7 +137,7 @@ export const styles = StyleSheet.create({
     flexShrink: 1,
   },
   button: {
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
     padding: 16,
     borderRadius: 8,
     width: '100%',
@@ -152,7 +152,7 @@ export const styles = StyleSheet.create({
   },
   linkText: {
     marginTop: 24,
-    color: '#003366',
+    color: colors.primaryBlue,
     fontFamily: 'Afacad-Regular',
     fontSize: 14,
     textAlign: 'center',

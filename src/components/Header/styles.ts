@@ -188,7 +188,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 20,
     borderWidth: 1.5,
-    borderColor: '#003366',
+    borderColor: colors.primaryBlue,
     backgroundColor: 'transparent',
     ...Platform.select({
       web: {
@@ -199,7 +199,7 @@ export const styles = StyleSheet.create({
   authButtonText: {
     fontFamily: 'Afacad-SemiBold',
     fontSize: 14,
-    color: '#003366',
+    color: colors.primaryBlue,
   },
   authButtonHovered: {
     ...Platform.select({
@@ -222,7 +222,7 @@ export const styles = StyleSheet.create({
     borderColor: colors.primaryOrange,
   },
   authButtonTextSecondary: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
   authButtonSecondaryHovered: {
     ...Platform.select({
@@ -267,7 +267,7 @@ export const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 22,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
   },
   mapWrapper: {
     width: '100%',
@@ -287,7 +287,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#CCCCCC',
   },
   modalButtonText: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
   },
