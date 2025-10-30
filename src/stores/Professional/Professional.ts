@@ -39,7 +39,7 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
           name: prof.User?.name || prof.name || 'Nome não disponível',
           category:
             prof.Service?.Subcategory?.name || prof.category || 'Serviços',
-          rating: prof.rating || 0,
+          rating: prof.rating ? Math.round(prof.rating * 10) / 10 : 0,
           ratingsCount: prof.ratings_count || prof.ratingsCount || 0,
           imageUrl:
             prof.User?.avatar_uri ||
@@ -80,10 +80,13 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
             ratings.length
           : 0;
 
+      // Arredonda a média para 1 casa decimal
+      const roundedRating = Math.round(averageRating * 10) / 10;
+
       // Adiciona a média calculada ao objeto
       const professionalWithRating = {
         ...professional,
-        rating: averageRating,
+        rating: roundedRating,
         ratings_count: ratings.length,
       };
 
