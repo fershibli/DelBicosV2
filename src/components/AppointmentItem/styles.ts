@@ -1,140 +1,328 @@
-import { StyleSheet, Platform } from 'react-native';
-import colors from '@theme/colors';
+import { StyleSheet } from 'react-native';
 
-// Função para retornar o texto e a cor com base no status
+export const styles = StyleSheet.create({
+  // ===== CARD PRINCIPAL =====
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 0,
+    marginVertical: 0,
+    marginHorizontal: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
+    overflow: 'hidden',
+    height: 400,
+    maxHeight: 400,
+  },
+
+  content: {
+    flexDirection: 'column',
+    height: 400,
+    maxHeight: 400,
+  },
+
+  // ===== LADO ESQUERDO (TEXTOS) =====
+  leftSection: {
+    flex: 1,
+    justifyContent: 'space-between',
+    padding: 12,
+    height: 240,
+    maxHeight: 240,
+  },
+
+  topInfo: {
+    marginBottom: 6,
+  },
+
+  // ===== TEXTOS =====
+  professionalName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FC8200',
+    marginBottom: 3,
+    lineHeight: 17,
+  },
+
+  serviceInfo: {
+    fontSize: 10,
+    color: '#666666',
+    marginBottom: 2,
+    lineHeight: 13,
+  },
+
+  serviceName: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#000000',
+    marginBottom: 3,
+    lineHeight: 15,
+  },
+
+  dateTime: {
+    fontSize: 10,
+    color: '#FC8200',
+    fontWeight: '700',
+    marginBottom: 0,
+    lineHeight: 13,
+  },
+
+  // ===== ESTRELAS =====
+  ratingContainer: {
+    flexDirection: 'row',
+    marginBottom: 6,
+  },
+
+  starIcon: {
+    marginRight: 2,
+  },
+
+  // ===== STATUS BADGE =====
+  statusBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 4,
+    marginBottom: 8,
+  },
+
+  statusText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: 0.3,
+  },
+
+  // ===== BOTÕES =====
+  buttonsContainer: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: 6,
+  },
+
+  button: {
+    flex: 1,
+    paddingVertical: 7,
+    paddingHorizontal: 8,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 30,
+  },
+
+  detailsButton: {
+    backgroundColor: '#005A93', // Azul do projeto
+  },
+
+  cancelButton: {
+    backgroundColor: '#DC2626', // Vermelho
+  },
+
+  modifyButton: {
+    backgroundColor: '#FC8200', // Laranja do projeto
+  },
+
+  receiptButton: {
+    backgroundColor: '#005A93',
+  },
+
+  rateButton: {
+    backgroundColor: '#22843B', // Verde do projeto
+  },
+
+  buttonText: {
+    color: '#FFF',
+    fontWeight: '700',
+    fontSize: 11,
+    letterSpacing: 0.3,
+  },
+
+  // ===== LADO DIREITO (IMAGEM) =====
+  rightSection: {
+    position: 'relative',
+    width: '100%',
+    height: 160,
+    maxHeight: 160,
+    flexShrink: 0,
+    borderRadius: 0,
+    overflow: 'hidden',
+  },
+
+  serviceImage: {
+    width: '100%',
+    height: 160,
+    backgroundColor: '#E0E0E0',
+  },
+
+  imageOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  },
+
+  viewProfileBadge: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 90, 147, 0.95)',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+  },
+
+  viewProfileText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+
+  imagePlaceholder: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 6,
+    backgroundColor: '#DDE6F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  imagePlaceholderText: {
+    color: '#005A93',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+
+  // ===== MODAL =====
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    width: '85%',
+    maxWidth: 400,
+    padding: 24,
+    elevation: 5,
+  },
+
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 20,
+    textAlign: 'center',
+    color: '#000000',
+  },
+
+  ratingComponent: {
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+
+  modalInput: {
+    borderWidth: 1,
+    borderColor: '#DDE6F0',
+    borderRadius: 8,
+    padding: 12,
+    textAlignVertical: 'top',
+    marginBottom: 20,
+    fontSize: 14,
+    color: '#000000',
+    backgroundColor: '#FAFAFA',
+    minHeight: 100,
+  },
+
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+
+  modalCancelButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    backgroundColor: '#E0E0E0',
+  },
+
+  modalCancelText: {
+    color: '#666666',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+
+  modalButton: {
+    flex: 1,
+    backgroundColor: '#005A93',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+
+  // ===== AVALIAÇÃO EXIBIDA =====
+  reviewSection: {
+    marginTop: 8,
+    padding: 10,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 6,
+    borderLeftWidth: 3,
+    borderLeftColor: '#FFC107',
+  },
+
+  reviewHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+
+  reviewLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#666666',
+    marginRight: 8,
+  },
+
+  reviewStarsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  reviewComment: {
+    fontSize: 12,
+    color: '#333333',
+    lineHeight: 16,
+    fontStyle: 'italic',
+  },
+});
+
 export const getStatusStyle = (
   status: 'pending' | 'confirmed' | 'completed' | 'canceled',
 ) => {
   switch (status) {
     case 'pending':
-      return { text: 'Pendente', color: '#FFA000' };
+      return { text: '⏱ Pendente', color: '#FC8200', backgroundColor: '#FC8200' };
     case 'confirmed':
-      return { text: 'Confirmado', color: '#388E3C' };
+      return { text: '✓ Confirmado', color: '#22843B', backgroundColor: '#22843B' };
     case 'completed':
-      return { text: 'Concluído', color: '#1976D2' };
+      return { text: '✓ Concluído', color: '#005A93', backgroundColor: '#005A93' };
     case 'canceled':
-      return { text: 'Cancelado', color: '#D32F2F' };
+      return { text: '✕ Cancelado', color: '#DC2626', backgroundColor: '#DC2626' };
     default:
-      return { text: 'Desconhecido', color: '#757575' };
+      return { text: 'Desconhecido', color: '#666666', backgroundColor: '#666666' };
   }
 };
-
-export const styles = StyleSheet.create({
-  card: {
-    flex: 1,
-    backgroundColor: colors.primaryWhite,
-    borderRadius: 12,
-    margin: 8,
-    overflow: 'hidden',
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.primaryBlack,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 4,
-      },
-      web: {
-        boxShadow: `0px 2px 6px rgba(0, 0, 0, 0.1)`,
-      },
-    }),
-  },
-  content: {
-    padding: 16,
-  },
-  professionalName: {
-    fontSize: 20,
-    fontFamily: 'Afacad-Bold',
-    color: colors.primaryOrange,
-  },
-  serviceCategory: {
-    fontSize: 14,
-    fontFamily: 'Afacad-Regular',
-    color: '#6c757d',
-    marginTop: 2,
-  },
-  serviceName: {
-    fontSize: 18,
-    fontFamily: 'Afacad-SemiBold',
-    color: '#212529',
-    marginVertical: 8,
-    minHeight: 40,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  starIcon: {
-    marginRight: 3,
-  },
-  statusText: {
-    fontSize: 14,
-    fontFamily: 'Afacad-Bold',
-    marginBottom: 16,
-    textTransform: 'capitalize',
-  },
-  button: {
-    backgroundColor: '#003366',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: colors.primaryWhite,
-    fontFamily: 'Afacad-Bold',
-    fontSize: 14,
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: '90%',
-    maxWidth: 400,
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 24,
-  },
-  modalTitle: {
-    fontSize: 22,
-    fontFamily: 'Afacad-Bold',
-    color: '#003366',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  ratingComponent: {
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  modalInput: {
-    borderWidth: 1,
-    borderColor: '#CED4DA',
-    borderRadius: 8,
-    padding: 12,
-    height: 100,
-    textAlignVertical: 'top',
-    marginBottom: 20,
-  },
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 10,
-  },
-  modalButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-  },
-  receiptButton: {
-    backgroundColor: '#005A93', // Um azul (botão de recibo)
-    marginBottom: 8,
-  },
-  detailsButton: {
-    backgroundColor: '#6c757d', // Um cinza (botão "detalhes" desabilitado)
-    opacity: 0.8,
-  },
-});
