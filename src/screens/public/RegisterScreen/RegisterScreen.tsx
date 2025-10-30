@@ -22,7 +22,6 @@ import { HTTP_DOMAIN } from '@config/varEnvs';
 import { isValidCPF } from '../../../utils/validators';
 import LogoV3 from '@assets/LogoV3.png';
 import { useUserStore } from '@stores/User';
-import colors from '@theme/colors';
 
 type FormData = {
   name: string;
@@ -228,6 +227,7 @@ function RegisterScreen() {
                       errors.location && styles.inputError,
                     ]}
                     placeholder="Clique no ícone para buscar"
+                    placeholderTextColor="#999"
                     value={value}
                     editable={false}
                   />
@@ -236,7 +236,7 @@ function RegisterScreen() {
                     onPress={handleUseLocation}
                     disabled={isLocationLoading}>
                     {isLocationLoading ? (
-                      <ActivityIndicator color={colors.primaryWhite} />
+                      <ActivityIndicator />
                     ) : (
                       <Text style={styles.locationButtonText}>📍</Text>
                     )}
@@ -290,6 +290,7 @@ function RegisterScreen() {
                       errors.password && styles.inputError,
                     ]}
                     placeholder="Crie uma senha forte"
+                    placeholderTextColor="#999"
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
