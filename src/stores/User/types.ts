@@ -6,6 +6,7 @@ export type User = {
   phone: string;
   cpf: string;
   avatar_uri?: string | null;
+  banner_uri?: string | null;
 };
 
 export type Address = {
