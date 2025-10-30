@@ -1,3 +1,5 @@
+import colors from '@theme/colors';
+
 export const buttonFontVariants = {
   AfacadRegular32: {
     fontFamily: 'Afacad-Regular',
@@ -43,11 +45,11 @@ export const buttonSizeVariants = {
 
 export const buttonColorVariants = {
   primary: {
-    backgroundColor: '#005A93',
-    color: '#FFFFFF',
+    backgroundColor: colors.primaryBlue,
+    color: colors.primaryWhite,
     hover: {
-      backgroundColor: '#FC8200',
-      color: '#FFFFFF',
+      backgroundColor: colors.primaryOrange,
+      color: colors.primaryWhite,
     },
     disabled: {
       backgroundColor: '#D3D3D3',
@@ -55,11 +57,11 @@ export const buttonColorVariants = {
     },
   },
   secondary: {
-    backgroundColor: '#FC8200',
-    color: '#FFFFFF',
+    backgroundColor: colors.primaryOrange,
+    color: colors.primaryWhite,
     hover: {
-      backgroundColor: '#005A93',
-      color: '#FFFFFF',
+      backgroundColor: colors.primaryBlue,
+      color: colors.primaryWhite,
     },
     disabled: {
       backgroundColor: '#D3D3D3',
@@ -67,11 +69,23 @@ export const buttonColorVariants = {
     },
   },
   primaryWhite: {
-    backgroundColor: '#FFFFFF',
-    color: '#000000',
+    backgroundColor: colors.primaryWhite,
+    color: colors.primaryBlack,
     hover: {
-      backgroundColor: '#FC8200',
-      color: '#000000',
+      backgroundColor: colors.primaryOrange,
+      color: colors.primaryBlack,
+    },
+    disabled: {
+      backgroundColor: '#D3D3D3',
+      color: '#A9A9A9',
+    },
+  },
+  primaryGreen: {
+    backgroundColor: colors.primaryGreen,
+    color: colors.primaryWhite,
+    hover: {
+      backgroundColor: colors.primaryWhite,
+      color: colors.primaryGreen,
     },
     disabled: {
       backgroundColor: '#D3D3D3',

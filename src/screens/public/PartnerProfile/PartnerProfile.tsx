@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -8,73 +8,112 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import { SobreContent } from './SobreContent';
 import { ServicosContent } from './ServicosContent';
 import { GaleriaContent } from './GaleriaContent';
 import { AvaliacoesContent } from './AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
-
-import { parceiros } from './parceiros.mock';
-import { comodidades } from './comodidades';
+import { useProfessionalStore } from '@stores/Professional';
+import colors from '@theme/colors';
 
 function PartnerProfileScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { id } = route.params as { id: string };
+  const { id } = route.params as { id: number };
 
   const [activeTab, setActiveTab] = useState<
     'sobre' | 'servicos' | 'galeria' | 'avaliacoes'
   >('sobre');
 
-  const parceiro = parceiros.find((p) => p.id === id);
+  const { selectedProfessional, fetchProfessionalById } =
+    useProfessionalStore();
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!parceiro) {
+  useEffect(() => {
+    const loadProfessional = async () => {
+      setIsLoading(true);
+      await fetchProfessionalById(id);
+      setIsLoading(false);
+    };
+    loadProfessional();
+  }, [id, fetchProfessionalById]);
+
+  if (isLoading) {
     return (
-      <View style={styles.container}>
-        <Text style={{ margin: 20, fontSize: 16 }}>
-          Parceiro não encontrado.
-        </Text>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primaryOrange} />
+        <Text style={styles.loadingText}>Carregando perfil...</Text>
       </View>
     );
   }
+
+  if (!selectedProfessional) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Profissional não encontrado.</Text>
+        <TouchableOpacity
+          style={styles.backButtonError}
+          onPress={() => navigation.goBack()}>
+          <Text style={styles.backButtonTextError}>Voltar</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const parceiro = selectedProfessional;
 
   const renderContent = () => {
     switch (activeTab) {
       case 'sobre':
         return (
           <SobreContent
-            detalhes={parceiro.descricao}
-            comodidadesIds={parceiro.comodidadesIds}
-            todasComodidades={comodidades}
+            nome={parceiro.User.name}
+            descricao={parceiro.description}
+            endereco={parceiro.MainAddress}
           />
         );
       case 'servicos':
+        return <ServicosContent servicos={parceiro.Services} />;
+      case 'galeria':
         return (
-          <ServicosContent
-            servicos={parceiro.servicos}
-            disponibilidades={parceiro.agenda}
+          <GaleriaContent
+            imagens={[
+              parceiro.User.banner_uri,
+              parceiro.User.avatar_uri,
+              ...parceiro.Services.map((s) => s.banner_uri),
+            ]
+              .filter(Boolean)
+              .map((url, index) => ({
+                id: String(index),
+                url: url as string,
+              }))}
           />
         );
-      case 'galeria':
-        return <GaleriaContent imagens={parceiro.galeria} />;
       case 'avaliacoes':
-        return <AvaliacoesContent avaliacoes={parceiro.avaliacoes} />;
+        return <AvaliacoesContent avaliacoes={parceiro.Appointments} />;
       default:
         return (
           <SobreContent
-            detalhes={parceiro.descricao}
-            comodidadesIds={parceiro.comodidadesIds}
-            todasComodidades={comodidades}
+            nome={parceiro.User.name}
+            descricao={parceiro.description}
+            endereco={parceiro.MainAddress}
           />
         );
     }
   };
 
+  const coverImageUri =
+    parceiro.User.banner_uri ||
+    parceiro.Services[0]?.banner_uri ||
+    `https://picsum.photos/seed/${parceiro.id}/800/400`;
+
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={{ uri: parceiro.imagemCapa }}
+        source={{ uri: coverImageUri }}
         style={styles.headerImage}>
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.8)']}
@@ -86,29 +125,39 @@ function PartnerProfileScreen() {
           </TouchableOpacity>
 
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{parceiro.nome}</Text>
+            <Text style={styles.profileName}>{parceiro.User.name}</Text>
             <View style={styles.ratingContainer}>
               <Rating
                 type="star"
                 ratingCount={5}
                 imageSize={12}
                 readonly
-                startingValue={parceiro.avaliacaoMedia}
+                startingValue={parceiro.rating || 0}
                 fractions={1}
                 tintColor="black"
                 style={{ marginRight: 4 }}
               />
+              <Text style={styles.ratingText}>
+                {(parceiro.rating || 0).toFixed(1)} (
+                {parceiro.ratings_count || 0} avaliações)
+              </Text>
             </View>
           </View>
         </LinearGradient>
       </ImageBackground>
 
-      <View style={styles.addressContainer}>
-        <MaterialCommunityIcons name="map-marker" size={16} color="#000" />
-        <Text style={styles.addressText}>
-          {`${parceiro.endereco.rua} - ${parceiro.endereco.cep} - ${parceiro.endereco.bairro} - ${parceiro.endereco.cidade} / ${parceiro.endereco.estado}`}
-        </Text>
-      </View>
+      {parceiro.MainAddress && (
+        <View style={styles.addressContainer}>
+          <MaterialCommunityIcons
+            name="map-marker"
+            size={16}
+            color={colors.primaryBlack}
+          />
+          <Text style={styles.addressText}>
+            {`${parceiro.MainAddress.street}, ${parceiro.MainAddress.number} - ${parceiro.MainAddress.neighborhood} - ${parceiro.MainAddress.city} / ${parceiro.MainAddress.state}`}
+          </Text>
+        </View>
+      )}
 
       <View style={styles.navTabs}>
         <TouchableOpacity onPress={() => setActiveTab('sobre')}>
@@ -142,7 +191,7 @@ function PartnerProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      {renderContent()}
+      <ScrollView style={styles.contentContainer}>{renderContent()}</ScrollView>
     </View>
   );
 }
@@ -150,7 +199,42 @@ function PartnerProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#DDE6F0',
+    backgroundColor: colors.secondaryGray,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.primaryWhite,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: colors.primaryBlack,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: colors.primaryWhite,
+  },
+  errorText: {
+    fontSize: 18,
+    color: colors.primaryBlack,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  backButtonError: {
+    backgroundColor: colors.primaryOrange,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  backButtonTextError: {
+    color: colors.primaryWhite,
+    fontSize: 16,
+    fontWeight: '600',
   },
   headerImage: {
     height: 174,
@@ -203,15 +287,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: colors.secondaryBeige,
   },
   tab: {
     fontSize: 17,
-    color: '#000',
+    color: colors.primaryBlack,
   },
   activeTab: {
-    color: '#FC8200',
+    color: colors.primaryOrange,
     fontWeight: 'bold',
+  },
+  contentContainer: {
+    flex: 1,
   },
 });
 

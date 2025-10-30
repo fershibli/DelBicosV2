@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Platform,
   View,
@@ -7,9 +7,9 @@ import {
   StyleSheet,
 } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { styles as globalStyles } from '../../lib/types/styles';
-import { MapComponentProps } from '../../lib/types/types';
-import { MapErrorBoundary } from './MapErrorBoundary';
+import { styles as globalStyles } from '../../lib/utils/styles';
+import { MapComponentProps } from '../../lib/hooks/types';
+import { MapErrorBoundary } from '../MapComponent/MapErrorBoundary';
 
 interface NativeMapRendererProps extends MapComponentProps {
   style?: any;
@@ -33,7 +33,6 @@ const NativeMapRenderer: React.FC<NativeMapRendererProps> = ({
 
   const handleMapReady = () => {
     setMapReady(true);
-    console.log('Mapa nativo carregado com sucesso');
   };
 
   const handleRegionChangeComplete = (newRegion: any) => {

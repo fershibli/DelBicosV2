@@ -1,71 +1,159 @@
-import React from 'react';
-import { ScrollView, Text, Image, View } from 'react-native';
+import React, { useState } from 'react';
+import {
+  ScrollView,
+  Text,
+  Image,
+  View,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import LocationOptions from '@components/LocationOptions';
-import { useLocation } from '@lib/hooks/LocationContext';
-import { styles } from './styles';
 import * as Location from 'expo-location';
+import { useLocation } from '@lib/hooks/LocationContext';
+import CustomTextInput from '@components/CustomTextInput';
+import LogoV3 from '@assets/LogoV3.png';
+import { styles } from './styles';
+import colors from '@theme/colors';
 
 function LoginScreen() {
   const navigation = useNavigation();
   const { setLocation } = useLocation();
+  const [cep, setCep] = useState('');
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [isLoadingCep, setIsLoadingCep] = useState(false);
 
-  const handleLocation = async (coords: {
-    latitude: number;
-    longitude: number;
-  }) => {
+  // Função para buscar localização automática
+  const handleUseLocation = async () => {
+    setIsLoadingLocation(true);
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permissão negada',
+        'Não foi possível acessar sua localização.',
+      );
+      setIsLoadingLocation(false);
+      return;
+    }
+
     try {
-      console.log('handleLocation chamado com coords:', coords);
-      const results = await Location.reverseGeocodeAsync({
-        latitude: coords.latitude,
-        longitude: coords.longitude,
-      });
-      const place = results?.[0];
-      const city = place?.city || place?.subregion || '';
-      const state = place?.region || '';
-      console.log('Reverse geocoded para:', { city, state });
-      setLocation(city, state);
-      if (city && state) {
-        console.log('Localização definida, navegando para Feed');
+      const locationData = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = locationData.coords;
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+      );
+      const data = await response.json();
+
+      if (data && data.address) {
+        const { city, state, town, village } = data.address;
+        const cityName = city || town || village || 'Cidade não encontrada';
+        const stateName = state || 'Estado não encontrado';
+        setLocation(cityName, stateName);
         navigation.navigate('Feed');
       } else {
-        console.log('Falha ao definir localização; navegação não realizada');
+        Alert.alert('Erro', 'Endereço não encontrado para esta localização.');
       }
-    } catch (error) {
-      console.error('Erro no reverse geocode:', error);
+    } catch {
+      Alert.alert('Erro', 'Ocorreu um problema ao buscar sua localização.');
+    } finally {
+      setIsLoadingLocation(false);
     }
   };
 
-  const handleCep = (city: string, state: string) => {
-    console.log('handleCep chamado com:', city, state);
-    setLocation(city, state);
-    if (city && state) {
-      console.log('Localização via CEP definida, navegando para Feed');
-      navigation.navigate('Feed');
-    } else {
-      console.log(
-        'Falha ao definir localização via CEP, navegando não realizado',
+  // Função para buscar localização via CEP
+  const handleCepSearch = async () => {
+    setIsLoadingCep(true);
+    if (cep.replace(/\D/g, '').length !== 8) {
+      Alert.alert('CEP Inválido', 'Por favor, digite um CEP com 8 dígitos.');
+      setIsLoadingCep(false);
+      return;
+    }
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = await response.json();
+
+      if (data.erro) {
+        Alert.alert('Erro', 'CEP não encontrado.');
+      } else {
+        setLocation(data.localidade, data.uf);
+        navigation.navigate('Feed');
+      }
+    } catch {
+      Alert.alert(
+        'Erro',
+        'Não foi possível buscar o CEP. Verifique sua conexão.',
       );
+    } finally {
+      setIsLoadingCep(false);
     }
   };
 
   const onLoginPress = () => {
-    console.log('Navegando para PhoneConfirmation');
     navigation.navigate('LoginPassword');
   };
 
   return (
     <View style={styles.container}>
       <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}>
-        <Image source={require('@assets/LogoV3.png')} style={styles.logo} />
+        contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="handled">
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <Image source={LogoV3} style={styles.logo} />
+        </TouchableOpacity>
+        <View style={styles.card}>
+          <Text style={styles.title}>Onde você está?</Text>
+          <Text style={styles.subtitle}>
+            Use sua localização ou CEP para encontrarmos os melhores serviços
+            perto de você.
+          </Text>
 
-        <LocationOptions
-          onLocationRetrieved={handleLocation}
-          onCepRetrieved={handleCep}
-          onLoginPress={onLoginPress}
-        />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleUseLocation}
+            disabled={isLoadingLocation}>
+            {isLoadingLocation ? (
+              <ActivityIndicator color={colors.primaryWhite} />
+            ) : (
+              <Text style={styles.buttonText}>Usar minha localização</Text>
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.inputContainer}>
+            <CustomTextInput
+              label="Digite seu CEP"
+              placeholder="00000-000"
+              value={cep}
+              onChangeText={setCep}
+              keyboardType="numeric"
+              maxLength={9}
+            />
+          </View>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleCepSearch}
+            disabled={isLoadingCep}>
+            {isLoadingCep ? (
+              <ActivityIndicator color={colors.primaryWhite} />
+            ) : (
+              <Text style={styles.buttonText}>Buscar CEP</Text>
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>ou</Text>
+            <View style={styles.divider} />
+          </View>
+
+          <TouchableOpacity
+            style={[styles.button, styles.buttonSecondary]}
+            onPress={onLoginPress}>
+            <Text style={[styles.buttonText, styles.buttonTextSecondary]}>
+              Fazer Login
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.

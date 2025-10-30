@@ -4,11 +4,23 @@ export type NavigationParams = {
   LoginPassword: undefined;
   Feed: undefined;
   PartnerProfile: { id: string };
-  ServiceStatus: undefined;
   PhoneConfirmation: undefined;
   ConfirmPhoneNumber: { code: string };
   Register: undefined;
   NotFound: undefined;
   VerificationScreen: { email: string };
   ClientProfile: undefined;
+  Category: undefined;
+  SubCategoryScreen: { categoryId: string };
+  SearchResult: { subcategoryId: number; date: string };
+  Checkout: {
+    professionalId: number;
+    priceFrom: number;
+    selectedTime: string;
+    imageUrl?: string;
+    professionalName?: string;
+  };
+  PaymentCompletion: undefined;
+  PaymentStatus: undefined;
+  MySchedules: undefined;
 };

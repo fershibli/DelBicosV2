@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useCategoryStore } from '@stores/Category/Category';
-import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  View,
+  Pressable,
+  Platform,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Category } from '@stores/Category/types';
 import colors from '@theme/colors';
 import { styles } from './styles';
 
+// Imports dos seus SVGs
 // @ts-ignore
 import beautySVG from '@assets/categories/beauty.svg';
 // @ts-ignore
@@ -18,84 +27,79 @@ import petsSVG from '@assets/categories/pets.svg';
 // @ts-ignore
 import repairSVG from '@assets/categories/repair.svg';
 
-// {IconComponent, width, height}
-const categoryImagesById: Record<number, any> = {
-  1: {
-    IconComponent: healthSVG,
-    width: 72,
-    height: 70,
-  },
-  2: {
-    IconComponent: beautySVG,
-    width: 63,
-    height: 87,
-  },
-  3: {
-    IconComponent: repairSVG,
-    width: 70,
-    height: 75,
-  },
-  4: {
-    IconComponent: miscSVG,
-    width: 51,
-    height: 69,
-  },
-  5: {
-    IconComponent: homeSVG,
-    width: 61,
-    height: 50,
-  },
-  6: {
-    IconComponent: petsSVG,
-    width: 74,
-    height: 74,
-  },
+const categoryInfoById: Record<number, any> = {
+  1: { IconComponent: healthSVG, width: 72, height: 70 },
+  2: { IconComponent: beautySVG, width: 63, height: 87 },
+  3: { IconComponent: repairSVG, width: 70, height: 75 },
+  4: { IconComponent: miscSVG, width: 51, height: 69 },
+  5: { IconComponent: homeSVG, width: 61, height: 50 },
+  6: { IconComponent: petsSVG, width: 74, height: 74 },
 };
 
-function getCategoryImagesById(id: number) {
-  return categoryImagesById[id] || miscSVG;
+function getCategoryInfo(id: number) {
+  return categoryInfoById[id] || categoryInfoById[4];
 }
 
 interface CategoryCardProps {
   category: Category;
-  imageUrl: string;
   onPress: (category: Category) => void;
 }
 
-function CategoryCard({ category, imageUrl, onPress }: CategoryCardProps) {
-  const image = getCategoryImagesById(category.id);
+function CategoryCard({ category, onPress }: CategoryCardProps) {
+  const info = getCategoryInfo(category.id);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const cardStyle = [
+    styles.categoryCard,
+    isHovered && styles.categoryCardHovered,
+  ];
+  const titleStyle = [
+    styles.categoryTitle,
+    isHovered && styles.categoryTitleHovered,
+  ];
+  const iconColor = isHovered ? colors.primaryWhite : colors.primaryOrange;
+
   return (
-    <View style={styles.categoryCard}>
-      <image.IconComponent
-        style={{
-          width: image.width,
-          height: image.height,
-          resizeMode: 'contain',
-        }}
-        color={colors.primaryOrange}
+    <Pressable
+      style={cardStyle}
+      onPress={() => onPress(category)}
+      onHoverIn={() => setIsHovered(true)}
+      onHoverOut={() => setIsHovered(false)}>
+      <info.IconComponent
+        width={info.width * 0.8}
+        height={info.height * 0.8}
+        color={iconColor}
       />
-      <Text style={styles.categoryTitle}>{category.title}</Text>
-    </View>
+      <Text style={titleStyle}>{category.title}</Text>
+    </Pressable>
   );
 }
 
 function CategoryList() {
   const [isLoading, setIsLoading] = useState(true);
-
   const { categories, fetchCategories } = useCategoryStore();
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (!categories?.length) {
       setIsLoading(true);
-      fetchCategories().then(() => {
-        setIsLoading(false);
-      });
+      fetchCategories().then(() => setIsLoading(false));
+    } else {
+      setIsLoading(false);
     }
   }, [categories, fetchCategories]);
 
+  const handleCategoryPress = (category: Category) => {
+    // @ts-ignore
+    navigation.navigate('SubCategoryScreen', {
+      categoryId: category.id,
+      categoryTitle: category.title,
+    });
+  };
+
   if (isLoading) {
     return (
-      <View style={styles.externalContainer}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primaryBlue} />
       </View>
     );
@@ -103,29 +107,23 @@ function CategoryList() {
 
   if (!categories || categories.length === 0) {
     return (
-      <View style={styles.externalContainer}>
-        <Text>No categories available</Text>
+      <View style={styles.loadingContainer}>
+        <Text>Nenhuma categoria disponível</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.externalContainer}>
-      <FlatList
-        contentContainerStyle={styles.flatList}
-        data={categories}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <CategoryCard
-            category={item}
-            imageUrl={''}
-            onPress={(category) => console.log('Category pressed:', category)}
-          />
-        )}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      />
-    </View>
+    <FlatList
+      contentContainerStyle={styles.listContainer}
+      data={categories}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <CategoryCard category={item} onPress={handleCategoryPress} />
+      )}
+      numColumns={Platform.OS === 'web' ? 3 : 2}
+      showsVerticalScrollIndicator={false}
+    />
   );
 }
 

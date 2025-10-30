@@ -1,504 +1,240 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  View,
   Text,
-  TextInput,
   StyleSheet,
   TouchableOpacity,
-  Platform,
   ScrollView,
+  Alert,
+  ActivityIndicator,
+  View,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import { FontAwesome } from '@expo/vector-icons';
+import { AddressCard } from '@components/AddressCard';
+import ConfirmationModal from '@components/ConfirmationModal';
+import colors from '@theme/colors';
+import { Address, useAddressStore } from '@stores/Address';
+import { useUserStore } from '@stores/User';
 
-export default function EnderecoForm() {
-  const [cep, setCep] = useState('23585-500');
-  const [endereco, setEndereco] = useState('Rua Alvorada de Minas');
-  const [numero, setNumero] = useState('1972');
-  const [bairro, setBairro] = useState('Jardim Alvorada');
-  const [uf, setUf] = useState('RJ');
-  const [cidade, setCidade] = useState('Rio de Janeiro');
-  // Segundo endereço (apenas visual)
-  const [cep2, setCep2] = useState('01310-200');
-  const [endereco2, setEndereco2] = useState('Av. Paulista');
-  const [numero2, setNumero2] = useState('1000');
-  const [bairro2, setBairro2] = useState('Bela Vista');
-  const [uf2, setUf2] = useState('SP');
-  const [cidade2, setCidade2] = useState('São Paulo');
+export default function AlterarEnderecoForm() {
+  const {
+    addresses,
+    isLoading,
+    error,
+    fetchAddressesByUserId,
+    updateAddress,
+    deleteAddress,
+    setPrimaryAddress,
+    addAddress,
+  } = useAddressStore();
+  const { user } = useUserStore();
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [addressToDelete, setAddressToDelete] = useState<Address | null>(null);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchAddressesByUserId(user.id);
+    }
+  }, [user?.id, fetchAddressesByUserId]);
+
+  const handleUpdate = async (id: number, data: Partial<Address>) => {
+    try {
+      await updateAddress(id, data);
+      Alert.alert('Sucesso', 'Endereço atualizado!');
+    } catch {
+      Alert.alert('Erro', 'Não foi possível atualizar o endereço.');
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    const address = addresses.find((addr) => addr.id === id);
+    if (address) {
+      setAddressToDelete(address);
+      setModalVisible(true);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (addressToDelete) {
+      try {
+        await deleteAddress(addressToDelete.id);
+        setModalVisible(false);
+        setAddressToDelete(null);
+        Alert.alert('Sucesso', 'Endereço excluído!');
+      } catch {
+        Alert.alert('Erro', 'Não foi possível excluir o endereço.');
+      }
+    }
+  };
+
+  const handleSetPrimary = async (id: number) => {
+    try {
+      await setPrimaryAddress(id);
+      Alert.alert('Sucesso', 'Endereço principal atualizado!');
+    } catch {
+      Alert.alert('Erro', 'Não foi possível definir o endereço principal.');
+    }
+  };
+
+  const handleAddNewAddress = async () => {
+    try {
+      if (!user?.id) {
+        Alert.alert('Erro', 'Usuário não identificado.');
+        return;
+      }
+
+      const newAddress: Omit<Address, 'id'> = {
+        lat: 0, // Você pode integrar com um serviço de geolocalização
+        lng: 0,
+        street: '',
+        number: '',
+        complement: '',
+        neighborhood: '',
+        city: '',
+        state: 'SP',
+        country_iso: 'BR',
+        postal_code: '',
+        user_id: user.id,
+        active: true,
+      };
+      await addAddress(newAddress);
+    } catch {
+      Alert.alert('Erro', 'Não foi possível adicionar o endereço.');
+    }
+  };
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.page}
-        showsVerticalScrollIndicator
-        keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
-        keyboardShouldPersistTaps="handled">
-        <Text style={styles.pageTitle}>Meus Endereços</Text>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}>
+      <Text style={styles.pageTitle}>Meus Endereços</Text>
 
-        <View>
-          {/* Card 1 */}
-          <View style={styles.card}>
-            <View style={styles.formContainer}>
-              {/* Coluna esquerda: CEP, Número, UF */}
-              <View style={styles.leftColumn}>
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.label}>CEP</Text>
-                  <TextInput
-                    style={styles.cepInput}
-                    value={cep}
-                    onChangeText={setCep}
-                  />
-                </View>
-
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.label}>Número</Text>
-                  <TextInput
-                    style={styles.numeroInput}
-                    value={numero}
-                    onChangeText={setNumero}
-                    keyboardType="numeric"
-                  />
-                </View>
-
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.label}>UF</Text>
-                  <View style={styles.ufInput}>
-                    <Picker
-                      selectedValue={uf}
-                      onValueChange={(itemValue) => setUf(itemValue as string)}
-                      style={styles.picker}>
-                      {[
-                        'AC',
-                        'AL',
-                        'AP',
-                        'AM',
-                        'BA',
-                        'CE',
-                        'DF',
-                        'ES',
-                        'GO',
-                        'MA',
-                        'MT',
-                        'MS',
-                        'MG',
-                        'PA',
-                        'PB',
-                        'PR',
-                        'PE',
-                        'PI',
-                        'RJ',
-                        'RN',
-                        'RS',
-                        'RO',
-                        'RR',
-                        'SC',
-                        'SP',
-                        'SE',
-                        'TO',
-                      ].map((sigla) => (
-                        <Picker.Item key={sigla} label={sigla} value={sigla} />
-                      ))}
-                    </Picker>
-                  </View>
-                </View>
-              </View>
-
-              {/* Coluna direita: Endereço, Bairro, Cidade */}
-              <View style={styles.rightColumn}>
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.label}>Endereço</Text>
-                  <TextInput
-                    style={styles.enderecoInput}
-                    value={endereco}
-                    onChangeText={setEndereco}
-                  />
-                </View>
-
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.label}>Bairro</Text>
-                  <TextInput
-                    style={styles.bairroInput}
-                    value={bairro}
-                    onChangeText={setBairro}
-                  />
-                </View>
-
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.label}>Cidade</Text>
-                  <TextInput
-                    style={styles.cidadeInput}
-                    value={cidade}
-                    onChangeText={setCidade}
-                  />
-                </View>
-              </View>
-            </View>
-
-            {/* Ações à direita */}
-            <View style={styles.actionsRow}>
-              <TouchableOpacity>
-                <FontAwesome name="star-o" size={20} color="#0066cc" />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <FontAwesome name="pencil" size={20} color="#ff6600" />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <FontAwesome name="trash-o" size={20} color="#999" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Botão Salvar à direita */}
-            <View style={styles.saveRow}>
-              <TouchableOpacity style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>Salvar Alterações</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Card 2 (duplicado) */}
-          <View style={styles.card}>
-            <View style={styles.formContainer}>
-              {/* Coluna esquerda: CEP, Número, UF */}
-              <View style={styles.leftColumn}>
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.label}>CEP</Text>
-                  <TextInput
-                    style={styles.cepInput}
-                    value={cep2}
-                    onChangeText={setCep2}
-                  />
-                </View>
-
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.label}>Número</Text>
-                  <TextInput
-                    style={styles.numeroInput}
-                    value={numero2}
-                    onChangeText={setNumero2}
-                    keyboardType="numeric"
-                  />
-                </View>
-
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.label}>UF</Text>
-                  <View style={styles.ufInput}>
-                    <Picker
-                      selectedValue={uf2}
-                      onValueChange={(itemValue) => setUf2(itemValue as string)}
-                      style={styles.picker}>
-                      {[
-                        'AC',
-                        'AL',
-                        'AP',
-                        'AM',
-                        'BA',
-                        'CE',
-                        'DF',
-                        'ES',
-                        'GO',
-                        'MA',
-                        'MT',
-                        'MS',
-                        'MG',
-                        'PA',
-                        'PB',
-                        'PR',
-                        'PE',
-                        'PI',
-                        'RJ',
-                        'RN',
-                        'RS',
-                        'RO',
-                        'RR',
-                        'SC',
-                        'SP',
-                        'SE',
-                        'TO',
-                      ].map((sigla) => (
-                        <Picker.Item key={sigla} label={sigla} value={sigla} />
-                      ))}
-                    </Picker>
-                  </View>
-                </View>
-              </View>
-
-              {/* Coluna direita: Endereço, Bairro, Cidade */}
-              <View style={styles.rightColumn}>
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.label}>Endereço</Text>
-                  <TextInput
-                    style={styles.enderecoInput}
-                    value={endereco2}
-                    onChangeText={setEndereco2}
-                  />
-                </View>
-
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.label}>Bairro</Text>
-                  <TextInput
-                    style={styles.bairroInput}
-                    value={bairro2}
-                    onChangeText={setBairro2}
-                  />
-                </View>
-
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.label}>Cidade</Text>
-                  <TextInput
-                    style={styles.cidadeInput}
-                    value={cidade2}
-                    onChangeText={setCidade2}
-                  />
-                </View>
-              </View>
-            </View>
-
-            {/* Ações à direita */}
-            <View style={styles.actionsRow}>
-              <TouchableOpacity>
-                <FontAwesome name="star-o" size={20} color="#0066cc" />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <FontAwesome name="pencil" size={20} color="#ff6600" />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <FontAwesome name="trash-o" size={20} color="#999" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Botão Salvar à direita */}
-            <View style={styles.saveRow}>
-              <TouchableOpacity style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>Salvar Alterações</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+      {isLoading && addresses.length === 0 ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primaryOrange} />
+          <Text style={styles.loadingText}>Carregando endereços...</Text>
         </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity
+            style={styles.retryButton}
+            onPress={() => user?.id && fetchAddressesByUserId(user.id)}>
+            <Text style={styles.retryButtonText}>Tentar novamente</Text>
+          </TouchableOpacity>
+        </View>
+      ) : addresses.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            Você ainda não possui endereços cadastrados
+          </Text>
+        </View>
+      ) : (
+        addresses.map((address) => (
+          <AddressCard
+            key={address.id}
+            addressData={address}
+            onUpdate={handleUpdate}
+            onDelete={handleDelete}
+            onSetPrimary={handleSetPrimary}
+          />
+        ))
+      )}
 
-        {/* Botão Novo Endereço centralizado */}
-        <TouchableOpacity style={styles.newButton}>
-          <Text style={styles.newButtonText}>+ Novo Endereço</Text>
-        </TouchableOpacity>
-      </ScrollView>
-      <Text style={styles.rodape}>
-        © DelBicos - 2025 - Todos os direitos reservados.
-      </Text>
-    </View>
+      <TouchableOpacity style={styles.newButton} onPress={handleAddNewAddress}>
+        <Text style={styles.newButtonText}>+ Adicionar Novo Endereço</Text>
+      </TouchableOpacity>
+
+      {addressToDelete && (
+        <ConfirmationModal
+          visible={isModalVisible}
+          title="Confirmar Exclusão"
+          message={`Você tem certeza que deseja excluir o endereço "${addressToDelete.street}, ${addressToDelete.number}"?`}
+          cancelText="Cancelar"
+          confirmText="Excluir"
+          onCancel={() => setModalVisible(false)}
+          onConfirm={confirmDelete}
+        />
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  scroll: {
+  container: {
     flex: 1,
-    width: '100%',
-    backgroundColor: '#e0e8f0',
+    backgroundColor: '#F4F7FA',
   },
-  page: {
-    flexGrow: 1,
-    alignItems: 'center',
+  contentContainer: {
     padding: 20,
-    width: '100%',
-    paddingBottom: 160,
   },
   pageTitle: {
-    width: '100%',
-    maxWidth: '80%',
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#1d2b36',
-    marginBottom: 12,
-    alignSelf: 'flex-start',
-    marginLeft: '3%',
+    color: colors.primaryBlue,
+    marginBottom: 24,
+    fontFamily: 'Afacad-Bold',
   },
-
-  card: {
-    width: '100%',
-    backgroundColor: '#f8fafd',
-    borderRadius: 12,
-    padding: 24,
-    borderWidth: 2,
-    borderColor: '#3399ff30', // os dois últimos dígitos (80) representam a opacidade em hex (~50%)
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 4,
-    marginBottom: 20,
-  },
-
-  formContainer: {
-    flexDirection: 'row',
-    gap: 1,
-  },
-  leftColumn: {
-    width: '25%',
-    minWidth: 220,
-  },
-  rightColumn: {
+  loadingContainer: {
     flex: 1,
-  },
-
-  // título movido para fora do card
-
-  row: {
-    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    paddingVertical: 40,
   },
-
-  inputWrapper: {
-    marginRight: 4,
-    marginBottom: 8,
-  },
-
-  label: {
-    fontSize: 16,
-    marginBottom: 4,
-    color: '#333',
-  },
-
-  cepInput: {
-    width: '70%',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    fontSize: 18,
-    backgroundColor: '#fff',
-    flexGrow: 0,
-    flexShrink: 0,
-    ...(Platform.OS === 'web'
-      ? { boxShadow: '0 1px 0 rgba(0,0,0,0.05) inset' }
-      : {}),
-  },
-
-  enderecoInput: {
-    width: '60%',
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    fontSize: 18,
-    backgroundColor: '#fff',
-    ...(Platform.OS === 'web'
-      ? { boxShadow: '0 1px 0 rgba(0,0,0,0.05) inset' }
-      : {}),
-  },
-
-  numeroInput: {
-    width: '50%',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    fontSize: 18,
-    backgroundColor: '#fff',
-    flexGrow: 0,
-    flexShrink: 0,
-    ...(Platform.OS === 'web'
-      ? { boxShadow: '0 1px 0 rgba(0,0,0,0.05) inset' }
-      : {}),
-  },
-
-  bairroInput: {
-    flex: 1,
-    width: '50%',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    fontSize: 18,
-    backgroundColor: '#fff',
-    ...(Platform.OS === 'web'
-      ? { boxShadow: '0 1px 0 rgba(0,0,0,0.05) inset' }
-      : {}),
-  },
-
-  ufInput: {
-    width: '30%',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    backgroundColor: '#fff',
-    flexGrow: 0,
-    flexShrink: 0,
-    ...(Platform.OS === 'web'
-      ? { boxShadow: '0 1px 0 rgba(0,0,0,0.05) inset' }
-      : {}),
-  },
-
-  cidadeInput: {
-    flex: 1,
-    width: '60%',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    fontSize: 18,
-    backgroundColor: '#fff',
-    ...(Platform.OS === 'web'
-      ? { boxShadow: '0 1px 0 rgba(0,0,0,0.05) inset' }
-      : {}),
-  },
-
-  picker: {
-    height: Platform.OS === 'web' ? 46 : 50,
-    width: '100%',
-  },
-
-  saveRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+  loadingText: {
     marginTop: 10,
+    fontSize: 16,
+    color: '#666',
+    fontFamily: 'Afacad-Regular',
   },
-
-  actionsRow: {
-    position: 'absolute',
-    right: 16,
-    top: 16,
-    flexDirection: 'row',
-    gap: 12,
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
   },
-
-  saveButton: {
-    backgroundColor: '#005A93',
+  errorText: {
+    fontSize: 16,
+    color: '#dc3545',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontFamily: 'Afacad-Regular',
+  },
+  retryButton: {
+    backgroundColor: '#007bff',
     paddingVertical: 12,
-    paddingHorizontal: 18,
+    paddingHorizontal: 24,
     borderRadius: 8,
   },
-
-  saveButtonText: {
-    color: '#fff',
+  retryButtonText: {
+    color: colors.primaryWhite,
     fontWeight: 'bold',
+    fontSize: 16,
+    fontFamily: 'Afacad-Bold',
   },
-
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    fontFamily: 'Afacad-Regular',
+  },
   newButton: {
-    backgroundColor: '#ff6600',
-    paddingVertical: 12,
+    backgroundColor: '#ff7f00',
+    paddingVertical: 14,
     paddingHorizontal: 22,
     borderRadius: 8,
     alignItems: 'center',
-  },
-
-  newButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-
-  rodape: {
-    fontSize: 13,
-    color: '#1877c9',
-    marginTop: 30,
     alignSelf: 'center',
-    fontWeight: '500',
+    marginTop: 10,
+  },
+  newButtonText: {
+    color: colors.primaryWhite,
+    fontWeight: 'bold',
+    fontSize: 16,
+    fontFamily: 'Afacad-Bold',
   },
 });

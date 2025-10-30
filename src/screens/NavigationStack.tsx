@@ -10,13 +10,19 @@ import ConfirmPhoneNumber from './public/ConfirmPhoneNumber';
 import RegisterScreen from './public/RegisterScreen';
 import VerificationScreen from './public/VerificationScreen';
 import PartnerProfile from './public/PartnerProfile';
-import ServiceStatusScreen from './public/ServicesStatus';
 import { NavigationParams } from './types';
 import Login from './public/Login';
 import Header from '@components/Header';
 import { useUserStore } from '@stores/User';
 import { LoginPassword } from './public/LoginPassword';
 import ProfileScreen from './private/client/Profile';
+import CategoryScreen from './public/Category';
+import SubCategoryScreen from './public/SubCategoryScreen';
+import SearchResultScreen from './public/SearchResultScreen';
+import CheckoutScreen from './public/CheckoutScreen';
+import { PaymentCompletionScreen } from './private/client/PaymentCompletion';
+import PaymentStatusScreen from './public/PaymentStatusScreen';
+import MySchedulesScreen from './private/client/MySchedulesScreen';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -68,12 +74,6 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
         },
       },
     },
-    ServiceStatus: {
-      screen: ServiceStatusScreen,
-      linking: {
-        path: 'service-status',
-      },
-    },
     PhoneConfirmation: {
       screen: PhoneConfirmation,
       options: {
@@ -107,10 +107,73 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
         path: 'client-profile',
       },
     },
+    PaymentCompletion: {
+      screen: PaymentCompletionScreen,
+      linking: {
+        path: 'payment-completion',
+      },
+      options: {
+        title: 'Pagamento Realizado',
+      },
+    },
     NotFound: {
       screen: NotFound,
       linking: {
         path: '*',
+      },
+    },
+    Category: {
+      screen: CategoryScreen,
+      linking: {
+        path: 'categories',
+      },
+      options: {
+        title: 'Categorias', // Título que pode ser usado pelo Header
+      },
+    },
+    SubCategoryScreen: {
+      screen: SubCategoryScreen,
+      linking: {
+        path: 'category/:categoryId',
+        parse: {
+          categoryId: (value) => Number(value), // Converte o ID da URL para número
+        },
+      },
+      options: {
+        title: 'Serviços',
+      },
+    },
+    SearchResult: {
+      screen: SearchResultScreen,
+      linking: {
+        path: 'search', // A URL será algo como /search?subcategory=...&date=...
+      },
+      options: {
+        title: 'Resultados da Busca',
+      },
+    },
+    Checkout: {
+      screen: CheckoutScreen,
+      linking: {
+        path: 'checkout', // A URL será algo como /checkout?professionalId=...&time=...
+      },
+      options: {
+        headerShown: false, // Opcional: Esconde o header padrão
+      },
+    },
+    PaymentStatus: {
+      screen: PaymentStatusScreen,
+      linking: {
+        path: 'payment-status', // <-- Esta é a URL de retorno
+      },
+      options: {
+        headerShown: false, // Sem header
+      },
+    },
+    MySchedules: {
+      screen: MySchedulesScreen,
+      options: {
+        title: 'Meus Agendamentos',
       },
     },
   },

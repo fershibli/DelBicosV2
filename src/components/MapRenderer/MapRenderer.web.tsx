@@ -1,26 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import { Region, AddressData } from '@lib/types/types';
-import { GOOGLE_MAPS_API_KEY } from '@config/varEnvs';
+import { Region, AddressData } from '../../lib/hooks/types';
 
 interface WebMapWrapperProps {
   region: Region | null;
   markerCoords: { latitude: number; longitude: number } | null;
   address?: AddressData;
-  onMapPress: (event: any) => void;
+  onMapPress?: (event: any) => void;
   style?: any;
 }
 
-const containerStyle = {
+const containerStyle: React.CSSProperties = {
   width: '100%',
   height: '100%',
-} as React.CSSProperties;
-
-const defaultCenter = {
-  lat: -23.5505, // São Paulo como default
-  lng: -46.6333,
 };
+
+const defaultCenter = { lat: -23.5505, lng: -46.6333 }; // São Paulo
 
 const mapOptions = {
   streetViewControl: false,
@@ -52,57 +48,48 @@ const WebMapWrapper: React.FC<WebMapWrapperProps> = ({
   const [mapLoaded, setMapLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (region && mapRef.current && mapLoaded) {
-      const newCenter = {
-        lat: region.latitude,
-        lng: region.longitude,
-      };
-      mapRef.current.setCenter(newCenter);
-      mapRef.current.setZoom(15);
-    }
-  }, [region, mapLoaded]);
+  // Carrega a API Key direto do .env
+  const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
     if (event.latLng) {
       const lat = event.latLng.lat();
       const lng = event.latLng.lng();
-      onMapPress({
-        nativeEvent: {
-          coordinate: { latitude: lat, longitude: lng },
-        },
+
+      // dispara callback para o App.tsx (mantém padrão mobile)
+      onMapPress?.({
+        nativeEvent: { coordinate: { latitude: lat, longitude: lng } },
       });
     }
   };
 
-  const handleLoadError = (error: any) => {
-    console.error('Erro ao carregar Google Maps:', error);
+  const handleLoadError = (err: any) => {
+    console.error('Erro ao carregar Google Maps:', err);
     setError('Falha ao carregar o mapa. Verifique a API Key.');
   };
 
-  // Se não tem API key, mostra placeholder
-  if (!GOOGLE_MAPS_API_KEY) {
+  if (!apiKey) {
     return (
       <View style={[styles.mapContainer, style]}>
-        <View style={styles.placeholder}>
-          <Text style={styles.placeholderText}>🗺️ Mapa</Text>
-          <Text style={styles.placeholderSubtext}>
-            Configure sua API Key do Google Maps
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>
+            🔑 Google Maps API Key não configurada
+          </Text>
+          <Text style={styles.errorSubtext}>
+            Defina{' '}
+            <Text style={{ fontWeight: '700' }}>GOOGLE_MAPS_API_KEY</Text> no
+            arquivo .env
           </Text>
         </View>
       </View>
     );
   }
 
-  // Se tem erro, mostra mensagem de erro
   if (error) {
     return (
       <View style={[styles.mapContainer, style]}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>❌ {error}</Text>
-          <Text style={styles.errorSubtext}>
-            Verifique a configuração da API Key
-          </Text>
         </View>
       </View>
     );
@@ -111,7 +98,7 @@ const WebMapWrapper: React.FC<WebMapWrapperProps> = ({
   return (
     <View style={[styles.mapContainer, style]}>
       <LoadScript
-        googleMapsApiKey={GOOGLE_MAPS_API_KEY}
+        googleMapsApiKey={apiKey}
         onError={handleLoadError}
         onLoad={() => setMapLoaded(true)}>
         <GoogleMap
@@ -139,14 +126,13 @@ const WebMapWrapper: React.FC<WebMapWrapperProps> = ({
                 address?.formatted
                   ? address.formatted.substring(0, 25) +
                     (address.formatted.length > 25 ? '...' : '')
-                  : 'Localização Atual'
+                  : 'Clique no mapa'
               }
             />
           )}
         </GoogleMap>
       </LoadScript>
 
-      {/* Loading overlay */}
       {!mapLoaded && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color="#3b82f6" />
@@ -164,22 +150,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     backgroundColor: '#e5e7eb',
-  },
-  placeholder: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f3f4f6',
-  },
-  placeholderText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#6b7280',
-    marginBottom: 4,
-  },
-  placeholderSubtext: {
-    fontSize: 12,
-    color: '#9ca3af',
   },
   errorContainer: {
     flex: 1,

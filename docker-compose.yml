@@ -1,0 +1,47 @@
+version: '3.8'
+
+name: frontend-delbicos
+
+services:
+  delbicos-frontend:
+    build:
+      context: .
+      dockerfile: ${DOCKERFILE:-Dockerfile}
+    container_name: webapp-delbicos
+    ports:
+      - '8081:8081' # Metro bundler
+      - '19000:19000' # Expo DevTools
+    volumes:
+      # Montar código fonte para hot reload
+      - ./src:/app/src
+      - ./assets:/app/assets
+      - ./.expo:/app/.expo
+      # Preservar node_modules no container
+      - /app/node_modules
+    environment:
+      # Variáveis de ambiente do .env
+      - EXPO_PUBLIC_ENVIRONMENT=${EXPO_PUBLIC_ENVIRONMENT:-development}
+      # Usar host.docker.internal para acessar o backend na máquina host
+      - EXPO_PUBLIC_DOMAIN_ANDROID=${EXPO_PUBLIC_DOMAIN_ANDROID:-host.docker.internal}
+      - EXPO_PUBLIC_DOMAIN_IOS=${EXPO_PUBLIC_DOMAIN_IOS:-host.docker.internal}
+      - EXPO_PUBLIC_PORT=${EXPO_PUBLIC_PORT:-3000}
+      - EXPO_PUBLIC_HTTP_PROTOCOL=${EXPO_PUBLIC_HTTP_PROTOCOL:-http}
+      - EXPO_PUBLIC_WS_PROTOCOL=${EXPO_PUBLIC_WS_PROTOCOL:-ws}
+      - EXPO_PUBLIC_UNSPLASH_API_KEY=${EXPO_PUBLIC_UNSPLASH_API_KEY}
+      # Variáveis Expo
+      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+      - REACT_NATIVE_PACKAGER_HOSTNAME=0.0.0.0
+      - EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY=${EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+      - EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=${EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}
+      - EXPO_PUBLIC_LOCATIONIQ_API_KEY=${EXPO_PUBLIC_LOCATIONIQ_API_KEY}
+    networks:
+      - delbicos-network
+    stdin_open: true
+    tty: true
+    extra_hosts:
+      # Garante que host.docker.internal funciona em Linux também
+      - 'host.docker.internal:host-gateway'
+networks:
+  delbicos-network:
+    external: true
+    name: delbicos-shared-network

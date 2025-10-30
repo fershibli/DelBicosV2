@@ -1,0 +1,95 @@
+export enum AppointmentStatus {
+  PENDING = 'pending',
+  CONFIRMED = 'confirmed',
+  COMPLETED = 'completed',
+  CANCELED = 'canceled',
+}
+
+export interface Service {
+  id: number;
+  title: string;
+  description: string;
+  price: string;
+  duration: number;
+  banner_uri: string | null;
+  active: boolean;
+  subcategory_id: number;
+  professional_id: number;
+  createdAt: string;
+  updatedAt: string;
+  Subcategory: Subcategory;
+}
+
+export interface Subcategory {
+  id: number;
+  name: string;
+}
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  active: boolean;
+  avatar_uri: string | null;
+  banner_uri: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Client {
+  id: number;
+  user_id: number;
+  main_address_id: number;
+  cpf: string;
+  createdAt: string;
+  updatedAt: string;
+  User: User;
+}
+
+export interface Professional {
+  id: number;
+  user_id: number;
+  main_address_id: number;
+  cpf: string;
+  cnpj: string | null;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  User: User;
+}
+
+export interface Appointment {
+  id: number;
+  professional_id: number;
+  client_id: number;
+  service_id: number;
+  address_id: number;
+  rating: number | null;
+  review: string | null;
+  start_time: string;
+  end_time: string;
+  status: AppointmentStatus;
+  createdAt: string;
+  updatedAt: string;
+  Service: Service;
+  Client: Client;
+  payment_intent_id?: string | null;
+  Professional: Professional;
+}
+
+export interface AppointmentStore {
+  appointments: Appointment[];
+  loading: boolean;
+
+  fetchAppointments: () => Promise<void>;
+
+  reviewAppointment: (
+    appointmentId: number,
+    rating: number,
+    review: string,
+  ) => Promise<boolean>;
+
+  fetchInvoice: (appointmentId: number) => Promise<string | null>;
+}

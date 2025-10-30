@@ -1,0 +1,60 @@
+# Dependencies
+
+node_modules/
+yarn-error.\*
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Debug
+
+.pnpm-debug.log
+npm-debug._
+yarn-debug._
+
+# Expo
+
+.expo/
+dist/
+web-build/
+
+# Native
+
+_.orig._
+_.jks
+_.p8
+_.p12
+_.key
+\*.mobileprovision
+
+# macOS
+
+.DS_Store
+\*.pem
+
+# Git
+
+.git
+.gitignore
+
+# IDE
+
+.vscode/
+.idea/
+
+# Env files (will be passed via docker-compose)
+
+.env.local
+.env\*.local
+
+# Typescript
+
+\*.tsbuildinfo
+
+# Misc
+
+README.md
+docs/
+assets/_.png
+assets/_.jpg
+app-example/

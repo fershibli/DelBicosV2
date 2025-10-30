@@ -1,43 +1,60 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
-  externalContainer: {
-    backgroundColor: colors.secondaryGray,
+  loadingContainer: {
     width: '100%',
     minHeight: 146,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  flatList: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 10,
+  listContainer: {
+    paddingBottom: 20,
   },
   categoryCard: {
-    flexDirection: 'row',
-    minWidth: 200,
-    maxWidth: 220,
-    height: 126,
-    margin: 10,
-    padding: 10,
-    borderRadius: 10,
-    shadowColor: colors.primaryBlack,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5, // Android shadow
-    backgroundColor: colors.secondaryBeige,
-    justifyContent: 'space-around',
+    flex: 1,
+    margin: 8,
+    padding: 16,
+    borderRadius: 12,
+    height: 140,
+    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.primaryWhite,
+    borderWidth: 1,
+    borderColor: colors.secondaryBeige,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.primaryBlack,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+        transition: 'all 0.2s ease-in-out',
+      },
+    }),
+  },
+  categoryCardHovered: {
+    ...Platform.select({
+      web: {
+        backgroundColor: colors.primaryBlue,
+        borderColor: colors.primaryBlue,
+        transform: [{ scale: 1.05 }],
+      },
+    }),
   },
   categoryTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontFamily: 'Afacad-Bold',
     color: colors.primaryOrange,
     textAlign: 'center',
+    marginTop: 10,
+  },
+  categoryTitleHovered: {
+    color: colors.primaryWhite,
   },
 });
