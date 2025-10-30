@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { Region, AddressData } from '../../lib/hooks/types';
@@ -50,14 +50,6 @@ const WebMapWrapper: React.FC<WebMapWrapperProps> = ({
 
   // Carrega a API Key direto do .env
   const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
-
-  useEffect(() => {
-    if (region && mapRef.current && mapLoaded) {
-      const newCenter = { lat: region.latitude, lng: region.longitude };
-      mapRef.current.setCenter(newCenter);
-      mapRef.current.setZoom(15);
-    }
-  }, [region, mapLoaded]);
 
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
     if (event.latLng) {

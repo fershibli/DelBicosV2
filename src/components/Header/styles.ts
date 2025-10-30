@@ -236,4 +236,59 @@ export const styles = StyleSheet.create({
   authButtonPressed: {
     opacity: 0.8,
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20, // Padding para não colar nas bordas em telas pequenas
+  },
+  modalContainer: {
+    width: '100%',
+    maxWidth: 700, // Largura máxima do modal
+    backgroundColor: colors.primaryWhite,
+    borderRadius: 16,
+    padding: 24,
+    ...Platform.select({
+      web: {
+        boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
+      },
+      default: {
+        elevation: 10,
+      },
+    }),
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontFamily: 'Afacad-Bold',
+    color: '#003366',
+  },
+  mapWrapper: {
+    width: '100%',
+    height: 400, // Altura do mapa
+    borderRadius: 12,
+    overflow: 'hidden', // Importante para o mapa não vazar
+    backgroundColor: '#E0E0E0', // Fundo enquanto o mapa carrega
+  },
+  modalButton: {
+    backgroundColor: colors.primaryOrange,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  modalButtonDisabled: {
+    backgroundColor: '#CCCCCC',
+  },
+  modalButtonText: {
+    color: '#FFFFFF',
+    fontFamily: 'Afacad-Bold',
+    fontSize: 16,
+  },
 });

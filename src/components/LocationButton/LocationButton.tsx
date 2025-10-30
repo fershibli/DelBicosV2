@@ -128,10 +128,6 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
       latitudeDelta: 0.01,
       longitudeDelta: (0.01 * window.width) / window.height,
     });
-    console.log('🗺️ Mini mapa pressionado:', {
-      latitude: latitude.toFixed(6),
-      longitude: longitude.toFixed(6),
-    });
   };
 
   const handleConfirm = () => {

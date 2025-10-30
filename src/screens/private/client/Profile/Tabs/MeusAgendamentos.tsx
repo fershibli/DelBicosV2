@@ -9,17 +9,15 @@ type SortOption = 'recentes' | 'avaliacao' | 'distancia';
 type FilterOption = 'todos' | 'pendentes' | 'confirmados' | 'concluidos' | 'cancelados';
 
 function MeusAgendamentos() {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>('recentes');
   const [filterBy, setFilterBy] = useState<FilterOption>('todos');
   const [showInfo, setShowInfo] = useState<'avaliacao' | 'distancia'>('avaliacao');
 
-  const { fetchAppointments } = useAppointmentStore();
+  const { appointments, fetchAppointments } = useAppointmentStore();
 
   useEffect(() => {
     const loadAppointments = async () => {
-      const data = await fetchAppointments();
-      setAppointments(data);
+      await fetchAppointments();
     };
 
     loadAppointments();

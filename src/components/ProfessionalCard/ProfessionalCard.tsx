@@ -36,7 +36,7 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
         </Text>
         <View style={styles.ratingRow}>
           <FontAwesome name="star" color="#FFC107" size={12} />
-          <Text style={styles.Rating}>{professional.rating.toFixed(1)}</Text>
+          <Text style={styles.Rating}>{professional.rating}</Text>
           <Text style={styles.RatingCount} numberOfLines={1}>
             ({professional.ratingsCount} reviews)
           </Text>
