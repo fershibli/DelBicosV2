@@ -85,7 +85,7 @@ export const useUserStore = create<UserStore>()(
             // O interceptor do httpClient adiciona o 'Authorization: Bearer ...'
           );
 
-          if (response.status !== 200) {
+          if (response.status < 200 || response.status >= 300) {
             throw new Error('Não foi possível alterar a senha.');
           }
           return;
