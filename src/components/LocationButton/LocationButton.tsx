@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import { styles as globalStyles } from '../../lib/utils/styles';
 import { MapComponent } from '../MapComponent/MapComponent';
 import { Region } from '../../lib/hooks/types';
+import colors from '@theme/colors';
 
 const window = Dimensions.get('window');
 
@@ -47,7 +48,7 @@ const rnModalStyle = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 12,
     padding: 16,
     width: '90%',
@@ -68,7 +69,7 @@ const rnModalStyle = StyleSheet.create({
     alignItems: 'center',
   },
   confirmButtonText: {
-    color: '#ffffff',
+    color: colors.primaryWhite,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -127,10 +128,6 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
       longitude,
       latitudeDelta: 0.01,
       longitudeDelta: (0.01 * window.width) / window.height,
-    });
-    console.log('🗺️ Mini mapa pressionado:', {
-      latitude: latitude.toFixed(6),
-      longitude: longitude.toFixed(6),
     });
   };
 

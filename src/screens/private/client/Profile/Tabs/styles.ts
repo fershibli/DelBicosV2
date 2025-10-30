@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 28,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 24,
   },
 
@@ -53,7 +53,7 @@ export const styles = StyleSheet.create({
   avatarAnimatedWrapper: {
     width: '100%',
     height: '100%',
-    borderRadius: 50, // Círculo perfeito
+    borderRadius: 50,
     overflow: 'hidden',
     backgroundColor: colors.primaryOrange,
     justifyContent: 'center',
@@ -94,11 +94,11 @@ export const styles = StyleSheet.create({
   },
   saveButtonContainer: {
     flex: 1,
-    justifyContent: 'flex-end', // Alinha o botão na parte de baixo
+    justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
   saveButton: {
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -112,14 +112,30 @@ export const styles = StyleSheet.create({
   // Modal de Opções do Avatar
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   optionsContainer: {
     backgroundColor: colors.primaryWhite,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderRadius: 16,
     padding: 16,
+    width: '90%',
+    maxWidth: 350,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 5,
+      },
+      web: {
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
+      },
+    }),
   },
   optionButton: {
     paddingVertical: 16,
@@ -129,24 +145,26 @@ export const styles = StyleSheet.create({
   optionText: {
     fontSize: 18,
     fontFamily: 'Afacad-Regular',
-    color: '#007AFF', // Cor azul padrão do iOS para ações
+    color: '#007AFF',
     textAlign: 'center',
   },
   removeOption: {
     borderBottomWidth: 0,
   },
   removeText: {
-    color: '#FF3B30', // Cor vermelha para ação destrutiva
+    color: '#FF3B30',
   },
   cancelOption: {
-    marginTop: 8,
+    marginTop: 10,
     backgroundColor: '#F2F2F7',
     borderRadius: 12,
     borderBottomWidth: 0,
+    paddingVertical: 16,
   },
   cancelText: {
     color: '#007AFF',
     fontFamily: 'Afacad-Bold',
+    textAlign: 'center',
   },
 
   // Modal de Status (Sucesso/Erro/Loading)
@@ -196,13 +214,18 @@ export const styles = StyleSheet.create({
   },
   menuItem: {
     width: '100%',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: 25,
-    marginBottom: 16,
+    marginBottom: 12,
     backgroundColor: '#e8eef5',
     flexDirection: 'row',
     alignItems: 'center',
+    ...Platform.select({
+      web: {
+        transition: 'background-color 0.2s ease',
+      },
+    }),
   },
   activeMenuItem: {
     backgroundColor: colors.primaryOrange,
@@ -224,7 +247,7 @@ export const styles = StyleSheet.create({
   menuText: {
     fontSize: 18,
     fontFamily: 'Afacad-SemiBold',
-    color: '#003366',
+    color: colors.primaryBlue,
   },
   activeMenuText: {
     color: colors.primaryWhite,
@@ -248,7 +271,7 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   button: {
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,

@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -69,7 +69,7 @@ export const styles = StyleSheet.create({
   },
   button: {
     height: 50,
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
     borderRadius: 8,
     width: '100%',
     justifyContent: 'center',
@@ -84,7 +84,7 @@ export const styles = StyleSheet.create({
   },
   linkText: {
     marginTop: 24,
-    color: '#003366',
+    color: colors.primaryBlue,
     fontFamily: 'Afacad-Bold',
     fontSize: 14,
     textDecorationLine: 'underline',

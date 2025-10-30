@@ -5,6 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import CustomTextInput from '@components/CustomTextInput';
 import { styles } from './styles';
 import { Address } from '@stores/Address';
+import colors from '@theme/colors';
 
 interface AddressCardProps {
   addressData: Address;
@@ -178,7 +179,7 @@ export const AddressCard: React.FC<AddressCardProps> = ({
           <FontAwesome
             name={localData.isPrimary ? 'star' : 'star-o'}
             size={22}
-            color={localData.isPrimary ? '#ffc107' : '#003366'}
+            color={localData.isPrimary ? '#ffc107' : colors.primaryBlue}
           />
         </TouchableOpacity>
         <TouchableOpacity

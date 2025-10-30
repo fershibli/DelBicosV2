@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 16,
     alignSelf: 'flex-start',
   },

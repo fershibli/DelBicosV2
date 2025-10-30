@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import colors from '@theme/colors';
 
 export const styles = StyleSheet.create({
   container: {
@@ -11,7 +12,7 @@ export const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 28,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 24,
   },
 });

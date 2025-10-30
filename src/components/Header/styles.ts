@@ -188,7 +188,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 20,
     borderWidth: 1.5,
-    borderColor: '#003366',
+    borderColor: colors.primaryBlue,
     backgroundColor: 'transparent',
     ...Platform.select({
       web: {
@@ -199,7 +199,7 @@ export const styles = StyleSheet.create({
   authButtonText: {
     fontFamily: 'Afacad-SemiBold',
     fontSize: 14,
-    color: '#003366',
+    color: colors.primaryBlue,
   },
   authButtonHovered: {
     ...Platform.select({
@@ -222,7 +222,7 @@ export const styles = StyleSheet.create({
     borderColor: colors.primaryOrange,
   },
   authButtonTextSecondary: {
-    color: '#FFFFFF',
+    color: colors.primaryWhite,
   },
   authButtonSecondaryHovered: {
     ...Platform.select({
@@ -235,5 +235,60 @@ export const styles = StyleSheet.create({
 
   authButtonPressed: {
     opacity: 0.8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20, // Padding para não colar nas bordas em telas pequenas
+  },
+  modalContainer: {
+    width: '100%',
+    maxWidth: 700, // Largura máxima do modal
+    backgroundColor: colors.primaryWhite,
+    borderRadius: 16,
+    padding: 24,
+    ...Platform.select({
+      web: {
+        boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
+      },
+      default: {
+        elevation: 10,
+      },
+    }),
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontFamily: 'Afacad-Bold',
+    color: colors.primaryBlue,
+  },
+  mapWrapper: {
+    width: '100%',
+    height: 400, // Altura do mapa
+    borderRadius: 12,
+    overflow: 'hidden', // Importante para o mapa não vazar
+    backgroundColor: '#E0E0E0', // Fundo enquanto o mapa carrega
+  },
+  modalButton: {
+    backgroundColor: colors.primaryOrange,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  modalButtonDisabled: {
+    backgroundColor: '#CCCCCC',
+  },
+  modalButtonText: {
+    color: colors.primaryWhite,
+    fontFamily: 'Afacad-Bold',
+    fontSize: 16,
   },
 });

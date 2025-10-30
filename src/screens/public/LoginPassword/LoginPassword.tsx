@@ -17,7 +17,7 @@ import CustomTextInput from '@components/CustomTextInput';
 // @ts-ignore
 import IconPerson from '@assets/person.svg';
 // @ts-ignore
-import IconPhone from '@assets/phone.svg';
+// import IconPhone from '@assets/phone.svg';
 import LogoV3 from '@assets/LogoV3.png';
 
 import { styles } from './styles';
@@ -112,6 +112,7 @@ export const LoginPassword = () => {
                 value={value}
                 error={errors.password}
                 secureTextEntry
+                onSubmitEditing={handleSubmit(onLoginPress)}
               />
             )}
           />
@@ -126,31 +127,32 @@ export const LoginPassword = () => {
             {isSubmitting ? (
               <ActivityIndicator color={colors.primaryWhite} />
             ) : (
-              <Text style={styles.buttonText}>
+              <View style={styles.buttonContent}>
                 <IconPerson
-                  width={16}
-                  height={16}
+                  width={18}
+                  height={18}
                   color={colors.primaryWhite}
-                  style={{ marginRight: 8 }}
-                />{' '}
-                Login
-              </Text>
+                />
+                <Text style={styles.buttonText}>Login</Text>
+              </View>
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, styles.buttonSecondary]}
-            onPress={() => navigation.navigate('PhoneConfirmation')}>
-            <Text style={[styles.buttonText, styles.buttonTextSecondary]}>
-              <IconPhone
-                width={16}
-                height={16}
-                stroke="#003366"
-                style={{ marginRight: 8 }}
-              />{' '}
-              Login por Telefone
-            </Text>
-          </TouchableOpacity>
+          {/* <TouchableOpacity
+            style={[
+              styles.button,
+              styles.buttonSecondary,
+              styles.buttonDisabled,
+            ]}
+            onPress={() => {}}
+            disabled={true}>
+            <View style={styles.buttonContent}>
+              <IconPhone width={18} height={18} stroke={colors.primaryBlue} />
+              <Text style={[styles.buttonText, styles.buttonTextSecondary]}>
+                Login por Telefone
+              </Text>
+            </View>
+          </TouchableOpacity> */}
 
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>
             <Text style={styles.linkText}>

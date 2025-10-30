@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -54,21 +54,6 @@ export const styles = StyleSheet.create({
     color: '#6c757d',
     marginBottom: 32,
     textAlign: 'center',
-  },
-  input: {
-    backgroundColor: colors.primaryWhite,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    height: 50,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#CED4DA',
-    fontFamily: 'Afacad-Regular',
-    color: '#212529',
-  },
-  inputError: {
-    borderColor: '#D32F2F',
-    borderWidth: 1.5,
   },
   errorText: {
     color: '#D32F2F',
@@ -94,7 +79,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
   },
   locationButton: {
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
     paddingHorizontal: 16,
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
@@ -115,6 +100,12 @@ export const styles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     borderWidth: 0,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+  },
+  passwordContainerError: {
+    borderColor: '#D32F2F',
+    borderWidth: 1.5,
   },
   eyeButton: {
     padding: 12,
@@ -137,7 +128,7 @@ export const styles = StyleSheet.create({
     flexShrink: 1,
   },
   button: {
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
     padding: 16,
     borderRadius: 8,
     width: '100%',
@@ -150,9 +141,12 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Afacad-Bold',
   },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
   linkText: {
     marginTop: 24,
-    color: '#003366',
+    color: colors.primaryBlue,
     fontFamily: 'Afacad-Regular',
     fontSize: 14,
     textAlign: 'center',

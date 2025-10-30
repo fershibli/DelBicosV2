@@ -41,10 +41,6 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
     const dateTimeString = `${selectedDate}T${time}:00`;
     // (Pode ser necessário adicionar :00 se a hora for só HH:MM)
 
-    console.log(
-      `[ProfessionalResultCard] Navegando com dateTimeString: ${dateTimeString}`,
-    );
-
     // @ts-ignore
     navigation.navigate('Checkout', {
       professionalId: professional.id,

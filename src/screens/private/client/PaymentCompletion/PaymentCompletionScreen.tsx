@@ -11,10 +11,11 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { CheckCircle, Description, Share, Download } from '@mui/icons-material';
 import { Button } from '@components/Button';
-import InvoiceTemplate, { type InvoiceData } from '@components/InvoiceTemplate';
+import InvoiceTemplate from '@components/InvoiceTemplate';
 import { generatePDF } from '@lib/helpers/pdfGenerator';
 import { shareContent, downloadPDF } from '@lib/helpers/shareHelperSimple';
 import { useAppointmentStore } from '@stores/Appointment';
+import { InvoiceData } from '@stores/Appointment/types';
 
 export const PaymentCompletionScreen: React.FC = () => {
   const navigation = useNavigation();

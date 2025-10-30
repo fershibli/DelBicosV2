@@ -1,7 +1,7 @@
 // Interface para uma subcategoria individual
 export interface SubCategory {
   id: number;
-  name: string;
+  title: string;
   categoryId: number; // Para sabermos a qual categoria ela pertence
 }
 

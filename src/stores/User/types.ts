@@ -6,6 +6,7 @@ export type User = {
   phone: string;
   cpf: string;
   avatar_uri?: string | null;
+  banner_uri?: string | null;
 };
 
 export type Address = {
@@ -14,7 +15,7 @@ export type Address = {
   lng: string;
   street: string;
   number: string;
-  complement: string;
+  complement: string | null;
   neighborhood: string;
   city: string;
   state: string;
@@ -22,18 +23,35 @@ export type Address = {
   postal_code: string;
 };
 
+export type ErrorResponse = {
+  erro: boolean;
+  mensagem: string;
+};
+
+export type UploadAvatarResponse = {
+  erro: boolean;
+  mensagem: string;
+  avatar_uri?: string;
+};
+
 export type UserStore = {
   user: User | null;
   address: Address | null;
   token: string | null;
-  verificationEmail: string | null; // Adicionar esta linha
+  verificationEmail: string | null;
+  avatarBase64: string | null;
   setVerificationEmail: (email: string | null) => void;
-  signIn: () => void;
+  setLoggedInUser: (data: {
+    token: string;
+    user: User;
+    address: Address | null;
+  }) => void;
   signInPassword: (email: string, password: string) => Promise<void>;
-  /** Altera a senha do usuário. Recebe a senha atual e a nova senha. */
   changePassword: (
     currentPassword: string,
     newPassword: string,
   ) => Promise<void>;
   signOut: () => void;
+  uploadAvatar: (base64Image: string) => Promise<UploadAvatarResponse>;
+  removeAvatar: () => Promise<ErrorResponse>;
 };

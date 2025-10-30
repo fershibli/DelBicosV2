@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 8,
   },
   subtitle: {
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
   },
   emailText: {
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
   },
   codeInputContainer: {
     flexDirection: 'row',
@@ -73,11 +73,11 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 22,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
   },
   button: {
     height: 50,
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
     borderRadius: 8,
     width: '100%',
     justifyContent: 'center',

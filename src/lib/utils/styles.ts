@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    color: '#ffffff',
+    color: colors.primaryWhite,
     fontSize: 32,
     fontFamily: 'Afacad-Regular',
     textAlign: 'center',
@@ -36,7 +36,7 @@ export const styles = StyleSheet.create({
   buttonLogin: {
     gap: 10,
     flexDirection: 'row',
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.primaryWhite,
     paddingHorizontal: 12,
     paddingTop: 4,
     paddingBottom: 7,
@@ -122,7 +122,7 @@ export const styles = StyleSheet.create({
   infoBox: {
     width: '100%',
     marginBottom: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.primaryWhite,
     padding: 16,
     borderRadius: 16,
     borderWidth: 1,
@@ -174,7 +174,7 @@ export const styles = StyleSheet.create({
   // Address Box
   addressBox: {
     width: '100%',
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.primaryWhite,
     padding: 16,
     borderRadius: 16,
     borderWidth: 1,
@@ -363,7 +363,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16,
     paddingHorizontal: 24,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.primaryWhite,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#e2e8f0',
