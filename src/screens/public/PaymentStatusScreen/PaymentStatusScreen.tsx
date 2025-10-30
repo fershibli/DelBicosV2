@@ -28,10 +28,6 @@ function PaymentStatusLogic() {
 
   useEffect(() => {
     if (!stripe || !user || Platform.OS !== 'web') {
-      // O estado 'loading' padrão será exibido enquanto 'user' é nulo
-      console.log(
-        '[PaymentStatus] Aguardando Stripe e/ou reidratação do usuário...',
-      );
       return;
     }
 
@@ -49,22 +45,21 @@ function PaymentStatusLogic() {
         const { error, paymentIntent } =
           await stripe.retrievePaymentIntent(clientSecret);
 
-        if (error) throw error; // Erro do Stripe
+        if (error) throw error;
 
-        // 3. Verifica o Status do Pagamento
         if (paymentIntent?.status === 'succeeded') {
-          // 4. CHAMA O NOSSO BACKEND PARA CRIAR O AGENDAMENTO
-          // Como o authMiddleware está desabilitado, enviamos o userId manualmente
-          // TODO: Quando o authMiddleware estiver ativo, envie o token no header
-          // e remova o userId do body
+          const { token } = useUserStore.getState();
           const confirmResponse = await fetch(
             `${HTTP_DOMAIN}/api/payments/confirm`,
             {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
               body: JSON.stringify({
                 paymentIntentId: paymentIntentId,
-                userId: user.id, // <-- 'user.id' agora existe
+                userId: user.id,
               }),
             },
           );
@@ -72,14 +67,12 @@ function PaymentStatusLogic() {
           const confirmData = await confirmResponse.json();
 
           if (!confirmResponse.ok) {
-            // Se o backend falhar (ex: erro ao salvar no DB), lança um erro
             throw new Error(
               confirmData.error ||
                 'Falha ao confirmar agendamento no servidor.',
             );
           }
 
-          // TUDO CERTO!
           setStatus('success');
           setMessage(
             'Seu pagamento foi concluído e seu agendamento está confirmado!',
@@ -87,12 +80,7 @@ function PaymentStatusLogic() {
           setReceiptUrl(
             (paymentIntent as any).charges?.data[0]?.receipt_url || null,
           );
-          console.log(
-            '[PaymentStatus] Agendamento criado no backend:',
-            confirmData.appointment,
-          );
         } else {
-          // Se o status do Stripe não for 'succeeded'
           throw new Error(
             `Pagamento não concluído. Status: ${paymentIntent?.status}`,
           );
@@ -110,11 +98,10 @@ function PaymentStatusLogic() {
     };
 
     verifyPayment();
-  }, [stripe, user]); // Executa quando o Stripe estiver pronto
+  }, [stripe, user]);
 
   // Renderização condicional baseada no status
 
-  // Estado de Loading
   if (status === 'loading') {
     return (
       <View style={styles.container}>

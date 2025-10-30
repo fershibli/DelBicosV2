@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Image,
@@ -8,8 +8,12 @@ import {
   useWindowDimensions,
   Platform,
   Pressable,
+  Modal,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { styles } from './styles';
+import * as Location from 'expo-location';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
 import { useLocation } from '@lib/hooks/LocationContext';
@@ -24,20 +28,37 @@ import {
   MenuOption,
   MenuTrigger,
 } from 'react-native-popup-menu';
+import { MapComponent } from '@components/MapComponent/MapComponent';
+import { Region } from '@lib/hooks/types';
 
 const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const { width } = useWindowDimensions();
   const isWebOrLargeScreen = Platform.OS === 'web' || width > 768;
 
   const { user, signOut } = useUserStore();
-  const { address } = useLocation();
-  const city = address?.city;
-  const state = address?.state;
+  const { address: userAddress } = useUserStore();
+
+  const {
+    address: locationAddress,
+    city,
+    state,
+    setLocation,
+    lookupByCoordinates,
+    loading: isLocationLoading, // Renomeia 'loading'
+  } = useLocation();
+
   const navigation = useNavigation();
   const [search, setSearch] = useState('');
 
   const [loginHovered, setLoginHovered] = useState(false);
   const [registerHovered, setRegisterHovered] = useState(false);
+
+  const [isMapModalVisible, setIsMapModalVisible] = useState(false);
+  const [tempMarker, setTempMarker] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [tempRegion, setTempRegion] = useState<Region | null>(null);
 
   const navigateTo = (screen?: keyof NavigationParams) => {
     if (!screen) return;
@@ -53,6 +74,113 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       }),
     );
   };
+
+  const openMapModal = async () => {
+    setIsMapModalVisible(true);
+    setTempRegion(null);
+    setTempMarker(null);
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permissão negada',
+          'Para vermos sua localização, precisamos da sua permissão.',
+        );
+        // Se a permissão for negada, caia para o fallback (endereço salvo)
+        throw new Error('Permissão de localização negada');
+      }
+
+      console.log(
+        '[Header] Permissão de localização concedida. Buscando coordenadas...',
+      );
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+      const currentCoords = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+
+      console.log('[Header] Coordenadas atuais obtidas:', currentCoords);
+      // DEFINE a região e o pino para a localização atual
+      setTempRegion({
+        ...currentCoords,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+      setTempMarker(currentCoords);
+    } catch (error) {
+      console.error(
+        '[Header] Erro ao pegar localização atual, usando fallback:',
+        error,
+      );
+      // 3.3. FALLBACK 1: Usar o endereço de contexto (salvo/logado)
+      if (locationAddress?.lat && locationAddress?.lon) {
+        const savedCoords = {
+          latitude: parseFloat(locationAddress.lat),
+          longitude: parseFloat(locationAddress.lon),
+        };
+        setTempRegion({
+          ...savedCoords,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        });
+        setTempMarker(savedCoords);
+      } else {
+        // 3.4. FALLBACK 2: Usar São Paulo
+        setTempRegion({
+          latitude: -23.5505,
+          longitude: -46.6333,
+          latitudeDelta: 0.1,
+          longitudeDelta: 0.1,
+        });
+        setTempMarker(null);
+      }
+    }
+  };
+
+  const handleMapPress = (event: any) => {
+    const { coordinate } = event.nativeEvent;
+
+    // 4.1. Atualiza o pino
+    setTempMarker(coordinate);
+
+    // 4.2. ATUALIZA A REGIÃO (o centro do mapa) para seguir o pino
+    // Mantém o zoom (delta) anterior, se existir
+    setTempRegion((prevRegion) => ({
+      latitude: coordinate.latitude,
+      longitude: coordinate.longitude,
+      latitudeDelta: prevRegion?.latitudeDelta || 0.01,
+      longitudeDelta: prevRegion?.longitudeDelta || 0.01,
+    }));
+  };
+
+  // Chamada quando o usuário clica em "Confirmar"
+  const handleConfirmLocation = async () => {
+    if (!tempMarker) {
+      setIsMapModalVisible(false);
+      return;
+    }
+
+    try {
+      // O hook 'useLocation' já define o estado de loading
+      await lookupByCoordinates(tempMarker.latitude, tempMarker.longitude);
+    } catch (error) {
+      console.error('Erro ao buscar coordenadas:', error);
+      // Trate o erro se necessário (ex: Alert.alert)
+    } finally {
+      setIsMapModalVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user && userAddress && userAddress.city && !city) {
+      console.log(
+        `[Header] Sincronizando: Definindo localização de pesquisa para ${userAddress.city}.`,
+      );
+      setLocation(userAddress.city, userAddress.state);
+    }
+  }, [user, userAddress, city, setLocation]);
 
   const MenuItem: React.FC<{
     screen?: keyof NavigationParams;
@@ -126,9 +254,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
               colorVariant="secondary" // Laranja
               sizeVariant="smallPill"
               fontVariant="AfacadRegular15"
-              onClick={() => {
-                /* Abrir modal de localização */
-              }}
+              onClick={openMapModal}
               endIcon={
                 <FontAwesome name="chevron-down" size={12} color="#FFFFFF" />
               }>
@@ -244,6 +370,59 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
           </TouchableOpacity>
         </View>
       </View>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isMapModalVisible}
+        onRequestClose={() => setIsMapModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Selecione sua localização</Text>
+              <TouchableOpacity onPress={() => setIsMapModalVisible(false)}>
+                <FontAwesome name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.mapWrapper}>
+              {!tempRegion ? (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <ActivityIndicator size="large" color="#003366" />
+                </View>
+              ) : (
+                <MapComponent
+                  region={tempRegion}
+                  markerCoords={tempMarker}
+                  onMapPress={handleMapPress}
+                />
+              )}
+            </View>
+
+            <TouchableOpacity
+              style={[
+                styles.modalButton,
+                (isLocationLoading || !tempMarker) &&
+                  styles.modalButtonDisabled,
+              ]}
+              onPress={handleConfirmLocation}
+              disabled={isLocationLoading || !tempMarker}>
+              {isLocationLoading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={styles.modalButtonText}>
+                  Confirmar Localização
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

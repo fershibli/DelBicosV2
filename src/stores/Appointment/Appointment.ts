@@ -4,18 +4,27 @@ import { useUserStore } from '@stores/User';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 
 export const useAppointmentStore = create<AppointmentStore>()((set) => ({
+  appointments: [],
+  loading: false,
+
   fetchAppointments: async () => {
+    set({ loading: true });
     try {
       const { user } = useUserStore.getState();
-      const endpoint = `api/appointments/user/${user?.id}`;
+      if (!user) {
+        throw new Error('Usuário não autenticado para buscar agendamentos.');
+      }
+
+      const endpoint = `api/appointments/user/${user.id}`;
       const response = await backendHttpClient.get(endpoint);
 
-      return response.data;
+      set({ appointments: response.data, loading: false });
     } catch (error) {
       console.error('Failed to fetch appointments:', error);
-      return [];
+      set({ appointments: [], loading: false });
     }
   },
+
   reviewAppointment: async (appointmentId, rating, review) => {
     try {
       const response = await backendHttpClient.post(
@@ -28,12 +37,14 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
       return false;
     }
   },
+
   fetchInvoice: async (appointmentId) => {
     try {
       const response = await backendHttpClient.get(
-        `api/appointments/${appointmentId}/invoice`,
+        `api/appointments/${appointmentId}/receipt`,
+        { params: { userId: useUserStore.getState().user?.id } },
       );
-      return response.data;
+      return response.data.receiptUrl;
     } catch (error) {
       console.error('Failed to fetch invoice:', error);
       return null;

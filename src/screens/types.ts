@@ -4,7 +4,6 @@ export type NavigationParams = {
   LoginPassword: undefined;
   Feed: undefined;
   PartnerProfile: { id: string };
-  ServiceStatus: undefined;
   PhoneConfirmation: undefined;
   ConfirmPhoneNumber: { code: string };
   Register: undefined;
