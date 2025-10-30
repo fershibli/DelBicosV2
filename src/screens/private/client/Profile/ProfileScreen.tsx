@@ -10,14 +10,8 @@ const UserProfileScreen: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [uploading, setUploading] = useState<boolean>(false);
 
-  const {
-    user,
-    avatarBase64,
-    uploadAvatar,
-    removeAvatar,
-    fetchUserById,
-    setAvatarBase64,
-  } = useUserStore();
+  const { user, avatarBase64, uploadAvatar, removeAvatar, fetchUserById } =
+    useUserStore();
 
   const userId = user?.id.toString() || '';
 
