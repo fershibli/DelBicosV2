@@ -18,10 +18,13 @@ import CustomTextInput from '@components/CustomTextInput';
 import CpfInput from '@components/CpfInput';
 import DateInput from '@components/DateInput';
 import { styles } from './styles';
+import { inputBaseStyle } from '@components/CustomTextInput/styles';
 import { HTTP_DOMAIN } from '@config/varEnvs';
 import { isValidCPF } from '../../../utils/validators';
 import LogoV3 from '@assets/LogoV3.png';
 import { useUserStore } from '@stores/User';
+import PhoneInput from '@components/PhoneInput';
+import colors from '@theme/colors';
 
 type FormData = {
   name: string;
@@ -30,6 +33,7 @@ type FormData = {
   cpf: string;
   location: string;
   email: string;
+  phone: string;
   password: string;
   acceptTerms: boolean;
 };
@@ -39,13 +43,14 @@ function RegisterScreen() {
   const { setLocation: updateLocationInContext } = useLocation();
   const [isLocationLoading, setLocationLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { setVerificationEmail } = useUserStore();
 
   const {
     control,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormData>({
     mode: 'onTouched',
     defaultValues: {
@@ -55,6 +60,7 @@ function RegisterScreen() {
       cpf: '',
       location: '',
       email: '',
+      phone: '',
       password: '',
       acceptTerms: false,
     },
@@ -97,6 +103,7 @@ function RegisterScreen() {
   };
 
   const handleRegister = async (formData: FormData) => {
+    setIsSubmitting(true);
     try {
       const response = await fetch(`${HTTP_DOMAIN}/auth/register`, {
         method: 'POST',
@@ -120,6 +127,8 @@ function RegisterScreen() {
         'Erro de Conexão',
         'Não foi possível se conectar ao servidor.',
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -222,9 +231,9 @@ function RegisterScreen() {
                 <View style={styles.locationContainer}>
                   <TextInput
                     style={[
-                      styles.input,
+                      inputBaseStyle.input,
                       styles.locationInput,
-                      errors.location && styles.inputError,
+                      errors.location && inputBaseStyle.inputError,
                     ]}
                     placeholder="Clique no ícone para buscar"
                     placeholderTextColor="#999"
@@ -272,29 +281,52 @@ function RegisterScreen() {
 
           <Controller
             control={control}
-            name="password"
+            name="phone"
             rules={{
-              required: 'A senha é obrigatória',
+              required: 'O telefone é obrigatório',
               minLength: {
-                value: 6,
-                message: 'A senha deve ter no mínimo 6 caracteres',
+                value: 10,
+                message: 'Telefone inválido',
+              },
+              maxLength: {
+                value: 11,
+                message: 'Telefone inválido',
               },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
+              <CustomTextInput label="Telefone" error={errors.phone}>
+                <PhoneInput
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={!!errors.phone}
+                />
+              </CustomTextInput>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="password"
+            rules={{
+              required: 'A senha é obrigatória',
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
               <CustomTextInput label="Senha" error={errors.password}>
-                <View style={styles.passwordContainer}>
+                <View
+                  style={[
+                    styles.passwordContainer,
+                    errors.password && styles.passwordContainerError,
+                  ]}>
                   <TextInput
-                    style={[
-                      styles.input,
-                      styles.passwordInput,
-                      errors.password && styles.inputError,
-                    ]}
+                    style={[inputBaseStyle.input, styles.passwordInput]}
                     placeholder="Crie uma senha forte"
                     placeholderTextColor="#999"
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
                     secureTextEntry={!passwordVisible}
+                    onSubmitEditing={handleSubmit(handleRegister)}
                   />
                   <TouchableOpacity
                     style={styles.eyeButton}
@@ -343,9 +375,17 @@ function RegisterScreen() {
           />
 
           <TouchableOpacity
-            style={styles.button}
-            onPress={handleSubmit(handleRegister)}>
-            <Text style={styles.buttonText}>Cadastrar</Text>
+            style={[
+              styles.button,
+              (!isValid || isSubmitting) && styles.buttonDisabled,
+            ]}
+            onPress={handleSubmit(handleRegister)}
+            disabled={!isValid || isSubmitting}>
+            {isSubmitting ? (
+              <ActivityIndicator color={colors.primaryWhite} />
+            ) : (
+              <Text style={styles.buttonText}>Cadastrar</Text>
+            )}{' '}
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
