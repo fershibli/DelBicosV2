@@ -3,43 +3,42 @@ import { View, ActivityIndicator, Alert } from 'react-native';
 import ProfileWrapper from './ProfileWrapper';
 import { useUserStore } from '@stores/User';
 import colors from '@theme/colors';
-import { HTTP_DOMAIN } from '@config/varEnvs';
 import DefaultAvatar from '@assets/logo.png';
 
 const UserProfileScreen: React.FC = () => {
-  const { user, uploadAvatar, removeAvatar } = useUserStore();
   const [uploading, setUploading] = useState<boolean>(false);
-
-  const getAvatarSource = () => {
-    if (user?.avatar_uri) {
-      const baseUrl = user.avatar_uri.startsWith('http')
-        ? user.avatar_uri
-        : `${HTTP_DOMAIN}/${user.avatar_uri}`;
-      return { uri: `${baseUrl}?timestamp=${new Date().getTime()}` };
-    }
-    return { uri: DefaultAvatar.toString() };
-  };
+  const { user, avatarBase64, uploadAvatar, removeAvatar } = useUserStore();
 
   const handleAvatarChange = async (base64Image: string | null) => {
     if (uploading) return;
+
     setUploading(true);
 
     try {
       if (base64Image) {
-        await uploadAvatar(base64Image);
-        Alert.alert('Sucesso', 'Avatar atualizado!');
+        const response = await uploadAvatar(base64Image);
+
+        if (response.erro) {
+          Alert.alert('Erro', response.mensagem);
+        } else {
+          Alert.alert('Sucesso', response.mensagem);
+        }
       } else {
-        await removeAvatar();
-        Alert.alert('Sucesso', 'Avatar removido!');
+        const response = await removeAvatar();
+
+        if (response.erro) {
+          Alert.alert('Erro', response.mensagem);
+        } else {
+          Alert.alert('Sucesso', response.mensagem);
+        }
       }
-    } catch (error: any) {
-      Alert.alert('Erro', error.message || 'Falha ao atualizar avatar.');
+    } catch (error) {
+      console.error('Erro ao processar avatar:', error);
+      Alert.alert('Erro', 'Erro inesperado ao processar avatar');
     } finally {
       setUploading(false);
     }
   };
-
-  const avatarSource = getAvatarSource();
 
   if (!user) {
     return (
@@ -52,11 +51,13 @@ const UserProfileScreen: React.FC = () => {
   return (
     <ProfileWrapper
       user={{
-        userId: String(user.id),
+        userId: `${user?.id}`,
         userName: user.name,
         userEmail: user.email,
         userPhone: user.phone,
-        avatarSource: avatarSource,
+        avatarSource: {
+          uri: avatarBase64 ? avatarBase64 : DefaultAvatar.toString(),
+        },
         onAvatarChange: handleAvatarChange,
         uploading: uploading,
       }}

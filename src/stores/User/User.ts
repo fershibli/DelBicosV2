@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'expo-zustand-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserStore, Address } from './types';
+import { UserStore, Address, ErrorResponse, User } from './types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { AxiosError } from 'axios';
 
@@ -12,6 +12,7 @@ export const useUserStore = create<UserStore>()(
       address: null,
       token: null,
       verificationEmail: null,
+      avatarBase64: null,
       setVerificationEmail: (email) => set({ verificationEmail: email }),
 
       signInPassword: async (email: string, password: string) => {
@@ -110,48 +111,106 @@ export const useUserStore = create<UserStore>()(
       },
       uploadAvatar: async (base64Image: string) => {
         try {
-          const response = await backendHttpClient.post(`/api/user/avatar`, {
-            base64Image: base64Image,
+          const token = get().token;
+
+          const response = await backendHttpClient.post(
+            `/api/user/avatar`,
+            {
+              base64Image: base64Image,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          const { data } = response;
+
+          const currentUser = get().user;
+          if (currentUser) {
+            set({
+              user: {
+                ...currentUser,
+                avatar_uri: data.avatar_uri,
+              },
+            });
+          }
+
+          // Armazena o base64 na store
+          set({ avatarBase64: base64Image });
+
+          return {
+            erro: false,
+            mensagem: 'Avatar atualizado com sucesso!',
+            avatar_uri: data.avatar_uri,
+          };
+        } catch (error: any) {
+          if (error instanceof AxiosError) {
+            const errorMessage = error.response?.data?.error || error.message;
+            return {
+              erro: true,
+              mensagem: errorMessage || 'Erro ao fazer upload do avatar',
+            };
+          }
+
+          return {
+            erro: true,
+            mensagem: error.message || 'Erro ao fazer upload do avatar',
+          };
+        }
+      },
+
+      removeAvatar: async (): Promise<ErrorResponse> => {
+        try {
+          const token = get().token;
+
+          await backendHttpClient.delete(`/api/user/avatar`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
 
-          const data = response.data;
-
-          set({ user: data.user });
-        } catch (error: any) {
-          console.error('Erro no uploadAvatar do UserStore:', error);
-          throw new Error(
-            error.response?.data?.error || 'Falha ao enviar avatar.',
-          );
-        }
-      },
-      removeAvatar: async () => {
-        const userId = get().user?.id;
-        if (!userId) throw new Error('Usuário não autenticado.');
-
-        try {
-          const response = await backendHttpClient.delete(`/api/user/avatar`);
-          if (!response.data || !response.data.user) {
-            console.error(
-              '[UserStore] Erro: O backend não retornou o objeto "user" atualizado.',
-            );
-            set((state) => ({
-              user: state.user ? { ...state.user, avatar_uri: null } : null,
-            }));
-          } else {
-            set({ user: response.data.user });
+          // Atualiza o avatar_uri do usuário na store
+          const currentUser = get().user;
+          if (currentUser) {
+            set({
+              user: {
+                ...currentUser,
+                avatar_uri: null,
+              },
+              avatarBase64: null,
+            });
           }
+
+          return {
+            erro: false,
+            mensagem: 'Avatar removido com sucesso!',
+          };
         } catch (error: any) {
-          console.error('Erro no removeAvatar do UserStore:', error);
-          throw new Error(
-            error.response?.data?.error || 'Falha ao remover avatar.',
-          );
+          console.error('Erro ao remover avatar:', error);
+
+          if (error instanceof AxiosError) {
+            const errorMessage = error.response?.data?.error || error.message;
+            return {
+              erro: true,
+              mensagem: errorMessage || 'Erro ao remover avatar',
+            };
+          }
+
+          return {
+            erro: true,
+            mensagem: 'Falha ao remover o avatar',
+          };
         }
       },
+
       signOut: () =>
         set({
           user: null,
           address: null,
           token: null,
+          avatarBase64: null,
           verificationEmail: null,
         }),
     }),
@@ -163,6 +222,7 @@ export const useUserStore = create<UserStore>()(
         user: state.user,
         address: state.address,
         token: state.token,
+        avatarBase64: state.avatarBase64,
       }),
     },
   ),

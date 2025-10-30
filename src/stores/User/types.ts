@@ -23,11 +23,23 @@ export type Address = {
   postal_code: string;
 };
 
+export type ErrorResponse = {
+  erro: boolean;
+  mensagem: string;
+};
+
+export type UploadAvatarResponse = {
+  erro: boolean;
+  mensagem: string;
+  avatar_uri?: string;
+};
+
 export type UserStore = {
   user: User | null;
   address: Address | null;
   token: string | null;
   verificationEmail: string | null;
+  avatarBase64: string | null;
   setVerificationEmail: (email: string | null) => void;
   signInPassword: (email: string, password: string) => Promise<void>;
   changePassword: (
@@ -35,6 +47,6 @@ export type UserStore = {
     newPassword: string,
   ) => Promise<void>;
   signOut: () => void;
-  uploadAvatar: (base64Image: string) => Promise<void>;
-  removeAvatar: () => Promise<void>;
+  uploadAvatar: (base64Image: string) => Promise<UploadAvatarResponse>;
+  removeAvatar: () => Promise<ErrorResponse>;
 };
