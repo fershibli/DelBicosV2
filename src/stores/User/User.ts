@@ -15,6 +15,18 @@ export const useUserStore = create<UserStore>()(
       avatarBase64: null,
       setVerificationEmail: (email) => set({ verificationEmail: email }),
 
+      setLoggedInUser: (data: {
+        token: string;
+        user: User;
+        address: Address | null;
+      }) => {
+        set({
+          token: data.token,
+          user: data.user,
+          address: data.address,
+        });
+      },
+
       signInPassword: async (email: string, password: string) => {
         try {
           const response = await backendHttpClient.post('/api/user/login', {
@@ -53,6 +65,19 @@ export const useUserStore = create<UserStore>()(
                 postal_code: user.address.postal_code,
               }
             : null;
+          get().setLoggedInUser({
+            token,
+            user: {
+              id: user.id,
+              client_id: user.client_id,
+              name: user.name,
+              email: user.email,
+              phone: user.phone,
+              cpf: user.cpf,
+              avatar_uri: user.avatar_uri,
+            },
+            address: addressData,
+          });
           set({ user: userData, address: addressData, token });
           return;
         } catch (error: any | AxiosError) {
@@ -83,7 +108,6 @@ export const useUserStore = create<UserStore>()(
               current_password: currentPassword,
               new_password: newPassword,
             },
-            // O interceptor do httpClient adiciona o 'Authorization: Bearer ...'
           );
 
           if (response.status < 200 || response.status >= 300) {
@@ -111,33 +135,21 @@ export const useUserStore = create<UserStore>()(
       },
       uploadAvatar: async (base64Image: string) => {
         try {
-          const token = get().token;
-
-          const response = await backendHttpClient.post(
-            `/api/user/avatar`,
-            {
-              base64Image: base64Image,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          );
+          const response = await backendHttpClient.post(`/api/user/avatar`, {
+            base64Image: base64Image,
+          });
 
           const { data } = response;
 
           const currentUser = get().user;
-          if (currentUser) {
+          if (data.user) {
+            set({ user: data.user });
+          } else if (currentUser) {
             set({
-              user: {
-                ...currentUser,
-                avatar_uri: data.avatar_uri,
-              },
+              user: { ...currentUser, avatar_uri: data.avatar_uri },
             });
           }
 
-          // Armazena o base64 na store
           set({ avatarBase64: base64Image });
 
           return {
@@ -163,15 +175,8 @@ export const useUserStore = create<UserStore>()(
 
       removeAvatar: async (): Promise<ErrorResponse> => {
         try {
-          const token = get().token;
+          await backendHttpClient.delete(`/api/user/avatar`);
 
-          await backendHttpClient.delete(`/api/user/avatar`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          // Atualiza o avatar_uri do usuário na store
           const currentUser = get().user;
           if (currentUser) {
             set({
