@@ -13,11 +13,8 @@ export interface LocationData {
 }
 
 export interface AddressData {
-  // Formatação completa
   display_name: string;
-  formatted: string; // Nosso formato customizado brasileiro
-  
-  // Campos individuais do LocationIQ
+  formatted: string;
   place_id?: string;
   licence?: string;
   osm_type?: string;
@@ -25,24 +22,25 @@ export interface AddressData {
   boundingbox?: string[];
   lat?: string;
   lon?: string;
+  lng?: string;
   class?: string;
   type?: string;
-  
-  // Componentes do endereço brasileiro
-  road?: string;           // Rua/Avenida
-  neighbourhood?: string;  // Bairro
-  suburb?: string;         // Subúrbio
-  city?: string;           // Cidade
-  town?: string;           // Cidade pequena
-  state?: string;          // Estado
+  road?: string; // Rua/Avenida
+  street?: string;
+  number?: string;
+  complement?: string;
+  neighbourhood?: string; // Bairro
+  suburb?: string; // Subúrbio
+  city?: string; // Cidade
+  town?: string; // Cidade pequena
+  state?: string; // Estado
   state_district?: string; // Região administrativa
-  country?: string;        // País
-  country_code?: string;   // Código do país
-  postcode?: string;       // CEP
-  house_number?: string;   // Número
-  road_number?: string;    // Número da rua
-  
-  // Campos extras úteis
+  country?: string; // País
+  country_code?: string; // Código do país
+  country_iso?: string;
+  postcode?: string; // CEP
+  house_number?: string; // Número
+  road_number?: string; // Número da rua
   formatted_address?: string; // Endereço formatado pelo LocationIQ (backup)
 }
 

@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { AddressData } from './types';
 
-// 🔑 A chave da API deve estar definida no arquivo .env como EXPO_PUBLIC_LOCATIONIQ_API_KEY
 const LOCATIONIQ_API_KEY = process.env.EXPO_PUBLIC_LOCATIONIQ_API_KEY || '';
 
 if (!LOCATIONIQ_API_KEY) {
@@ -12,6 +11,8 @@ if (!LOCATIONIQ_API_KEY) {
 
 interface LocationContextType {
   address: AddressData | null;
+  city: string | undefined;
+  state: string | undefined;
   setLocation: (city: string, state: string) => void;
   lookupByCoordinates: (latitude: number, longitude: number) => Promise<void>;
   loading: boolean;
@@ -147,6 +148,14 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
       state,
       formatted: `${city} - ${state}`,
       display_name: `${city} - ${state}`,
+      lat: address?.lat || 0,
+      lng: address?.lng || 0,
+      street: address?.street || '',
+      number: address?.number || '',
+      neighborhood: address?.neighbourhood || '',
+      postal_code: address?.postcode || '',
+      country_iso: address?.country_iso || '',
+      lon: address?.lon || address?.lng || '0',
     } as AddressData);
   };
 
@@ -165,11 +174,6 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
       try {
         const url = `https://us1.locationiq.com/v1/reverse?key=${LOCATIONIQ_API_KEY}&lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`;
 
-        console.log('🔍 Buscando endereço para:', {
-          latitude: latitude.toFixed(6),
-          longitude: longitude.toFixed(6),
-        });
-
         const res = await fetch(url);
         if (!res.ok) {
           const text = await res.text();
@@ -183,18 +187,6 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
         }
 
         const addressData = formatBrazilianAddress(json);
-
-        console.log('📍 Endereço formatado:', {
-          original: json.display_name,
-          brasileiro: addressData.formatted,
-          componentes: {
-            rua: addressData.road,
-            bairro: addressData.neighbourhood,
-            cidade: addressData.city,
-            estado: addressData.state,
-            cep: addressData.postcode,
-          },
-        });
 
         setAddress(addressData);
         setLoading(false);
@@ -210,9 +202,20 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
     [],
   );
 
+  const currentCity = address?.city;
+  const currentState = address?.state;
+
   return (
     <LocationContext.Provider
-      value={{ address, setLocation, lookupByCoordinates, loading, error }}>
+      value={{
+        address,
+        city: currentCity,
+        state: currentState,
+        setLocation,
+        lookupByCoordinates,
+        loading,
+        error,
+      }}>
       {children}
     </LocationContext.Provider>
   );

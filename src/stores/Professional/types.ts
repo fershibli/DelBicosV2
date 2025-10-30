@@ -33,7 +33,7 @@ export interface Professional {
 
   // --- Dados Aninhados Essenciais ---
   User: User; // Informações do usuário associado
-  Service?: Service; // O serviço principal ou relevante para o contexto
+  Services?: Service; // O serviço principal ou relevante para o contexto
 
   // --- Dados Calculados/Agregados (Opcional, mas útil) ---
   rating?: number | null; // Média de avaliações

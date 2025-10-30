@@ -14,7 +14,7 @@ export type Address = {
   lng: string;
   street: string;
   number: string;
-  complement: string;
+  complement: string | null;
   neighborhood: string;
   city: string;
   state: string;
@@ -38,25 +38,14 @@ export type UserStore = {
   address: Address | null;
   token: string | null;
   verificationEmail: string | null;
-  // Base64 completo do avatar
   avatarBase64: string | null;
   setVerificationEmail: (email: string | null) => void;
-  signIn: () => void;
   signInPassword: (email: string, password: string) => Promise<void>;
   changePassword: (
     currentPassword: string,
     newPassword: string,
   ) => Promise<void>;
   signOut: () => void;
-  // Funções para gerenciamento de avatar
-  uploadAvatar: (
-    userId: string,
-    base64Image: string,
-  ) => Promise<UploadAvatarResponse>;
-  removeAvatar: (userId: string) => Promise<ErrorResponse>;
-  fetchUserById: (
-    userId: string,
-  ) => Promise<{ erro: boolean; mensagem: string; user?: User }>;
-  // Função para definir o base64 do avatar
-  setAvatarBase64: (base64: string | null) => void;
+  uploadAvatar: (base64Image: string) => Promise<UploadAvatarResponse>;
+  removeAvatar: () => Promise<ErrorResponse>;
 };

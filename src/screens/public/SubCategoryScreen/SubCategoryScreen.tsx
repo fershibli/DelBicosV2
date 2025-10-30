@@ -37,7 +37,7 @@ const SubCategoryButton: React.FC<{
         styles.subCategoryText,
         isActive && styles.subCategoryTextActive,
       ]}>
-      {item.name}
+      {item.title}
     </Text>
   </TouchableOpacity>
 );
