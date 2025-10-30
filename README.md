@@ -39,45 +39,59 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 🔗 **Documentações das disciplinas do projeto**
 
-- <a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf"> Gestão Ágil de Projetos de Software </a>
-- <a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf"> Interação Humano-Computador </a>
+- `<a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf">` Gestão Ágil de Projetos de Software - 3 Semestre `</a>`
+- `<a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf">` Interação Humano-Computador - 3 Semestre`</a>`
 
 <br>
 
 ## 🏁 Entregas de Sprints
 
-| Sprint |    Período    | Entregas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |    Status    |
-| :----: | :-----------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------: |
-|   01   | 04/06 - 20/06 | Figma do protótipo de agendar e pagar serviço, Página de Feed, Header, Endpoint GET de profissionais com filtros opcionais`<br>` (termo pesquisado, localização, categoria, subcategoria, data_inicio, data_fim) e com ordenação (relevância, avaliação, distância, disponibilidade)                                                                                                                                                                                                                                                                                                                                                                                                                                                    | ✅ Concluído |
-|   02   | 10/06 - 17/06 | Página de Meus Agendamentos, Figma do protótipo de Página de Login, Página de Login por E-mail e Senha,`<br>` dois endpoints POST de login por senha, endpoint POST de cadastro, endpoint POST de cancelar agendamento                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | ✅ Concluído |
-|   03   | 17/06 - 24/06 | Interações do protótipo do Figma, endpoint POST de cadastro de parceiro,`<br>` endpoint POST de aceitar agendamento, endpoint POST de editar disponibilidade                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | ✅ Concluído |
-|   04   |    24/06 -    | Criar o protótipo do Figma de Página de Ajuda (FAQ e mandar e-mail), Criar Figma de Perfil do Usuário, Criar Figma de Portal do Parceiro (login/cadastro),`<br>` Criar Figma de Meus Agendamentos (visão do parceiro), Criar Figma de Editar Loja do Parceiro, Criar Figma de Editar Disponibilidade do Parceiro, `<br>` Criar endpoint GET de detalhes do profissional, Criar dois endpoints POST de login por celular+SMS, Criar endpoint POST de enviar e-mail de Ajuda, `<br>` Criar endpoint POST de Editar Loja do Parceiro, Criar tabela noSQL para armazenar os chats (por id de sala), Criar tabela SQL para listar salas de chat por id de usuário, `<br>` Criar endpoint WebSocket de chat (sala com lista de participantes) | Em Andamento |
-
-<br>
+| Sprint |    Período    | Entregas                                                                                                                                                                                                                                                                              |     Status      |
+| :----: | :-----------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------: |
+|   01   | 04/06 - 20/06 | Figma do protótipo de agendar e pagar serviço, Página de Feed, Header, Endpoint GET de profissionais com filtros opcionais `<br>` (termo pesquisado, localização, categoria, subcategoria, data_inicio, data_fim) e com ordenação (relevância, avaliação, distância, disponibilidade) |  ✅ Concluído   |
+|   02   | 10/06 - 17/06 | Página de Meus Agendamentos, Figma do protótipo de Página de Login, Página de Login por E-mail e Senha,`<br>` dois endpoints POST de login por senha, endpoint POST de cadastro, endpoint POST de cancelar agendamento                                                                |  ✅ Concluído   |
+|   03   | 17/06 - 24/06 | Interações do protótipo do Figma, endpoint POST de cadastro de parceiro,`<br>` endpoint POST de aceitar agendamento, endpoint POST de editar disponibilidade                                                                                                                          |  ✅ Concluído   |
+|   04   | 24/06 - 25/08 | Implementação de Envio de E-mails Automatizados                                                                                                                                                                                                                                       |  ✅ Concluído   |
+|   05   | 26/08 - 08/09 | Implementação de Sistema de Agendamento com Calendário                                                                                                                                                                                                                                |  ✅ Concluído   |
+|   06   | 09/09 - 15/09 | Implementação de Sistema de Agendamento com Calendário                                                                                                                                                                                                                                |  ✅ Concluído   |
+|   07   | 16/09 - 22/09 | Implementação de Upload e Armazenamento de Arquivos                                                                                                                                                                                                                                   |  ✅ Concluído   |
+|   08   | 23/09 - 07/10 | Implementação de Sistema de Avaliações ou Comentários                                                                                                                                                                                                                                 |  ✅ Concluído   |
+|   09   | 08/10 - 14/10 | Implementação de Geração de Entrega de Relatórios em PDF                                                                                                                                                                                                                              |  ✅ Concluído   |
+|   10   | 15/10 - 20/10 | Implementação de Envio de Notificações em Tempo Real                                                                                                                                                                                                                                  |  ✅ Concluído   |
+|   11   |    21/10-     | Implementação de Integração com API de Pagamentos                                                                                                                                                                                                                                     | ⏳ Em Andamento |
+|   12   |    21/10 -    | Implementação de Visualização de Dados com Gráficos                                                                                                                                                                                                                                   | ⏳ Em Andamento |
+|   13   |    21/10-     | Implementação de Exportação de Dados para Excel/CSV                                                                                                                                                                                                                                   | ⏳ Em Andamento |
 
 ### 🎬 Apresentação
 
-<image src="assets/login01.gif" alt="tela de login">
+<image src="assets/delbicos_pitch_HD.gif" alt="Vídeo PITCH do projeto DelBicos" width="40%">
+<p>Vídeo PITCH do projeto DelBicos
+
+<image src="assets/login01.gif" alt="tela de login" width="40%">
+<p>Tela de login
+
+<image src="assets/apresentação.gif" alt="tela da Área do Cliente" width="40%">
+<p>Tela da Área do Cliente
 
 <br>
 
 ## 🎯 Backlogs
 
-<image src="assets/backlogP.png" alt="Backlog de Produtos do projeto DelBicos" width="60%">
-<image src="assets/backlogS.png" alt="Backlog de Sprints do projeto DelBicos" width="60%">
+<image src="assets/backlogP.png" alt="Backlog de Produtos do projeto DelBicos" width="30%">
+<image src="assets/backlogS.png" alt="Backlog de Sprints do projeto DelBicos" width="28.8%">
 
 <br>
 
 ## 🎥 User Stories
 
-<image src="assets/sprint01-1.png" alt="User Stories do projeto DelBicos" width="60%">
-<image src="assets/sprint01-2.png" alt="User Stories do projeto DelBicos" width="60%">
-<image src="assets/sprint01-3.png" alt="User Stories do projeto DelBicos" width="60%">
-<image src="assets/sprint02-1.png" alt="User Stories do projeto DelBicos" width="60%">
-<image src="assets/sprint02-2.png" alt="User Stories do projeto DelBicos" width="60%">
-<image src="assets/sprint03-1.png" alt="User Stories do projeto DelBicos" width="60%">
-<image src="assets/sprint03-2.png" alt="User Stories do projeto DelBicos" width="60%">
-<image src="assets/sprint04.png" alt="User Stories do projeto DelBicos" width="60%">
+<image src="assets/sprint01-1.png" alt="User Stories do projeto DelBicos" width="30%"><p>
+<image src="assets/sprint01-2.png" alt="User Stories do projeto DelBicos" width="30%"><p>
+<image src="assets/sprint01-3.png" alt="User Stories do projeto DelBicos" width="30%"><p>
+<image src="assets/sprint02-1.png" alt="User Stories do projeto DelBicos" width="30%"><p>
+<image src="assets/sprint02-2.png" alt="User Stories do projeto DelBicos" width="30%"><p>
+<image src="assets/sprint03-1.png" alt="User Stories do projeto DelBicos" width="30%"><p>
+<image src="assets/sprint03-2.png" alt="User Stories do projeto DelBicos" width="30%"><p>
+<image src="assets/sprint04.png" alt="User Stories do projeto DelBicos" width="30%"><p>
 
 <br>
 
@@ -145,8 +159,11 @@ O protótipo do DelBicos no Figma serve como uma demonstração visual interativ
 | :------------------------------------------------: | --------------------------- |
 |  [Fernando Chibli](https://github.com/fershibli)   | _Product Owner & FullStack_ |
 | [Douglas Wenzel](https://github.com/douglaswenzel) | _Scrum Master & FullStack_  |
+|    [Eduardo Kamo](https://github.com/edukamoz)     | _Desenvolvedor FullStack_   |
 |  [Gustavo Ferreira](https://github.com/Gspedine)   | _Desenvolvedor FullStack_   |
+|  [Iago Rossan](https://github.com/IagoYuriRossan)  | _Desenvolvedor FullStack_   |
 |   [Isabel Maito](https://github.com/isabelmaito)   | _Desenvolvedora FullStack_  |
+|    [Lucas Consani](https://github.com/konsanii)    | _Desenvolvedor FullStack_   |
 
 <br>
 
