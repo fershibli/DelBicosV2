@@ -14,38 +14,45 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
     try {
       const response = await backendHttpClient.get('/api/professionals', {
         params: {
-          search: filter,
+          termo: filter,
           page: page,
           limit: limit,
         },
       });
+      const data = response.data;
 
-      const backendData: any[] = response.data;
+      if (!data) {
+        console.error(`[ProfessionalStore] Backend error: No data received.`);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-      const listedData: ListedProfessional[] = backendData.map((prof) => {
-        let categoryName = 'Serviços';
-        if (
-          prof.services &&
-          prof.services.length > 0 &&
-          prof.services[0].Subcategory
-        ) {
-          categoryName = prof.services[0].Subcategory.name;
-        }
+      // Espera-se que o backend retorne um array de profissionais
+      // ou um objeto com { professionals: [], total: number }
+      const professionals = Array.isArray(data)
+        ? data
+        : data.professionals || [];
 
-        return {
+      // Mapeia para o formato ListedProfessional
+      const listedData: ListedProfessional[] = professionals.map(
+        (prof: any) => ({
           id: prof.id,
-          name: prof.User?.name || 'Nome Indisponível',
-          category: categoryName,
-          rating: prof.rating || 0,
-          ratingsCount: prof.ratings_count || 0,
+          name: prof.User?.name || prof.name || 'Nome não disponível',
+          category:
+            prof.Service?.Subcategory?.name || prof.category || 'Serviços',
+          rating: prof.rating ? Math.round(prof.rating * 10) / 10 : 0,
+          ratingsCount: prof.ratings_count || prof.ratingsCount || 0,
           imageUrl:
             prof.User?.avatar_uri ||
-            `https://picsum.photos/id/${prof.id}/200/200`,
-          location: prof.MainAddress?.city || 'Local não informado',
-          Service: prof.Services,
-        };
-      });
+            prof.Service?.banner_uri ||
+            prof.imageUrl ||
+            `https://picsum.photos/seed/${prof.id}/400/400`,
+          location: prof.location || 'São Paulo, SP',
+        }),
+      );
 
+      console.log(
+        `[ProfessionalStore] Retornando ${listedData.length} profissionais para página ${page}.`,
+      );
       return listedData;
     } catch (error) {
       console.error('[ProfessionalStore] Error fetching professionals:', error);
@@ -65,8 +72,31 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
 
       const professional: Professional = response.data;
 
-      set({ selectedProfessional: professional });
-      return professional;
+      // Calcula a média de avaliações
+      const ratings = professional.Appointments?.filter((a) => a.rating) || [];
+      const averageRating =
+        ratings.length > 0
+          ? ratings.reduce((sum, a) => sum + (a.rating || 0), 0) /
+            ratings.length
+          : 0;
+
+      // Arredonda a média para 1 casa decimal
+      const roundedRating = Math.round(averageRating * 10) / 10;
+
+      // Adiciona a média calculada ao objeto
+      const professionalWithRating = {
+        ...professional,
+        rating: roundedRating,
+        ratings_count: ratings.length,
+      };
+
+      console.log(
+        `[ProfessionalStore] Professional loaded:`,
+        professionalWithRating,
+      );
+
+      set({ selectedProfessional: professionalWithRating });
+      return professionalWithRating;
     } catch (error) {
       console.error(
         `[ProfessionalStore] Error fetching professional by ID ${id}:`,
