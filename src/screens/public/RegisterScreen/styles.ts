@@ -55,21 +55,6 @@ export const styles = StyleSheet.create({
     marginBottom: 32,
     textAlign: 'center',
   },
-  input: {
-    backgroundColor: colors.primaryWhite,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    height: 50,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#CED4DA',
-    fontFamily: 'Afacad-Regular',
-    color: '#212529',
-  },
-  inputError: {
-    borderColor: '#D32F2F',
-    borderWidth: 1.5,
-  },
   errorText: {
     color: '#D32F2F',
     fontSize: 14,
@@ -115,6 +100,12 @@ export const styles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     borderWidth: 0,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+  },
+  passwordContainerError: {
+    borderColor: '#D32F2F',
+    borderWidth: 1.5,
   },
   eyeButton: {
     padding: 12,
@@ -149,6 +140,9 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     fontFamily: 'Afacad-Bold',
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   linkText: {
     marginTop: 24,
