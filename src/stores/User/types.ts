@@ -15,7 +15,7 @@ export type Address = {
   lng: string;
   street: string;
   number: string;
-  complement: string;
+  complement: string | null;
   neighborhood: string;
   city: string;
   state: string;
@@ -27,14 +27,14 @@ export type UserStore = {
   user: User | null;
   address: Address | null;
   token: string | null;
-  verificationEmail: string | null; // Adicionar esta linha
+  verificationEmail: string | null;
   setVerificationEmail: (email: string | null) => void;
-  signIn: () => void;
   signInPassword: (email: string, password: string) => Promise<void>;
-  /** Altera a senha do usuário. Recebe a senha atual e a nova senha. */
   changePassword: (
     currentPassword: string,
     newPassword: string,
   ) => Promise<void>;
   signOut: () => void;
+  uploadAvatar: (base64Image: string) => Promise<void>;
+  removeAvatar: () => Promise<void>;
 };

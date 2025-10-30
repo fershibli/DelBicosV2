@@ -68,7 +68,6 @@ export const generatePDF = async (
       throw new Error('Falha ao gerar o arquivo PDF');
     }
 
-    console.log('PDF gerado com sucesso:', uri);
     return uri;
   } catch (error) {
     console.error('Erro ao gerar PDF:', error);

@@ -4,38 +4,27 @@ import {
   ProfessionalStore,
   Professional,
 } from '@stores/Professional/types';
-import { HTTP_DOMAIN } from '@config/varEnvs';
+import { backendHttpClient } from '@lib/helpers/httpClient';
 
-// --- Store Implementation ---
 export const useProfessionalStore = create<ProfessionalStore>((set) => ({
-  // --- Estado ---
   professionals: [],
   selectedProfessional: null,
 
-  // --- Ações ---
   fetchProfessionals: async (filter = '', page = 0, limit = 12) => {
     try {
-      const url = new URL(`${HTTP_DOMAIN}/api/professionals`);
-      url.searchParams.append('page', page.toString());
-      url.searchParams.append('limit', limit.toString());
-      if (filter) {
-        url.searchParams.append('filter', filter);
-      }
+      const response = await backendHttpClient.get('/api/professionals', {
+        params: {
+          termo: filter,
+          page: page,
+          limit: limit,
+        },
+      });
+      const data = response.data;
 
-      console.log(`[ProfessionalStore] Fetching professionals from: ${url}`);
-
-      const response = await fetch(url.toString());
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(
-          `[ProfessionalStore] Backend error ${response.status}:`,
-          errorText,
-        );
+      if (!data) {
+        console.error(`[ProfessionalStore] Backend error: No data received.`);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      const data = await response.json();
 
       // Espera-se que o backend retorne um array de profissionais
       // ou um objeto com { professionals: [], total: number }
@@ -73,23 +62,15 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
 
   fetchProfessionalById: async (id: number): Promise<Professional | null> => {
     set({ selectedProfessional: null });
+
     try {
-      const url = `${HTTP_DOMAIN}/api/professionals/${id}`;
-      console.log(`[ProfessionalStore] Fetching professional from: ${url}`);
+      const response = await backendHttpClient.get(`/api/professionals/${id}`);
 
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          console.warn(
-            `[ProfessionalStore] Professional with ID ${id} not found.`,
-          );
-          return null;
-        }
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (response.status !== 200 || !response.data) {
+        throw new Error(`Profissional com ID ${id} não encontrado.`);
       }
 
-      const professional: Professional = await response.json();
+      const professional: Professional = response.data;
 
       // Calcula a média de avaliações
       const ratings = professional.Appointments?.filter((a) => a.rating) || [];
@@ -115,7 +96,7 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
       return professionalWithRating;
     } catch (error) {
       console.error(
-        '[ProfessionalStore] Error fetching professional by ID:',
+        `[ProfessionalStore] Error fetching professional by ID ${id}:`,
         error,
       );
       set({ selectedProfessional: null });

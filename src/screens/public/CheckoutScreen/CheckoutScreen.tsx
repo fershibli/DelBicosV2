@@ -34,12 +34,15 @@ async function fetchPaymentIntent(
   addressId: number,
 ): Promise<string | null> {
   try {
+    const { token } = useUserStore.getState();
     const backendUrl = `${HTTP_DOMAIN}/api/payments/create-payment-intent`;
-    console.log(`[CheckoutScreen] Chamando backend em: ${backendUrl}`);
 
     const response = await fetch(backendUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({
         amount: amount, // Ex: 250.00
         currency: 'brl', // Defina sua moeda
@@ -63,7 +66,6 @@ async function fetchPaymentIntent(
       throw new Error('Client Secret não encontrado na resposta.');
     }
 
-    console.log('[CheckoutScreen] clientSecret recebido com sucesso.');
     return data.clientSecret;
   } catch (e: any) {
     console.error('[CheckoutScreen] Erro ao buscar Payment Intent:', e.message);
@@ -102,14 +104,6 @@ function CheckoutScreen() {
     // Só executa se tivermos o preço e os dados do profissional
     if (priceFrom && priceFrom > 0 && selectedProfessional && userAddress) {
       if (!priceFrom || !selectedProfessional || !userAddress) {
-        console.log(
-          '[CheckoutScreen Debug] useEffect NÃO DISPARADO, dados faltantes:',
-          {
-            hasPrice: !!(priceFrom && priceFrom > 0),
-            hasProfessional: !!selectedProfessional,
-            hasUserAddress: !!userAddress,
-          },
-        );
         return; // Sai se os dados básicos não estiverem prontos
       }
 
@@ -118,7 +112,7 @@ function CheckoutScreen() {
         setErrorIntent(null);
 
         // Precisamos do serviceId. Vamos pegá-lo do profissional buscado.
-        const serviceId = selectedProfessional.Service?.id;
+        const serviceId = (selectedProfessional.Services as any)?.[0]?.id;
         const addressId = userAddress.id;
 
         if (!serviceId) {
@@ -207,7 +201,7 @@ function CheckoutScreen() {
               <Image
                 source={{
                   uri:
-                    imageUrl || professional.Service?.banner_uri || undefined,
+                    imageUrl || professional.Services?.banner_uri || undefined,
                 }}
                 style={styles.summaryImage}
               />
@@ -218,7 +212,7 @@ function CheckoutScreen() {
                       {professional.User.name}
                     </Text>
                     <Text style={styles.summarySubtitle} numberOfLines={1}>
-                      {professional.Service?.title}
+                      {professional.Services?.title}
                     </Text>
                     <View style={styles.summaryRatingRow}>
                       <Rating
@@ -237,7 +231,7 @@ function CheckoutScreen() {
                 </View>
                 <View style={styles.summaryDivider} />
                 <Text style={styles.summaryServiceTitle}>
-                  {professional.Service?.Subcategory?.name || 'Serviço'}
+                  {professional.Services?.Subcategory?.name || 'Serviço'}
                 </Text>
                 <Text style={styles.summaryServiceDate}>{selectedTime}</Text>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
