@@ -10,7 +10,6 @@ import ConfirmPhoneNumber from './public/ConfirmPhoneNumber';
 import RegisterScreen from './public/RegisterScreen';
 import VerificationScreen from './public/VerificationScreen';
 import PartnerProfile from './public/PartnerProfile';
-import ServiceStatusScreen from './public/ServicesStatus';
 import { NavigationParams } from './types';
 import Login from './public/Login';
 import Header from '@components/Header';
@@ -73,12 +72,6 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
         stringify: {
           id: (value) => value,
         },
-      },
-    },
-    ServiceStatus: {
-      screen: ServiceStatusScreen,
-      linking: {
-        path: 'service-status',
       },
     },
     PhoneConfirmation: {

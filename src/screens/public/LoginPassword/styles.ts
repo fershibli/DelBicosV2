@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 8,
   },
   subtitle: {
@@ -55,7 +55,7 @@ export const styles = StyleSheet.create({
   },
   button: {
     height: 50,
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
     borderRadius: 8,
     width: '100%',
     justifyContent: 'center',
@@ -75,14 +75,14 @@ export const styles = StyleSheet.create({
   buttonSecondary: {
     backgroundColor: colors.primaryWhite,
     borderWidth: 1.5,
-    borderColor: '#003366',
+    borderColor: colors.primaryBlue,
   },
   buttonTextSecondary: {
-    color: '#003366',
+    color: colors.primaryBlue,
   },
   linkText: {
     marginTop: 20,
-    color: '#003366',
+    color: colors.primaryBlue,
     fontFamily: 'Afacad-Regular',
     fontSize: 14,
   },
@@ -112,7 +112,7 @@ export const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 22,
     fontFamily: 'Afacad-Bold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 16,
   },
   modalText: {
@@ -125,6 +125,11 @@ export const styles = StyleSheet.create({
   modalButton: {
     width: '100%',
     marginTop: 0,
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

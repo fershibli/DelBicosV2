@@ -1,50 +1,74 @@
 import { Text } from '@react-navigation/elements';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
+import colors from '@theme/colors';
+import { Address } from '@stores/Professional/types';
 
-type SobreContentProps = {
-  detalhes: string;
-  comodidadesIds: (string | number)[];
-  todasComodidades: {
-    id: string | number;
-    nome: string;
-  }[];
+export type SobreContentProps = {
+  nome?: string;
+  descricao?: string;
+  endereco?: Address;
 };
 
-export function SobreContent({
-  detalhes,
-  comodidadesIds,
-  todasComodidades,
-}: SobreContentProps) {
-  const comodidadesParceiro = todasComodidades.filter((comodidade) =>
-    comodidadesIds.includes(comodidade.id),
-  );
-
+export function SobreContent({ nome, descricao, endereco }: SobreContentProps) {
   return (
-    <View style={styles.contentContainer}>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Detalhes</Text>
-        <Text style={styles.sectionText}>{detalhes || 'Não informado'}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Comodidades</Text>
-        <View style={styles.list}>
-          {comodidadesParceiro.length > 0 ? (
-            comodidadesParceiro.map((comodidade) => (
-              <Text key={comodidade.id.toString()} style={styles.listItem}>
-                • {comodidade.nome}
-              </Text>
-            ))
-          ) : (
-            <Text style={styles.sectionText}>Nenhuma comodidade informada</Text>
-          )}
+    <ScrollView style={styles.contentContainer}>
+      {nome && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Nome</Text>
+          <Text style={styles.sectionText}>{nome}</Text>
         </View>
-      </View>
-    </View>
+      )}
+
+      {descricao && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Descrição</Text>
+          <Text style={styles.sectionText}>{descricao}</Text>
+        </View>
+      )}
+
+      {endereco && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Endereço</Text>
+          <Text style={styles.sectionText}>
+            {endereco.street}, {endereco.number}
+            {endereco.complement ? `, ${endereco.complement}` : ''}
+          </Text>
+          <Text style={styles.sectionText}>
+            {endereco.neighborhood}, {endereco.city} - {endereco.state}
+          </Text>
+          <Text style={styles.sectionText}>CEP: {endereco.zipcode}</Text>
+        </View>
+      )}
+
+      {!nome && !descricao && !endereco && (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Nenhuma informação disponível</Text>
+        </View>
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  navTabs: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.secondaryBeige,
+  },
+  tab: {
+    fontSize: 17,
+    color: '#666',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  activeTab: {
+    color: colors.primaryOrange,
+    fontWeight: 'bold',
+    borderBottomWidth: 2,
+    borderBottomColor: colors.primaryOrange,
+  },
   contentContainer: {
     padding: 16,
   },
@@ -60,6 +84,7 @@ const styles = StyleSheet.create({
   sectionText: {
     fontSize: 15,
     color: '#666',
+    lineHeight: 22,
   },
   list: {
     marginLeft: 16,
@@ -68,5 +93,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#666',
     marginBottom: 4,
+  },
+  emptyContainer: {
+    padding: 32,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
   },
 });

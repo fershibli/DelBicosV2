@@ -66,7 +66,7 @@ export const styles = StyleSheet.create({
   timesTitle: {
     fontSize: 13,
     fontFamily: 'Afacad-SemiBold',
-    color: '#003366',
+    color: colors.primaryBlue,
     marginBottom: 4,
   },
   timesRow: {

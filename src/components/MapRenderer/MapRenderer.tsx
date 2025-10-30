@@ -33,7 +33,6 @@ const NativeMapRenderer: React.FC<NativeMapRendererProps> = ({
 
   const handleMapReady = () => {
     setMapReady(true);
-    console.log('Mapa nativo carregado com sucesso');
   };
 
   const handleRegionChangeComplete = (newRegion: any) => {

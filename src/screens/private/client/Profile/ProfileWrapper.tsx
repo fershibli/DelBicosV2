@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
-
 import MenuNavegacao from './Tabs/MenuNavegacao';
 import AlterarEnderecoForm from './Tabs/AlterarEnderecoForm';
 import DadosContaForm from './Tabs/DadosContaForm';
@@ -20,14 +19,14 @@ interface UserProfileProps {
 }
 
 const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
-  const [currentScreen, setCurrentScreen] = useState('MeusEnderecos');
+  const [activeTab, setActiveTab] = useState('DadosContaForm');
 
   const renderScreen = () => {
-    switch (currentScreen) {
-      case 'MeusEnderecos':
-        return <AlterarEnderecoForm />;
+    switch (activeTab) {
       case 'DadosContaForm':
         return <DadosContaForm user={user} />;
+      case 'MeusEnderecos':
+        return <AlterarEnderecoForm />;
       case 'TrocarSenhaForm':
         return <TrocarSenhaForm />;
       case 'MeusAgendamentos':
@@ -42,26 +41,15 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Cabeçalho superior (se houver) */}
-      {/* <View style={styles.header}>
-        <UserProfile {...user} />
-      </View> */}
-
-      {/* Wrapper principal que contém o menu lateral e o conteúdo */}
+    <View style={styles.container}>
       <View style={styles.bodyWrapper}>
-        {/* Seção do menu lateral */}
-        <View style={styles.menuSection}>
-          <MenuNavegacao
-            initialActive={currentScreen}
-            onItemSelected={setCurrentScreen}
-          />
-        </View>
+        <ScrollView style={styles.menuSection}>
+          <MenuNavegacao activeItem={activeTab} onItemSelected={setActiveTab} />
+        </ScrollView>
 
-        {/* Seção do conteúdo principal */}
         <View style={styles.mainContent}>{renderScreen()}</View>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -83,6 +71,9 @@ const styles = StyleSheet.create({
       android: {
         elevation: 4,
       },
+      web: {
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+      },
     }),
   },
   bodyWrapper: {
@@ -90,19 +81,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   menuSection: {
-    width: 250,
+    width: '25%',
+    minWidth: 220,
+    maxWidth: 280,
     backgroundColor: '#f0f2f5',
     paddingVertical: 20,
-    paddingHorizontal: 18, // aumentei o espaçamento interno para afastar mais da borda
+    paddingHorizontal: 18,
   },
   mainContent: {
     flex: 1,
-    padding: 20,
   },
   contentText: {
     fontSize: 18,
     textAlign: 'center',
     color: '#333',
+    marginTop: 40,
   },
 });
 

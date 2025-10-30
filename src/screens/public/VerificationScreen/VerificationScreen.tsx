@@ -17,11 +17,17 @@ import LogoV3 from '@assets/LogoV3.png';
 import { styles } from './styles';
 import { HTTP_DOMAIN } from '@config/varEnvs';
 import { useUserStore } from '@stores/User';
+import { backendHttpClient } from '@lib/helpers/httpClient';
+import { Address } from '@stores/User/types';
 import colors from '@theme/colors';
 
 function VerificationScreen() {
   const navigation = useNavigation();
-  const { verificationEmail: email, setVerificationEmail } = useUserStore();
+  const {
+    verificationEmail: email,
+    setVerificationEmail,
+    setLoggedInUser,
+  } = useUserStore();
 
   const [code, setCode] = useState<string[]>(Array(6).fill(''));
   const [isLoading, setIsLoading] = useState(false);
@@ -60,16 +66,59 @@ function VerificationScreen() {
       return;
     }
 
+    if (!email) {
+      Alert.alert('Erro', 'Sessão inválida. Por favor, retorne ao cadastro.');
+      navigation.navigate('Register');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const response = await fetch(`${HTTP_DOMAIN}/auth/verify`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code: fullCode }),
-      });
-      const data = await response.json();
+      const response = await backendHttpClient.post(
+        `${HTTP_DOMAIN}/auth/verify`,
+        {
+          email,
+          code: fullCode,
+        },
+      );
+      const data = response.data;
 
-      if (response.ok) {
+      if (response.status === 200) {
+        const { token, user } = data;
+        if (!token || !user) {
+          throw new Error('Resposta de verificação inválida do servidor.');
+        }
+
+        const addressData: Address | null = user.address
+          ? {
+              id: user.address.id,
+              lat: user.address.lat,
+              lng: user.address.lng,
+              street: user.address.street,
+              number: user.address.number,
+              complement: user.address.complement,
+              neighborhood: user.address.neighborhood,
+              city: user.address.city,
+              state: user.address.state,
+              country_iso: user.address.country_iso,
+              postal_code: user.address.postal_code,
+            }
+          : null;
+
+        setLoggedInUser({
+          token,
+          user: {
+            id: user.id,
+            client_id: user.client_id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            cpf: user.cpf,
+            avatar_uri: user.avatar_uri,
+          },
+          address: addressData,
+        });
+
         Alert.alert('Sucesso!', 'Sua conta foi verificada com sucesso.');
         setVerificationEmail(null);
         navigation.navigate('Home');
@@ -79,15 +128,16 @@ function VerificationScreen() {
           data.error || 'Ocorreu um problema.',
         );
       }
-      if (!email) {
-        return (
-          <View style={styles.container}>
-            <Text>Sessão inválida. Por favor, retorne ao cadastro.</Text>
-          </View>
+    } catch (error: any) {
+      console.error('Erro ao verificar código:', error);
+      if (error.response) {
+        Alert.alert(
+          'Erro na Verificação',
+          error.response.data.error || 'Ocorreu um problema.',
         );
+      } else {
+        Alert.alert('Erro de Conexão', 'Não foi possível verificar o código.');
       }
-    } catch {
-      Alert.alert('Erro de Conexão', 'Não foi possível verificar o código.');
     } finally {
       setIsLoading(false);
     }

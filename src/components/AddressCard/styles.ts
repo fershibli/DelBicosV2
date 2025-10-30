@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
   },
   saveButton: {
-    backgroundColor: '#003366',
+    backgroundColor: colors.primaryBlue,
   },
   cancelButton: {
     backgroundColor: '#6c757d',

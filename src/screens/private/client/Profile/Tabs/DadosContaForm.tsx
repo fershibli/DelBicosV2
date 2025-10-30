@@ -243,7 +243,6 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
       const success = Math.random() > 0.2;
 
       if (success) {
-        console.log('Dados Salvos:', { nome, sobrenome, cpf, email, telefone });
         setStatus('success');
         setStatusMessage('Suas informações foram salvas com sucesso!');
       } else {
