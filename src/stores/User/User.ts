@@ -5,6 +5,23 @@ import { UserStore, Address, ErrorResponse, User } from './types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { AxiosError } from 'axios';
 
+backendHttpClient.interceptors.request.use(
+  (config) => {
+    try {
+      const token = useUserStore.getState().token;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      console.error('Erro ao buscar token no interceptor do Axios:', error);
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
 export const useUserStore = create<UserStore>()(
   persist(
     (set, get) => ({
