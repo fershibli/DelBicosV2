@@ -90,9 +90,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         throw new Error('Permissão de localização negada');
       }
 
-      console.log(
-        '[Header] Permissão de localização concedida. Buscando coordenadas...',
-      );
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
       });
@@ -101,8 +98,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         longitude: location.coords.longitude,
       };
 
-      console.log('[Header] Coordenadas atuais obtidas:', currentCoords);
-      // DEFINE a região e o pino para a localização atual
       setTempRegion({
         ...currentCoords,
         latitudeDelta: 0.01,
@@ -175,9 +170,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
 
   useEffect(() => {
     if (user && userAddress && userAddress.city && !city) {
-      console.log(
-        `[Header] Sincronizando: Definindo localização de pesquisa para ${userAddress.city}.`,
-      );
       setLocation(userAddress.city, userAddress.state);
     }
   }, [user, userAddress, city, setLocation]);
