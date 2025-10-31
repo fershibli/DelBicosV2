@@ -74,4 +74,14 @@ export const styles = StyleSheet.create({
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
   },
+  receiptButton: {
+    backgroundColor: colors.primaryOrange, // Laranja
+    marginBottom: 12, // Espaço entre os botões
+  },
+  homeButton: {
+    backgroundColor: '#005A93', // Azul
+  },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
 });
