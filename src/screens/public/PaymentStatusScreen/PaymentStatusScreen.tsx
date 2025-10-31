@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   ActivityIndicator,
   TouchableOpacity,
   Platform,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Elements, useStripe } from '@stripe/react-stripe-js';
@@ -13,18 +14,28 @@ import { styles } from './styles';
 import { FontAwesome } from '@expo/vector-icons';
 import { HTTP_DOMAIN } from '@config/varEnvs';
 import { useUserStore } from '@stores/User';
+import {
+  useAppointmentStore,
+  Appointment,
+  InvoiceData,
+} from '@stores/Appointment';
+import InvoiceTemplate from '@components/InvoiceTemplate';
+import { generatePDF } from '@lib/helpers/pdfGenerator';
+import { downloadPDF } from '@lib/helpers/shareHelperSimple';
 
-// Define os status da tela
 type StatusType = 'loading' | 'success' | 'error';
 
 function PaymentStatusLogic() {
   const navigation = useNavigation();
-  const stripe = useStripe(); // Obtém a instância do Stripe
+  const stripe = useStripe();
   const { user } = useUserStore();
+  const { fetchInvoice } = useAppointmentStore();
 
   const [status, setStatus] = useState<StatusType>('loading');
   const [message, setMessage] = useState('Verificando seu pagamento...');
-  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+  const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
 
   useEffect(() => {
     if (!stripe || !user || Platform.OS !== 'web') {
@@ -33,10 +44,9 @@ function PaymentStatusLogic() {
 
     const verifyPayment = async () => {
       try {
-        // 1. Pega os parâmetros da URL
         const urlParams = new URLSearchParams(window.location.search);
         const clientSecret = urlParams.get('payment_intent_client_secret');
-        const paymentIntentId = urlParams.get('payment_intent'); // O ID "pi_..."
+        const paymentIntentId = urlParams.get('payment_intent');
 
         if (!clientSecret || !paymentIntentId) {
           throw new Error('Identificador de pagamento não encontrado na URL.');
@@ -73,13 +83,25 @@ function PaymentStatusLogic() {
             );
           }
 
-          setStatus('success');
-          setMessage(
-            'Seu pagamento foi concluído e seu agendamento está confirmado!',
-          );
-          setReceiptUrl(
-            (paymentIntent as any).charges?.data[0]?.receipt_url || null,
-          );
+          const newAppointment = confirmData.appointment as Appointment;
+
+          const invoice = await fetchInvoice(newAppointment.id);
+
+          if (!invoice) {
+            console.warn(
+              'Agendamento criado, mas falha ao buscar dados da nota.',
+            );
+            setStatus('success');
+            setMessage(
+              'Pagamento concluído! (Recibo indisponível no momento).',
+            );
+          } else {
+            setInvoiceData(invoice);
+            setStatus('success');
+            setMessage(
+              'Seu pagamento foi concluído e seu agendamento está confirmado!',
+            );
+          }
         } else {
           throw new Error(
             `Pagamento não concluído. Status: ${paymentIntent?.status}`,
@@ -98,9 +120,37 @@ function PaymentStatusLogic() {
     };
 
     verifyPayment();
-  }, [stripe, user]);
+  }, [stripe, user, fetchInvoice]);
 
-  // Renderização condicional baseada no status
+  const handlePrintOrDownload = useCallback(() => {
+    if (!invoiceData) {
+      Alert.alert('Erro', 'Dados do recibo não estão disponíveis.');
+      return;
+    }
+
+    setIsGeneratingPDF(true);
+    try {
+      const htmlContent = InvoiceTemplate(invoiceData);
+      const fileName = `recibo-${invoiceData.invoiceNumber}.pdf`;
+
+      if (Platform.OS === 'web') {
+        generatePDF(htmlContent);
+        setIsGeneratingPDF(false);
+      } else {
+        (async () => {
+          const uri = await generatePDF(htmlContent);
+          await downloadPDF(uri, fileName);
+          setIsGeneratingPDF(false);
+        })();
+      }
+    } catch (error: any) {
+      Alert.alert(
+        'Erro ao Gerar PDF',
+        error.message || 'Não foi possível gerar o PDF.',
+      );
+      setIsGeneratingPDF(false);
+    }
+  }, [invoiceData]);
 
   if (status === 'loading') {
     return (
@@ -111,7 +161,6 @@ function PaymentStatusLogic() {
     );
   }
 
-  // Estado de Erro
   if (status === 'error') {
     return (
       <View style={styles.container}>
@@ -131,7 +180,6 @@ function PaymentStatusLogic() {
     );
   }
 
-  // Estado de Sucesso
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -141,18 +189,28 @@ function PaymentStatusLogic() {
         <Text style={styles.title}>Pagamento Aprovado!</Text>
         <Text style={styles.message}>{message}</Text>
 
-        {/* Opção 1: Mostrar o link do recibo do Stripe */}
-        {receiptUrl && (
+        {invoiceData && (
           <TouchableOpacity
-            onPress={() =>
-              Platform.OS === 'web' && window.open(receiptUrl, '_blank')
-            }>
-            <Text style={styles.receiptLink}>Ver recibo do pagamento</Text>
+            style={[
+              styles.button,
+              styles.receiptButton,
+              isGeneratingPDF && styles.buttonDisabled,
+            ]}
+            onPress={handlePrintOrDownload}
+            disabled={isGeneratingPDF}>
+            {isGeneratingPDF ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <Text style={styles.buttonText}>
+                <FontAwesome name="print" size={16} />{' '}
+                {Platform.OS === 'web' ? 'Imprimir Recibo' : 'Salvar Recibo'}
+              </Text>
+            )}
           </TouchableOpacity>
         )}
 
         <TouchableOpacity
-          style={styles.button}
+          style={[styles.button, styles.homeButton]}
           onPress={() => navigation.navigate('MySchedules')}>
           <Text style={styles.buttonText}>Ir para Meus Agendamentos</Text>
         </TouchableOpacity>
@@ -163,8 +221,6 @@ function PaymentStatusLogic() {
 
 function PaymentStatusScreen() {
   return (
-    // 8. Envolva sua lógica de tela com o <Elements> provider
-    // Note: Ele só precisa do 'stripe', não do 'options'/'clientSecret'
     <Elements stripe={stripePromise}>
       <PaymentStatusLogic />
     </Elements>
