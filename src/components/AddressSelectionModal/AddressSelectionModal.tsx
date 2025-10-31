@@ -1,27 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   Modal,
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
   Alert,
 } from 'react-native';
-
-type Address = {
-  id: number;
-  street: string;
-  number: string;
-  complement?: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  postal_code: string;
-  lat: number;
-  lng: number;
-};
+import { styles } from './styles';
+import { Address } from '@stores/Address';
 
 type AddressSelectionModalProps = {
   visible: boolean;
@@ -30,7 +18,7 @@ type AddressSelectionModalProps = {
   userId: string;
 };
 
-export function AddressSelectionModal({
+function AddressSelectionModal({
   visible,
   onClose,
   onAddressSelect,
@@ -40,21 +28,17 @@ export function AddressSelectionModal({
   const [loading, setLoading] = useState(true);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
-  useEffect(() => {
-    if (visible) {
-      fetchAddresses();
-    }
-  }, [visible, userId]);
-
-  const fetchAddresses = async () => {
+  const fetchAddresses = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3000/api/address/user/${userId}`);
-      
+      const response = await fetch(
+        `http://localhost:3000/api/address/user/${userId}`,
+      );
+
       if (!response.ok) {
         throw new Error('Erro ao carregar endereços');
       }
-      
+
       const data = await response.json();
       setAddresses(data);
     } catch (error) {
@@ -63,7 +47,7 @@ export function AddressSelectionModal({
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   const handleSelectAddress = (address: Address) => {
     setSelectedAddress(address);
@@ -83,6 +67,12 @@ export function AddressSelectionModal({
     return `${address.street}, ${address.number}${address.complement ? ` - ${address.complement}` : ''}, ${address.neighborhood}, ${address.city} - ${address.state}`;
   };
 
+  useEffect(() => {
+    if (visible) {
+      fetchAddresses();
+    }
+  }, [visible, fetchAddresses]);
+
   return (
     <Modal
       visible={visible}
@@ -100,9 +90,7 @@ export function AddressSelectionModal({
             </View>
           ) : addresses.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>
-                Nenhum endereço cadastrado
-              </Text>
+              <Text style={styles.emptyText}>Nenhum endereço cadastrado</Text>
               <Text style={styles.emptySubtext}>
                 Cadastre um endereço antes de agendar
               </Text>
@@ -118,14 +106,16 @@ export function AddressSelectionModal({
                   <TouchableOpacity
                     style={[
                       styles.addressItem,
-                      selectedAddress?.id === item.id && styles.selectedAddressItem,
+                      selectedAddress?.id === item.id &&
+                        styles.selectedAddressItem,
                     ]}
                     onPress={() => handleSelectAddress(item)}>
                     <View style={styles.addressRadio}>
                       <View
                         style={[
                           styles.radioCircle,
-                          selectedAddress?.id === item.id && styles.radioCircleSelected,
+                          selectedAddress?.id === item.id &&
+                            styles.radioCircleSelected,
                         ]}
                       />
                     </View>
@@ -154,9 +144,7 @@ export function AddressSelectionModal({
                   </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={onClose}>
+                <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
                   <Text style={styles.cancelButtonText}>Cancelar</Text>
                 </TouchableOpacity>
               </View>
@@ -168,127 +156,4 @@ export function AddressSelectionModal({
   );
 }
 
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    width: '90%',
-    borderRadius: 12,
-    padding: 20,
-    maxHeight: '80%',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#333',
-  },
-  loadingContainer: {
-    padding: 40,
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 10,
-    color: '#666',
-  },
-  emptyContainer: {
-    padding: 40,
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  emptySubtext: {
-    fontSize: 14,
-    color: '#999',
-    textAlign: 'center',
-  },
-  addressesList: {
-    maxHeight: 400,
-  },
-  addressesListContent: {
-    paddingBottom: 10,
-  },
-  addressItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 8,
-    marginBottom: 8,
-    backgroundColor: '#FAFAFA',
-  },
-  selectedAddressItem: {
-    borderColor: '#FC8200',
-    backgroundColor: '#FFF5EB',
-  },
-  addressRadio: {
-    marginRight: 12,
-  },
-  radioCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#CCCCCC',
-  },
-  radioCircleSelected: {
-    borderColor: '#FC8200',
-    backgroundColor: '#FC8200',
-  },
-  addressInfo: {
-    flex: 1,
-  },
-  addressText: {
-    fontSize: 14,
-    color: '#333',
-    fontWeight: '500',
-    marginBottom: 2,
-  },
-  addressNeighborhood: {
-    fontSize: 12,
-    color: '#666',
-  },
-  modalButtons: {
-    marginTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    paddingTop: 16,
-  },
-  confirmButton: {
-    backgroundColor: '#FC8200',
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  disabledButton: {
-    backgroundColor: '#CCCCCC',
-  },
-  confirmButtonText: {
-    color: 'white',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  cancelButton: {
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#CCC',
-  },
-  cancelButtonText: {
-    color: '#666',
-    fontWeight: '500',
-  },
-});
+export default AddressSelectionModal;
