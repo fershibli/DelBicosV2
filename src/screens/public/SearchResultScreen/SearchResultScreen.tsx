@@ -58,7 +58,7 @@ const MOCK_RESULTS: ProfessionalResult[] = [
 
 function SearchResultScreen() {
   const route = useRoute();
-  const { subCategoryId, date } = route.params as {
+  const { date } = route.params as {
     subCategoryId: number;
     date: string;
   };
