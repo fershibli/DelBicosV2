@@ -1,17 +1,30 @@
 import { useAppointmentStore } from '@stores/Appointment';
 import { Appointment } from '@stores/Appointment/types';
 import React, { useEffect, useState, useMemo } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import AppointmentItem from '@components/AppointmentItem';
 import colors from '@theme/colors';
 
 type SortOption = 'recentes' | 'avaliacao' | 'distancia';
-type FilterOption = 'todos' | 'pendentes' | 'confirmados' | 'concluidos' | 'cancelados';
+type FilterOption =
+  | 'todos'
+  | 'pendentes'
+  | 'confirmados'
+  | 'concluidos'
+  | 'cancelados';
 
 function MeusAgendamentos() {
   const [sortBy, setSortBy] = useState<SortOption>('recentes');
   const [filterBy, setFilterBy] = useState<FilterOption>('todos');
-  const [showInfo, setShowInfo] = useState<'avaliacao' | 'distancia'>('avaliacao');
+  const [showInfo, setShowInfo] = useState<'avaliacao' | 'distancia'>(
+    'avaliacao',
+  );
 
   const { appointments, fetchAppointments } = useAppointmentStore();
 
@@ -41,7 +54,7 @@ function MeusAgendamentos() {
 
     // Aplicar filtro de status
     if (filterBy !== 'todos') {
-      filtered = filtered.filter(apt => {
+      filtered = filtered.filter((apt) => {
         switch (filterBy) {
           case 'pendentes':
             return apt.status === 'pending';
@@ -66,7 +79,9 @@ function MeusAgendamentos() {
           return getDistance(a) - getDistance(b);
         case 'recentes':
         default:
-          return new Date(b.start_time).getTime() - new Date(a.start_time).getTime();
+          return (
+            new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
+          );
       }
     });
 
@@ -77,54 +92,84 @@ function MeusAgendamentos() {
     <View style={styles.container}>
       {/* Título Grande */}
       <Text style={styles.pageTitle}>Meus Agendamentos</Text>
-      
+
       {/* Barra de Filtros */}
       <View style={styles.filtersContainer}>
         <View style={styles.filterRow}>
-          <TouchableOpacity 
-            style={[styles.filterButton, sortBy === 'recentes' && styles.filterButtonActive]}
-            onPress={() => setSortBy('recentes')}
-          >
-            <Text style={[styles.filterButtonText, sortBy === 'recentes' && styles.filterButtonTextActive]}>
+          <TouchableOpacity
+            style={[
+              styles.filterButton,
+              sortBy === 'recentes' && styles.filterButtonActive,
+            ]}
+            onPress={() => setSortBy('recentes')}>
+            <Text
+              style={[
+                styles.filterButtonText,
+                sortBy === 'recentes' && styles.filterButtonTextActive,
+              ]}>
               Recentes
             </Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.filterButton, sortBy === 'avaliacao' && styles.filterButtonActive]}
+
+          <TouchableOpacity
+            style={[
+              styles.filterButton,
+              sortBy === 'avaliacao' && styles.filterButtonActive,
+            ]}
             onPress={() => {
               setSortBy('avaliacao');
               setShowInfo('avaliacao');
-            }}
-          >
-            <Text style={[styles.filterButtonText, sortBy === 'avaliacao' && styles.filterButtonTextActive]}>
+            }}>
+            <Text
+              style={[
+                styles.filterButtonText,
+                sortBy === 'avaliacao' && styles.filterButtonTextActive,
+              ]}>
               ⭐ Avaliação
             </Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.filterButton, sortBy === 'distancia' && styles.filterButtonActive]}
+
+          <TouchableOpacity
+            style={[
+              styles.filterButton,
+              sortBy === 'distancia' && styles.filterButtonActive,
+            ]}
             onPress={() => {
               setSortBy('distancia');
               setShowInfo('distancia');
-            }}
-          >
-            <Text style={[styles.filterButtonText, sortBy === 'distancia' && styles.filterButtonTextActive]}>
+            }}>
+            <Text
+              style={[
+                styles.filterButtonText,
+                sortBy === 'distancia' && styles.filterButtonTextActive,
+              ]}>
               📍 Distância
             </Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.filterButton, filterBy !== 'todos' && styles.filterButtonActive]}
+
+          <TouchableOpacity
+            style={[
+              styles.filterButton,
+              filterBy !== 'todos' && styles.filterButtonActive,
+            ]}
             onPress={() => {
               // Rotacionar entre os status
-              const statuses: FilterOption[] = ['todos', 'pendentes', 'confirmados', 'concluidos', 'cancelados'];
+              const statuses: FilterOption[] = [
+                'todos',
+                'pendentes',
+                'confirmados',
+                'concluidos',
+                'cancelados',
+              ];
               const currentIndex = statuses.indexOf(filterBy);
               const nextIndex = (currentIndex + 1) % statuses.length;
               setFilterBy(statuses[nextIndex]);
-            }}
-          >
-            <Text style={[styles.filterButtonText, filterBy !== 'todos' && styles.filterButtonTextActive]}>
+            }}>
+            <Text
+              style={[
+                styles.filterButtonText,
+                filterBy !== 'todos' && styles.filterButtonTextActive,
+              ]}>
               {filterBy === 'todos' && 'Todos'}
               {filterBy === 'pendentes' && 'Pendentes'}
               {filterBy === 'confirmados' && 'Confirmados'}
@@ -138,45 +183,54 @@ function MeusAgendamentos() {
         {(sortBy === 'avaliacao' || sortBy === 'distancia') && (
           <View style={styles.infoIndicator}>
             <Text style={styles.infoIndicatorText}>
-              {showInfo === 'avaliacao' ? '⭐ Ordenado por avaliação (melhor → pior)' : '📍 Ordenado por distância (mais perto → mais longe)'}
+              {showInfo === 'avaliacao'
+                ? '⭐ Ordenado por avaliação (melhor → pior)'
+                : '📍 Ordenado por distância (mais perto → mais longe)'}
             </Text>
           </View>
         )}
       </View>
 
       {/* Lista de Agendamentos em Grade 2x2 */}
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}>
         {filteredAndSortedAppointments.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyStateText}>Nenhum agendamento encontrado</Text>
+            <Text style={styles.emptyStateText}>
+              Nenhum agendamento encontrado
+            </Text>
           </View>
         ) : (
           <View style={styles.gridContainer}>
             {filteredAndSortedAppointments.map((appointment, index) => (
-              <View 
-                key={appointment.id} 
+              <View
+                key={appointment.id}
                 style={[
                   styles.gridItem,
-                  (index + 1) % 2 === 0 && { marginRight: 0 }
-                ]}
-              >
+                  (index + 1) % 2 === 0 && { marginRight: 0 },
+                ]}>
                 <AppointmentItem appointment={appointment} />
-                
+
                 {/* Quadro de informação (avaliação ou distância) */}
                 {showInfo === 'avaliacao' && (
                   <View style={styles.infoBox}>
                     <Text style={styles.infoBoxLabel}>Avaliação:</Text>
                     <View style={styles.ratingDisplay}>
-                      <Text style={styles.ratingText}>⭐ {getProfessionalRating(appointment).toFixed(1)}</Text>
+                      <Text style={styles.ratingText}>
+                        ⭐ {getProfessionalRating(appointment).toFixed(1)}
+                      </Text>
                     </View>
                   </View>
                 )}
-                
+
                 {showInfo === 'distancia' && (
                   <View style={styles.infoBox}>
                     <Text style={styles.infoBoxLabel}>Distância:</Text>
                     <View style={styles.distanceDisplay}>
-                      <Text style={styles.distanceText}>📍 {getDistance(appointment)} km</Text>
+                      <Text style={styles.distanceText}>
+                        📍 {getDistance(appointment)} km
+                      </Text>
                     </View>
                   </View>
                 )}

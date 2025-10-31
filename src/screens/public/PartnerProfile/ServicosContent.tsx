@@ -10,15 +10,12 @@ import {
 } from 'react-native';
 import colors from '@theme/colors';
 import { Service } from '@stores/Professional/types';
-import { useNavigation } from '@react-navigation/native';
 
 type ServicosContentProps = {
   servicos: Service[];
 };
 
 export function ServicosContent({ servicos }: ServicosContentProps) {
-  const navigation = useNavigation();
-
   const formatarPreco = (preco: string) => {
     const valor = parseFloat(preco);
     return new Intl.NumberFormat('pt-BR', {
