@@ -28,9 +28,9 @@ export interface ButtonStyleProps {
 
 export interface ButtonProps {
   onPress: () => void;
-  colorVariant?: 'primary' | 'secondary' | 'primaryWhite' | 'primaryGreen';
-  sizeVariant?: 'medium' | 'large' | 'xLarge' | 'smallPill' | 'largePill';
-  fontVariant?: 'AfacadRegular32' | 'AfacadRegular20' | 'AfacadRegular15';
+  colorVariant?: 'primary' | 'secondary' | 'primaryWhite' | 'primaryGreen' | 'modalPrimary' | 'primaryOrange';
+  sizeVariant?: 'medium' | 'large' | 'xLarge' | 'smallPill' | 'largePill' | 'default' | 'modalButton';
+  fontVariant?: 'AfacadRegular32' | 'AfacadRegular20' | 'AfacadRegular15' | 'AfacadSemiBold14' | 'AfacadBold16';
   disabled?: boolean;
   variant?: 'contained' | 'outlined';
   noWrap?: boolean;
@@ -56,6 +56,6 @@ export interface ButtonStyles {
   };
 }
 
-export type ButtonColorVariantsKeys = 'primary' | 'secondary' | 'primaryWhite' | 'primaryGreen';
-export type ButtonSizeVariantsKeys = 'medium' | 'large' | 'xLarge' | 'smallPill' | 'largePill';
-export type ButtonFontVariantsKeys = 'AfacadRegular32' | 'AfacadRegular20' | 'AfacadRegular15';
+export type ButtonColorVariantsKeys = 'primary' | 'secondary' | 'primaryWhite' | 'primaryGreen' | 'modalPrimary' | 'primaryOrange';
+export type ButtonSizeVariantsKeys = 'medium' | 'large' | 'xLarge' | 'smallPill' | 'largePill' | 'default' | 'modalButton';
+export type ButtonFontVariantsKeys = 'AfacadRegular32' | 'AfacadRegular20' | 'AfacadRegular15' | 'AfacadSemiBold14' | 'AfacadBold16';
