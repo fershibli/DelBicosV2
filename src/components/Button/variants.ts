@@ -18,6 +18,10 @@ export const buttonFontVariants = {
     fontFamily: 'Afacad-SemiBold',
     fontSize: 14,
   },
+    AfacadBold16: {
+    fontFamily: 'Afacad-Bold',
+    fontSize: 16,
+  }
 };
 
 export const buttonSizeVariants = {
