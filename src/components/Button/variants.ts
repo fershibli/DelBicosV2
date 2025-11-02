@@ -86,8 +86,8 @@ export const buttonColorVariants = {
     backgroundColor: colors.primaryWhite,
     color: colors.primaryBlack,
     hover: {
-      backgroundColor: colors.primaryOrange,
-      color: colors.primaryBlack,
+      backgroundColor: colors.primaryWhiteHover,
+      color: colors.primaryBlue,
     },
     disabled: {
       backgroundColor: '#D3D3D3',
@@ -105,6 +105,18 @@ export const buttonColorVariants = {
       backgroundColor: '#D3D3D3',
       color: '#A9A9A9',
     },
+    modalPrimary: {
+    backgroundColor: colors.primaryOrange,
+    color: colors.primaryWhite,
+    hover: {
+      backgroundColor: colors.primaryOrange,
+      color: colors.primaryWhite,
+    },
+    disabled: {
+      backgroundColor: '#CCCCCC',
+      color: '#A9A9A9',
+    },
+  },
   },
 };
 
