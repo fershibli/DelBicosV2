@@ -50,6 +50,11 @@ export const buttonSizeVariants = {
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
+  modalButton: {
+    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+  },
 };
 
 export const buttonColorVariants = {
