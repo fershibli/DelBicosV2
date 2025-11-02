@@ -198,7 +198,7 @@ export const PaymentCompletionScreen: React.FC = () => {
           <View style={styles.buttonGroup}>
             <Button
               variant="outlined"
-              onClick={handleShareInvoice}
+              onPress={handleShareInvoice}
               disabled={isGeneratingPDF}
               style={styles.shareButton}>
               {isGeneratingPDF ? (
@@ -217,7 +217,7 @@ export const PaymentCompletionScreen: React.FC = () => {
             {/* Botão de Download */}
             <Button
               variant="outlined"
-              onClick={handleDownloadPDF}
+              onPress={handleDownloadPDF}
               disabled={isGeneratingPDF}
               style={styles.shareButton}>
               {isGeneratingPDF ? (
@@ -238,7 +238,7 @@ export const PaymentCompletionScreen: React.FC = () => {
         {/* Botão para voltar */}
         <Button
           variant="contained"
-          onClick={handleBackToHome}
+          onPress={handleBackToHome}
           style={styles.backButton}>
           Voltar ao Início
         </Button>
