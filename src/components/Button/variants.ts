@@ -1,5 +1,4 @@
 import colors from '@theme/colors';
-import { TextStyle, ViewStyle } from 'react-native';
 
 export const buttonFontVariants = {
   AfacadRegular32: {
@@ -18,7 +17,7 @@ export const buttonFontVariants = {
     fontFamily: 'Afacad-SemiBold',
     fontSize: 14,
   },
-    AfacadBold16: {
+  AfacadBold16: {
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
   }
@@ -39,6 +38,11 @@ export const buttonSizeVariants = {
     borderRadius: 14,
     paddingVertical: 16,
     paddingHorizontal: 20,
+  },
+  default: {
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
   smallPill: {
     borderRadius: 50,
@@ -62,8 +66,8 @@ export const buttonColorVariants = {
     backgroundColor: colors.primaryBlue,
     color: colors.primaryWhite,
     hover: {
-      backgroundColor: colors.primaryOrange,
-      color: colors.primaryWhite,
+      backgroundColor: colors.primaryGreen,
+      color: colors.primaryWhiteHover,
     },
     disabled: {
       backgroundColor: '#D3D3D3',
@@ -82,9 +86,21 @@ export const buttonColorVariants = {
       color: '#A9A9A9',
     },
   },
+  primaryOrange: {
+    backgroundColor: colors.primaryOrange,
+    color: colors.primaryWhite,
+    hover: {
+      backgroundColor: colors.primaryOrangeHover,
+      color: colors.primaryWhiteHover,
+    },
+    disabled: {
+      backgroundColor: '#D3D3D3',
+      color: '#A9A9A9',
+    },
+  },
   primaryWhite: {
-    backgroundColor: colors.primaryWhite,
-    color: colors.primaryBlack,
+    backgroundColor: 'transparent',
+    color: colors.primaryBlue,
     hover: {
       backgroundColor: colors.primaryWhiteHover,
       color: colors.primaryBlue,
@@ -94,6 +110,7 @@ export const buttonColorVariants = {
       color: '#A9A9A9',
     },
   },
+
   primaryGreen: {
     backgroundColor: colors.primaryGreen,
     color: colors.primaryWhite,
@@ -105,11 +122,12 @@ export const buttonColorVariants = {
       backgroundColor: '#D3D3D3',
       color: '#A9A9A9',
     },
-    modalPrimary: {
+  },
+  modalPrimary: {
     backgroundColor: colors.primaryOrange,
     color: colors.primaryWhite,
     hover: {
-      backgroundColor: colors.primaryOrange,
+      backgroundColor: '#ca6f00ff',
       color: colors.primaryWhite,
     },
     disabled: {
@@ -117,67 +135,8 @@ export const buttonColorVariants = {
       color: '#A9A9A9',
     },
   },
-  },
 };
 
-export const getButtonStyles = (
-  colorVariant: ButtonColorVariantsKeys = 'primary',
-  sizeVariant: ButtonSizeVariantsKeys = 'medium',
-  fontVariant: ButtonFontVariantsKeys = 'AfacadRegular20',
-  variant: 'contained' | 'outlined' = 'contained',
-  disabled: boolean = false
-): { container: ViewStyle; text: TextStyle; icon: ViewStyle } => {
-  const buttonColor = buttonColorVariants[colorVariant];
-  const buttonSize = buttonSizeVariants[sizeVariant];
-  const buttonFont = buttonFontVariants[fontVariant];
-
-  const isOutlined = variant === 'outlined';
-  
-  const backgroundColor = disabled 
-    ? (buttonColor.disabled?.backgroundColor || buttonColor.backgroundColor)
-    : (isOutlined ? 'transparent' : buttonColor.backgroundColor);
-
-  const textColor = disabled 
-    ? (buttonColor.disabled?.color || buttonColor.color)
-    : (isOutlined ? buttonColor.backgroundColor : buttonColor.color);
-
-  const containerStyle: ViewStyle = {
-    backgroundColor,
-    borderRadius: buttonSize.borderRadius,
-    paddingVertical: buttonSize.paddingVertical,
-    paddingHorizontal: buttonSize.paddingHorizontal,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    opacity: disabled ? 0.6 : 1,
-    ...(isOutlined && {
-      borderWidth: 2,
-      borderColor: buttonColor.backgroundColor,
-    }),
-  };
-
-  const textStyle: TextStyle = {
-    fontSize: buttonFont.fontSize,
-    fontFamily: buttonFont.fontFamily,
-    color: textColor,
-    textAlign: 'center',
-  };
-
-  const iconStyle: ViewStyle = {
-    marginLeft: 8,
-  };
-
-  return {
-    container: containerStyle,
-    text: textStyle,
-    icon: iconStyle,
-  };
-};
-
-
-export type ButtonFontVariantsType = typeof buttonFontVariants;
-export type ButtonColorVariantsType = typeof buttonColorVariants;
-export type ButtonSizeVariantsType = typeof buttonSizeVariants;
 export type ButtonFontVariantsKeys = keyof typeof buttonFontVariants;
 export type ButtonColorVariantsKeys = keyof typeof buttonColorVariants;
 export type ButtonSizeVariantsKeys = keyof typeof buttonSizeVariants;
