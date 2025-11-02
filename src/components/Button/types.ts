@@ -1,3 +1,5 @@
+import { ViewStyle, TextStyle } from 'react-native';
+
 export interface ButtonStyleProps {
   defaultColors: {
     backgroundColor: string;
@@ -37,3 +39,23 @@ export interface ButtonProps {
   loading?: boolean;
   style?: any;
 }
+
+export interface ButtonStyles {
+  container: ViewStyle;
+  text: TextStyle;
+  icon: ViewStyle;
+  state: {
+    hover: {
+      container: ViewStyle;
+      text: TextStyle;
+    };
+    disabled: {
+      container: ViewStyle;
+      text: TextStyle;
+    };
+  };
+}
+
+export type ButtonColorVariantsKeys = 'primary' | 'secondary' | 'primaryWhite' | 'primaryGreen';
+export type ButtonSizeVariantsKeys = 'medium' | 'large' | 'xLarge' | 'smallPill' | 'largePill';
+export type ButtonFontVariantsKeys = 'AfacadRegular32' | 'AfacadRegular20' | 'AfacadRegular15';
