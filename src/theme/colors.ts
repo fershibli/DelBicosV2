@@ -6,6 +6,8 @@ const colors = {
   primaryWhite: '#FFFFFF',
   secondaryGray: '#DDE6F0',
   secondaryBeige: '#E0E0E0',
+  primaryWhiteHover: '#F5F5F5',
+  primaryOrangeHover: '#d07100'
 };
 
 export default colors;
