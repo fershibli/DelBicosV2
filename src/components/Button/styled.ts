@@ -1,11 +1,10 @@
-import { ViewStyle, TextStyle } from 'react-native';
+import { ButtonStyleProps, ButtonStyles } from "@components/Button/types";
+import { TextStyle, ViewStyle } from "react-native";
 import { StyleSheet } from 'react-native';
 import { 
-  ButtonStyleProps, 
   ButtonColorVariantsKeys, 
   ButtonSizeVariantsKeys, 
-  ButtonFontVariantsKeys,
-  ButtonStyles 
+  ButtonFontVariantsKeys 
 } from './types';
 import { buttonColorVariants, buttonSizeVariants, buttonFontVariants } from './variants';
 
@@ -36,24 +35,26 @@ export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
   const backgroundColor = defaultColors.backgroundColor;
   const color = defaultColors.color;
 
+  const shouldHaveBorder = isOutlined || backgroundColor === 'transparent';
+
   const containerStyle: ViewStyle = {
-    backgroundColor: isOutlined ? 'transparent' : backgroundColor,
+    backgroundColor: backgroundColor,
     borderRadius: defaultSize.borderRadius,
     paddingVertical: defaultSize.paddingVertical,
     paddingHorizontal: defaultSize.paddingHorizontal,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    ...(isOutlined && {
-      borderWidth: 2,
-      borderColor: backgroundColor,
+    ...(shouldHaveBorder && {
+      borderWidth: 1.5,
+      borderColor: color,
     }),
   };
 
   const textStyle: TextStyle = {
     fontSize: defaultFont.fontSize,
     fontFamily: defaultFont.fontFamily,
-    color: isOutlined ? backgroundColor : color,
+    color: color,
     textAlign: 'center',
     ...(noWrap && {
       flexShrink: 1,
@@ -67,28 +68,24 @@ export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
   const stateStyles = {
     hover: {
       container: {
-        backgroundColor: isOutlined 
-          ? 'transparent' 
-          : (hoverColors?.backgroundColor || backgroundColor),
-        opacity: 0.8,
+        backgroundColor: hoverColors?.backgroundColor || backgroundColor,
+        ...(shouldHaveBorder && hoverColors?.color && {
+          borderColor: hoverColors.color,
+        }),
       } as ViewStyle,
       text: {
-        color: isOutlined 
-          ? (hoverColors?.backgroundColor || backgroundColor)
-          : (hoverColors?.color || color),
+        color: hoverColors?.color || color,
       } as TextStyle,
     },
     disabled: {
       container: {
-        backgroundColor: isOutlined 
-          ? 'transparent' 
-          : (disabledColors?.backgroundColor || backgroundColor),
-        opacity: 0.6,
+        backgroundColor: disabledColors?.backgroundColor || backgroundColor,
+        ...(shouldHaveBorder && {
+          borderColor: disabledColors?.color || color,
+        }),
       } as ViewStyle,
       text: {
-        color: isOutlined 
-          ? (disabledColors?.backgroundColor || backgroundColor)
-          : (disabledColors?.color || color),
+        color: disabledColors?.color || color,
       } as TextStyle,
     },
   };
