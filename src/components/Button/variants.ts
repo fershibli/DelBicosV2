@@ -46,7 +46,7 @@ export const buttonSizeVariants = {
   },
   smallPill: {
     borderRadius: 50,
-    paddingVertical: 0,
+    paddingVertical: 3,
     paddingHorizontal: 10,
   },
   largePill: {
@@ -66,7 +66,7 @@ export const buttonColorVariants = {
     backgroundColor: colors.primaryBlue,
     color: colors.primaryWhite,
     hover: {
-      backgroundColor: colors.primaryGreen,
+      backgroundColor: colors.primaryOrange,
       color: colors.primaryWhiteHover,
     },
     disabled: {
@@ -127,7 +127,7 @@ export const buttonColorVariants = {
     backgroundColor: colors.primaryGreen,
     color: colors.primaryWhite,
     hover: {
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.primaryWhiteHover,
       color: colors.primaryGreen,
     },
     disabled: {
