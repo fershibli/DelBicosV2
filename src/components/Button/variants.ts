@@ -74,6 +74,18 @@ export const buttonColorVariants = {
       color: '#A9A9A9',
     },
   },
+    primaryBlue: {
+    backgroundColor: 'transparent',
+    color: colors.primaryBlue,
+    hover: {
+      backgroundColor: colors.primaryWhiteHover,
+      color: colors.primaryBlue,
+    },
+    disabled: {
+      backgroundColor: '#D3D3D3',
+      color: '#A9A9A9',
+    },
+  },
   secondary: {
     backgroundColor: colors.primaryOrange,
     color: colors.primaryWhite,
