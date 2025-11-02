@@ -1,4 +1,5 @@
 import colors from '@theme/colors';
+import { TextStyle, ViewStyle } from 'react-native';
 
 export const buttonFontVariants = {
   AfacadRegular32: {
@@ -93,6 +94,61 @@ export const buttonColorVariants = {
     },
   },
 };
+
+export const getButtonStyles = (
+  colorVariant: ButtonColorVariantsKeys = 'primary',
+  sizeVariant: ButtonSizeVariantsKeys = 'medium',
+  fontVariant: ButtonFontVariantsKeys = 'AfacadRegular20',
+  variant: 'contained' | 'outlined' = 'contained',
+  disabled: boolean = false
+): { container: ViewStyle; text: TextStyle; icon: ViewStyle } => {
+  const buttonColor = buttonColorVariants[colorVariant];
+  const buttonSize = buttonSizeVariants[sizeVariant];
+  const buttonFont = buttonFontVariants[fontVariant];
+
+  const isOutlined = variant === 'outlined';
+  
+  const backgroundColor = disabled 
+    ? (buttonColor.disabled?.backgroundColor || buttonColor.backgroundColor)
+    : (isOutlined ? 'transparent' : buttonColor.backgroundColor);
+
+  const textColor = disabled 
+    ? (buttonColor.disabled?.color || buttonColor.color)
+    : (isOutlined ? buttonColor.backgroundColor : buttonColor.color);
+
+  const containerStyle: ViewStyle = {
+    backgroundColor,
+    borderRadius: buttonSize.borderRadius,
+    paddingVertical: buttonSize.paddingVertical,
+    paddingHorizontal: buttonSize.paddingHorizontal,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    opacity: disabled ? 0.6 : 1,
+    ...(isOutlined && {
+      borderWidth: 2,
+      borderColor: buttonColor.backgroundColor,
+    }),
+  };
+
+  const textStyle: TextStyle = {
+    fontSize: buttonFont.fontSize,
+    fontFamily: buttonFont.fontFamily,
+    color: textColor,
+    textAlign: 'center',
+  };
+
+  const iconStyle: ViewStyle = {
+    marginLeft: 8,
+  };
+
+  return {
+    container: containerStyle,
+    text: textStyle,
+    icon: iconStyle,
+  };
+};
+
 
 export type ButtonFontVariantsType = typeof buttonFontVariants;
 export type ButtonColorVariantsType = typeof buttonColorVariants;
