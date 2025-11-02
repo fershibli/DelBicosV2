@@ -23,19 +23,21 @@ export interface ButtonProps {
   style?: any;
   variant?: 'contained' | 'outlined';
   endIcon?: React.ReactNode;
+  loading?: boolean;
 }
 
 export const ButtonComponent: React.FC<ButtonProps> = ({
   children,
-  onClick,
+  onPress,
   colorVariant = 'primary',
   sizeVariant = 'medium',
   fontVariant = 'AfacadRegular20',
   disabled = false,
-  selected = false,
-  noWrap = false,
+  variant = 'contained',
   style = {},
-  ...muiProps
+  endIcon,
+  loading = false,
+  ...props
 }) => {
   const buttonColor = buttonColorVariants[colorVariant];
   const buttonSize = buttonSizeVariants[sizeVariant];
@@ -46,6 +48,11 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
   const defaultColors = {
     backgroundColor: buttonColor.backgroundColor,
     color: buttonColor.color,
+  };
+
+  const handlePress = () => {
+    if (disabled) return;
+    onPress?.();
   };
 
   return (
