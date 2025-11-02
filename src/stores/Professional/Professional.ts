@@ -50,9 +50,6 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
         }),
       );
 
-      console.log(
-        `[ProfessionalStore] Retornando ${listedData.length} profissionais para página ${page}.`,
-      );
       return listedData;
     } catch (error) {
       console.error('[ProfessionalStore] Error fetching professionals:', error);
@@ -89,11 +86,6 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
         rating: roundedRating,
         ratings_count: ratings.length,
       };
-
-      console.log(
-        `[ProfessionalStore] Professional loaded:`,
-        professionalWithRating,
-      );
 
       set({ selectedProfessional: professionalWithRating });
       return professionalWithRating;

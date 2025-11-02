@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AppointmentStore } from './types';
+import { AppointmentStore, InvoiceData } from './types';
 import { useUserStore } from '@stores/User';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 
@@ -38,13 +38,20 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
     }
   },
 
-  fetchInvoice: async (appointmentId) => {
+  fetchInvoice: async (appointmentId: number): Promise<InvoiceData | null> => {
     try {
-      const response = await backendHttpClient.get(
-        `api/appointments/${appointmentId}/receipt`,
-        { params: { userId: useUserStore.getState().user?.id } },
-      );
-      return response.data.receiptUrl;
+      const { user } = useUserStore.getState();
+      if (!user) {
+        throw new Error('Usuário não autenticado para buscar a nota.');
+      }
+
+      const endpoint = `api/appointments/${appointmentId}/receipt`;
+      const response = await backendHttpClient.get(endpoint, {
+        params: {
+          userId: user.id,
+        },
+      });
+      return response.data as InvoiceData;
     } catch (error) {
       console.error('Failed to fetch invoice:', error);
       return null;

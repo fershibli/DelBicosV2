@@ -1,13 +1,12 @@
 import React from 'react';
-import { 
-  TouchableOpacity, 
-  Text, 
-  StyleSheet,
-  StyleProp, 
+import {
+  TouchableOpacity,
+  Text,
+  StyleProp,
   GestureResponderEvent,
   ViewStyle,
   TextStyle,
-  View
+  View,
 } from 'react-native';
 import {
   buttonColorVariants,
@@ -49,7 +48,9 @@ export const ButtonNative: React.FC<ButtonProps> = ({
 
   const getBaseButtonStyle = (): ViewStyle => {
     return {
-      backgroundColor: disabled ? buttonColor.disabled.backgroundColor : buttonColor.backgroundColor,
+      backgroundColor: disabled
+        ? buttonColor.disabled.backgroundColor
+        : buttonColor.backgroundColor,
       borderRadius: buttonSize.borderRadius,
       paddingHorizontal: buttonSize.paddingHorizontal,
       paddingVertical: buttonSize.paddingVertical,
@@ -81,8 +82,7 @@ export const ButtonNative: React.FC<ButtonProps> = ({
       onPress={onPress}
       disabled={disabled}
       activeOpacity={0.8}
-      {...props}
-    >
+      {...props}>
       <Text style={getTextStyle()}>{children}</Text>
       {endIcon && <View style={{ marginLeft: 4 }}>{endIcon}</View>}
     </TouchableOpacity>

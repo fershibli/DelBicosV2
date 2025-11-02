@@ -6,8 +6,8 @@ import {
   Modal,
   TextInput,
   Alert,
-  Linking,
-  Platform,
+  // Linking,
+  // Platform,
   Image,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
@@ -15,8 +15,8 @@ import { Rating } from 'react-native-ratings';
 import { Appointment } from '@stores/Appointment/types';
 import { useAppointmentStore } from '@stores/Appointment';
 import { styles, getStatusStyle } from './styles';
-import { HTTP_DOMAIN } from '@config/varEnvs';
-import { useUserStore } from '@stores/User';
+// import { HTTP_DOMAIN } from '@config/varEnvs';
+// import { useUserStore } from '@stores/User';
 
 // Componente do Modal de Avaliação
 const ReviewAppointment = ({
@@ -34,14 +34,17 @@ const ReviewAppointment = ({
 
   const handleSubmit = async () => {
     if (rating === 0) {
-      Alert.alert('Atenção', 'Por favor, selecione uma avaliação com estrelas.');
+      Alert.alert(
+        'Atenção',
+        'Por favor, selecione uma avaliação com estrelas.',
+      );
       return;
     }
 
     const success = await reviewAppointment(appointment.id, rating, review);
     if (success) {
-      const message = appointment.rating 
-        ? 'Sua avaliação foi modificada com sucesso!' 
+      const message = appointment.rating
+        ? 'Sua avaliação foi modificada com sucesso!'
         : 'Sua avaliação foi enviada!';
       Alert.alert('Sucesso', message);
       onClose();
@@ -51,7 +54,10 @@ const ReviewAppointment = ({
     }
   };
 
-  const isModifying = appointment.rating !== undefined && appointment.rating !== null && appointment.rating > 0;
+  const isModifying =
+    appointment.rating !== undefined &&
+    appointment.rating !== null &&
+    appointment.rating > 0;
 
   return (
     <View style={styles.modalOverlay}>
@@ -97,30 +103,30 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
     Professional: professional,
     Service: service,
     status,
-    rating,
+    // rating,
     start_time,
   } = appointment;
   const statusInfo = getStatusStyle(status);
-  const { user } = useUserStore();
+  // const { user } = useUserStore();
 
-  const renderStars = () => {
-    const stars = [];
-    const totalStars = 5;
-    const filledStars = rating || 0;
+  // const renderStars = () => {
+  //   const stars = [];
+  //   const totalStars = 5;
+  //   const filledStars = rating || 0;
 
-    for (let i = 1; i <= totalStars; i++) {
-      stars.push(
-        <FontAwesome
-          key={i}
-          name={i <= filledStars ? 'star' : 'star-o'}
-          size={14}
-          color={i <= filledStars ? '#FFC107' : '#D1D1D1'}
-          style={styles.starIcon}
-        />,
-      );
-    }
-    return stars;
-  };
+  //   for (let i = 1; i <= totalStars; i++) {
+  //     stars.push(
+  //       <FontAwesome
+  //         key={i}
+  //         name={i <= filledStars ? 'star' : 'star-o'}
+  //         size={14}
+  //         color={i <= filledStars ? '#FFC107' : '#D1D1D1'}
+  //         style={styles.starIcon}
+  //       />,
+  //     );
+  //   }
+  //   return stars;
+  // };
 
   const formatDateTime = () => {
     if (!start_time) return '';
@@ -130,42 +136,42 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
     const year = dateObj.getFullYear().toString().slice(-2);
     const hours = dateObj.getHours().toString().padStart(2, '0');
     const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-    
+
     const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
     const weekDay = weekDays[dateObj.getDay()];
-    
+
     return `${weekDay}, ${day}/${month}/${year} - ${hours}:${minutes}`;
   };
 
-  const handleViewReceipt = async () => {
-    if (!user) {
-      Alert.alert('Erro', 'Você precisa estar logado para ver um recibo.');
-      return;
-    }
+  // const handleViewReceipt = async () => {
+  //   if (!user) {
+  //     Alert.alert('Erro', 'Você precisa estar logado para ver um recibo.');
+  //     return;
+  //   }
 
-    try {
-      const response = await fetch(
-        `${HTTP_DOMAIN}/api/appointments/${appointment.id}/receipt?userId=${user.id}`,
-        {
-          method: 'GET',
-        },
-      );
+  //   try {
+  //     const response = await fetch(
+  //       `${HTTP_DOMAIN}/api/appointments/${appointment.id}/receipt?userId=${user.id}`,
+  //       {
+  //         method: 'GET',
+  //       },
+  //     );
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Não foi possível buscar o recibo.');
-      }
+  //     if (!response.ok) {
+  //       throw new Error(data.error || 'Não foi possível buscar o recibo.');
+  //     }
 
-      if (Platform.OS === 'web') {
-        window.open(data.receiptUrl, '_blank');
-      } else {
-        Linking.openURL(data.receiptUrl);
-      }
-    } catch (error: any) {
-      Alert.alert('Erro ao buscar recibo', error.message);
-    }
-  };
+  //     if (Platform.OS === 'web') {
+  //       window.open(data.receiptUrl, '_blank');
+  //     } else {
+  //       Linking.openURL(data.receiptUrl);
+  //     }
+  //   } catch (error: any) {
+  //     Alert.alert('Erro ao buscar recibo', error.message);
+  //   }
+  // };
 
   const handleCancel = () => {
     Alert.alert(
@@ -178,7 +184,10 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
           style: 'destructive',
           onPress: () => {
             // Lógica de cancelamento será implementada
-            Alert.alert('Info', 'Funcionalidade de cancelamento em desenvolvimento');
+            Alert.alert(
+              'Info',
+              'Funcionalidade de cancelamento em desenvolvimento',
+            );
           },
         },
       ],
@@ -193,7 +202,7 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
       'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=600&h=600&fit=crop', // Limpeza/Diarista
       'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=600&fit=crop', // Evento/Grupo
     ];
-    
+
     // Usa o ID do appointment para escolher uma imagem consistente
     const index = appointment.id % images.length;
     return images[index];
@@ -232,7 +241,11 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
             </View>
 
             {/* Status Badge */}
-            <View style={[styles.statusBadge, { backgroundColor: statusInfo.backgroundColor }]}>
+            <View
+              style={[
+                styles.statusBadge,
+                { backgroundColor: statusInfo.backgroundColor },
+              ]}>
               <Text style={styles.statusText}>{statusInfo.text}</Text>
             </View>
 
@@ -245,16 +258,22 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
                     {[1, 2, 3, 4, 5].map((star) => (
                       <FontAwesome
                         key={star}
-                        name={star <= (appointment.rating || 0) ? 'star' : 'star-o'}
+                        name={
+                          star <= (appointment.rating || 0) ? 'star' : 'star-o'
+                        }
                         size={14}
-                        color={star <= (appointment.rating || 0) ? '#FFC107' : '#D1D1D1'}
+                        color={
+                          star <= (appointment.rating || 0)
+                            ? '#FFC107'
+                            : '#D1D1D1'
+                        }
                         style={{ marginRight: 2 }}
                       />
                     ))}
                   </View>
                 </View>
                 {appointment.review && (
-                  <Text style={styles.reviewComment}>"{appointment.review}"</Text>
+                  <Text style={styles.reviewComment}>{appointment.review}</Text>
                 )}
               </View>
             )}
@@ -263,7 +282,8 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
             <View style={styles.buttonsContainer}>
               {status === 'pending' && (
                 <>
-                  <TouchableOpacity style={[styles.button, styles.detailsButton]}>
+                  <TouchableOpacity
+                    style={[styles.button, styles.detailsButton]}>
                     <Text style={styles.buttonText}>Detalhes</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -276,7 +296,8 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
 
               {status === 'confirmed' && (
                 <>
-                  <TouchableOpacity style={[styles.button, styles.detailsButton]}>
+                  <TouchableOpacity
+                    style={[styles.button, styles.detailsButton]}>
                     <Text style={styles.buttonText}>Detalhes</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -289,7 +310,8 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
 
               {status === 'completed' && (
                 <>
-                  <TouchableOpacity style={[styles.button, styles.detailsButton]}>
+                  <TouchableOpacity
+                    style={[styles.button, styles.detailsButton]}>
                     <Text style={styles.buttonText}>Detalhes</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -302,7 +324,8 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
 
               {status === 'canceled' && (
                 <>
-                  <TouchableOpacity style={[styles.button, styles.detailsButton]}>
+                  <TouchableOpacity
+                    style={[styles.button, styles.detailsButton]}>
                     <Text style={styles.buttonText}>Detalhes</Text>
                   </TouchableOpacity>
                   <TouchableOpacity

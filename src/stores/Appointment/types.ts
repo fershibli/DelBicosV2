@@ -79,6 +79,24 @@ export interface Appointment {
   Professional: Professional;
 }
 
+export interface InvoiceData {
+  invoiceNumber: string;
+  date: string;
+  customerName: string;
+  customerCpf: string;
+  customerAddress: string;
+  professionalName: string;
+  professionalCpf: string;
+  serviceName: string;
+  serviceDescription: string;
+  servicePrice: number;
+  serviceDate: string;
+  serviceTime: string;
+  total: number;
+  paymentMethod?: string;
+  transactionId?: string;
+}
+
 export interface AppointmentStore {
   appointments: Appointment[];
   loading: boolean;
@@ -91,5 +109,5 @@ export interface AppointmentStore {
     review: string,
   ) => Promise<boolean>;
 
-  fetchInvoice: (appointmentId: number) => Promise<string | null>;
+  fetchInvoice: (appointmentId: number) => Promise<InvoiceData | null>;
 }

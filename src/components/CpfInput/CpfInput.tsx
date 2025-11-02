@@ -5,25 +5,30 @@ import { styles } from './styles';
 interface CpfInputProps {
   value: string;
   onChangeText: (text: string) => void;
+  onBlur?: () => void;
   error?: boolean;
 }
 
-const CpfInput: React.FC<CpfInputProps> = ({ value, onChangeText, error }) => {
+const formatCpf = (cleanText: string) => {
+  let formatted = cleanText.replace(/(\d{3})(\d)/, '$1.$2');
+  formatted = formatted.replace(/(\d{3})(\d)/, '$1.$2');
+  formatted = formatted.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  return formatted;
+};
+
+const CpfInput: React.FC<CpfInputProps> = ({
+  value,
+  onChangeText,
+  onBlur,
+  error,
+}) => {
   const [formattedCpf, setFormattedCpf] = useState(value);
 
-  const formatCpf = (text: string) => {
-    const cleanText = text.replace(/[^\d]/g, '');
-    if (cleanText.length > 11) return formattedCpf;
-    let formatted = cleanText.replace(/(\d{3})(\d)/, '$1.$2');
-    formatted = formatted.replace(/(\d{3})(\d)/, '$1.$2');
-    formatted = formatted.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-    return formatted;
-  };
-
   const handleChangeText = (text: string) => {
-    const formatted = formatCpf(text);
+    const cleanText = text.replace(/[^\d]/g, '').slice(0, 11);
+    const formatted = formatCpf(cleanText);
     setFormattedCpf(formatted);
-    onChangeText(formatted);
+    onChangeText(cleanText);
   };
 
   useEffect(() => {
@@ -37,6 +42,7 @@ const CpfInput: React.FC<CpfInputProps> = ({ value, onChangeText, error }) => {
       placeholderTextColor="#999"
       value={formattedCpf}
       onChangeText={handleChangeText}
+      onBlur={onBlur}
       keyboardType="numeric"
       maxLength={14}
     />

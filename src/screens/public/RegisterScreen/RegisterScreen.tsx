@@ -385,7 +385,7 @@ function RegisterScreen() {
               <ActivityIndicator color={colors.primaryWhite} />
             ) : (
               <Text style={styles.buttonText}>Cadastrar</Text>
-            )}{' '}
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
