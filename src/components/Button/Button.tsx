@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  TouchableOpacity,
+  Pressable,
   Text,
   ActivityIndicator,
   View,
@@ -24,7 +24,7 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
   loading = false,
   ...props
 }) => {
-  const [isPressed, setIsPressed] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const styles = Styled.fromVariants(
     colorVariant,
@@ -40,20 +40,20 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
     onPress();
   };
 
-  const handlePressIn = () => {
+  const handleHoverIn = () => {
     if (disabled || loading) return;
-    setIsPressed(true);
+    setIsHovered(true);
   };
 
-  const handlePressOut = () => {
-    setIsPressed(false);
+  const handleHoverOut = () => {
+    setIsHovered(false);
   };
 
-  const containerStyle = isPressed
+  const containerStyle = isHovered
     ? [styles.container, styles.state.hover.container, style]
     : [styles.container, style];
 
-  const textStyle = isPressed
+  const textStyle = isHovered
     ? [styles.text, styles.state.hover.text]
     : styles.text;
 
@@ -62,13 +62,15 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
     : (textStyle as TextStyle)?.color || '#000000';
 
   return (
-    <TouchableOpacity
-      style={containerStyle}
+    <Pressable
+      style={({ pressed }) => [
+        containerStyle,
+        pressed && { opacity: 0.8 }
+      ]}
       onPress={handlePress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
+      onHoverIn={handleHoverIn}
+      onHoverOut={handleHoverOut}
       disabled={disabled || loading}
-      activeOpacity={0.8}
       {...props}
     >
       {loading ? (
@@ -96,7 +98,7 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
           )}
         </>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
