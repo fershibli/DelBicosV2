@@ -44,3 +44,4 @@ yarn-error.*
 app-example
 tsconfig.json
 tsconfig.json
+.vercel
