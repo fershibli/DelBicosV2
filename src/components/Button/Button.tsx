@@ -7,7 +7,6 @@ import {
   ButtonFontVariantsKeys,
   buttonFontVariants,
 } from './variants';
-import { ButtonProps as MUIButtonProps } from '@mui/material';
 
 import { Styled } from './styled';
 
@@ -54,6 +53,16 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
     if (disabled) return;
     onPress?.();
   };
+
+  const isOutlined = variant === 'outlined';
+  
+  const backgroundColor = disabled 
+    ? (buttonColor.disabled?.backgroundColor || buttonColor.backgroundColor)
+    : (isOutlined ? 'transparent' : buttonColor.backgroundColor);
+
+  const textColor = disabled 
+    ? (buttonColor.disabled?.color || buttonColor.color)
+    : (isOutlined ? buttonColor.backgroundColor : buttonColor.color);
 
   return (
     <Styled.Button
