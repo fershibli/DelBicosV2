@@ -1,8 +1,26 @@
 import { ViewStyle, TextStyle } from 'react-native';
-import { ButtonStyleProps } from './types';
+import { StyleSheet } from 'react-native';
+import { 
+  ButtonStyleProps, 
+  ButtonColorVariantsKeys, 
+  ButtonSizeVariantsKeys, 
+  ButtonFontVariantsKeys,
+  ButtonStyles 
+} from './types';
 import { buttonColorVariants, buttonSizeVariants, buttonFontVariants } from './variants';
 
-export const createStyledButton = (props: ButtonStyleProps) => {
+export const baseStyles = StyleSheet.create({
+  loadingContainer: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+  loadingText: {
+    marginLeft: 8,
+  },
+});
+
+export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
   const {
     defaultColors,
     defaultSize,
@@ -84,13 +102,13 @@ export const createStyledButton = (props: ButtonStyleProps) => {
 };
 
 export const getStyledButtonFromVariants = (
-  colorVariant: keyof typeof buttonColorVariants = 'primary',
-  sizeVariant: keyof typeof buttonSizeVariants = 'medium',
-  fontVariant: keyof typeof buttonFontVariants = 'AfacadRegular20',
+  colorVariant: ButtonColorVariantsKeys = 'primary',
+  sizeVariant: ButtonSizeVariantsKeys = 'medium',
+  fontVariant: ButtonFontVariantsKeys = 'AfacadRegular20',
   variant: 'contained' | 'outlined' = 'contained',
   disabled: boolean = false,
   noWrap: boolean = false
-) => {
+): ButtonStyles => {
   const buttonColor = buttonColorVariants[colorVariant];
   const buttonSize = buttonSizeVariants[sizeVariant];
   const buttonFont = buttonFontVariants[fontVariant];
@@ -115,6 +133,7 @@ export const getStyledButtonFromVariants = (
       container: { ...styles.container, ...styles.state.disabled.container },
       text: { ...styles.text, ...styles.state.disabled.text },
       icon: styles.icon,
+      state: styles.state,
     };
   }
 
