@@ -316,7 +316,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                 colorVariant="primaryOrange"
                 sizeVariant="default"
                 variant="contained"
-                fontVariant="AfacadSemiBold14"
+                fontVariant="AfacadBold16"
                 onPress={() => navigateTo('Register')}>
                 Cadastre-se
               </Button>
