@@ -1,29 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  buttonColorVariants,
-  buttonSizeVariants,
-  ButtonColorVariantsKeys,
-  ButtonSizeVariantsKeys,
-  ButtonFontVariantsKeys,
-  buttonFontVariants,
-} from './variants';
-
+  TouchableOpacity,
+  Text,
+  ActivityIndicator,
+  View,
+  TextStyle,
+} from 'react-native';
+import { ButtonProps } from './types';
 import { Styled } from './styled';
-
-export interface ButtonProps {
-  children?: React.ReactNode;
-  onPress: () => void;
-  colorVariant?: ButtonColorVariantsKeys;
-  sizeVariant?: ButtonSizeVariantsKeys;
-  fontVariant?: ButtonFontVariantsKeys;
-  disabled?: boolean;
-  selected?: boolean;
-  noWrap?: boolean;
-  style?: any;
-  variant?: 'contained' | 'outlined';
-  endIcon?: React.ReactNode;
-  loading?: boolean;
-}
+import { baseStyles } from './styled';
 
 export const ButtonComponent: React.FC<ButtonProps> = ({
   children,
@@ -33,53 +18,85 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
   fontVariant = 'AfacadRegular20',
   disabled = false,
   variant = 'contained',
+  noWrap = false,
   style = {},
   endIcon,
   loading = false,
   ...props
 }) => {
-  const buttonColor = buttonColorVariants[colorVariant];
-  const buttonSize = buttonSizeVariants[sizeVariant];
-  const buttonFont = buttonFontVariants[fontVariant];
+  const [isPressed, setIsPressed] = useState(false);
 
-  const hoverColors = buttonColor.hover;
-  const disabledColors = buttonColor.disabled;
-  const defaultColors = {
-    backgroundColor: buttonColor.backgroundColor,
-    color: buttonColor.color,
-  };
+  const styles = Styled.fromVariants(
+    colorVariant,
+    sizeVariant,
+    fontVariant,
+    variant,
+    disabled || loading,
+    noWrap
+  );
 
   const handlePress = () => {
-    if (disabled) return;
-    onPress?.();
+    if (disabled || loading) return;
+    onPress();
   };
 
-  const isOutlined = variant === 'outlined';
-  
-  const backgroundColor = disabled 
-    ? (buttonColor.disabled?.backgroundColor || buttonColor.backgroundColor)
-    : (isOutlined ? 'transparent' : buttonColor.backgroundColor);
+  const handlePressIn = () => {
+    if (disabled || loading) return;
+    setIsPressed(true);
+  };
 
-  const textColor = disabled 
-    ? (buttonColor.disabled?.color || buttonColor.color)
-    : (isOutlined ? buttonColor.backgroundColor : buttonColor.color);
+  const handlePressOut = () => {
+    setIsPressed(false);
+  };
+
+  const containerStyle = isPressed
+    ? [styles.container, styles.state.hover.container, style]
+    : [styles.container, style];
+
+  const textStyle = isPressed
+    ? [styles.text, styles.state.hover.text]
+    : styles.text;
+
+  const indicatorColor = Array.isArray(textStyle) 
+    ? (textStyle[0] as TextStyle)?.color || '#000000'
+    : (textStyle as TextStyle)?.color || '#000000';
 
   return (
-    <Styled.Button
-      onClick={onClick}
-      disabled={disabled}
-      defaultColors={defaultColors}
-      defaultSize={buttonSize}
-      defaultFont={buttonFont}
-      hoverColors={buttonColor.hover ? hoverColors : undefined}
-      disabledColors={disabledColors}
-      noWrap={noWrap}
-      sx={{
-        ...style,
-      }}
-      {...muiProps}>
-      {children}
-    </Styled.Button>
+    <TouchableOpacity
+      style={containerStyle}
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      disabled={disabled || loading}
+      activeOpacity={0.8}
+      {...props}
+    >
+      {loading ? (
+        <View style={baseStyles.loadingContainer}>
+          <ActivityIndicator 
+            size="small" 
+            color={indicatorColor} 
+          />
+          <Text style={[textStyle, baseStyles.loadingText]}>
+            Carregando...
+          </Text>
+        </View>
+      ) : (
+        <>
+          <Text 
+            style={textStyle} 
+            numberOfLines={noWrap ? 1 : undefined}
+          >
+            {children}
+          </Text>
+          {endIcon && (
+            <View style={styles.icon}>
+              {endIcon}
+            </View>
+          )}
+        </>
+      )}
+    </TouchableOpacity>
   );
 };
 
