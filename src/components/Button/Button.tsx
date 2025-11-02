@@ -11,16 +11,18 @@ import { ButtonProps as MUIButtonProps } from '@mui/material';
 
 import { Styled } from './styled';
 
-export interface ButtonProps extends MUIButtonProps {
+export interface ButtonProps {
   children?: React.ReactNode;
-  onClick: () => void;
+  onPress: () => void;
   colorVariant?: ButtonColorVariantsKeys;
   sizeVariant?: ButtonSizeVariantsKeys;
   fontVariant?: ButtonFontVariantsKeys;
   disabled?: boolean;
   selected?: boolean;
   noWrap?: boolean;
-  style?: React.CSSProperties;
+  style?: any;
+  variant?: 'contained' | 'outlined';
+  endIcon?: React.ReactNode;
 }
 
 export const ButtonComponent: React.FC<ButtonProps> = ({
