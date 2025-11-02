@@ -14,6 +14,10 @@ export const buttonFontVariants = {
     fontFamily: 'Afacad-Regular',
     fontSize: 15,
   },
+  AfacadSemiBold14: {
+    fontFamily: 'Afacad-SemiBold',
+    fontSize: 14,
+  },
 };
 
 export const buttonSizeVariants = {
