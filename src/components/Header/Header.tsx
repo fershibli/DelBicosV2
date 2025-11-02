@@ -246,7 +246,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
               colorVariant="secondary" // Laranja
               sizeVariant="smallPill"
               fontVariant="AfacadRegular15"
-              onClick={openMapModal}
+              onPress={openMapModal}
               endIcon={
                 <FontAwesome name="chevron-down" size={12} color="#FFFFFF" />
               }>
