@@ -7,8 +7,7 @@ import {
   TextStyle,
 } from 'react-native';
 import { ButtonProps } from './types';
-import { Styled } from './styled';
-import { baseStyles } from './styled';
+import { Styled, baseStyles } from './styled';
 
 export const ButtonComponent: React.FC<ButtonProps> = ({
   children,
