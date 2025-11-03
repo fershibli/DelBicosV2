@@ -20,7 +20,6 @@ import CategoryScreen from './public/Category';
 import SubCategoryScreen from './public/SubCategoryScreen';
 import SearchResultScreen from './public/SearchResultScreen';
 import CheckoutScreen from './public/CheckoutScreen';
-import { PaymentCompletionScreen } from './private/client/PaymentCompletion';
 import PaymentStatusScreen from './public/PaymentStatusScreen';
 import MySchedulesScreen from './private/client/MySchedulesScreen';
 import HelpScreen from '@screens/public/HelpScreen';
@@ -106,15 +105,6 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: ProfileScreen,
       linking: {
         path: 'client-profile',
-      },
-    },
-    PaymentCompletion: {
-      screen: PaymentCompletionScreen,
-      linking: {
-        path: 'payment-completion',
-      },
-      options: {
-        title: 'Pagamento Realizado',
       },
     },
     NotFound: {
