@@ -19,6 +19,7 @@ export type NavigationParams = {
     selectedTime: string;
     imageUrl?: string;
     professionalName?: string;
+    serviceId: number;
   };
   PaymentCompletion: undefined;
   PaymentStatus: undefined;
