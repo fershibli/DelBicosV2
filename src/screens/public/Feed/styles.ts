@@ -4,10 +4,10 @@ import { StyleSheet, Platform } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F7FA',
+    backgroundColor: colors.primaryWhite,
   },
   contentContainer: {
-    paddingBottom: 40,
+    paddingBottom: 20,
   },
   title: {
     fontSize: 24,
@@ -42,5 +42,64 @@ export const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  categorySection: {
+    marginBottom: 24,
+  },
+  listSection: {
+    marginBottom: 24,
+  },
+  carouselSection: {
+    marginBottom: 24,
+    position: 'relative',
+  },
+  carouselContainer: {
+    width: '100%',
+  },
+  carouselListContainer: {
+    paddingHorizontal: 0,
+  },
+  scrollButton: {
+    position: 'absolute',
+    top: 250 / 2 - 20,
+    transform: 'translateY(-20px)',
+    zIndex: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    cursor: 'pointer',
+  },
+  scrollButtonLeft: {
+    left: 24,
+  },
+  scrollButtonRight: {
+    right: 24,
+  },
+  paginationContainer: {
+    position: 'absolute',
+    bottom: 12,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    marginHorizontal: 4,
+  },
+  dotActive: {
+    backgroundColor: colors.primaryWhite,
   },
 });
