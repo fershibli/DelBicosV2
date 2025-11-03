@@ -11,7 +11,7 @@ import { styles } from './styles';
 import { FontAwesome } from '@expo/vector-icons';
 import ProfessionalResultCard, {
   ProfessionalResult,
-} from '@components/ProfessionalResultCard';
+} from '@components/features/ProfessionalResultCard';
 import { useProfessionalStore } from '@stores/Professional';
 import { useLocation } from '@lib/hooks/LocationContext';
 

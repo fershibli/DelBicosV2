@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useUserStore } from '@stores/User';
-import CustomTextInput from '@components/CustomTextInput';
-import PasswordInput from '@components/PasswordInput';
+import CustomTextInput from '@components/ui/CustomTextInput';
+import PasswordInput from '@components/ui/PasswordInput';
 import { styles } from './styles';
 import colors from '@theme/colors';
 

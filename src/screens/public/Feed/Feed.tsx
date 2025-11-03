@@ -10,10 +10,10 @@ import {
   NativeScrollEvent,
 } from 'react-native';
 import { styles } from './styles';
-import CategorySlider from '@components/CategorySlider';
-import ListProfessionals from '@components/ListProfessionals';
+import CategorySlider from '@components/features/CategorySlider';
+import ListProfessionals from '@components/features/ListProfessionals';
 import { FontAwesome } from '@expo/vector-icons';
-import { HighlightCard, HighlightItem } from '@components/HighlightCard';
+import { HighlightCard, HighlightItem } from '@components/ui/HighlightCard';
 import colors from '@theme/colors';
 
 const HIGHLIGHT_DATA: HighlightItem[] = [

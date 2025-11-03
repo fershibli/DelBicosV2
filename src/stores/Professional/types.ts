@@ -1,5 +1,5 @@
 import { User } from '@stores/User/types';
-import { ProfessionalResult } from '@components/ProfessionalResultCard';
+import { ProfessionalResult } from '@components/features/ProfessionalResultCard';
 
 export interface ListedProfessional {
   id: number;

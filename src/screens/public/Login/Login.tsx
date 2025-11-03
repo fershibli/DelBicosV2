@@ -11,7 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { useLocation } from '@lib/hooks/LocationContext';
-import CustomTextInput from '@components/CustomTextInput';
+import CustomTextInput from '@components/ui/CustomTextInput';
 import LogoV3 from '@assets/LogoV3.png';
 import { styles } from './styles';
 import colors from '@theme/colors';

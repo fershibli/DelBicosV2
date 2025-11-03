@@ -12,7 +12,7 @@ import VerificationScreen from './public/VerificationScreen';
 import PartnerProfile from './public/PartnerProfile';
 import { NavigationParams } from './types';
 import Login from './public/Login';
-import Header from '@components/Header';
+import Header from '@components/layout/Header';
 import { useUserStore } from '@stores/User';
 import { LoginPassword } from './public/LoginPassword';
 import ProfileScreen from './private/client/Profile';

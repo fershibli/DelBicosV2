@@ -5,7 +5,7 @@ import {
   Professional,
 } from '@stores/Professional/types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
-import { ProfessionalResult } from '@components/ProfessionalResultCard';
+import { ProfessionalResult } from '@components/features/ProfessionalResultCard';
 
 export const useProfessionalStore = create<ProfessionalStore>((set) => ({
   professionals: [],

@@ -8,8 +8,8 @@ import {
   ActivityIndicator,
   View,
 } from 'react-native';
-import { AddressCard } from '@components/AddressCard';
-import ConfirmationModal from '@components/ConfirmationModal';
+import { AddressCard } from '@components/ui/AddressCard';
+import ConfirmationModal from '@components/ui/ConfirmationModal';
 import colors from '@theme/colors';
 import { Address, useAddressStore } from '@stores/Address';
 import { useUserStore } from '@stores/User';

@@ -12,7 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
 
 import { useUserStore } from '@stores/User';
-import CustomTextInput from '@components/CustomTextInput';
+import CustomTextInput from '@components/ui/CustomTextInput';
 
 // @ts-ignore
 import IconPerson from '@assets/person.svg';

@@ -24,7 +24,7 @@ import { Address } from '@stores/Address/types';
 
 // Store Imports
 import { useProfessionalStore } from '@stores/Professional';
-import AddressSelectionModal from '@components/AddressSelectionModal';
+import AddressSelectionModal from '@components/features/AddressSelectionModal';
 
 // Tipos da Rota
 type CheckoutRouteParams = NavigationParams['Checkout'];

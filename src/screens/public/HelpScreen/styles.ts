@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import colors from '@theme/colors';
-import { inputBaseStyle } from '@components/CustomTextInput/styles';
+import { inputBaseStyle } from '@components/ui/CustomTextInput/styles';
 
 export const styles = StyleSheet.create({
   container: {

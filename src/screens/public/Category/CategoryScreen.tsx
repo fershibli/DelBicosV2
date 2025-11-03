@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import CategoryList from '@components/CategoryList';
+import CategoryList from '@components/features/CategoryList';
 import { styles } from './styles';
 
 function CategoryScreen() {

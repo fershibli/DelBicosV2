@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { styles } from './styles';
 import { FontAwesome } from '@expo/vector-icons';
-import AccordionItem from '@components/AccordionItem';
+import AccordionItem from '@components/ui/AccordionItem';
 import colors from '@theme/colors';
 
 // Dados Mockados para o FAQ (Mova para um JSON/store se crescer)
