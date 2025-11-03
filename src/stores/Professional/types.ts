@@ -1,4 +1,5 @@
 import { User } from '@stores/User/types';
+import { ProfessionalResult } from '@components/ProfessionalResultCard';
 
 export interface ListedProfessional {
   id: number;
@@ -88,4 +89,10 @@ export interface ProfessionalStore {
     limit?: number,
   ) => Promise<ListedProfessional[]>;
   fetchProfessionalById: (id: number) => Promise<Professional | null>;
+  fetchProfessionalsByAvailability: (
+    subCategoryId: number,
+    date: string,
+    lat?: number,
+    lng?: number,
+  ) => Promise<ProfessionalResult[] | null>;
 }
