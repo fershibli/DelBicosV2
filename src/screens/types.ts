@@ -23,4 +23,5 @@ export type NavigationParams = {
   PaymentCompletion: undefined;
   PaymentStatus: undefined;
   MySchedules: undefined;
+  Help: undefined;
 };
