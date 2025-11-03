@@ -393,7 +393,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                 <View style={styles.userContainer}>
                   {/* Idealmente, usar user.avatar_uri aqui */}
                   <Image
-                    source={require('../../assets/logo.png')}
+                    source={require('../../../assets/logo.png')}
                     style={styles.profileImage}
                   />
                   {/* <Text style={styles.userName}>{user.name}</Text> // Nome pode ser removido se só a imagem for usada */}
