@@ -6,6 +6,12 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 999,
   },
   modalContent: {
     backgroundColor: 'white',
@@ -122,5 +128,19 @@ export const styles = StyleSheet.create({
   cancelButtonText: {
     color: '#666',
     fontWeight: '500',
+  },
+  newAddressButton: {
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FC8200',
+    backgroundColor: '#FFFFFF',
+    marginBottom: 10,
+  },
+  newAddressButtonText: {
+    color: '#FC8200',
+    fontWeight: '500',
+    fontSize: 16,
   },
 });

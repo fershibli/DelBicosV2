@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,13 @@ import {
   Alert,
 } from 'react-native';
 import { styles } from './styles';
-import { Address } from '@stores/Address';
+import { Address, useAddressStore } from '@stores/Address';
 
 type AddressSelectionModalProps = {
   visible: boolean;
   onClose: () => void;
   onAddressSelect: (address: Address) => void;
-  userId: string;
+  userId: number;
 };
 
 function AddressSelectionModal({
@@ -24,30 +24,14 @@ function AddressSelectionModal({
   onAddressSelect,
   userId,
 }: AddressSelectionModalProps) {
-  const [addresses, setAddresses] = useState<Address[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    addresses,
+    isLoading: loading,
+    error,
+    fetchAddressesByUserId,
+  } = useAddressStore();
+
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
-
-  const fetchAddresses = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(
-        `http://localhost:3000/api/address/user/${userId}`,
-      );
-
-      if (!response.ok) {
-        throw new Error('Erro ao carregar endereços');
-      }
-
-      const data = await response.json();
-      setAddresses(data);
-    } catch (error) {
-      console.error('Erro ao buscar endereços:', error);
-      Alert.alert('Erro', 'Não foi possível carregar os endereços');
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
 
   const handleSelectAddress = (address: Address) => {
     setSelectedAddress(address);
@@ -57,7 +41,7 @@ function AddressSelectionModal({
     if (selectedAddress) {
       onAddressSelect(selectedAddress);
       onClose();
-      setSelectedAddress(null);
+      setSelectedAddress(null); // Reseta o estado
     } else {
       Alert.alert('Atenção', 'Por favor, selecione um endereço');
     }
@@ -69,9 +53,9 @@ function AddressSelectionModal({
 
   useEffect(() => {
     if (visible) {
-      fetchAddresses();
+      fetchAddressesByUserId(userId);
     }
-  }, [visible, fetchAddresses]);
+  }, [visible, userId, fetchAddressesByUserId]);
 
   return (
     <Modal
@@ -81,12 +65,14 @@ function AddressSelectionModal({
       onRequestClose={onClose}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Selecione o Endereço</Text>
-
           {loading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#FC8200" />
               <Text style={styles.loadingText}>Carregando endereços...</Text>
+            </View>
+          ) : error ? (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>{error}</Text>
             </View>
           ) : addresses.length === 0 ? (
             <View style={styles.emptyContainer}>
@@ -141,6 +127,20 @@ function AddressSelectionModal({
                   disabled={!selectedAddress}>
                   <Text style={styles.confirmButtonText}>
                     Selecionar Endereço
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.newAddressButton}
+                  onPress={() => {
+                    // TODO: Adicionar navegação para a tela de criar endereço
+                    Alert.alert(
+                      'Em breve',
+                      'Navegar para a tela de adicionar endereço.',
+                    );
+                  }}>
+                  <Text style={styles.newAddressButtonText}>
+                    + Adicionar novo endereço
                   </Text>
                 </TouchableOpacity>
 
