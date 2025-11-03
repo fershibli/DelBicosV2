@@ -9,15 +9,20 @@ export const styles = StyleSheet.create({
   mobileHeader: {
     height: 60,
     backgroundColor: colors.primaryWhite,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: '#ddd',
+    paddingHorizontal: 16,
   },
   mobileLogo: {
     width: 150,
     height: 40,
     resizeMode: 'contain',
+  },
+  mobileMenuTrigger: {
+    padding: 8,
   },
 
   topBar: {
@@ -119,7 +124,7 @@ export const styles = StyleSheet.create({
   menuOptionsContainer: {
     borderRadius: 8,
     marginTop: 50,
-    width: 180,
+    width: 220,
     ...Platform.select({
       ios: {
         shadowColor: colors.primaryBlack,
@@ -241,11 +246,11 @@ export const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20, // Padding para não colar nas bordas em telas pequenas
+    padding: 20,
   },
   modalContainer: {
     width: '100%',
-    maxWidth: 700, // Largura máxima do modal
+    maxWidth: 700,
     backgroundColor: colors.primaryWhite,
     borderRadius: 16,
     padding: 24,
@@ -271,10 +276,10 @@ export const styles = StyleSheet.create({
   },
   mapWrapper: {
     width: '100%',
-    height: 400, // Altura do mapa
+    height: 400,
     borderRadius: 12,
-    overflow: 'hidden', // Importante para o mapa não vazar
-    backgroundColor: '#E0E0E0', // Fundo enquanto o mapa carrega
+    overflow: 'hidden',
+    backgroundColor: '#E0E0E0',
   },
   modalButton: {
     backgroundColor: colors.primaryOrange,

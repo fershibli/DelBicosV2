@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   useWindowDimensions,
-  Platform,
+  // Platform,
   Pressable,
   Modal,
   ActivityIndicator,
@@ -30,10 +30,12 @@ import {
 } from 'react-native-popup-menu';
 import { MapComponent } from '@components/MapComponent/MapComponent';
 import { Region } from '@lib/hooks/types';
+import colors from '@theme/colors';
 
 const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const { width } = useWindowDimensions();
-  const isWebOrLargeScreen = Platform.OS === 'web' || width > 768;
+  // const isWebOrLargeScreen = Platform.OS === 'web' || width > 768;
+  const isWebOrLargeScreen = width > 768;
 
   const { user, signOut } = useUserStore();
   const { address: userAddress } = useUserStore();
@@ -44,7 +46,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
     state,
     setLocation,
     lookupByCoordinates,
-    loading: isLocationLoading, // Renomeia 'loading'
+    loading: isLocationLoading,
   } = useLocation();
 
   const navigation = useNavigation();
@@ -86,7 +88,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
           'Permissão negada',
           'Para vermos sua localização, precisamos da sua permissão.',
         );
-        // Se a permissão for negada, caia para o fallback (endereço salvo)
         throw new Error('Permissão de localização negada');
       }
 
@@ -109,7 +110,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         '[Header] Erro ao pegar localização atual, usando fallback:',
         error,
       );
-      // 3.3. FALLBACK 1: Usar o endereço de contexto (salvo/logado)
       if (locationAddress?.lat && locationAddress?.lon) {
         const savedCoords = {
           latitude: parseFloat(locationAddress.lat),
@@ -122,7 +122,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         });
         setTempMarker(savedCoords);
       } else {
-        // 3.4. FALLBACK 2: Usar São Paulo
         setTempRegion({
           latitude: -23.5505,
           longitude: -46.6333,
@@ -137,11 +136,8 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const handleMapPress = (event: any) => {
     const { coordinate } = event.nativeEvent;
 
-    // 4.1. Atualiza o pino
     setTempMarker(coordinate);
 
-    // 4.2. ATUALIZA A REGIÃO (o centro do mapa) para seguir o pino
-    // Mantém o zoom (delta) anterior, se existir
     setTempRegion((prevRegion) => ({
       latitude: coordinate.latitude,
       longitude: coordinate.longitude,
@@ -150,7 +146,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
     }));
   };
 
-  // Chamada quando o usuário clica em "Confirmar"
   const handleConfirmLocation = async () => {
     if (!tempMarker) {
       setIsMapModalVisible(false);
@@ -158,11 +153,9 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
     }
 
     try {
-      // O hook 'useLocation' já define o estado de loading
       await lookupByCoordinates(tempMarker.latitude, tempMarker.longitude);
     } catch (error) {
       console.error('Erro ao buscar coordenadas:', error);
-      // Trate o erro se necessário (ex: Alert.alert)
     } finally {
       setIsMapModalVisible(false);
     }
@@ -200,12 +193,152 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
     );
   };
 
-  // --- RENDERIZAÇÃO PARA MOBILE (SIMPLES) ---
+  // --- RENDERIZAÇÃO PARA MOBILE ---
   if (!isWebOrLargeScreen) {
     return (
       <View style={styles.mobileHeader}>
-        <Image source={DelBicosLogo} style={styles.mobileLogo} />
-        {/* Adicionar um ícone de menu hambúrguer aqui seria o ideal no futuro */}
+        {/* Logo Clicável */}
+        <TouchableOpacity onPress={() => navigateTo('Feed')}>
+          <Image source={DelBicosLogo} style={styles.mobileLogo} />
+        </TouchableOpacity>
+
+        {/* Menu Sanduíche */}
+        <Menu>
+          <MenuTrigger style={styles.mobileMenuTrigger}>
+            <FontAwesome name="bars" size={24} color={colors.primaryBlue} />
+          </MenuTrigger>
+
+          <MenuOptions
+            customStyles={{
+              optionsContainer: styles.menuOptionsContainer,
+            }}>
+            {/* Links de Navegação */}
+            <MenuOption onSelect={() => navigateTo('Feed')}>
+              <View style={styles.menuOption}>
+                <FontAwesome
+                  name="home"
+                  size={18}
+                  color={colors.primaryBlue}
+                  style={styles.menuIcon}
+                />
+                <Text style={styles.menuOptionText}>Página Inicial</Text>
+              </View>
+            </MenuOption>
+            <MenuOption onSelect={() => navigateTo('Category')}>
+              <View style={styles.menuOption}>
+                <FontAwesome
+                  name="th-large"
+                  size={18}
+                  color={colors.primaryBlue}
+                  style={styles.menuIcon}
+                />
+                <Text style={styles.menuOptionText}>Categorias</Text>
+              </View>
+            </MenuOption>
+            <MenuOption onSelect={() => navigateTo('Help')}>
+              <View style={styles.menuOption}>
+                <FontAwesome
+                  name="question-circle-o"
+                  size={18}
+                  color={colors.primaryBlue}
+                  style={styles.menuIcon}
+                />
+                <Text style={styles.menuOptionText}>Ajuda</Text>
+              </View>
+            </MenuOption>
+
+            {/* Links Condicionais (Usuário Logado) */}
+            {!!user && (
+              <>
+                <MenuOption onSelect={() => navigateTo('MySchedules')}>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="calendar-check-o"
+                      size={18}
+                      color={colors.primaryBlue}
+                      style={styles.menuIcon}
+                    />
+                    <Text style={styles.menuOptionText}>Meus Agendamentos</Text>
+                  </View>
+                </MenuOption>
+                <MenuOption
+                  onSelect={() => {
+                    /* Adicionar navegação do Parceiro */
+                  }}>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="briefcase"
+                      size={18}
+                      color={colors.primaryBlue}
+                      style={styles.menuIcon}
+                    />
+                    <Text style={styles.menuOptionText}>
+                      Portal do Parceiro
+                    </Text>
+                  </View>
+                </MenuOption>
+              </>
+            )}
+
+            <View style={styles.menuDivider} />
+
+            {/* Links de Usuário/Autenticação */}
+            {!!user ? (
+              <>
+                <MenuOption
+                  onSelect={() => navigation.navigate('ClientProfile')}>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="user-circle-o"
+                      size={18}
+                      color={colors.primaryBlue}
+                      style={styles.menuIcon}
+                    />
+                    <Text style={styles.menuOptionText}>Meu Perfil</Text>
+                  </View>
+                </MenuOption>
+                <MenuOption onSelect={handleSignOut}>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="sign-out"
+                      size={18}
+                      color="#D32F2F"
+                      style={styles.menuIcon}
+                    />
+                    <Text style={[styles.menuOptionText, { color: '#D32F2F' }]}>
+                      Deslogar
+                    </Text>
+                  </View>
+                </MenuOption>
+              </>
+            ) : (
+              <>
+                <MenuOption onSelect={() => navigateTo('Login')}>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="sign-in"
+                      size={18}
+                      color={colors.primaryBlue}
+                      style={styles.menuIcon}
+                    />
+                    <Text style={styles.menuOptionText}>Fazer Login</Text>
+                  </View>
+                </MenuOption>
+                <MenuOption onSelect={() => navigateTo('Register')}>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="user-plus"
+                      size={18}
+                      color={colors.primaryBlue}
+                      style={styles.menuIcon}
+                    />
+                    <Text style={styles.menuOptionText}>Cadastre-se</Text>
+                  </View>
+                </MenuOption>
+              </>
+            )}
+          </MenuOptions>
+        </Menu>
       </View>
     );
   }
@@ -241,16 +374,14 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         <View style={styles.rightSection}>
           <View style={styles.locationContainer}>
             <Text style={styles.locationLabel}>Estou em:</Text>
-            {/* Usando o seu componente Button adaptado */}
             <Button
-              colorVariant="secondary" // Laranja
+              colorVariant="secondary"
               sizeVariant="smallPill"
               fontVariant="AfacadRegular15"
               onClick={openMapModal}
               endIcon={
                 <FontAwesome name="chevron-down" size={12} color="#FFFFFF" />
               }>
-              {/* Usa a localização do useLocation */}
               {!!city && !!state ? `${city} - ${state}` : 'Localização'}
             </Button>
           </View>
@@ -278,7 +409,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                     <FontAwesome
                       name="user-circle-o"
                       size={18}
-                      color="#333"
+                      color={colors.primaryBlue}
                       style={styles.menuIcon}
                     />
                     <Text style={styles.menuOptionText}>Meu Perfil</Text>
