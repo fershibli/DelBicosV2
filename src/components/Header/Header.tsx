@@ -228,7 +228,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         <View style={styles.menu}>
           <MenuItem screen={'Feed'}>Página Inicial</MenuItem>
           <MenuItem screen={'Category'}>Categorias</MenuItem>
-          <MenuItem>Ajuda</MenuItem>
+          <MenuItem screen={'Help'}>Ajuda</MenuItem>
           {!!user && (
             <>
               <MenuItem screen={'MySchedules'}>Meus Agendamentos</MenuItem>
