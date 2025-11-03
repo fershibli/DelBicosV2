@@ -12,68 +12,40 @@ import { FontAwesome } from '@expo/vector-icons';
 import ProfessionalResultCard, {
   ProfessionalResult,
 } from '@components/ProfessionalResultCard';
-
-// --- PLACEHOLDERS ---
-// (Substitua pelos seus stores e lógica de fetch)
-const MOCK_RESULTS: ProfessionalResult[] = [
-  // ... (vou usar os dados da sua imagem como exemplo)
-  {
-    id: 1,
-    name: 'Jefferson Santos',
-    serviceName: 'Serviços de Eletricista',
-    rating: 4.8,
-    ratingsCount: 13,
-    priceFrom: 250,
-    availableTimes: ['09:30', '11:30', '14:00', '15:30', '16:00', '18:30'],
-    offeredServices: [
-      'Eletricista Geral',
-      'Instalação Elétrica Residencial',
-      'Instalação Elétrica Comercial',
-      'Instalação de Cooktop por Indução',
-    ],
-    distance: 1,
-    location: 'Jardim Faculdade, Sorocaba, São Paulo',
-    imageUrl: 'https://i.imgur.com/example.jpg',
-  },
-  {
-    id: 2,
-    name: 'Jefferson Santos',
-    serviceName: 'Serviços de Eletricista',
-    rating: 4.8,
-    ratingsCount: 13,
-    priceFrom: 250,
-    availableTimes: ['09:30', '11:30', '14:00', '15:30', '16:00', '18:30'],
-    offeredServices: [
-      'Eletricista Geral',
-      'Instalação Elétrica Residencial',
-      'Instalação Elétrica Comercial',
-      'Instalação de Cooktop por Indução',
-    ],
-    distance: 1,
-    location: 'Jardim Faculdade, Sorocaba, São Paulo',
-    imageUrl: 'https://i.imgur.com/example.jpg',
-  },
-];
-// --- FIM PLACEHOLDERS ---
+import { useProfessionalStore } from '@stores/Professional';
+import { useLocation } from '@lib/hooks/LocationContext';
 
 function SearchResultScreen() {
   const route = useRoute();
-  const { date } = route.params as {
+  const { subCategoryId, date } = route.params as {
     subCategoryId: number;
     date: string;
   };
+
+  const { fetchProfessionalsByAvailability } = useProfessionalStore();
+  const { address } = useLocation();
 
   const [isLoading, setIsLoading] = useState(true);
   const [results, setResults] = useState<ProfessionalResult[]>([]);
 
   useEffect(() => {
-    // Aqui você chamaria seu store para buscar os profissionais com os filtros
-    // ex: fetchProfessionalsByFilter(categoryId, subCategoryId, date);
-    setTimeout(() => {
-      setResults(MOCK_RESULTS);
+    const loadResults = async () => {
+      setIsLoading(true);
+
+      const lat = address?.lat ? parseFloat(address.lat) : undefined;
+      const lng = address?.lon ? parseFloat(address.lon) : undefined;
+      const data = await fetchProfessionalsByAvailability(
+        subCategoryId,
+        date,
+        lat,
+        lng,
+      );
+      setResults(data || []);
       setIsLoading(false);
-    }, 1000);
-  }, []);
+    };
+
+    loadResults();
+  }, [subCategoryId, date, fetchProfessionalsByAvailability, address]);
 
   const renderFilterBar = () => (
     <View style={styles.filterBar}>
@@ -111,7 +83,7 @@ function SearchResultScreen() {
           contentContainerStyle={styles.contentContainer}
           data={results}
           keyExtractor={(item) => item.id.toString()}
-          numColumns={2} // Grade de 2 colunas
+          numColumns={2}
           key={'two-columns'}
           ListHeaderComponent={
             <>
@@ -122,15 +94,21 @@ function SearchResultScreen() {
             </>
           }
           renderItem={({ item }) => (
-            <ProfessionalResultCard
-              professional={item}
-              selectedDate={date} // <-- Adicione esta prop
-            />
+            <View style={styles.cardWrapper}>
+              <ProfessionalResultCard professional={item} selectedDate={date} />
+            </View>
           )}
           ListFooterComponent={
             <Text style={styles.footer}>
               © DelBicos - 2024 - Todos os direitos reservados.
             </Text>
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>
+                Nenhum profissional encontrado para esta data ou serviço.
+              </Text>
+            </View>
           }
         />
       )}
