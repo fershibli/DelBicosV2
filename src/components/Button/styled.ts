@@ -17,6 +17,11 @@ export const baseStyles = StyleSheet.create({
   loadingText: {
     marginLeft: 8,
   },
+  contentContainer: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
 });
 
 export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
@@ -61,7 +66,11 @@ export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
     }),
   };
 
-  const iconStyle: ViewStyle = {
+  const startIconStyle: ViewStyle = {
+    marginRight: 8,
+  };
+
+  const endIconStyle: ViewStyle = {
     marginLeft: 8,
   };
 
@@ -93,7 +102,8 @@ export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
   return {
     container: containerStyle,
     text: textStyle,
-    icon: iconStyle,
+    startIcon: startIconStyle,
+    endIcon: endIconStyle,
     state: stateStyles,
   };
 };
@@ -129,7 +139,8 @@ export const getStyledButtonFromVariants = (
     return {
       container: { ...styles.container, ...styles.state.disabled.container },
       text: { ...styles.text, ...styles.state.disabled.text },
-      icon: styles.icon,
+      startIcon: styles.startIcon,
+      endIcon: styles.endIcon,
       state: styles.state,
     };
   }
