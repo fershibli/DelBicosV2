@@ -44,7 +44,8 @@ export interface ButtonProps {
 export interface ButtonStyles {
   container: ViewStyle;
   text: TextStyle;
-  icon: ViewStyle;
+  startIcon: ViewStyle;
+  endIcon: ViewStyle;
   state: {
     hover: {
       container: ViewStyle;
