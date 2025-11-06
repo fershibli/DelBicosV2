@@ -36,6 +36,7 @@ export interface ButtonProps {
   noWrap?: boolean;
   children?: React.ReactNode;
   endIcon?: React.ReactNode;
+  startIcon?: React.ReactNode;
   loading?: boolean;
   style?: any;
 }
