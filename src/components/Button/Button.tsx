@@ -1,67 +1,109 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  buttonColorVariants,
-  buttonSizeVariants,
-  ButtonColorVariantsKeys,
-  ButtonSizeVariantsKeys,
-  ButtonFontVariantsKeys,
-  buttonFontVariants,
-} from './variants';
-import { ButtonProps as MUIButtonProps } from '@mui/material';
-
-import { Styled } from './styled';
-
-export interface ButtonProps extends MUIButtonProps {
-  children?: React.ReactNode;
-  onClick: () => void;
-  colorVariant?: ButtonColorVariantsKeys;
-  sizeVariant?: ButtonSizeVariantsKeys;
-  fontVariant?: ButtonFontVariantsKeys;
-  disabled?: boolean;
-  selected?: boolean;
-  noWrap?: boolean;
-  style?: React.CSSProperties;
-}
+  Pressable,
+  Text,
+  ActivityIndicator,
+  View,
+  TextStyle,
+} from 'react-native';
+import { ButtonProps } from './types';
+import { Styled, baseStyles } from './styled';
 
 export const ButtonComponent: React.FC<ButtonProps> = ({
   children,
-  onClick,
+  onPress,
   colorVariant = 'primary',
   sizeVariant = 'medium',
   fontVariant = 'AfacadRegular20',
   disabled = false,
-  selected = false,
+  variant = 'contained',
   noWrap = false,
   style = {},
-  ...muiProps
+  startIcon,
+  endIcon,
+  loading = false,
+  ...props
 }) => {
-  const buttonColor = buttonColorVariants[colorVariant];
-  const buttonSize = buttonSizeVariants[sizeVariant];
-  const buttonFont = buttonFontVariants[fontVariant];
+  const [isHovered, setIsHovered] = useState(false);
 
-  const hoverColors = buttonColor.hover;
-  const disabledColors = buttonColor.disabled;
-  const defaultColors = {
-    backgroundColor: buttonColor.backgroundColor,
-    color: buttonColor.color,
+  const styles = Styled.fromVariants(
+    colorVariant,
+    sizeVariant,
+    fontVariant,
+    variant,
+    disabled || loading,
+    noWrap
+  );
+
+  const handlePress = () => {
+    if (disabled || loading) return;
+    onPress();
   };
 
+  const handleHoverIn = () => {
+    if (disabled || loading) return;
+    setIsHovered(true);
+  };
+
+  const handleHoverOut = () => {
+    setIsHovered(false);
+  };
+
+  const containerStyle = isHovered
+    ? [styles.container, styles.state.hover.container, style]
+    : [styles.container, style];
+
+  const textStyle = isHovered
+    ? [styles.text, styles.state.hover.text]
+    : styles.text;
+
+  const indicatorColor = Array.isArray(textStyle) 
+    ? (textStyle[0] as TextStyle)?.color || '#000000'
+    : (textStyle as TextStyle)?.color || '#000000';
+
   return (
-    <Styled.Button
-      onClick={onClick}
-      disabled={disabled}
-      defaultColors={defaultColors}
-      defaultSize={buttonSize}
-      defaultFont={buttonFont}
-      hoverColors={buttonColor.hover ? hoverColors : undefined}
-      disabledColors={disabledColors}
-      noWrap={noWrap}
-      sx={{
-        ...style,
-      }}
-      {...muiProps}>
-      {children}
-    </Styled.Button>
+    <Pressable
+      style={({ pressed }) => [
+        containerStyle,
+        pressed && { opacity: 0.8 }
+      ]}
+      onPress={handlePress}
+      onHoverIn={handleHoverIn}
+      onHoverOut={handleHoverOut}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {loading ? (
+        <View style={baseStyles.loadingContainer}>
+          <ActivityIndicator 
+            size="small" 
+            color={indicatorColor} 
+          />
+          <Text style={[textStyle, baseStyles.loadingText]}>
+            Carregando...
+          </Text>
+        </View>
+      ) : (
+        <View style={baseStyles.contentContainer}>
+          {startIcon && (
+            <View style={styles.startIcon}>
+              {startIcon}
+            </View>
+          )}
+          <Text 
+            style={textStyle} 
+            numberOfLines={noWrap ? 1 : undefined}
+          >
+            {children}
+          </Text>
+          {endIcon && (
+            <View style={styles.endIcon}>
+              {endIcon}
+            </View>
+          )}
+        </View>
+      )}
+    </Pressable>
   );
 };
 

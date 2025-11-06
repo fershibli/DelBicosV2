@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { CheckCircle, Description, Share, Download } from '@mui/icons-material';
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Button } from '@components/Button';
 import InvoiceTemplate from '@components/InvoiceTemplate';
 import { generatePDF } from '@lib/helpers/pdfGenerator';
@@ -143,7 +143,7 @@ export const PaymentCompletionScreen: React.FC = () => {
       <View style={styles.content}>
         {/* Header de Sucesso */}
         <View style={styles.successHeader}>
-          <CheckCircle style={styles.successIcon} />
+          <MaterialIcons name="check-circle" size={64} color="#4CAF50" style={styles.successIcon} />
           <Text style={styles.successTitle}>Pagamento Realizado!</Text>
           <Text style={styles.successSubtitle}>
             Seu serviço foi agendado com sucesso
@@ -185,7 +185,7 @@ export const PaymentCompletionScreen: React.FC = () => {
         {/* Seção da Nota Fiscal */}
         <View style={styles.invoiceSection}>
           <View style={styles.invoiceHeader}>
-            <Description style={styles.invoiceIcon} />
+            <MaterialIcons name="description" size={24} color="#4A90E2" style={styles.invoiceIcon} />
             <Text style={styles.invoiceTitle}>Nota Fiscal</Text>
           </View>
 
@@ -198,7 +198,7 @@ export const PaymentCompletionScreen: React.FC = () => {
           <View style={styles.buttonGroup}>
             <Button
               variant="outlined"
-              onClick={handleShareInvoice}
+              onPress={handleShareInvoice}
               disabled={isGeneratingPDF}
               style={styles.shareButton}>
               {isGeneratingPDF ? (
@@ -208,7 +208,7 @@ export const PaymentCompletionScreen: React.FC = () => {
                 </View>
               ) : (
                 <View style={styles.buttonContent}>
-                  <Share style={styles.buttonIcon} />
+                  <FontAwesome name="share" size={18} color="#4A90E2" style={styles.buttonIcon} />
                   <Text style={styles.buttonText}>Compartilhar PDF</Text>
                 </View>
               )}
@@ -217,7 +217,7 @@ export const PaymentCompletionScreen: React.FC = () => {
             {/* Botão de Download */}
             <Button
               variant="outlined"
-              onClick={handleDownloadPDF}
+              onPress={handleDownloadPDF}
               disabled={isGeneratingPDF}
               style={styles.shareButton}>
               {isGeneratingPDF ? (
@@ -227,7 +227,7 @@ export const PaymentCompletionScreen: React.FC = () => {
                 </View>
               ) : (
                 <View style={styles.buttonContent}>
-                  <Download style={styles.buttonIcon} />
+                  <FontAwesome name="download" size={18} color="#4A90E2" style={styles.buttonIcon} />
                   <Text style={styles.buttonText}>Baixar PDF</Text>
                 </View>
               )}
@@ -238,7 +238,7 @@ export const PaymentCompletionScreen: React.FC = () => {
         {/* Botão para voltar */}
         <Button
           variant="contained"
-          onClick={handleBackToHome}
+          onPress={handleBackToHome}
           style={styles.backButton}>
           Voltar ao Início
         </Button>

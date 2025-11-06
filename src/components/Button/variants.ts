@@ -13,6 +13,14 @@ export const buttonFontVariants = {
     fontFamily: 'Afacad-Regular',
     fontSize: 15,
   },
+  AfacadSemiBold14: {
+    fontFamily: 'Afacad-SemiBold',
+    fontSize: 14,
+  },
+  AfacadBold16: {
+    fontFamily: 'Afacad-Bold',
+    fontSize: 16,
+  }
 };
 
 export const buttonSizeVariants = {
@@ -31,15 +39,25 @@ export const buttonSizeVariants = {
     paddingVertical: 16,
     paddingHorizontal: 20,
   },
+  default: {
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
   smallPill: {
     borderRadius: 50,
-    paddingVertical: 0,
+    paddingVertical: 3,
     paddingHorizontal: 10,
   },
   largePill: {
     borderRadius: 50,
     paddingVertical: 12,
     paddingHorizontal: 16,
+  },
+  modalButton: {
+    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
   },
 };
 
@@ -49,7 +67,19 @@ export const buttonColorVariants = {
     color: colors.primaryWhite,
     hover: {
       backgroundColor: colors.primaryOrange,
-      color: colors.primaryWhite,
+      color: colors.primaryWhiteHover,
+    },
+    disabled: {
+      backgroundColor: '#D3D3D3',
+      color: '#A9A9A9',
+    },
+  },
+    primaryBlue: {
+    backgroundColor: 'transparent',
+    color: colors.primaryBlue,
+    hover: {
+      backgroundColor: colors.primaryWhiteHover,
+      color: colors.primaryBlue,
     },
     disabled: {
       backgroundColor: '#D3D3D3',
@@ -68,23 +98,36 @@ export const buttonColorVariants = {
       color: '#A9A9A9',
     },
   },
-  primaryWhite: {
-    backgroundColor: colors.primaryWhite,
-    color: colors.primaryBlack,
+  primaryOrange: {
+    backgroundColor: colors.primaryOrange,
+    color: colors.primaryWhite,
     hover: {
-      backgroundColor: colors.primaryOrange,
-      color: colors.primaryBlack,
+      backgroundColor: colors.primaryOrangeHover,
+      color: colors.primaryWhiteHover,
     },
     disabled: {
       backgroundColor: '#D3D3D3',
       color: '#A9A9A9',
     },
   },
+  primaryWhite: {
+    backgroundColor: 'transparent',
+    color: colors.primaryBlue,
+    hover: {
+      backgroundColor: colors.primaryWhiteHover,
+      color: colors.primaryBlue,
+    },
+    disabled: {
+      backgroundColor: '#D3D3D3',
+      color: '#A9A9A9',
+    },
+  },
+
   primaryGreen: {
     backgroundColor: colors.primaryGreen,
     color: colors.primaryWhite,
     hover: {
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.primaryWhiteHover,
       color: colors.primaryGreen,
     },
     disabled: {
@@ -92,11 +135,20 @@ export const buttonColorVariants = {
       color: '#A9A9A9',
     },
   },
+  modalPrimary: {
+    backgroundColor: colors.primaryOrange,
+    color: colors.primaryWhite,
+    hover: {
+      backgroundColor: '#ca6f00ff',
+      color: colors.primaryWhite,
+    },
+    disabled: {
+      backgroundColor: '#CCCCCC',
+      color: '#A9A9A9',
+    },
+  },
 };
 
-export type ButtonFontVariantsType = typeof buttonFontVariants;
-export type ButtonColorVariantsType = typeof buttonColorVariants;
-export type ButtonSizeVariantsType = typeof buttonSizeVariants;
 export type ButtonFontVariantsKeys = keyof typeof buttonFontVariants;
 export type ButtonColorVariantsKeys = keyof typeof buttonColorVariants;
 export type ButtonSizeVariantsKeys = keyof typeof buttonSizeVariants;

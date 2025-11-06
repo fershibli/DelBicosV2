@@ -44,7 +44,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
     state,
     setLocation,
     lookupByCoordinates,
-    loading: isLocationLoading, // Renomeia 'loading'
+    loading: isLocationLoading,
   } = useLocation();
 
   const navigation = useNavigation();
@@ -243,10 +243,10 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
             <Text style={styles.locationLabel}>Estou em:</Text>
             {/* Usando o seu componente Button adaptado */}
             <Button
-              colorVariant="secondary" // Laranja
+              colorVariant="secondary"
               sizeVariant="smallPill"
               fontVariant="AfacadRegular15"
-              onClick={openMapModal}
+              onPress={openMapModal}
               endIcon={
                 <FontAwesome name="chevron-down" size={12} color="#FFFFFF" />
               }>
@@ -302,43 +302,24 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
             </Menu>
           ) : (
             <View style={styles.authButtons}>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.authButton,
-                  loginHovered && styles.authButtonHovered,
-                  pressed && styles.authButtonPressed,
-                ]}
-                onPress={() => navigateTo('Login')}
-                onHoverIn={() => setLoginHovered(true)}
-                onHoverOut={() => setLoginHovered(false)}>
-                <Text
-                  style={[
-                    styles.authButtonText,
-                    loginHovered && styles.authButtonTextHovered,
-                  ]}>
-                  Fazer login
-                </Text>
-              </Pressable>
+              <Button
+                colorVariant="primaryWhite"
+                sizeVariant="default"
+                fontVariant="AfacadSemiBold14"
+                variant="contained" 
+                onPress={() => navigateTo('Login')}>
+                Fazer login
+              </Button>
 
               {/* Botão Cadastre-se */}
-              <Pressable
-                style={({ pressed }) => [
-                  styles.authButton,
-                  styles.authButtonSecondary,
-                  registerHovered && styles.authButtonSecondaryHovered,
-                  pressed && styles.authButtonPressed,
-                ]}
-                onPress={() => navigateTo('Register')}
-                onHoverIn={() => setRegisterHovered(true)}
-                onHoverOut={() => setRegisterHovered(false)}>
-                <Text
-                  style={[
-                    styles.authButtonText,
-                    styles.authButtonTextSecondary,
-                  ]}>
-                  Cadastre-se
-                </Text>
-              </Pressable>
+              <Button
+                colorVariant="primaryOrange"
+                sizeVariant="default"
+                variant="contained"
+                fontVariant="AfacadBold16"
+                onPress={() => navigateTo('Register')}>
+                Cadastre-se
+              </Button>
             </View>
           )}
         </View>
