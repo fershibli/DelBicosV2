@@ -19,8 +19,8 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
   variant = 'contained',
   noWrap = false,
   style = {},
-  endIcon,
   startIcon,
+  endIcon,
   loading = false,
   ...props
 }) => {

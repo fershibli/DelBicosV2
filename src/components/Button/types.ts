@@ -35,8 +35,8 @@ export interface ButtonProps {
   variant?: 'contained' | 'outlined';
   noWrap?: boolean;
   children?: React.ReactNode;
-  endIcon?: React.ReactNode;
   startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
   loading?: boolean;
   style?: any;
 }
