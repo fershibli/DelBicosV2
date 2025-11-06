@@ -84,7 +84,12 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
           </Text>
         </View>
       ) : (
-        <>
+        <View style={baseStyles.contentContainer}>
+          {startIcon && (
+            <View style={styles.startIcon}>
+              {startIcon}
+            </View>
+          )}
           <Text 
             style={textStyle} 
             numberOfLines={noWrap ? 1 : undefined}
@@ -92,11 +97,11 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
             {children}
           </Text>
           {endIcon && (
-            <View style={styles.icon}>
+            <View style={styles.endIcon}>
               {endIcon}
             </View>
           )}
-        </>
+        </View>
       )}
     </Pressable>
   );
