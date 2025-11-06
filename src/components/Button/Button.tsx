@@ -20,6 +20,7 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
   noWrap = false,
   style = {},
   endIcon,
+  startIcon,
   loading = false,
   ...props
 }) => {
