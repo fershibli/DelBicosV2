@@ -1,69 +1,154 @@
-import { Button, styled } from '@mui/material';
+import { ButtonStyleProps, ButtonStyles } from "@components/Button/types";
+import { TextStyle, ViewStyle } from "react-native";
+import { StyleSheet } from 'react-native';
+import { 
+  ButtonColorVariantsKeys, 
+  ButtonSizeVariantsKeys, 
+  ButtonFontVariantsKeys 
+} from './types';
+import { buttonColorVariants, buttonSizeVariants, buttonFontVariants } from './variants';
 
-interface ButtonProps {
-  defaultColors: {
-    backgroundColor: string;
-    color: string;
-  };
-  defaultFont: {
-    fontSize: number;
-    fontFamily: string;
-  };
-  defaultSize: {
-    borderRadius: number;
-    paddingVertical: number;
-    paddingHorizontal: number;
-  };
-  hoverColors?: {
-    backgroundColor: string;
-    color: string;
-  };
-  disabledColors?: {
-    backgroundColor: string;
-    color: string;
-  };
-  noWrap?: boolean;
-}
+export const baseStyles = StyleSheet.create({
+  loadingContainer: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+  loadingText: {
+    marginLeft: 8,
+  },
+  contentContainer: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+});
 
-const customProps = [
-  'defaultColors',
-  'defaultSize',
-  'defaultFont',
-  'hoverColors',
-  'disabledColors',
-  'noWrap',
-];
+export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
+  const {
+    defaultColors,
+    defaultSize,
+    defaultFont,
+    hoverColors,
+    disabledColors,
+    noWrap,
+    variant = 'contained',
+  } = props;
+
+  const isOutlined = variant === 'outlined';
+  
+  const backgroundColor = defaultColors.backgroundColor;
+  const color = defaultColors.color;
+
+  const shouldHaveBorder = isOutlined || backgroundColor === 'transparent';
+
+  const containerStyle: ViewStyle = {
+    backgroundColor: backgroundColor,
+    borderRadius: defaultSize.borderRadius,
+    paddingVertical: defaultSize.paddingVertical,
+    paddingHorizontal: defaultSize.paddingHorizontal,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    ...(shouldHaveBorder && {
+      borderWidth: 1.5,
+      borderColor: color,
+    }),
+  };
+
+  const textStyle: TextStyle = {
+    fontSize: defaultFont.fontSize,
+    fontFamily: defaultFont.fontFamily,
+    color: color,
+    textAlign: 'center',
+    ...(noWrap && {
+      flexShrink: 1,
+    }),
+  };
+
+  const startIconStyle: ViewStyle = {
+    marginRight: 8,
+  };
+
+  const endIconStyle: ViewStyle = {
+    marginLeft: 8,
+  };
+
+  const stateStyles = {
+    hover: {
+      container: {
+        backgroundColor: hoverColors?.backgroundColor || backgroundColor,
+        ...(shouldHaveBorder && hoverColors?.color && {
+          borderColor: hoverColors.color,
+        }),
+      } as ViewStyle,
+      text: {
+        color: hoverColors?.color || color,
+      } as TextStyle,
+    },
+    disabled: {
+      container: {
+        backgroundColor: disabledColors?.backgroundColor || backgroundColor,
+        ...(shouldHaveBorder && {
+          borderColor: disabledColors?.color || color,
+        }),
+      } as ViewStyle,
+      text: {
+        color: disabledColors?.color || color,
+      } as TextStyle,
+    },
+  };
+
+  return {
+    container: containerStyle,
+    text: textStyle,
+    startIcon: startIconStyle,
+    endIcon: endIconStyle,
+    state: stateStyles,
+  };
+};
+
+export const getStyledButtonFromVariants = (
+  colorVariant: ButtonColorVariantsKeys = 'primary',
+  sizeVariant: ButtonSizeVariantsKeys = 'medium',
+  fontVariant: ButtonFontVariantsKeys = 'AfacadRegular20',
+  variant: 'contained' | 'outlined' = 'contained',
+  disabled: boolean = false,
+  noWrap: boolean = false
+): ButtonStyles => {
+  const buttonColor = buttonColorVariants[colorVariant];
+  const buttonSize = buttonSizeVariants[sizeVariant];
+  const buttonFont = buttonFontVariants[fontVariant];
+
+  const styleProps: ButtonStyleProps = {
+    defaultColors: {
+      backgroundColor: buttonColor.backgroundColor,
+      color: buttonColor.color,
+    },
+    defaultSize: buttonSize,
+    defaultFont: buttonFont,
+    hoverColors: buttonColor.hover,
+    disabledColors: buttonColor.disabled,
+    noWrap,
+    variant,
+  };
+
+  const styles = createStyledButton(styleProps);
+
+  if (disabled) {
+    return {
+      container: { ...styles.container, ...styles.state.disabled.container },
+      text: { ...styles.text, ...styles.state.disabled.text },
+      startIcon: styles.startIcon,
+      endIcon: styles.endIcon,
+      state: styles.state,
+    };
+  }
+
+  return styles;
+};
 
 export const Styled = {
-  Button: styled(Button, {
-    shouldForwardProp: (prop) => !customProps.includes(prop as string),
-  })<ButtonProps>(
-    ({
-      defaultColors,
-      defaultSize,
-      defaultFont,
-      hoverColors,
-      disabledColors,
-      noWrap,
-    }) => ({
-      backgroundColor: defaultColors.backgroundColor,
-      color: defaultColors.color,
-      borderRadius: defaultSize.borderRadius,
-      padding: `${defaultSize.paddingVertical}px ${defaultSize.paddingHorizontal}px`,
-      fontSize: defaultFont.fontSize,
-      fontFamily: defaultFont.fontFamily,
-      textTransform: 'none',
-      whiteSpace: noWrap ? 'nowrap' : 'normal',
-      '&:hover': {
-        backgroundColor:
-          hoverColors?.backgroundColor || defaultColors.backgroundColor,
-        color: hoverColors?.color || defaultColors.color,
-      },
-      '&:disabled': {
-        backgroundColor:
-          disabledColors?.backgroundColor || defaultColors.backgroundColor,
-        color: disabledColors?.color || defaultColors.color,
-      },
-    }),
-  ),
+  createButton: createStyledButton,
+  fromVariants: getStyledButtonFromVariants,
 };

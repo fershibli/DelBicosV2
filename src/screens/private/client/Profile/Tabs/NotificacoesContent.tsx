@@ -6,16 +6,11 @@ import {
   View,
   Image,
   ScrollView,
-} from 'react-native';
-import {
-  Surface,
-  Text,
-  ActivityIndicator,
-  Card,
-  useTheme,
   Modal,
-  Button,
-} from 'react-native-paper';
+  TouchableOpacity,
+  ActivityIndicator,
+  Text,
+} from 'react-native';
 import axios from 'axios';
 
 interface Notification {
@@ -42,7 +37,12 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
   const [selectedNotification, setSelectedNotification] =
     useState<Notification | null>(null);
 
-  const { colors } = useTheme();
+  const colors = {
+    primary: '#FC8200',
+    error: '#FF0000',
+    surface: '#FFFFFF',
+    onSurfaceVariant: '#666666',
+  };
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -121,11 +121,11 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
     const descriptionColor = isUnread ? '#005A93' : colors.onSurfaceVariant;
 
     return (
-      <Card
+      <TouchableOpacity
         style={[styles.card, cardStyle]}
         onPress={() => handleNotificationPress(item)}
-        elevation={isUnread ? 4 : 2}>
-        <Card.Content style={styles.cardContent}>
+        activeOpacity={0.7}>
+        <View style={styles.cardContent}>
           <Image source={logoSource} style={styles.logo} />
 
           <View style={styles.textContainer}>
@@ -155,8 +155,8 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
             ]}>
             {formatTime(item.createdAt)}
           </Text>
-        </Card.Content>
-      </Card>
+        </View>
+      </TouchableOpacity>
     );
   };
 
@@ -181,7 +181,7 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
   }
 
   return (
-    <Surface style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.surface }]}>
       <FlatList
         data={notifications}
         renderItem={renderItem}
@@ -191,42 +191,41 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
 
       <Modal
         visible={!!selectedNotification}
-        onDismiss={hideModal}
-        contentContainerStyle={[
-          styles.modalContent,
-          { backgroundColor: colors.surface },
-        ]}>
-        {selectedNotification && (
-          <View style={styles.modalInnerContainer}>
-            <Text style={[styles.modalTitle, { color: '#FC8200' }]}>
-              {selectedNotification.title}
-            </Text>
+        animationType="fade"
+        transparent={true}
+        onRequestClose={hideModal}>
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+            {selectedNotification && (
+              <View style={styles.modalInnerContainer}>
+                <Text style={[styles.modalTitle, { color: '#FC8200' }]}>
+                  {selectedNotification.title}
+                </Text>
 
-            <ScrollView style={styles.modalMessageScroll}>
-              <Text style={styles.modalMessage}>
-                {selectedNotification.message}
-              </Text>
-            </ScrollView>
+                <ScrollView style={styles.modalMessageScroll}>
+                  <Text style={styles.modalMessage}>
+                    {selectedNotification.message}
+                  </Text>
+                </ScrollView>
 
-            <Text style={styles.modalDate}>
-              {new Date(selectedNotification.createdAt).toLocaleDateString(
-                'pt-BR',
-              )}{' '}
-              às {formatTime(selectedNotification.createdAt)}
-            </Text>
+                <Text style={styles.modalDate}>
+                  {new Date(selectedNotification.createdAt).toLocaleDateString(
+                    'pt-BR',
+                  )}{' '}
+                  às {formatTime(selectedNotification.createdAt)}
+                </Text>
 
-            <Button
-              onPress={hideModal}
-              mode="contained"
-              style={styles.modalButton}
-              labelStyle={styles.modalButtonLabel}
-              buttonColor="#FC8200">
-              Fechar
-            </Button>
+                <TouchableOpacity
+                  style={[styles.modalButton, { backgroundColor: '#FC8200' }]}
+                  onPress={hideModal}>
+                  <Text style={styles.modalButtonLabel}>Fechar</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
-        )}
+        </View>
       </Modal>
-    </Surface>
+    </View>
   );
 };
 
@@ -247,6 +246,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 50,
     backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   unreadCard: {
     borderWidth: 2,
@@ -302,16 +306,18 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
   },
-
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   modalContent: {
     marginHorizontal: 20,
-    marginVertical: 40,
     padding: 20,
     borderRadius: 16,
-    alignSelf: 'center',
     width: '90%',
-    maxHeight: 'auto',
-    minHeight: 'auto',
+    maxHeight: '80%',
   },
   modalInnerContainer: {
     flex: 1,
@@ -324,26 +330,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 24,
   },
-  messageContainer: {
-    flex: 1,
-    minHeight: 100,
-    marginVertical: 12,
-  },
   modalMessageScroll: {
     flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingRight: 8,
+    marginVertical: 12,
   },
   modalMessage: {
     fontSize: 16,
     lineHeight: 22,
     color: '#333',
     textAlign: 'left',
-  },
-  modalFooter: {
-    marginTop: 16,
   },
   modalDate: {
     fontSize: 14,
@@ -354,10 +349,13 @@ const styles = StyleSheet.create({
   modalButton: {
     borderRadius: 12,
     marginHorizontal: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
   },
   modalButtonLabel: {
     fontSize: 16,
-    paddingVertical: 4,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
 });
 
