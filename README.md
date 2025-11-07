@@ -39,8 +39,8 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 🔗 **Documentações das disciplinas do projeto**
 
-- `<a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf">` Gestão Ágil de Projetos de Software - 3 Semestre `</a>`
-- `<a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf">` Interação Humano-Computador - 3 Semestre`</a>`
+- <a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf"> Gestão Ágil de Projetos de Software - 3 Semestre </a>
+- <a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf"> Interação Humano-Computador - 3 Semestre </a>
 
 <br>
 
@@ -173,7 +173,10 @@ O protótipo do DelBicos no Figma serve como uma demonstração visual interativ
 DelBicosV2
 ├── 📁 src
 │  ├── 🖼️ assets        # Static assets like images and fonts
-│  ├── 🧩 components    # Reusable React components
+│  ├── 🧩 components    # Reusable React components
+│  │  ├── ✨ features   # Smart components with business logic
+│  │  ├── 🏗️ layout     # Structural components (Header, Footer)
+│  │  └── 🎨 ui           # Dumb, reusable UI components (Button, Input)
 │  ├── ⚙️ config        # Configuration files for the application
 │  │
 │  ├── lib

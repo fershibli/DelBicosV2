@@ -4,33 +4,31 @@ import colors from '@theme/colors';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F7FA', // Fundo cinza claro da página
+    backgroundColor: '#F4F7FA',
+    alignItems: 'center',
   },
   contentContainer: {
-    paddingHorizontal: 24,
+    paddingHorizontal: 16,
     paddingVertical: 20,
-    alignItems: 'center', // Centraliza a lista na web
   },
   list: {
     width: '100%',
-    maxWidth: 1200, // Limite de largura para a lista na web
+    maxWidth: 1200,
   },
   title: {
     fontSize: 28,
     fontFamily: 'Afacad-Bold',
     color: colors.primaryBlue,
     marginBottom: 16,
-    alignSelf: 'flex-start',
   },
   filterBar: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'flex-end', // Alinha os filtros à direita
+    justifyContent: 'flex-end',
     alignItems: 'center',
     marginBottom: 20,
     gap: 16,
   },
-  // Estilo placeholder para os botões de filtro
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -46,11 +44,29 @@ export const styles = StyleSheet.create({
     fontFamily: 'Afacad-Regular',
     marginRight: 8,
   },
+  cardWrapper: {
+    width: '50%',
+    padding: 8,
+  },
   footer: {
     padding: 20,
     textAlign: 'center',
     fontSize: 12,
     color: '#6c757d',
     fontFamily: 'Afacad-Regular',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+    minHeight: 300,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    fontFamily: 'Afacad-Regular',
+    lineHeight: 24,
   },
 });

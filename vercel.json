@@ -9,5 +9,14 @@
       "source": "/:path*",
       "destination": "/"
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  },
+  "github": {
+    "enabled": true,
+    "silent": true
+  }
 }

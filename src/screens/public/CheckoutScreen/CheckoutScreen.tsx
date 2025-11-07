@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -6,21 +6,25 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Rating } from 'react-native-ratings';
 import { styles } from './styles';
 import { NavigationParams } from '@screens/types';
+import colors from '@theme/colors';
 
 import { stripePromise } from '@lib/stripe/stripe';
 import { Elements } from '@stripe/react-stripe-js';
-import { HTTP_DOMAIN } from '@config/varEnvs'; // Importe chave e domínio
-import CheckoutForm from './CheckoutForm'; // O componente do formulário Stripe
+import { HTTP_DOMAIN } from '@config/varEnvs';
+import CheckoutForm from './CheckoutForm';
 import { useUserStore } from '@stores/User';
+import { Address } from '@stores/Address/types';
 
 // Store Imports
 import { useProfessionalStore } from '@stores/Professional';
+import AddressSelectionModal from '@components/features/AddressSelectionModal';
 
 // Tipos da Rota
 type CheckoutRouteParams = NavigationParams['Checkout'];
@@ -77,19 +81,36 @@ function CheckoutScreen() {
   const navigation = useNavigation();
   const route =
     useRoute<RouteProp<{ params: CheckoutRouteParams }, 'params'>>();
-  const { professionalId, priceFrom, selectedTime, imageUrl } = route.params;
+  const { professionalId, selectedTime, imageUrl, serviceId } = route.params;
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [loadingIntent, setLoadingIntent] = useState(true);
+  const [loadingIntent, setLoadingIntent] = useState(false);
   const [errorIntent, setErrorIntent] = useState<string | null>(null);
   const [isLoadingProfessional, setIsLoadingProfessional] = useState(true);
 
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
+
+  const { user } = useUserStore();
   const { selectedProfessional, fetchProfessionalById } =
     useProfessionalStore();
 
-  const { address: userAddress } = useUserStore();
+  const service = useMemo(() => {
+    if (selectedProfessional && serviceId) {
+      const foundService = selectedProfessional.Services.find(
+        (s) => s.id === serviceId,
+      );
+      if (!foundService) {
+        console.error(
+          `Serviço com ID ${serviceId} não encontrado no profissional.`,
+        );
+        setErrorIntent('Erro ao carregar os dados do serviço.');
+      }
+      return foundService || null;
+    }
+    return null;
+  }, [selectedProfessional, serviceId]);
 
-  // Busca detalhes do profissional
   useEffect(() => {
     const loadProfessional = async () => {
       setIsLoadingProfessional(true);
@@ -99,30 +120,26 @@ function CheckoutScreen() {
     loadProfessional();
   }, [professionalId, fetchProfessionalById]);
 
-  // Busca o Payment Intent (clientSecret)
   useEffect(() => {
-    // Só executa se tivermos o preço e os dados do profissional
-    if (priceFrom && priceFrom > 0 && selectedProfessional && userAddress) {
-      if (!priceFrom || !selectedProfessional || !userAddress) {
-        return; // Sai se os dados básicos não estiverem prontos
-      }
-
+    if (service && selectedProfessional && selectedAddress) {
       const initializePayment = async () => {
         setLoadingIntent(true);
         setErrorIntent(null);
 
-        // Precisamos do serviceId. Vamos pegá-lo do profissional buscado.
-        const serviceId = (selectedProfessional.Services as any)?.[0]?.id;
-        const addressId = userAddress.id;
+        const servicePrice = parseFloat(service.price);
+        const addressId = selectedAddress.id;
 
         if (!serviceId) {
-          setErrorIntent('ID do serviço não encontrado.');
+          Alert.alert(
+            'Erro',
+            'Não foi possível identificar o serviço selecionado.',
+          );
           setLoadingIntent(false);
           return;
         }
 
         const secret = await fetchPaymentIntent(
-          priceFrom,
+          servicePrice,
           professionalId,
           serviceId,
           selectedTime,
@@ -139,14 +156,16 @@ function CheckoutScreen() {
         setLoadingIntent(false);
       };
       initializePayment();
+    } else {
+      setClientSecret(null);
     }
   }, [
-    priceFrom,
     professionalId,
     selectedTime,
     selectedProfessional,
-    userAddress,
-    fetchProfessionalById,
+    selectedAddress,
+    service,
+    serviceId,
   ]);
 
   // Configurações para o Stripe Elements
@@ -154,7 +173,10 @@ function CheckoutScreen() {
   const options = clientSecret ? { clientSecret, appearance } : {};
 
   // Renderização de Loading/Erro
-  if (isLoadingProfessional || loadingIntent) {
+  if (
+    isLoadingProfessional ||
+    (selectedProfessional && !service && !errorIntent)
+  ) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#003366" />
@@ -162,6 +184,52 @@ function CheckoutScreen() {
       </View>
     );
   }
+
+  if (errorIntent || !selectedProfessional || !service) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>
+          {errorIntent || 'Erro ao carregar dados do serviço.'}
+        </Text>
+        <TouchableOpacity
+          style={styles.backButtonError}
+          onPress={() => navigation.goBack()}>
+          <Text style={styles.backButtonTextError}>Voltar</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const renderAddressSection = () => {
+    return (
+      <View style={styles.addressSection}>
+        <Text style={styles.sectionTitle}>Endereço do Serviço</Text>
+        {selectedAddress ? (
+          <View style={styles.addressCard}>
+            <FontAwesome
+              name="map-marker"
+              size={16}
+              color={colors.primaryBlue}
+            />
+            <Text style={styles.addressText} numberOfLines={2}>
+              {`${selectedAddress.street}, ${selectedAddress.number} - ${selectedAddress.neighborhood}, ${selectedAddress.city}`}
+            </Text>
+            <TouchableOpacity onPress={() => setIsAddressModalVisible(true)}>
+              <Text style={styles.summaryLink}>Trocar</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={styles.selectAddressButton}
+            onPress={() => setIsAddressModalVisible(true)}>
+            <Text style={styles.selectAddressButtonText}>
+              Selecione um endereço
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
 
   if (errorIntent || !selectedProfessional) {
     return (
@@ -201,7 +269,10 @@ function CheckoutScreen() {
               <Image
                 source={{
                   uri:
-                    imageUrl || professional.Services?.banner_uri || undefined,
+                    imageUrl ||
+                    service.banner_uri ||
+                    professional.User.avatar_uri ||
+                    undefined,
                 }}
                 style={styles.summaryImage}
               />
@@ -212,7 +283,7 @@ function CheckoutScreen() {
                       {professional.User.name}
                     </Text>
                     <Text style={styles.summarySubtitle} numberOfLines={1}>
-                      {professional.Services?.title}
+                      {service.title}
                     </Text>
                     <View style={styles.summaryRatingRow}>
                       <Rating
@@ -226,12 +297,12 @@ function CheckoutScreen() {
                     </View>
                   </View>
                   <Text style={styles.summaryPrice}>
-                    R${priceFrom.toFixed(2)}
+                        R$ {parseFloat(service.price).toFixed(2)}
                   </Text>
                 </View>
                 <View style={styles.summaryDivider} />
                 <Text style={styles.summaryServiceTitle}>
-                  {professional.Services?.Subcategory?.name || 'Serviço'}
+                  {service.Subcategory?.name || 'Serviço'}
                 </Text>
                 <Text style={styles.summaryServiceDate}>{selectedTime}</Text>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -243,28 +314,46 @@ function CheckoutScreen() {
 
           {/* COLUNA DA DIREITA: PAGAMENTO */}
           <View style={styles.rightColumn}>
+            {renderAddressSection()}
             <View style={styles.paymentContainer}>
               <Text style={styles.sectionTitle}>Pagamento Seguro</Text>
-
-              {/* O Stripe Elements será renderizado aqui */}
-              {clientSecret && stripePromise && (
+              {loadingIntent && (
+                <ActivityIndicator
+                  size="large"
+                  color={colors.primaryBlue}
+                  style={{ marginVertical: 40 }}
+                />
+              )}
+              {errorIntent && (
+                <Text style={styles.errorText}>{errorIntent}</Text>
+              )}
+              {clientSecret && selectedAddress && stripePromise && (
                 <Elements options={options} stripe={stripePromise}>
                   <CheckoutForm />
                 </Elements>
               )}
-
-              {/* Resumo do Pedido (Total) */}
+              {!clientSecret && !loadingIntent && selectedAddress && (
+                <Text style={styles.errorText}>
+                  Não foi possível carregar o pagamento. Tente recarregar a
+                  página.
+                </Text>
+              )}
+              {!selectedAddress && !loadingIntent && (
+                <Text style={styles.paymentWaitingText}>
+                  Por favor, selecione um endereço para continuar.
+                </Text>
+              )}
               <View style={styles.orderSummaryContainer}>
                 <View style={styles.summaryRow}>
                   <Text style={styles.summaryLabel}>Subtotal</Text>
                   <Text style={styles.summaryValue}>
-                    R$ {priceFrom.toFixed(2)}
+                    R$ {parseFloat(service.price).toFixed(2)}
                   </Text>
                 </View>
                 <View style={styles.totalRow}>
                   <Text style={styles.totalLabel}>Total</Text>
                   <Text style={styles.totalValue}>
-                    R$ {priceFrom.toFixed(2)}
+                    R$ {parseFloat(service.price).toFixed(2)}
                   </Text>
                 </View>
               </View>
@@ -272,6 +361,17 @@ function CheckoutScreen() {
           </View>
         </View>
       </View>
+      {user && (
+        <AddressSelectionModal
+          visible={isAddressModalVisible}
+          userId={user.id} // Passa o ID do usuário logado
+          onClose={() => setIsAddressModalVisible(false)}
+          onAddressSelect={(address) => {
+            setSelectedAddress(address);
+            setIsAddressModalVisible(false);
+          }}
+        />
+      )}
     </ScrollView>
   );
 }

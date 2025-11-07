@@ -12,7 +12,7 @@ import VerificationScreen from './public/VerificationScreen';
 import PartnerProfile from './public/PartnerProfile';
 import { NavigationParams } from './types';
 import Login from './public/Login';
-import Header from '@components/Header';
+import Header from '@components/layout/Header';
 import { useUserStore } from '@stores/User';
 import { LoginPassword } from './public/LoginPassword';
 import ProfileScreen from './private/client/Profile';
@@ -20,9 +20,9 @@ import CategoryScreen from './public/Category';
 import SubCategoryScreen from './public/SubCategoryScreen';
 import SearchResultScreen from './public/SearchResultScreen';
 import CheckoutScreen from './public/CheckoutScreen';
-import { PaymentCompletionScreen } from './private/client/PaymentCompletion';
 import PaymentStatusScreen from './public/PaymentStatusScreen';
 import MySchedulesScreen from './private/client/MySchedulesScreen';
+import HelpScreen from '@screens/public/HelpScreen';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -107,15 +107,6 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
         path: 'client-profile',
       },
     },
-    PaymentCompletion: {
-      screen: PaymentCompletionScreen,
-      linking: {
-        path: 'payment-completion',
-      },
-      options: {
-        title: 'Pagamento Realizado',
-      },
-    },
     NotFound: {
       screen: NotFound,
       linking: {
@@ -174,6 +165,12 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: MySchedulesScreen,
       options: {
         title: 'Meus Agendamentos',
+      },
+    },
+    Help: {
+      screen: HelpScreen,
+      options: {
+        title: 'Central de Ajuda',
       },
     },
   },
