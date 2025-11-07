@@ -8,7 +8,7 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
-import AppointmentItem from '@components/AppointmentItem';
+import AppointmentItem from '@components/features/AppointmentItem';
 import colors from '@theme/colors';
 
 type SortOption = 'recentes' | 'avaliacao' | 'distancia';

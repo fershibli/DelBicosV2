@@ -14,16 +14,16 @@ import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
 import { useLocation } from '@lib/hooks/LocationContext';
-import CustomTextInput from '@components/CustomTextInput';
-import CpfInput from '@components/CpfInput';
-import DateInput from '@components/DateInput';
+import CustomTextInput from '@components/ui/CustomTextInput';
+import CpfInput from '@components/ui/CpfInput';
+import DateInput from '@components/ui/DateInput';
 import { styles } from './styles';
-import { inputBaseStyle } from '@components/CustomTextInput/styles';
+import { inputBaseStyle } from '@components/ui/CustomTextInput/styles';
 import { HTTP_DOMAIN } from '@config/varEnvs';
 import { isValidCPF } from '../../../utils/validators';
 import LogoV3 from '@assets/LogoV3.png';
 import { useUserStore } from '@stores/User';
-import PhoneInput from '@components/PhoneInput';
+import PhoneInput from '@components/ui/PhoneInput';
 import colors from '@theme/colors';
 
 type FormData = {

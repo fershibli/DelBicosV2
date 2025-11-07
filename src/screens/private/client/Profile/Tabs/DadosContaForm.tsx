@@ -13,7 +13,7 @@ import {
   ScrollView,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import CustomTextInput from '@components/CustomTextInput';
+import CustomTextInput from '@components/ui/CustomTextInput';
 import { styles } from './styles';
 import colors from '@theme/colors';
 

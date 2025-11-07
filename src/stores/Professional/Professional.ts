@@ -5,6 +5,7 @@ import {
   Professional,
 } from '@stores/Professional/types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
+import { ProfessionalResult } from '@components/features/ProfessionalResultCard';
 
 export const useProfessionalStore = create<ProfessionalStore>((set) => ({
   professionals: [],
@@ -96,6 +97,33 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
       );
       set({ selectedProfessional: null });
       return null;
+    }
+  },
+
+  fetchProfessionalsByAvailability: async (
+    subCategoryId: number,
+    date: string,
+    lat?: number,
+    lng?: number,
+  ): Promise<ProfessionalResult[]> => {
+    try {
+      const response = await backendHttpClient.get(
+        '/api/professionals/search-availability',
+        {
+          params: {
+            subCategoryId,
+            date,
+            lat,
+            lng,
+          },
+        },
+      );
+
+      const data = response.data as ProfessionalResult[];
+      return data;
+    } catch (error) {
+      console.error('[ProfessionalStore] Error fetching availability:', error);
+      return [];
     }
   },
 }));
