@@ -5,6 +5,8 @@ import {
 } from 'expo-file-system/legacy';
 import { printToFileAsync, FilePrintOptions } from 'expo-print';
 import { Platform } from 'react-native';
+import * as Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 
 type BlobType = 'text/csv' | 'application/octet-stream';
 
@@ -119,4 +121,39 @@ export const generatePDF = async (
     console.error('Erro ao gerar PDF:', error);
     throw new Error(`Falha ao gerar PDF: ${error}`);
   }
+};
+
+// =============================================================
+// EXPORTA CSV
+// =============================================================
+export const generateCSV = async (
+  dados: any[] | any[][],
+): Promise<string | undefined> => {
+  if (!dados || dados.length === 0) {
+    console.error('Erro', 'Nenhum dado para exportar');
+    return;
+  }
+  const csv = Papa.unparse(dados);
+  return csv;
+};
+
+// =============================================================
+// EXPORTA EXCEL (múltiplas abas)
+// =============================================================
+export const generateXLSX = async (
+  tabs: { title: string; sheetData: any[][] }[],
+): Promise<string | undefined> => {
+  if (!tabs || tabs.length === 0) {
+    console.error('Erro', 'Nenhuma aba para exportar');
+    return;
+  }
+
+  const wb = XLSX.utils.book_new();
+  tabs.forEach(({ title, sheetData }) => {
+    const ws = XLSX.utils.aoa_to_sheet(sheetData);
+    XLSX.utils.book_append_sheet(wb, ws, title.slice(0, 31));
+  });
+
+  const base64 = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
+  return base64;
 };
