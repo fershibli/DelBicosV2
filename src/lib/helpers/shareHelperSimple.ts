@@ -1,3 +1,4 @@
+import { deleteAsync, getInfoAsync } from 'expo-file-system/legacy';
 import { isAvailableAsync, shareAsync } from 'expo-sharing';
 import { Alert, Platform } from 'react-native';
 
@@ -17,6 +18,9 @@ export const shareContent = async (uri: string): Promise<boolean> => {
       }
     }
     await shareAsync(uri);
+
+    await deleteAsync(uri);
+
     return true;
   } catch {
     Alert.alert(
