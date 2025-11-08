@@ -1,15 +1,17 @@
-import * as FileSystem from 'expo-file-system/legacy';
-import * as Sharing from 'expo-sharing';
+import {
+  cacheDirectory,
+  writeAsStringAsync,
+  EncodingType,
+} from 'expo-file-system/legacy';
 import { Platform } from 'react-native';
 
 type BlobType = 'text/csv' | 'application/octet-stream';
-type EncodingType = 'utf8' | 'base64';
 
 export async function generateFileURI(
   content: string,
   filename: string,
   type: BlobType,
-  encoding: EncodingType = 'utf8',
+  encoding: EncodingType = EncodingType.UTF8,
 ): Promise<string | null> {
   try {
     if (Platform.OS === 'web') {
@@ -31,13 +33,11 @@ export async function generateFileURI(
       return url;
     }
 
-    const fileUri = `${FileSystem.cacheDirectory}${filename}`;
+    const fileUri = `${cacheDirectory}${filename}`;
 
-    await FileSystem.writeAsStringAsync(fileUri, content, {
-      encoding: FileSystem.EncodingType.Base64,
+    await writeAsStringAsync(fileUri, content, {
+      encoding,
     });
-
-    await Sharing.shareAsync(fileUri);
 
     return fileUri;
   } catch (error) {
