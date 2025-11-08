@@ -95,7 +95,7 @@ export default function HistoricoCompras() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.pageTitle}>Meus Agendamentos</Text>
+      <Text style={styles.pageTitle}>Historico de Pagamentos</Text>
       <View style={styles.buttonContainer}>
         <Button onPress={handleDownloadCSV}>Exportar CSV</Button>
         <Button onPress={handleDownloadExcel}>Exportar Excel</Button>
