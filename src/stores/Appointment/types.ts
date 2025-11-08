@@ -30,7 +30,6 @@ export interface User {
   name: string;
   email: string;
   phone: string;
-  password: string;
   active: boolean;
   avatar_uri: string | null;
   banner_uri: string | null;
@@ -97,11 +96,22 @@ export interface InvoiceData {
   transactionId?: string;
 }
 
+export interface AppointmentSheetRow {
+  ID: number;
+  Professional: string;
+  Client: string;
+  Service: string;
+  Date: string;
+  Status: string;
+}
+
 export interface AppointmentStore {
   appointments: Appointment[];
   loading: boolean;
 
   fetchAppointments: () => Promise<void>;
+
+  fetchAppointmentsAsSheet: () => Promise<AppointmentSheetRow[]>;
 
   reviewAppointment: (
     appointmentId: number,
