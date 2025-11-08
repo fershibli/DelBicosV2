@@ -21,7 +21,7 @@ import {
 } from '@stores/Appointment';
 import InvoiceTemplate from '@components/features/InvoiceTemplate';
 import { generatePDF } from '@lib/helpers/pdfGenerator';
-import { downloadPDF } from '@lib/helpers/shareHelperSimple';
+import { downloadFile } from '@lib/helpers/shareHelperSimple';
 
 type StatusType = 'loading' | 'success' | 'error';
 
@@ -139,7 +139,7 @@ function PaymentStatusLogic() {
       } else {
         (async () => {
           const uri = await generatePDF(htmlContent);
-          await downloadPDF(uri, fileName);
+          await downloadFile(uri, fileName);
           setIsGeneratingPDF(false);
         })();
       }

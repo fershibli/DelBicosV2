@@ -2,7 +2,7 @@ import { isAvailableAsync, shareAsync } from 'expo-sharing';
 import { Alert, Platform } from 'react-native';
 
 /**
- * Compartilha um arquivo PDF de forma simples
+ * Compartilha um arquivo de forma simples
  */
 export const shareContent = async (uri: string): Promise<boolean> => {
   try {
@@ -28,11 +28,11 @@ export const shareContent = async (uri: string): Promise<boolean> => {
 };
 
 /**
- * Faz download direto do arquivo PDF
+ * Faz download direto do arquivo
  */
-export const downloadPDF = async (
+export const downloadFile = async (
   uri: string,
-  filename: string = 'nota-fiscal-delbicos.pdf',
+  filename: string,
 ): Promise<boolean> => {
   try {
     if (Platform.OS === 'web') {
