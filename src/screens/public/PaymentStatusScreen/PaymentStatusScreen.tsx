@@ -20,7 +20,7 @@ import {
   InvoiceData,
 } from '@stores/Appointment';
 import InvoiceTemplate from '@components/features/InvoiceTemplate';
-import { generatePDF } from '@lib/helpers/pdfGenerator';
+import { generatePDF } from '@lib/helpers/fileGenerator';
 import { downloadFile } from '@lib/helpers/shareHelperSimple';
 
 type StatusType = 'loading' | 'success' | 'error';
