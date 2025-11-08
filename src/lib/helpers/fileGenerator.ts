@@ -148,12 +148,12 @@ export const generateXLSX = async (
     return;
   }
 
-  const wb = XLSX.utils.book_new();
+  const workbook = XLSX.utils.book_new();
   tabs.forEach(({ title, sheetData }) => {
-    const ws = XLSX.utils.aoa_to_sheet(sheetData);
-    XLSX.utils.book_append_sheet(wb, ws, title.slice(0, 31));
+    const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+    XLSX.utils.book_append_sheet(workbook, worksheet, title.slice(0, 31));
   });
 
-  const base64 = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
+  const base64 = XLSX.write(workbook, { bookType: 'xlsx', type: 'base64' });
   return base64;
 };
