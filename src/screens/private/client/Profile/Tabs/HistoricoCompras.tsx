@@ -1,4 +1,5 @@
 import { View, Platform, Alert, StyleSheet, Text } from 'react-native';
+import { EncodingType } from 'expo-file-system/legacy';
 import { Button } from '@components/ui/Button';
 import { useAppointmentStore } from '@stores/Appointment';
 import {
@@ -76,6 +77,7 @@ export default function HistoricoCompras() {
       content,
       'relatorio_completo.xlsx',
       'application/octet-stream',
+      EncodingType.Base64,
     );
 
     if (!uri) {
