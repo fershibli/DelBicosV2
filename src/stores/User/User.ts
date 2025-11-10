@@ -2,7 +2,8 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'expo-zustand-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserStore, Address, ErrorResponse, User } from './types';
-import { backendHttpClient } from '@lib/helpers/httpClient';
+import { backendHttpClient, registerAuthSignOut } from '@lib/helpers/httpClient';
+import secureStorage from '@lib/helpers/secureStorage';
 import { AxiosError } from 'axios';
 
 backendHttpClient.interceptors.request.use(
@@ -42,6 +43,12 @@ export const useUserStore = create<UserStore>()(
           user: data.user,
           address: data.address,
         });
+        // persist token in secure storage (best-effort)
+        try {
+          void secureStorage.setItem('token', data.token);
+        } catch (e) {
+          // ignore
+        }
       },
 
       signInPassword: async (email: string, password: string) => {
@@ -96,6 +103,11 @@ export const useUserStore = create<UserStore>()(
             address: addressData,
           });
           set({ user: userData, address: addressData, token });
+          try {
+            void secureStorage.setItem('token', token);
+          } catch (e) {
+            // ignore
+          }
           return;
         } catch (error: any | AxiosError) {
           if (error instanceof AxiosError) {
@@ -114,6 +126,46 @@ export const useUserStore = create<UserStore>()(
             }
           }
           throw new Error('Erro ao fazer login. Por favor, tente novamente.');
+        }
+      },
+      signInAdmin: async (email: string, password: string) => {
+        try {
+          const response = await backendHttpClient.post('/api/admin/login', {
+            email,
+            password,
+          });
+
+          const { token, user } = response.data;
+          if (!token) {
+            throw new Error('No token received from the server');
+          }
+
+          // Minimal admin user payload
+          const userData: any = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            admin: true,
+          };
+
+          get().setLoggedInUser({ token, user: userData, address: null });
+          set({ user: userData, address: null, token });
+          try {
+            void secureStorage.setItem('token', token);
+          } catch (e) {
+            // ignore
+          }
+          return;
+        } catch (error: any | AxiosError) {
+          if (error instanceof AxiosError) {
+            if (error.response?.status === 401 || error.response?.status === 404 || error.response?.status === 403) {
+              throw new Error('Credenciais inválidas ou sem permissão.');
+            }
+            if (error.response?.status.toString().startsWith('5')) {
+              throw new Error('Erro interno do servidor. Tente novamente mais tarde.');
+            }
+          }
+          throw new Error('Erro ao fazer login do admin. Por favor, tente novamente.');
         }
       },
 
@@ -227,14 +279,20 @@ export const useUserStore = create<UserStore>()(
         }
       },
 
-      signOut: () =>
+      signOut: () => {
+        try {
+          void secureStorage.deleteItem('token');
+        } catch (e) {
+          // ignore
+        }
         set({
           user: null,
           address: null,
           token: null,
           avatarBase64: null,
           verificationEmail: null,
-        }),
+        });
+      },
     }),
     {
       name: 'user-storage',
@@ -249,3 +307,29 @@ export const useUserStore = create<UserStore>()(
     },
   ),
 );
+
+// Register signOut handler to avoid circular imports in httpClient
+try {
+  registerAuthSignOut(() => {
+    try {
+      useUserStore.getState().signOut();
+    } catch (e) {
+      // swallow errors
+    }
+  });
+} catch (e) {
+  // ignore if registration fails
+}
+
+// Hydrate token from secureStorage into the store on startup (best-effort)
+(async () => {
+  try {
+    const token = await secureStorage.getItem('token');
+    if (token) {
+      // set token only (do not modify other persisted fields)
+      useUserStore.setState({ token });
+    }
+  } catch (e) {
+    // ignore
+  }
+})();

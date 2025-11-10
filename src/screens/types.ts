@@ -23,5 +23,7 @@ export type NavigationParams = {
   };
   PaymentStatus: undefined;
   MySchedules: undefined;
+  ProviderDashboard: undefined;
   Help: undefined;
+  AdminDashboard: undefined;
 };
