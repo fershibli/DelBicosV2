@@ -26,4 +26,5 @@ export type NavigationParams = {
   ProviderDashboard: undefined;
   Help: undefined;
   AdminDashboard: undefined;
+  AdminAnalytics: undefined;
 };

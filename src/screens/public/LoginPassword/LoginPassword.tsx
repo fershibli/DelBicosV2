@@ -53,8 +53,9 @@ export const LoginPassword = () => {
         // admin login
         // @ts-ignore
         await (useUserStore.getState().signInAdmin || signInPassword)(data.email, data.password);
-        // go directly to the admin dashboard after successful admin login
-        (navigation as any).reset({ index: 0, routes: [{ name: 'AdminDashboard' }] });
+  // After admin login, keep the user on the normal Home/Feed screen.
+  // The admin can access Analytics via the Header -> Analytics menu.
+  navigation.navigate('Feed');
       } else {
         await signInPassword(data.email, data.password);
         navigation.navigate('Feed');

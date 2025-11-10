@@ -24,6 +24,7 @@ import PaymentStatusScreen from './public/PaymentStatusScreen';
 import MySchedulesScreen from './private/client/MySchedulesScreen';
 import HelpScreen from '@screens/public/HelpScreen';
 import AdminDashboard from './private/Admin/AdminDashboard';
+import AdminAnalytics from './private/Admin/AdminAnalytics';
 import ProviderDashboard from './private/ProviderDashboard';
 
 // If logged in Home = Feed, otherwise Home = Login
@@ -185,6 +186,12 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: AdminDashboard,
       options: {
         title: 'Admin',
+      },
+    },
+    AdminAnalytics: {
+      screen: AdminAnalytics,
+      options: {
+        title: 'Analytics',
       },
     },
   },
