@@ -6,6 +6,8 @@ import { useFonts } from 'expo-font';
 import { Navigation } from '@screens/NavigationStack';
 import { LocationProvider } from '@lib/hooks/LocationContext';
 import { MenuProvider } from 'react-native-popup-menu';
+import { Platform } from 'react-native';
+import { initGAWeb } from './utils/ga-web';
 
 Asset.loadAsync([...NavigationAssets]);
 
@@ -23,6 +25,10 @@ export function App() {
   });
 
   React.useEffect(() => {
+    if (Platform.OS === 'web') {
+      initGAWeb();
+    }
+
     if (loaded || error) {
       SplashScreen.hideAsync();
     }

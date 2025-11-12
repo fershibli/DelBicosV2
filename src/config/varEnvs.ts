@@ -24,3 +24,5 @@ export const UNSPLASH_API_KEY = process.env.EXPO_PUBLIC_UNSPLASH_API_KEY || '';
 
 export const STRIPE_PUBLISHABLE_KEY =
   process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
+
+export const GOOGLE_ANALYTICS_ID = process.env.EXPO_PUBLIC_GOOGLE_ANALYTICS_ID || '';

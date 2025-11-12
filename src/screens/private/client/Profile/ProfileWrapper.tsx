@@ -7,6 +7,7 @@ import TrocarSenhaForm from './Tabs/TrocarSenhaForm';
 import MeusAgendamentos from './Tabs/MeusAgendamentos';
 import NotificacoesContent from './Tabs/NotificacoesContent';
 import colors from '@theme/colors';
+import HistoricoCompras from '@screens/private/client/Profile/Tabs/HistoricoCompras';
 
 interface UserProfileProps {
   userId: string;
@@ -33,6 +34,8 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
         return <MeusAgendamentos />;
       case 'Notificacoes':
         return <NotificacoesContent userId={user.userId} />;
+      case 'Historico':
+        return <HistoricoCompras />;
       default:
         return (
           <Text style={styles.contentText}>Selecione uma opção no menu</Text>
