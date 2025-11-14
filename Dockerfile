@@ -14,10 +14,10 @@ WORKDIR /app
 RUN npm install -g expo-cli@latest eslint typescript
 
 # Copiar package.json e lockfile (se existir)
-COPY package.json */package-lock.json* ./
+COPY package.json package-lock.json* ./
 
-# Instalar dependências baseado no lockfile presente
-RUN npm install
+# Instalar dependências: usar npm ci quando existir lockfile, fallback para npm install
+RUN if [ -f package-lock.json ]; then npm ci --silent; else npm install --silent; fi
 
 # Copiar o restante dos arquivos do projeto
 COPY . .
@@ -29,5 +29,6 @@ COPY . .
 # 19002 - Expo DevTools (ngrok)
 EXPOSE 8081 19000 19001 19002
 
-# Container em idle
-CMD ["tail", "-f", "/dev/null"]
+# Executa o servidor web (modo desenvolvimento para Expo web)
+# Ajuste se preferir outro comando (ex: start, android, ios)
+CMD ["npm", "run", "web"]
