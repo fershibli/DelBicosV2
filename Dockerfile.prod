@@ -1,0 +1,48 @@
+### Multi-stage Dockerfile for production static build
+### Stage 1: build the static site
+FROM node:20-alpine AS build
+WORKDIR /app
+
+# Reduce noise and set CI env
+ENV CI=true
+
+# Copy package files first for cache
+COPY package.json package-lock.json* ./
+
+# Install dependencies (use npm ci when lockfile present)
+RUN if [ -f package-lock.json ]; then npm ci --silent; else npm install --silent; fi
+
+# Copy project files
+COPY . .
+
+# Ensure expo-cli available if project needs it for web export
+RUN if ! command -v expo >/dev/null 2>&1; then npm install -g expo-cli@latest --silent; fi
+
+# Attempt several possible build commands used by different flows
+#  - prefer `npm run build`
+#  - fallback to `npm run build:web` or an explicit expo export
+RUN if npm run build --silent; then echo "built with npm run build"; \
+    elif npm run build:web --silent; then echo "built with npm run build:web"; \
+    elif npm run web --silent; then echo "web script exists (dev)"; \
+    elif expo export:web --output-dir web-build --silent; then echo "exported web via expo"; \
+    else echo "No recognized build output (build/web-build/dist). Please add a build script or use expo export:web." && exit 1; fi
+
+# Consolidate build outputs to a single folder /app/out
+RUN mkdir -p /app/out \
+    && if [ -d web-build ]; then cp -a web-build/. /app/out/; \
+    elif [ -d build ]; then cp -a build/. /app/out/; \
+    elif [ -d dist ]; then cp -a dist/. /app/out/; \
+    else echo "No output directory found" && exit 1; fi
+
+
+### Stage 2: serve with nginx (small runtime)
+FROM nginx:alpine AS runtime
+
+# Remove default nginx static files
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy static files from build stage
+COPY --from=build /app/out /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
