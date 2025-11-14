@@ -1,46 +1,60 @@
+# Dependencies
 
-# Reduce Docker build context for Node/Expo project
+node_modules/
+yarn-error.\*
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
 
-# Node deps and caches
-node_modules
-**/node_modules
+# Debug
+
+.pnpm-debug.log
+npm-debug._
+yarn-debug._
+
+# Expo
+
+.expo/
+dist/
+web-build/
+
+# Native
+
+_.orig._
+_.jks
+_.p8
+_.p12
+_.key
+\*.mobileprovision
+
+# macOS
+
+.DS_Store
+\*.pem
 
 # Git
+
 .git
+.gitignore
 
-# OS / editor
-.DS_Store
-Thumbs.db
-.vscode
-.idea
+# IDE
 
-# Logs
-*.log
-npm-debug.log
-pnpm-debug.log
+.vscode/
+.idea/
 
-# Expo / Metro caches and outputs
-.expo
-.expo-shared
+# Env files (will be passed via docker-compose)
 
-# Build outputs (keep lockfiles! do NOT ignore lockfiles if Dockerfile uses them)
-web-build
-build
-dist
+.env.local
+.env\*.local
 
-# Temporary
-tmp
-temp
-coverage
+# Typescript
 
-# Private keys and native secrets
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+\*.tsbuildinfo
 
-# Env files (should not be in image)
-.env
-.env.*
+# Misc
 
+README.md
+docs/
+assets/_.png
+assets/_.jpg
+app-example/
