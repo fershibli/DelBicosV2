@@ -34,6 +34,7 @@ export const LoginPassword = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const {
     control,
@@ -48,8 +49,20 @@ export const LoginPassword = () => {
     setIsSubmitting(true);
     setErrorModalVisible(false);
     try {
-      await signInPassword(data.email, data.password);
-      navigation.navigate('Feed');
+      if (isAdmin) {
+        // admin login
+        // @ts-ignore
+        await (useUserStore.getState().signInAdmin || signInPassword)(
+          data.email,
+          data.password,
+        );
+        // After admin login, keep the user on the normal Home/Feed screen.
+        // The admin can access Analytics via the Header -> Analytics menu.
+        navigation.navigate('Feed');
+      } else {
+        await signInPassword(data.email, data.password);
+        navigation.navigate('Feed');
+      }
     } catch (error: any) {
       setErrorMessage(
         error.message || 'Ocorreu um erro ao tentar fazer login.',
@@ -70,6 +83,23 @@ export const LoginPassword = () => {
         </TouchableOpacity>
 
         <View style={styles.formContainer}>
+          <View style={styles.roleToggle}>
+            <TouchableOpacity
+              onPress={() => setIsAdmin(false)}
+              style={[styles.roleButton, !isAdmin && styles.roleButtonActive]}>
+              <Text
+                style={[styles.roleText, !isAdmin && styles.roleTextActive]}>
+                Usuário
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setIsAdmin(true)}
+              style={[styles.roleButton, isAdmin && styles.roleButtonActive]}>
+              <Text style={[styles.roleText, isAdmin && styles.roleTextActive]}>
+                Administrador
+              </Text>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.title}>Bem-vindo!</Text>
           <Text style={styles.subtitle}>Acesse sua conta para continuar.</Text>
 

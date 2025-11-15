@@ -132,4 +132,29 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  roleToggle: {
+    flexDirection: 'row',
+    width: '100%',
+    marginBottom: 16,
+    justifyContent: 'center',
+  },
+  roleButton: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 6,
+    backgroundColor: '#f0f0f0',
+  },
+  roleButtonActive: {
+    backgroundColor: colors.primaryBlue,
+  },
+  roleText: {
+    fontFamily: 'Afacad-Regular',
+    color: '#333',
+  },
+  roleTextActive: {
+    color: colors.primaryWhite,
+    fontFamily: 'Afacad-Bold',
+  },
 });
