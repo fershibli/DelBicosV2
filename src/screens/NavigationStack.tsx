@@ -23,8 +23,8 @@ import CheckoutScreen from './public/CheckoutScreen';
 import PaymentStatusScreen from './public/PaymentStatusScreen';
 import MySchedulesScreen from './private/client/MySchedulesScreen';
 import HelpScreen from '@screens/public/HelpScreen';
-import AdminDashboard from './private/Admin/AdminDashboard';
-import AdminAnalytics from './private/Admin/AdminAnalytics';
+import AdminDashboard from './private/admin/AdminDashboard';
+import AdminAnalytics from './private/admin/AdminAnalytics';
 import ProviderDashboard from './private/ProviderDashboard';
 
 // If logged in Home = Feed, otherwise Home = Login
