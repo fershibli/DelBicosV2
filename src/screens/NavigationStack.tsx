@@ -184,12 +184,18 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
     },
     AdminDashboard: {
       screen: AdminDashboard,
+      linking: {
+        path: 'admin-dashboard',
+      },
       options: {
         title: 'Admin',
       },
     },
     AdminAnalytics: {
       screen: AdminAnalytics,
+      linking: {
+        path: 'admin-analytics',
+      },
       options: {
         title: 'Analytics',
       },
