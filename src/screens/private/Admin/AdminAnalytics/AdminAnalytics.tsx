@@ -106,8 +106,6 @@ const AdminAnalytics: React.FC = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Button title="Voltar" onPress={() => navigation.goBack()} />
-
       <Text style={styles.title}>Painel do Admin</Text>
 
       {loading && <ActivityIndicator size="large" />}
