@@ -6,6 +6,9 @@ import { useFonts } from 'expo-font';
 import { Navigation } from '@screens/NavigationStack';
 import { LocationProvider } from '@lib/hooks/LocationContext';
 import { MenuProvider } from 'react-native-popup-menu';
+import { Platform } from 'react-native';
+import { initGAWeb } from './utils/ga-web';
+import { GOOGLE_ANALYTICS_ID } from './config/varEnvs';
 
 Asset.loadAsync([...NavigationAssets]);
 
@@ -23,6 +26,14 @@ export function App() {
   });
 
   React.useEffect(() => {
+    if (Platform.OS === 'web') {
+      if (GOOGLE_ANALYTICS_ID) {
+        initGAWeb(GOOGLE_ANALYTICS_ID);
+      } else {
+        console.warn('Variável de conexão do GA não definida');
+      }
+    }
+
     if (loaded || error) {
       SplashScreen.hideAsync();
     }

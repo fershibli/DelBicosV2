@@ -1,5 +1,10 @@
 import { create } from 'zustand';
-import { AppointmentStore, InvoiceData } from './types';
+import {
+  Appointment,
+  AppointmentSheetRow,
+  AppointmentStore,
+  InvoiceData,
+} from './types';
 import { useUserStore } from '@stores/User';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 
@@ -22,6 +27,35 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
     } catch (error) {
       console.error('Failed to fetch appointments:', error);
       set({ appointments: [], loading: false });
+    }
+  },
+
+  fetchAppointmentsAsSheet: async (): Promise<AppointmentSheetRow[]> => {
+    try {
+      const { user } = useUserStore.getState();
+      if (!user) {
+        throw new Error('Usuário não autenticado para buscar agendamentos.');
+      }
+
+      const endpoint = `api/appointments/user/${user.id}`;
+      const response = await backendHttpClient.get(endpoint);
+      const appointments: Appointment[] = response.data;
+
+      const sheetData: AppointmentSheetRow[] = appointments.map(
+        (appointment) => ({
+          ID: appointment.id,
+          Professional: appointment.Professional.User.name,
+          Client: appointment.Client.User.name,
+          Service: appointment.Service.title,
+          Date: new Date(appointment.start_time).toLocaleDateString(),
+          Status: appointment.status,
+        }),
+      );
+
+      return sheetData;
+    } catch (error) {
+      console.error('Failed to fetch appointments as sheet:', error);
+      return [];
     }
   },
 
