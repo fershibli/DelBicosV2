@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { KpisResponse } from '@lib/types/dashboard';
+import { KpisResponse } from '@stores/Dashboard/types';
 
 type Props = {
   kpis?: KpisResponse | null;
@@ -56,5 +56,3 @@ const styles = StyleSheet.create({
   title: { fontSize: 12, color: '#666' },
   value: { fontSize: 18, fontWeight: '700', marginTop: 8 },
 });
-
-export default DashboardKpiCards;
