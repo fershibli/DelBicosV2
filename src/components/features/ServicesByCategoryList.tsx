@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { ServiceCategory } from '@lib/types/dashboard';
+import { ServiceCategory } from '@stores/Dashboard/types';
 
 type Props = {
   categories: ServiceCategory[];
@@ -45,5 +45,3 @@ const styles = StyleSheet.create({
   category: { fontSize: 14 },
   count: { fontSize: 14, fontWeight: '700' },
 });
-
-export default ServicesByCategoryList;
