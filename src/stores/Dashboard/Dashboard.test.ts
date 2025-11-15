@@ -1,7 +1,7 @@
 // @ts-nocheck
 /// <reference types="jest" />
 
-import useDashboardStore from '@stores/dashboard.store';
+import useDashboardStore from '@stores/Dashboard/Dashboard';
 
 jest.mock('@lib/helpers/httpClient', () => ({
   backendHttpClient: {
@@ -21,7 +21,9 @@ describe('dashboard store', () => {
   });
 
   it('fetchKpis stores kpis when backend returns data', async () => {
-    (backendHttpClient.get as jest.Mock).mockResolvedValueOnce({ data: { totalServices: 5, totalEarnings: 123.45, avgRating: 4.2 } });
+    (backendHttpClient.get as jest.Mock).mockResolvedValueOnce({
+      data: { totalServices: 5, totalEarnings: 123.45, avgRating: 4.2 },
+    });
 
     await useDashboardStore.getState().fetchKpis();
 
@@ -33,9 +35,13 @@ describe('dashboard store', () => {
 
   it('fetchEarnings stores earnings array', async () => {
     const sample = [{ month: '10-2025', total: 100 }];
-    (backendHttpClient.get as jest.Mock).mockResolvedValueOnce({ data: sample });
+    (backendHttpClient.get as jest.Mock).mockResolvedValueOnce({
+      data: sample,
+    });
 
-    await useDashboardStore.getState().fetchEarnings('2025-10-01', '2025-10-31');
+    await useDashboardStore
+      .getState()
+      .fetchEarnings('2025-10-01', '2025-10-31');
 
     const state = useDashboardStore.getState();
     expect(state.earnings).toEqual(sample);
