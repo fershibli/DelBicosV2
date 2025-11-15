@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, Button } from 'react-native';
-import DashboardKpiCards from '@components/features/DashboardKpiCards';
-import EarningsChart from '@components/features/EarningsChart';
-import ServicesByCategoryList from '@components/features/ServicesByCategoryList';
-import useDashboardStore from '@stores/dashboard.store';
+import { DashboardKpiCards } from '@components/features/DashboardKpiCards';
+import { EarningsChart } from '@components/features/EarningsChart';
+import { ServicesByCategoryList } from '@components/features/ServicesByCategoryList';
+import { useDashboardStore } from '@stores/Dashboard';
+
 const ProviderDashboard: React.FC = () => {
   const {
     kpis,
@@ -14,7 +15,6 @@ const ProviderDashboard: React.FC = () => {
     fetchKpis,
     fetchEarnings,
     fetchCategories,
-    clear,
   } = useDashboardStore();
 
   useEffect(() => {
@@ -40,14 +40,24 @@ const ProviderDashboard: React.FC = () => {
   }, []);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 32 }}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 32 }}>
       <View style={styles.header}>
         <Text style={styles.title}>Painel do Prestador</Text>
-        <Button title="Atualizar" onPress={() => { fetchKpis(); }} />
+        <Button
+          title="Atualizar"
+          disabled={loading}
+          onPress={() => {
+            fetchKpis();
+          }}
+        />
       </View>
 
       {error ? (
-        <View style={styles.error}><Text>{error}</Text></View>
+        <View style={styles.error}>
+          <Text>{error}</Text>
+        </View>
       ) : null}
 
       <DashboardKpiCards kpis={kpis} loading={loading} />
@@ -61,7 +71,12 @@ const ProviderDashboard: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f8f9fb' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+  },
   title: { fontSize: 20, fontWeight: '700' },
   error: { padding: 16, backgroundColor: '#fff0f0' },
 });
