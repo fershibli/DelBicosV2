@@ -27,9 +27,25 @@ type StatsResponse = {
   servicesSummary?: Record<string, number>;
 };
 
-const MONTH_LABELS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+const MONTH_LABELS = [
+  'Jan',
+  'Fev',
+  'Mar',
+  'Abr',
+  'Mai',
+  'Jun',
+  'Jul',
+  'Ago',
+  'Set',
+  'Out',
+  'Nov',
+  'Dez',
+];
 
-function fillMonthlyArray<T extends { month: number }>(arr: T[] | undefined, mapper: (v: T | undefined) => number) {
+function fillMonthlyArray<T extends { month: number }>(
+  arr: T[] | undefined,
+  mapper: (v: T | undefined) => number,
+) {
   const out: number[] = new Array(12).fill(0);
   if (!arr || arr.length === 0) return out;
   const byMonth = new Map<number, T>();
@@ -63,7 +79,9 @@ const AdminAnalytics: React.FC = () => {
         setData(res.data as StatsResponse);
       } catch (e: any) {
         console.error('[AdminAnalytics] erro ao buscar stats', e);
-        setError(e?.response?.data?.message || e.message || 'Erro ao buscar dados');
+        setError(
+          e?.response?.data?.message || e.message || 'Erro ao buscar dados',
+        );
       } finally {
         setLoading(false);
       }
@@ -72,14 +90,17 @@ const AdminAnalytics: React.FC = () => {
     fetchStats();
   }, []);
 
-  const usersData = fillMonthlyArray(data?.usersByMonth, (v) => (v ? (v as any).count || 0 : 0));
-  const prosData = fillMonthlyArray(data?.professionalsByMonth, (v) => (v ? (v as any).count || 0 : 0));
-  const appointments = fillMonthlyArray(data?.appointmentsByMonth, (v) => (v ? (v as any).totalRequested || 0 : 0));
+  const usersData = fillMonthlyArray(data?.usersByMonth, (v) => v?.count || 0);
 
-  const pendingSeries = fillMonthlyArray(data?.appointmentsByMonth, (v) => (v ? (v as any).pending || 0 : 0));
-  const confirmedSeries = fillMonthlyArray(data?.appointmentsByMonth, (v) => (v ? (v as any).confirmed || 0 : 0));
-  const completedSeries = fillMonthlyArray(data?.appointmentsByMonth, (v) => (v ? (v as any).completed || 0 : 0));
-  const canceledSeries = fillMonthlyArray(data?.appointmentsByMonth, (v) => (v ? (v as any).canceled || 0 : 0));
+  const prosData = fillMonthlyArray(
+    data?.professionalsByMonth,
+    (v) => v?.count || 0,
+  );
+
+  const appointments = fillMonthlyArray(
+    data?.appointmentsByMonth,
+    (v) => v?.totalRequested || 0,
+  );
 
   const summary = data?.servicesSummary || {};
 
@@ -136,7 +157,9 @@ const AdminAnalytics: React.FC = () => {
                 fromZero
               />
 
-              <Text style={[styles.sectionTitle, { marginTop: 12 }]}>Prestadores por mês</Text>
+              <Text style={[styles.sectionTitle, { marginTop: 12 }]}>
+                Prestadores por mês
+              </Text>
               <LineChart
                 data={{ labels: MONTH_LABELS, datasets: [{ data: prosData }] }}
                 width={Math.min(SCREEN_WIDTH - 40, 900)}
@@ -146,9 +169,14 @@ const AdminAnalytics: React.FC = () => {
                 fromZero
               />
 
-              <Text style={[styles.sectionTitle, { marginTop: 12 }]}>Serviços solicitados</Text>
+              <Text style={[styles.sectionTitle, { marginTop: 12 }]}>
+                Serviços solicitados
+              </Text>
               <BarChart
-                data={{ labels: MONTH_LABELS, datasets: [{ data: appointments }] }}
+                data={{
+                  labels: MONTH_LABELS,
+                  datasets: [{ data: appointments }],
+                }}
                 width={Math.min(SCREEN_WIDTH - 40, 900)}
                 height={180}
                 yAxisLabel=""
@@ -178,12 +206,14 @@ const AdminAnalytics: React.FC = () => {
 
               <View style={{ marginTop: 12 }}>
                 <Text style={styles.sectionTitle}>Resumo</Text>
-                {['pending', 'confirmed', 'completed', 'canceled', 'total'].map((k) => (
-                  <View key={k} style={styles.summaryRow}>
-                    <Text style={styles.summaryKey}>{k}</Text>
-                    <Text style={styles.summaryVal}>{summary[k] ?? 0}</Text>
-                  </View>
-                ))}
+                {['pending', 'confirmed', 'completed', 'canceled', 'total'].map(
+                  (k) => (
+                    <View key={k} style={styles.summaryRow}>
+                      <Text style={styles.summaryKey}>{k}</Text>
+                      <Text style={styles.summaryVal}>{summary[k] ?? 0}</Text>
+                    </View>
+                  ),
+                )}
               </View>
             </View>
           </View>
@@ -211,15 +241,32 @@ const styles = StyleSheet.create({
   title: { fontSize: 22, fontWeight: '700', marginVertical: 12 },
   errorBox: { padding: 12, backgroundColor: '#fdecea', borderRadius: 6 },
   errorText: { color: '#611a15' },
-  kpiRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap' },
-  kpiCard: { flex: 1, minWidth: 140, backgroundColor: '#fff', padding: 12, margin: 6, borderRadius: 8, elevation: 2 },
+  kpiRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+    flexWrap: 'wrap',
+  },
+  kpiCard: {
+    flex: 1,
+    minWidth: 140,
+    backgroundColor: '#fff',
+    padding: 12,
+    margin: 6,
+    borderRadius: 8,
+    elevation: 2,
+  },
   kpiLabel: { fontSize: 12, color: '#666' },
   kpiValue: { fontSize: 20, fontWeight: '700', marginTop: 6 },
   chartsRow: { flexDirection: 'row', gap: 12 },
   mainChart: { flex: 1 },
   sideColumn: { width: 320, marginLeft: 12 },
   sectionTitle: { fontSize: 14, fontWeight: '600', marginBottom: 6 },
-  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 6,
+  },
   summaryKey: { color: '#333' },
   summaryVal: { fontWeight: '700' },
 });
