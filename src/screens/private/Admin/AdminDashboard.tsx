@@ -1,13 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
+import { Text, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { styles } from './styles';
 import colors from '@theme/colors';
 import { BarChart, LineChart } from 'react-native-chart-kit';
 
-type MonthData = { month: number; count?: number; totalRequested?: number; completed?: number; canceled?: number };
+type MonthData = {
+  month: number;
+  count?: number;
+  totalRequested?: number;
+  completed?: number;
+  canceled?: number;
+};
 
-const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const monthNames = [
+  'Jan',
+  'Fev',
+  'Mar',
+  'Abr',
+  'Mai',
+  'Jun',
+  'Jul',
+  'Ago',
+  'Set',
+  'Out',
+  'Nov',
+  'Dez',
+];
 
 const screenWidth = Dimensions.get('window').width - 32;
 
@@ -24,7 +43,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<MonthData[]>([]);
   const [professionals, setProfessionals] = useState<MonthData[]>([]);
-  const [appointments, setAppointments] = useState<any[]>([]);
+  const [appointments, setAppointments] = useState<MonthData[]>([]);
 
   useEffect(() => {
     const load = async () => {
@@ -44,16 +63,17 @@ export default function AdminDashboard() {
     load();
   }, []);
 
-  if (loading) return <ActivityIndicator style={{ flex: 1 }} color={colors.primaryBlue} />;
+  if (loading)
+    return <ActivityIndicator style={{ flex: 1 }} color={colors.primaryBlue} />;
 
   const labels = monthNames;
 
   const usersData = users.map((m) => m.count || 0);
   const profData = professionals.map((m) => m.count || 0);
 
-  const appointmentTotal = appointments.map((m: any) => m.totalRequested || 0);
-  const appointmentCompleted = appointments.map((m: any) => m.completed || 0);
-  const appointmentCanceled = appointments.map((m: any) => m.canceled || 0);
+  const appointmentTotal = appointments.map((m) => m.totalRequested || 0);
+  const appointmentCompleted = appointments.map((m) => m.completed || 0);
+  const appointmentCanceled = appointments.map((m) => m.canceled || 0);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -78,19 +98,36 @@ export default function AdminDashboard() {
         height={220}
         yAxisLabel=""
         yAxisSuffix=""
-        chartConfig={{ ...chartConfig, color: (opacity = 1) => `rgba(255, 152, 0, ${opacity})` }}
+        chartConfig={{
+          ...chartConfig,
+          color: (opacity = 1) => `rgba(255, 152, 0, ${opacity})`,
+        }}
         fromZero
         showValuesOnTopOfBars
       />
 
-      <Text style={styles.sectionTitle}>Agendamentos (Solicitados / Realizados / Cancelados)</Text>
+      <Text style={styles.sectionTitle}>
+        Agendamentos (Solicitados / Realizados / Cancelados)
+      </Text>
       <LineChart
         data={{
           labels,
           datasets: [
-            { data: appointmentTotal, color: (opacity = 1) => `rgba(33,150,243, ${opacity})`, strokeWidth: 2 },
-            { data: appointmentCompleted, color: (opacity = 1) => `rgba(76,175,80, ${opacity})`, strokeWidth: 2 },
-            { data: appointmentCanceled, color: (opacity = 1) => `rgba(244,67,54, ${opacity})`, strokeWidth: 2 },
+            {
+              data: appointmentTotal,
+              color: (opacity = 1) => `rgba(33,150,243, ${opacity})`,
+              strokeWidth: 2,
+            },
+            {
+              data: appointmentCompleted,
+              color: (opacity = 1) => `rgba(76,175,80, ${opacity})`,
+              strokeWidth: 2,
+            },
+            {
+              data: appointmentCanceled,
+              color: (opacity = 1) => `rgba(244,67,54, ${opacity})`,
+              strokeWidth: 2,
+            },
           ],
           legend: ['Solicitados', 'Realizados', 'Cancelados'],
         }}
