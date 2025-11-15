@@ -277,7 +277,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                     </Text>
                   </View>
                 </MenuOption>
-                {(user as any)?.admin && (
+                {user?.admin && (
                   <MenuOption onSelect={() => navigateTo('AdminAnalytics')}>
                     <View style={styles.menuOption}>
                       <FontAwesome
@@ -379,7 +379,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
             <>
               <MenuItem screen={'MySchedules'}>Meus Agendamentos</MenuItem>
               <MenuItem>Portal do Parceiro</MenuItem>
-              {(user as any)?.admin && (
+              {user?.admin && (
                 <MenuItem screen={'AdminAnalytics'}>Analytics</MenuItem>
               )}
             </>
@@ -453,7 +453,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                 colorVariant="primaryWhite"
                 sizeVariant="default"
                 fontVariant="AfacadSemiBold14"
-                variant="contained" 
+                variant="contained"
                 onPress={() => navigateTo('Login')}>
                 Fazer login
               </Button>
