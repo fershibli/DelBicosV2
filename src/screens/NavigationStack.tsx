@@ -23,6 +23,9 @@ import CheckoutScreen from './public/CheckoutScreen';
 import PaymentStatusScreen from './public/PaymentStatusScreen';
 import MySchedulesScreen from './private/client/MySchedulesScreen';
 import HelpScreen from '@screens/public/HelpScreen';
+import AdminDashboard from './private/admin/AdminDashboard';
+import AdminAnalytics from './private/admin/AdminAnalytics';
+import ProviderDashboard from './private/ProviderDashboard';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -167,10 +170,34 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
         title: 'Meus Agendamentos',
       },
     },
+    ProviderDashboard: {
+      screen: ProviderDashboard,
+      options: {
+        title: 'Painel do Prestador',
+      },
+    },
     Help: {
       screen: HelpScreen,
       options: {
         title: 'Central de Ajuda',
+      },
+    },
+    AdminDashboard: {
+      screen: AdminDashboard,
+      linking: {
+        path: 'admin-dashboard',
+      },
+      options: {
+        title: 'Admin',
+      },
+    },
+    AdminAnalytics: {
+      screen: AdminAnalytics,
+      linking: {
+        path: 'admin-analytics',
+      },
+      options: {
+        title: 'Analytics',
       },
     },
   },

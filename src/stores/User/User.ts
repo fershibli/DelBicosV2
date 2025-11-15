@@ -5,23 +5,6 @@ import { UserStore, Address, ErrorResponse, User } from './types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { AxiosError } from 'axios';
 
-backendHttpClient.interceptors.request.use(
-  (config) => {
-    try {
-      const token = useUserStore.getState().token;
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    } catch (error) {
-      console.error('Erro ao buscar token no interceptor do Axios:', error);
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  },
-);
-
 export const useUserStore = create<UserStore>()(
   persist(
     (set, get) => ({
@@ -114,6 +97,52 @@ export const useUserStore = create<UserStore>()(
             }
           }
           throw new Error('Erro ao fazer login. Por favor, tente novamente.');
+        }
+      },
+      signInAdmin: async (email: string, password: string) => {
+        try {
+          const response = await backendHttpClient.post('/api/admin/login', {
+            email,
+            password,
+          });
+
+          const { token, user } = response.data;
+          if (!token) {
+            throw new Error('No token received from the server');
+          }
+
+          const userData: User = {
+            id: user.id,
+            client_id: user.client_id || 0,
+            name: user.name,
+            email: user.email,
+            phone: user.phone || '',
+            cpf: user.cpf || '',
+            avatar_uri: user.avatar_uri || null,
+            admin: true,
+          };
+
+          get().setLoggedInUser({ token, user: userData, address: null });
+          set({ user: userData, address: null, token });
+          return;
+        } catch (error: any | AxiosError) {
+          if (error instanceof AxiosError) {
+            if (
+              error.response?.status === 401 ||
+              error.response?.status === 404 ||
+              error.response?.status === 403
+            ) {
+              throw new Error('Credenciais inválidas ou sem permissão.');
+            }
+            if (error.response?.status.toString().startsWith('5')) {
+              throw new Error(
+                'Erro interno do servidor. Tente novamente mais tarde.',
+              );
+            }
+          }
+          throw new Error(
+            'Erro ao fazer login do admin. Por favor, tente novamente.',
+          );
         }
       },
 
@@ -227,14 +256,15 @@ export const useUserStore = create<UserStore>()(
         }
       },
 
-      signOut: () =>
+      signOut: () => {
         set({
           user: null,
           address: null,
           token: null,
           avatarBase64: null,
           verificationEmail: null,
-        }),
+        });
+      },
     }),
     {
       name: 'user-storage',

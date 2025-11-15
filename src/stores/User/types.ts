@@ -7,6 +7,7 @@ export type User = {
   cpf: string;
   avatar_uri?: string | null;
   banner_uri?: string | null;
+  admin?: boolean;
 };
 
 export type Address = {
