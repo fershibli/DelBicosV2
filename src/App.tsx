@@ -28,32 +28,6 @@ export function App() {
     }
   }, [loaded, error]);
 
-  // Global handler for unhandled promise rejections (helps debug `Uncaught (in promise) Object`)
-  React.useEffect(() => {
-    if (typeof window === 'undefined' || !window.addEventListener) return;
-
-    const onUnhandledRejection = (event: any) => {
-      // log as much helpful information as possible
-      // eslint-disable-next-line no-console
-      console.error('[unhandledrejection] reason:', event?.reason ?? event);
-      // if the reason is an AxiosError we may have a normalizedMessage
-      try {
-        const reason = event?.reason;
-        if (reason && typeof reason === 'object') {
-          // eslint-disable-next-line no-console
-          console.error('[unhandledrejection] details:', reason);
-        }
-      } catch (e) {
-        // ignore
-      }
-    };
-
-    window.addEventListener('unhandledrejection', onUnhandledRejection as EventListener);
-    return () => {
-      window.removeEventListener('unhandledrejection', onUnhandledRejection as EventListener);
-    };
-  }, []);
-
   if (!loaded || error) {
     return null;
   }
