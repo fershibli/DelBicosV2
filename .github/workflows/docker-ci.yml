@@ -2,7 +2,7 @@ name: 02 - Buildar e publicar imagem Docker
 
 on:
   workflow_run:
-    workflows: ["01 - Análise Semântica Pós-Merge"]
+    workflows: ['01 - Análise Semântica Pós-Merge']
     types:
       - completed
 
@@ -32,7 +32,11 @@ jobs:
         run: |
           set -euo pipefail
 
-          DOCKER_REPO="${DOCKER_USER}/${REPO}"
+          # Normalizar para lowercase (Docker exige nomes minúsculos)
+          DOCKER_USER_LC="$(echo "${DOCKER_USER}" | tr '[:upper:]' '[:lower:]')"
+          REPO_LC="$(echo "${REPO}" | tr '[:upper:]' '[:lower:]')"
+          DOCKER_REPO="${DOCKER_USER_LC}/${REPO_LC}"
+
           git fetch --tags --force
 
           TAG_NAME="$(git tag --points-at HEAD | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n1 || true)"
