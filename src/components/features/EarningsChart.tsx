@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Dimensions, StyleSheet } from 'react-native';
-import { EarningsMonth } from '@lib/types/dashboard';
+import { EarningsMonth } from '@stores/Dashboard/types';
 import { LineChart } from 'react-native-chart-kit';
 
 type Props = {
@@ -52,5 +52,3 @@ const styles = StyleSheet.create({
   container: { padding: 16 },
   title: { fontSize: 16, fontWeight: '700', marginBottom: 8 },
 });
-
-export default EarningsChart;
