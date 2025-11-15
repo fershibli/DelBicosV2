@@ -52,10 +52,13 @@ export const LoginPassword = () => {
       if (isAdmin) {
         // admin login
         // @ts-ignore
-        await (useUserStore.getState().signInAdmin || signInPassword)(data.email, data.password);
-  // After admin login, keep the user on the normal Home/Feed screen.
-  // The admin can access Analytics via the Header -> Analytics menu.
-  navigation.navigate('Feed');
+        await (useUserStore.getState().signInAdmin || signInPassword)(
+          data.email,
+          data.password,
+        );
+        // After admin login, keep the user on the normal Home/Feed screen.
+        // The admin can access Analytics via the Header -> Analytics menu.
+        navigation.navigate('Feed');
       } else {
         await signInPassword(data.email, data.password);
         navigation.navigate('Feed');
@@ -81,11 +84,20 @@ export const LoginPassword = () => {
 
         <View style={styles.formContainer}>
           <View style={styles.roleToggle}>
-            <TouchableOpacity onPress={() => setIsAdmin(false)} style={[styles.roleButton, !isAdmin && styles.roleButtonActive]}>
-              <Text style={[styles.roleText, !isAdmin && styles.roleTextActive]}>Usuário</Text>
+            <TouchableOpacity
+              onPress={() => setIsAdmin(false)}
+              style={[styles.roleButton, !isAdmin && styles.roleButtonActive]}>
+              <Text
+                style={[styles.roleText, !isAdmin && styles.roleTextActive]}>
+                Usuário
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setIsAdmin(true)} style={[styles.roleButton, isAdmin && styles.roleButtonActive]}>
-              <Text style={[styles.roleText, isAdmin && styles.roleTextActive]}>Administrador</Text>
+            <TouchableOpacity
+              onPress={() => setIsAdmin(true)}
+              style={[styles.roleButton, isAdmin && styles.roleButtonActive]}>
+              <Text style={[styles.roleText, isAdmin && styles.roleTextActive]}>
+                Administrador
+              </Text>
             </TouchableOpacity>
           </View>
           <Text style={styles.title}>Bem-vindo!</Text>
