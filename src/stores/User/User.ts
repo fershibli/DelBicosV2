@@ -2,26 +2,8 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'expo-zustand-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserStore, Address, ErrorResponse, User } from './types';
-import { backendHttpClient, registerAuthSignOut } from '@lib/helpers/httpClient';
-import secureStorage from '@lib/helpers/secureStorage';
+import { backendHttpClient } from '@lib/helpers/httpClient';
 import { AxiosError } from 'axios';
-
-backendHttpClient.interceptors.request.use(
-  (config) => {
-    try {
-      const token = useUserStore.getState().token;
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    } catch (error) {
-      console.error('Erro ao buscar token no interceptor do Axios:', error);
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  },
-);
 
 export const useUserStore = create<UserStore>()(
   persist(
@@ -43,12 +25,6 @@ export const useUserStore = create<UserStore>()(
           user: data.user,
           address: data.address,
         });
-        // persist token in secure storage (best-effort)
-        try {
-          void secureStorage.setItem('token', data.token);
-        } catch (e) {
-          // ignore
-        }
       },
 
       signInPassword: async (email: string, password: string) => {
@@ -103,11 +79,6 @@ export const useUserStore = create<UserStore>()(
             address: addressData,
           });
           set({ user: userData, address: addressData, token });
-          try {
-            void secureStorage.setItem('token', token);
-          } catch (e) {
-            // ignore
-          }
           return;
         } catch (error: any | AxiosError) {
           if (error instanceof AxiosError) {
@@ -140,32 +111,38 @@ export const useUserStore = create<UserStore>()(
             throw new Error('No token received from the server');
           }
 
-          // Minimal admin user payload
-          const userData: any = {
+          const userData: User = {
             id: user.id,
+            client_id: user.client_id || 0,
             name: user.name,
             email: user.email,
+            phone: user.phone || '',
+            cpf: user.cpf || '',
+            avatar_uri: user.avatar_uri || null,
             admin: true,
           };
 
           get().setLoggedInUser({ token, user: userData, address: null });
           set({ user: userData, address: null, token });
-          try {
-            void secureStorage.setItem('token', token);
-          } catch (e) {
-            // ignore
-          }
           return;
         } catch (error: any | AxiosError) {
           if (error instanceof AxiosError) {
-            if (error.response?.status === 401 || error.response?.status === 404 || error.response?.status === 403) {
+            if (
+              error.response?.status === 401 ||
+              error.response?.status === 404 ||
+              error.response?.status === 403
+            ) {
               throw new Error('Credenciais inválidas ou sem permissão.');
             }
             if (error.response?.status.toString().startsWith('5')) {
-              throw new Error('Erro interno do servidor. Tente novamente mais tarde.');
+              throw new Error(
+                'Erro interno do servidor. Tente novamente mais tarde.',
+              );
             }
           }
-          throw new Error('Erro ao fazer login do admin. Por favor, tente novamente.');
+          throw new Error(
+            'Erro ao fazer login do admin. Por favor, tente novamente.',
+          );
         }
       },
 
@@ -280,11 +257,6 @@ export const useUserStore = create<UserStore>()(
       },
 
       signOut: () => {
-        try {
-          void secureStorage.deleteItem('token');
-        } catch (e) {
-          // ignore
-        }
         set({
           user: null,
           address: null,
@@ -307,29 +279,3 @@ export const useUserStore = create<UserStore>()(
     },
   ),
 );
-
-// Register signOut handler to avoid circular imports in httpClient
-try {
-  registerAuthSignOut(() => {
-    try {
-      useUserStore.getState().signOut();
-    } catch (e) {
-      // swallow errors
-    }
-  });
-} catch (e) {
-  // ignore if registration fails
-}
-
-// Hydrate token from secureStorage into the store on startup (best-effort)
-(async () => {
-  try {
-    const token = await secureStorage.getItem('token');
-    if (token) {
-      // set token only (do not modify other persisted fields)
-      useUserStore.setState({ token });
-    }
-  } catch (e) {
-    // ignore
-  }
-})();
