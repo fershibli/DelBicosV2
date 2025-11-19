@@ -27,3 +27,5 @@ export const STRIPE_PUBLISHABLE_KEY =
 
 export const GOOGLE_ANALYTICS_ID =
   process.env.EXPO_PUBLIC_GOOGLE_ANALYTICS_ID || '';
+
+export const CLARITY_ID = process.env.EXPO_PUBLIC_CLARITY_ID || '';

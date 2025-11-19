@@ -8,7 +8,8 @@ import { LocationProvider } from '@lib/hooks/LocationContext';
 import { MenuProvider } from 'react-native-popup-menu';
 import { Platform } from 'react-native';
 import { initGAWeb } from './utils/ga-web';
-import { GOOGLE_ANALYTICS_ID } from './config/varEnvs';
+import { initClarityWeb } from './utils/clarity'
+import { GOOGLE_ANALYTICS_ID, CLARITY_ID  } from './config/varEnvs';
 
 Asset.loadAsync([...NavigationAssets]);
 
@@ -31,6 +32,12 @@ export function App() {
         initGAWeb(GOOGLE_ANALYTICS_ID);
       } else {
         console.warn('Variável de conexão do GA não definida');
+      }
+
+      if (CLARITY_ID) {
+        initClarityWeb(CLARITY_ID);
+      } else {
+        console.warn('Variável de conexão do Clarity não definida');
       }
     }
 
