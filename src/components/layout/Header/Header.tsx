@@ -243,7 +243,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                   color={colors.primaryBlue}
                   style={styles.menuIcon}
                 />
-                <Text style={styles.menuOptionText}>Ajuda</Text>
+                <Text style={styles.menuOptionText}>FAQ</Text>
               </View>
             </MenuOption>
 
@@ -374,7 +374,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         <View style={styles.menu}>
           <MenuItem screen={'Feed'}>Página Inicial</MenuItem>
           <MenuItem screen={'Category'}>Categorias</MenuItem>
-          <MenuItem screen={'Help'}>Ajuda</MenuItem>
+          <MenuItem screen={'Help'}>FAQ</MenuItem>
           {!!user && (
             <>
               <MenuItem screen={'MySchedules'}>Meus Agendamentos</MenuItem>
