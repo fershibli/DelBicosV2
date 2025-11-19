@@ -12,6 +12,7 @@ import {
   Text,
 } from 'react-native';
 import axios from 'axios';
+import { HTTP_DOMAIN } from '@config/varEnvs';
 
 interface Notification {
   id: number;
@@ -22,7 +23,6 @@ interface Notification {
   user_id: number;
 }
 
-const BASE_URL = 'http://localhost:3000/api';
 
 interface NotificacoesContentProps {
   userId: string;
@@ -47,7 +47,7 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
   const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${BASE_URL}/notifications/${userId}`);
+      const response = await axios.get(`${HTTP_DOMAIN}/notifications/${userId}`);
       const apiNotifications = response.data as Notification[];
       setNotifications(apiNotifications);
     } catch (err) {
@@ -77,7 +77,7 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
 
       try {
         await axios.patch(
-          `${BASE_URL}/notifications/${notificationId}/read/${userId}`,
+          `${HTTP_DOMAIN}/notifications/${notificationId}/read/${userId}`,
         );
         setNotifications((prev) =>
           prev.map((notif) =>
