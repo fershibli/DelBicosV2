@@ -8,4 +8,11 @@ export type ColorsType = {
   secondaryBeige: string;
   primaryWhiteHover: string;
   primaryOrangeHover: string;
+
+  // Cores adicionais para melhor hierarquia
+  cardBackground: string;
+  borderColor: string;
+  textSecondary: string;
+  textTertiary: string;
+  backgroundElevated: string;
 };
