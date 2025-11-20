@@ -18,7 +18,10 @@ import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
 import { useLocation } from '@lib/hooks/LocationContext';
 import DelBicosLogo from '@assets/DelBicos_LogoH.png';
+import DelBicosLogoDark from 'assets/DelBicos_git.png';
 import { Button } from '@components/ui/Button';
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types';
 import { NavigationParams } from '@screens/types';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import { FontAwesome } from '@expo/vector-icons';
@@ -31,11 +34,21 @@ import {
 import { MapComponent } from '@components/ui/MapComponent/MapComponent';
 import { Region } from '@lib/hooks/types';
 import colors from '@theme/colors';
+import { ThemeToggle } from '@components/ui/ThemeToggle';
 
 const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const { width } = useWindowDimensions();
   // const isWebOrLargeScreen = Platform.OS === 'web' || width > 768;
   const isWebOrLargeScreen = width > 768;
+  const { theme } = useThemeStore();
+  const logo = theme === ThemeMode.DARK ? DelBicosLogoDark : DelBicosLogo;
+
+  console.log(
+    'Header renderizado. isWebOrLargeScreen:',
+    isWebOrLargeScreen,
+    'width:',
+    width,
+  );
 
   const { user, signOut } = useUserStore();
   const { address: userAddress } = useUserStore();
@@ -199,7 +212,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       <View style={styles.mobileHeader}>
         {/* Logo Clicável */}
         <TouchableOpacity onPress={() => navigateTo('Feed')}>
-          <Image source={DelBicosLogo} style={styles.mobileLogo} />
+          <Image source={logo} style={styles.mobileLogo} />
         </TouchableOpacity>
 
         {/* Menu Sanduíche */}
@@ -295,6 +308,20 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
 
             <View style={styles.menuDivider} />
 
+            {/* Seletor de Tema */}
+            <View style={styles.menuOption}>
+              <FontAwesome
+                name="paint-brush"
+                size={18}
+                color={colors.primaryBlue}
+                style={styles.menuIcon}
+              />
+              <Text style={styles.menuOptionText}>Tema:</Text>
+              <ThemeToggle />
+            </View>
+
+            <View style={styles.menuDivider} />
+
             {/* Links de Usuário/Autenticação */}
             {!!user ? (
               <>
@@ -363,11 +390,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       <View style={styles.topBar}>
         {/* Logo */}
         <TouchableOpacity onPress={() => navigateTo('Feed')}>
-          <Image
-            source={DelBicosLogo}
-            style={styles.logoImage}
-            resizeMode="contain"
-          />
+          <Image source={logo} style={styles.logoImage} resizeMode="contain" />
         </TouchableOpacity>
 
         {/* Menu Centralizado (Adaptado) */}
@@ -388,6 +411,8 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
 
         {/* Localização + Usuário */}
         <View style={styles.rightSection}>
+          {console.log('Renderizando ThemeToggle no Header Web')}
+          <ThemeToggle />
           <View style={styles.locationContainer}>
             <Text style={styles.locationLabel}>Estou em:</Text>
             <Button
