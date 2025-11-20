@@ -4,7 +4,7 @@ import { StyleSheet, Platform } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primaryWhite,
+    backgroundColor: '#DDE6F0',
   },
   contentContainer: {
     paddingBottom: 20,
