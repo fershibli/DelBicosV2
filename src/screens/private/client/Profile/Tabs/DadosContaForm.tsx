@@ -479,12 +479,12 @@ const statusModalStyles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#1d2b36',
+    color: colors.primaryBlack,
   },
   message: {
     fontSize: 16,
     textAlign: 'center',
-    color: '#666',
+    color: colors.textSecondary,
     marginBottom: 20,
   },
   activityIndicator: {

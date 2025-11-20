@@ -246,7 +246,7 @@ function MeusAgendamentos() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.primaryWhite,
   },
   pageTitle: {
     fontSize: 28,
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: '#E8F4FF',
+    backgroundColor: colors.secondaryBeige,
     borderRadius: 6,
     borderLeftWidth: 3,
     borderLeftColor: colors.primaryBlue,
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     fontSize: 16,
-    color: '#999',
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   appointmentWrapper: {
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
   },
   infoBoxLabel: {
     fontSize: 11,
-    color: '#666',
+    color: colors.textSecondary,
     fontWeight: '600',
   },
   ratingDisplay: {

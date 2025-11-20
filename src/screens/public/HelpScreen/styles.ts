@@ -5,7 +5,7 @@ import { inputBaseStyle } from '@components/ui/CustomTextInput/styles';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F7FA',
+    backgroundColor: colors.secondaryGray,
   },
   contentContainer: {
     alignItems: 'center',
@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: 'Afacad-Bold',
-    color: colors.primaryBlue,
+    color: colors.primaryBlack,
     marginBottom: 24,
   },
   searchBarContainer: {
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
   notFoundText: {
     fontFamily: 'Afacad-Regular',
     fontSize: 16,
-    color: '#6c757d',
+    color: colors.textSecondary,
     textAlign: 'center',
     marginTop: 20,
   },

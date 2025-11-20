@@ -63,7 +63,7 @@ function PhoneConfirmationScreen() {
               mask="+55 (99) 99999-9999"
               style={styles.input}
               placeholder="+55 (00) 00000-0000"
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.textTertiary}
               value={phoneNumber}
               onChangeText={setPhoneNumber}
               keyboardType="phone-pad"

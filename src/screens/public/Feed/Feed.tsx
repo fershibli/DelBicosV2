@@ -15,6 +15,7 @@ import ListProfessionals from '@components/features/ListProfessionals';
 import { FontAwesome } from '@expo/vector-icons';
 import { HighlightCard, HighlightItem } from '@components/ui/HighlightCard';
 import colors from '@theme/colors';
+import { useUserStore } from '@stores/User';
 
 const HIGHLIGHT_DATA: HighlightItem[] = [
   {
@@ -55,6 +56,7 @@ const SNAP_INTERVAL = CARD_WIDTH + CARD_MARGIN * 2;
 const FeedScreen: React.FC = () => {
   const scrollRef = useRef<ScrollView | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { user } = useUserStore();
 
   const handleScrollLeft = () => {
     const newIndex = currentIndex - 1;

@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#F4F7FA',
+    backgroundColor: colors.secondaryGray,
   },
   pageTitle: {
     fontSize: 28,
@@ -218,7 +218,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 25,
     marginBottom: 12,
-    backgroundColor: '#e8eef5',
+    backgroundColor: colors.secondaryBeige,
     flexDirection: 'row',
     alignItems: 'center',
     ...Platform.select({
@@ -247,7 +247,7 @@ export const styles = StyleSheet.create({
   menuText: {
     fontSize: 18,
     fontFamily: 'Afacad-SemiBold',
-    color: colors.primaryBlue,
+    color: colors.primaryBlack,
   },
   activeMenuText: {
     color: colors.primaryWhite,

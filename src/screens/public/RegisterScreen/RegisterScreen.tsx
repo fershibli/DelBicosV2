@@ -236,7 +236,7 @@ function RegisterScreen() {
                       errors.location && inputBaseStyle.inputError,
                     ]}
                     placeholder="Clique no ícone para buscar"
-                    placeholderTextColor="#999"
+                    placeholderTextColor={colors.textTertiary}
                     value={value}
                     editable={false}
                   />
@@ -321,7 +321,7 @@ function RegisterScreen() {
                   <TextInput
                     style={[inputBaseStyle.input, styles.passwordInput]}
                     placeholder="Crie uma senha forte"
-                    placeholderTextColor="#999"
+                    placeholderTextColor={colors.textTertiary}
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}

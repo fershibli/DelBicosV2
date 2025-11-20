@@ -161,7 +161,7 @@ export default function AlterarEnderecoForm() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F7FA',
+    backgroundColor: colors.secondaryGray,
   },
   contentContainer: {
     padding: 20,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#666',
+    color: colors.primaryBlack,
     fontFamily: 'Afacad-Regular',
   },
   errorContainer: {
@@ -193,13 +193,13 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: '#dc3545',
+    color: colors.primaryOrange,
     textAlign: 'center',
     marginBottom: 20,
     fontFamily: 'Afacad-Regular',
   },
   retryButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: colors.primaryBlue,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -216,14 +216,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 40,
   },
-  emptyText: {
+  errorText: {
     fontSize: 16,
-    color: '#666',
+    color: colors.primaryBlack,
     textAlign: 'center',
     fontFamily: 'Afacad-Regular',
   },
   newButton: {
-    backgroundColor: '#ff7f00',
+    backgroundColor: colors.primaryOrange,
     paddingVertical: 14,
     paddingHorizontal: 22,
     borderRadius: 8,

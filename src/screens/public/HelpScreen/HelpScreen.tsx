@@ -84,7 +84,7 @@ function HelpScreen() {
             <TextInput
               style={styles.searchInput}
               placeholder="Sobre o que você precisa de ajuda?"
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.textTertiary}
               value={searchTerm}
               onChangeText={setSearchTerm}
             />

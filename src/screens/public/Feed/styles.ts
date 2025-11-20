@@ -4,10 +4,24 @@ import { StyleSheet, Platform } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#DDE6F0',
+    backgroundColor: colors.secondaryGray,
   },
   contentContainer: {
     paddingBottom: 20,
+  },
+  themeToggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  themeToggleLabel: {
+    fontSize: 16,
+    fontFamily: 'Afacad-SemiBold',
+    color: colors.primaryBlue,
+    marginRight: 8,
   },
   title: {
     fontSize: 24,
