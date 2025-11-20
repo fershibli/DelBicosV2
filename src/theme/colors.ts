@@ -1,14 +1,12 @@
-const colors = {
-  primaryBlue: '#005A93',
-  primaryOrange: '#FC8200',
-  primaryBlack: '#000000',
-  primaryGreen: '#22843B',
-  primaryWhite: '#FFFFFF',
-  secondaryGray: '#DDE6F0',
-  secondaryBeige: '#E0E0E0',
-  primaryWhiteHover: '#F5F5F5',
-  primaryOrangeHover: '#d07100'
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types'; // ColorScheme pode ser outro nome
+import lightScheme from './light'; // lightScheme pode ser outro nome
+import { ColorsType } from '@theme/types';
+
+const themes: Record<ThemeMode, ColorsType> = {
+  [ThemeMode.LIGHT]: lightScheme,
+  [ThemeMode.DARK]: lightScheme,
+  [ThemeMode.LIGHT_HI_CONTRAST]: lightScheme,
 };
 
-export default colors;
-export type ColorsType = typeof colors;
+export default themes[useThemeStore.getState().getTheme()];
