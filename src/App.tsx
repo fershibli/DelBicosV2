@@ -11,7 +11,6 @@ import { initGAWeb } from './utils/ga-web';
 import { initClarityWeb } from './utils/clarity'
 import { GOOGLE_ANALYTICS_ID, CLARITY_ID  } from './config/varEnvs';
 import VLibrasSetup from '@components/features/Accessibility/VLibrasSetup';
-import VLibrasToggle from '@components/features/Accessibility/VLibrasToggle.tsx';
 
 Asset.loadAsync([...NavigationAssets]);
 
@@ -53,22 +52,19 @@ export function App() {
   }
 
   return (
-    <>
-      <VLibrasSetup />
-        <MenuProvider>
-          <LocationProvider>
-            <Navigation
-              linking={{
-                enabled: 'auto',
-                prefixes: ['delbicos://'],
-              }}
-              onReady={() => {
-                SplashScreen.hideAsync();
-              }}
-            />
-            <VLibrasToggle />
-          </LocationProvider>
-        </MenuProvider>
-   </>
+    <MenuProvider>
+      <LocationProvider>
+        <VLibrasSetup />
+        <Navigation
+          linking={{
+            enabled: 'auto',
+            prefixes: ['delbicos://'],
+          }}
+          onReady={() => {
+            SplashScreen.hideAsync();
+          }}
+        />
+      </LocationProvider>
+    </MenuProvider>
   );
 }
