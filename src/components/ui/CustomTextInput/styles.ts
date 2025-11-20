@@ -9,9 +9,9 @@ export const inputBaseStyle = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#CED4DA',
+    borderColor: colors.borderColor,
     fontFamily: 'Afacad-Regular',
-    color: '#212529',
+    color: colors.primaryBlack,
   },
   inputError: {
     borderColor: '#D32F2F',

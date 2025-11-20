@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput } from 'react-native';
 import { styles } from './styles';
+import colors from '@theme/colors';
 
 interface CpfInputProps {
   value: string;
@@ -39,7 +40,7 @@ const CpfInput: React.FC<CpfInputProps> = ({
     <TextInput
       style={[styles.input, error && styles.inputError]}
       placeholder="000.000.000-00"
-      placeholderTextColor="#999"
+      placeholderTextColor={colors.textTertiary}
       value={formattedCpf}
       onChangeText={handleChangeText}
       onBlur={onBlur}

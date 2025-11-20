@@ -30,10 +30,10 @@ export const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   inputReadOnly: {
-    backgroundColor: '#F4F7FA',
-    color: '#6c757d',
+    backgroundColor: colors.secondaryGray,
+    color: colors.textSecondary,
     borderRadius: 8,
-    borderColor: '#CED4DA',
+    borderColor: colors.borderColor,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
@@ -46,8 +46,9 @@ export const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#CED4DA',
+    borderColor: colors.borderColor,
     fontFamily: 'Afacad-Regular',
+    color: colors.primaryBlack,
   },
   actionsRow: {
     position: 'absolute',
@@ -73,7 +74,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.primaryBlue,
   },
   cancelButton: {
-    backgroundColor: '#6c757d',
+    backgroundColor: colors.textSecondary,
   },
   actionButtonText: {
     color: colors.primaryWhite,
@@ -85,14 +86,14 @@ export const styles = StyleSheet.create({
   },
   pickerContainer: {
     borderWidth: 1,
-    borderColor: '#CED4DA',
+    borderColor: colors.borderColor,
     borderRadius: 8,
     justifyContent: 'center',
     backgroundColor: colors.primaryWhite,
   },
   pickerWrapper: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: colors.borderColor,
     borderRadius: 8,
     overflow: 'hidden',
   },
@@ -103,8 +104,9 @@ export const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#CED4DA',
+    borderColor: colors.borderColor,
     fontFamily: 'Afacad-Regular',
+    color: colors.primaryBlack,
   },
   iconButton: {
     padding: 8,

@@ -9,6 +9,7 @@ import {
 import EyeOpen from '@assets/eye-open.png';
 import EyeOff from '@assets/eye-off.png';
 import { styles } from './styles';
+import colors from '@theme/colors';
 
 interface PasswordInputProps extends TextInputProps {
   error?: boolean;
@@ -22,7 +23,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ error, ...props }) => {
       <TextInput
         style={styles.input}
         secureTextEntry={!visible}
-        placeholderTextColor="#999"
+        placeholderTextColor={colors.textTertiary}
         {...props}
       />
       <TouchableOpacity

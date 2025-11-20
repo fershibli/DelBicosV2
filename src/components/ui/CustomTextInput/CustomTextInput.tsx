@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { styles } from './styles';
 import { FieldError } from 'react-hook-form';
+import colors from '@theme/colors';
 
 interface CustomTextInputProps extends TextInputProps {
   label: string;
@@ -33,7 +34,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
         ) : (
           <TextInput
             style={[styles.input, !!error && styles.inputError]}
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.textTertiary}
             {...rest}
           />
         )}

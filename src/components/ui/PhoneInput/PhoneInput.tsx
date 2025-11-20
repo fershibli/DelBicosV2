@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput } from 'react-native';
 import { styles } from './styles';
+import colors from '@theme/colors';
 
 interface PhoneInputProps {
   value: string;
@@ -68,7 +69,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
     <TextInput
       style={[styles.input, error && styles.inputError]}
       placeholder="(00) 00000-0000"
-      placeholderTextColor="#999"
+      placeholderTextColor={colors.textTertiary}
       value={formattedPhone}
       onChangeText={handleChangeText}
       onBlur={onBlur}

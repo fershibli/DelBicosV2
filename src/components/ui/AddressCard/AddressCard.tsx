@@ -179,18 +179,18 @@ export const AddressCard: React.FC<AddressCardProps> = ({
           <FontAwesome
             name={localData.isPrimary ? 'star' : 'star-o'}
             size={22}
-            color={localData.isPrimary ? '#ffc107' : colors.primaryBlue}
+            color={localData.isPrimary ? '#ffc107' : colors.textSecondary}
           />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() => setIsEditing(true)}>
-          <FontAwesome name="pencil" size={22} color="#007bff" />
+          <FontAwesome name="pencil" size={22} color={colors.textSecondary} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() => onDelete(localData.id)}>
-          <FontAwesome name="trash-o" size={22} color="#dc3545" />
+          <FontAwesome name="trash-o" size={22} color={colors.primaryOrange} />
         </TouchableOpacity>
       </View>
     </View>

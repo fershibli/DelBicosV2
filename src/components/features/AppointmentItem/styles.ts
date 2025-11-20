@@ -4,7 +4,7 @@ import colors from '@theme/colors';
 export const styles = StyleSheet.create({
   // ===== CARD PRINCIPAL =====
   card: {
-    backgroundColor: colors.primaryWhite,
+    backgroundColor: colors.secondaryGray,
     borderRadius: 8,
     padding: 0,
     marginVertical: 0,
@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#E8E8E8',
+    borderColor: colors.borderColor,
     overflow: 'hidden',
     height: 400,
     maxHeight: 400,
@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
 
   serviceInfo: {
     fontSize: 10,
-    color: '#666666',
+    color: colors.primaryBlack,
     marginBottom: 2,
     lineHeight: 13,
   },
@@ -59,7 +59,7 @@ export const styles = StyleSheet.create({
   serviceName: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#000000',
+    color: colors.primaryBlack,
     marginBottom: 3,
     lineHeight: 15,
   },
@@ -94,7 +94,7 @@ export const styles = StyleSheet.create({
   statusText: {
     fontSize: 10,
     fontWeight: '700',
-    color: colors.primaryWhite,
+    color: '#FFFFFF',
     letterSpacing: 0.3,
   },
 

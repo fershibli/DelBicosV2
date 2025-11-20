@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontFamily: 'Afacad-SemiBold',
-    color: colors.primaryBlue,
+    color: colors.primaryBlack,
     flex: 1, // Para o texto quebrar a linha se for longo
     marginRight: 16,
   },
@@ -44,12 +44,12 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 20,
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
+    borderTopColor: colors.borderColor,
   },
   bodyText: {
     fontSize: 15,
     fontFamily: 'Afacad-Regular',
-    color: '#495057', // Um cinza escuro, não preto
+    color: colors.primaryBlack,
     lineHeight: 22,
   },
 });

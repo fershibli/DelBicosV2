@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.borderColor,
     paddingHorizontal: 16,
   },
   mobileLogo: {
@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
     height: 80,
     paddingHorizontal: 32,
     borderBottomWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.primaryBlue,
   },
   logoImage: {
     width: 200,
@@ -59,7 +59,7 @@ export const styles = StyleSheet.create({
   locationLabel: {
     fontFamily: 'Afacad-Regular',
     fontSize: 12,
-    color: '#6c757d',
+    color: colors.textSecondary,
     marginBottom: 2,
   },
 
@@ -84,7 +84,7 @@ export const styles = StyleSheet.create({
   },
 
   searchBar: {
-    backgroundColor: colors.primaryBlue,
+    backgroundColor: colors.primaryWhite,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -93,14 +93,14 @@ export const styles = StyleSheet.create({
     gap: 20,
   },
   searchText: {
-    color: colors.primaryWhite,
+    color: colors.primaryBlack,
     fontSize: 16,
     fontFamily: 'Afacad-SemiBold',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.primaryWhite,
+    backgroundColor: colors.secondaryBeige,
     borderRadius: 8,
     overflow: 'hidden',
     width: 350,
@@ -112,13 +112,14 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Afacad-Regular',
     height: '100%',
+    color: colors.primaryBlack,
   },
   searchButton: {
     paddingHorizontal: 12,
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F0F0F0',
+    backgroundColor: colors.secondaryGray,
   },
 
   menuOptionsContainer: {
@@ -148,11 +149,11 @@ export const styles = StyleSheet.create({
   menuOptionText: {
     fontFamily: 'Afacad-Regular',
     fontSize: 15,
-    color: '#333',
+    color: colors.primaryBlack,
   },
   menuDivider: {
     height: 1,
-    backgroundColor: '#EFEFEF',
+    backgroundColor: colors.borderColor,
   },
   menuItemPressable: {
     paddingVertical: 8,
@@ -167,14 +168,14 @@ export const styles = StyleSheet.create({
   menuItemHovered: {
     ...Platform.select({
       web: {
-        backgroundColor: '#E0E8F0',
+        backgroundColor: colors.secondaryGray,
       },
     }),
   },
   menuItemText: {
     fontSize: 15,
     fontFamily: 'Afacad-SemiBold',
-    color: '#333',
+    color: colors.primaryBlack,
   },
   menuItemTextHovered: {
     ...Platform.select({
@@ -279,7 +280,7 @@ export const styles = StyleSheet.create({
     height: 400,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: '#E0E0E0',
+    backgroundColor: colors.secondaryGray,
   },
   modalButton: {
     backgroundColor: colors.primaryOrange,
@@ -289,7 +290,7 @@ export const styles = StyleSheet.create({
     marginTop: 20,
   },
   modalButtonDisabled: {
-    backgroundColor: '#CCCCCC',
+    backgroundColor: colors.textTertiary,
   },
   modalButtonText: {
     color: colors.primaryWhite,

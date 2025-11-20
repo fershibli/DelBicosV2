@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.primaryWhite,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#CED4DA',
+    borderColor: colors.borderColor,
     height: 50,
   },
   input: {
@@ -18,10 +18,10 @@ export const styles = StyleSheet.create({
     height: '100%',
     fontSize: 16,
     fontFamily: 'Afacad-Regular',
-    color: '#212529',
+    color: colors.primaryBlack,
   },
   inputError: {
-    borderColor: '#D32F2F',
+    borderColor: colors.primaryOrange,
     borderWidth: 1.5,
   },
   eyeButton: {
@@ -30,6 +30,6 @@ export const styles = StyleSheet.create({
   eyeIcon: {
     width: 24,
     height: 24,
-    tintColor: '#6c757d',
+    tintColor: colors.textSecondary,
   },
 });
