@@ -17,14 +17,14 @@ import { useLocation } from '@lib/hooks/LocationContext';
 import CustomTextInput from '@components/ui/CustomTextInput';
 import CpfInput from '@components/ui/CpfInput';
 import DateInput from '@components/ui/DateInput';
-import { styles } from './styles';
-import { inputBaseStyle } from '@components/ui/CustomTextInput/styles';
+import { createStyles } from './styles';
+import { createInputBaseStyle } from '@components/ui/CustomTextInput/styles';
 import { HTTP_DOMAIN } from '@config/varEnvs';
 import { isValidCPF } from '../../../utils/validators';
 import LogoV3 from '@assets/LogoV3.png';
 import { useUserStore } from '@stores/User';
 import PhoneInput from '@components/ui/PhoneInput';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 
 type FormData = {
   name: string;
@@ -45,6 +45,10 @@ function RegisterScreen() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { setVerificationEmail } = useUserStore();
+
+  const colors = useColors();
+  const inputBaseStyle = createInputBaseStyle(colors);
+  const styles = createStyles(colors);
 
   const {
     control,
