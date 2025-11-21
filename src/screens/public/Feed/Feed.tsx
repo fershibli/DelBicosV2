@@ -9,9 +9,9 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 import CategorySlider from '@components/features/CategorySlider';
 import ListProfessionals from '@components/features/ListProfessionals';
 import { FontAwesome } from '@expo/vector-icons';
@@ -58,6 +58,8 @@ const FeedScreen: React.FC = () => {
   const scrollRef = useRef<ScrollView | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { user } = useUserStore();
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const handleScrollLeft = () => {
     const newIndex = currentIndex - 1;
