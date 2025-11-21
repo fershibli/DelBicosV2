@@ -20,8 +20,8 @@ import IconPerson from '@assets/person.svg';
 // import IconPhone from '@assets/phone.svg';
 import LogoV3 from '@assets/LogoV3.png';
 
-import { styles } from './styles';
-import colors from '@theme/colors';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 
 type FormData = {
   email: string;
@@ -32,6 +32,8 @@ export const LoginPassword = () => {
   const navigation = useNavigation();
   const { signInPassword } = useUserStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const colors = useColors();
+  const styles = createStyles(colors);
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);

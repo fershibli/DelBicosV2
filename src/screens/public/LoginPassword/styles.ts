@@ -1,11 +1,10 @@
 import { StyleSheet, Platform } from 'react-native';
-import colors from '@theme/colors';
 
 export const createStyles = (colors: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.secondaryGray,
+      backgroundColor: colors.primaryOrange,
     },
     contentContainer: {
       flexGrow: 1,
