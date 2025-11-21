@@ -16,6 +16,8 @@ import * as ImagePicker from 'expo-image-picker';
 import CustomTextInput from '@components/ui/CustomTextInput';
 import { styles } from './styles';
 import colors from '@theme/colors';
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types';
 
 interface UserProfileProps {
   userId: string;
@@ -264,11 +266,13 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
   };
 
   const avatarUriToDisplay = user?.avatarSource?.uri;
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.pageTitle}>Dados da Conta</Text>
-      <View style={styles.card}>
+      <View style={[styles.card, isDark && { backgroundColor: '#323232' }]}>
         <View style={styles.contentWrapper}>
           <View style={styles.avatarContainer}>
             <TouchableOpacity
@@ -453,7 +457,7 @@ const statusModalStyles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   container: {
-    backgroundColor: 'white',
+    backgroundColor: colors.primaryWhite,
     padding: 25,
     borderRadius: 15,
     alignItems: 'center',

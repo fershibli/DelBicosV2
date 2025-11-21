@@ -6,6 +6,8 @@ import CustomTextInput from '@components/ui/CustomTextInput';
 import PasswordInput from '@components/ui/PasswordInput';
 import { styles } from './styles';
 import colors from '@theme/colors';
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types';
 
 type MessageType = 'success' | 'error' | null;
 
@@ -34,6 +36,8 @@ const TrocarSenhaForm: React.FC = () => {
   const novaSenha = watch('novaSenha');
 
   const { changePassword } = useUserStore();
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
 
   const handleSalvar = async (data: any) => {
     // Limpa mensagens anteriores
@@ -94,7 +98,7 @@ const TrocarSenhaForm: React.FC = () => {
         </View>
       )}
 
-      <View style={styles.card}>
+      <View style={[styles.card, isDark && { backgroundColor: '#323232' }]}>
         <View style={styles.formContainer}>
           <Controller
             control={control}

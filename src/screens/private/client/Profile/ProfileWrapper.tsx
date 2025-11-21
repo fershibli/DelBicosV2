@@ -52,14 +52,24 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
     <View
       style={[
         styles.container,
-        isDark ? { backgroundColor: colors.primaryWhite } : null,
+        { backgroundColor: isDark ? '#323232' : colors.secondaryGray },
       ]}>
       <View style={styles.bodyWrapper}>
-        <ScrollView style={styles.menuSection}>
+        <ScrollView
+          style={[
+            styles.menuSection,
+            isDark ? { backgroundColor: 'transparent' } : null,
+          ]}>
           <MenuNavegacao activeItem={activeTab} onItemSelected={setActiveTab} />
         </ScrollView>
 
-        <View style={styles.mainContent}>{renderScreen()}</View>
+        <View
+          style={[
+            styles.mainContent,
+            isDark ? { backgroundColor: '#545454' } : null,
+          ]}>
+          {renderScreen()}
+        </View>
       </View>
     </View>
   );
@@ -68,7 +78,6 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.secondaryGray,
   },
   header: {
     paddingVertical: 20,

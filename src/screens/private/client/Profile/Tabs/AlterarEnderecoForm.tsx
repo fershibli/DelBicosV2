@@ -161,7 +161,6 @@ export default function AlterarEnderecoForm() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.secondaryGray,
   },
   contentContainer: {
     padding: 20,
@@ -216,7 +215,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 40,
   },
-  errorText: {
+  emptyText: {
     fontSize: 16,
     color: colors.primaryBlack,
     textAlign: 'center',
