@@ -15,6 +15,7 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
   const navigation = useNavigation();
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
   const [isHovered, setIsHovered] = useState(false);
 
   const navigateToProfile = () => {
