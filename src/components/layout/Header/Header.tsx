@@ -12,7 +12,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import * as Location from 'expo-location';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
@@ -33,7 +33,7 @@ import {
 } from 'react-native-popup-menu';
 import { MapComponent } from '@components/ui/MapComponent/MapComponent';
 import { Region } from '@lib/hooks/types';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 import { ThemeToggle } from '@components/ui/ThemeToggle';
 
 const Header: React.FC<NativeStackHeaderProps> = (props) => {
@@ -41,6 +41,8 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
   // const isWebOrLargeScreen = Platform.OS === 'web' || width > 768;
   const isWebOrLargeScreen = width > 768;
   const logo = theme === ThemeMode.DARK ? DelBicosLogoDark : DelBicosLogo;
