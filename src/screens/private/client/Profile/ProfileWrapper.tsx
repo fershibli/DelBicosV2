@@ -47,12 +47,19 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
 
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
 
   return (
     <View
       style={[
         styles.container,
-        { backgroundColor: isDark ? '#323232' : colors.secondaryGray },
+        {
+          backgroundColor: isDark
+            ? '#323232'
+            : isHighContrast
+              ? colors.backgroundElevated
+              : colors.secondaryGray,
+        },
       ]}>
       <View style={styles.bodyWrapper}>
         <ScrollView
@@ -66,7 +73,15 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
         <View
           style={[
             styles.mainContent,
-            isDark ? { backgroundColor: '#545454' } : null,
+            isDark
+              ? { backgroundColor: '#545454' }
+              : isHighContrast
+                ? {
+                    backgroundColor: colors.cardBackground,
+                    borderWidth: 2,
+                    borderColor: colors.primaryBlack,
+                  }
+                : null,
           ]}>
           {renderScreen()}
         </View>
