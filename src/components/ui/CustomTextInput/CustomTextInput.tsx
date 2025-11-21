@@ -7,9 +7,9 @@ import {
   StyleProp,
   ViewStyle,
 } from 'react-native';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { FieldError } from 'react-hook-form';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
 
@@ -29,6 +29,8 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
 }) => {
   const { theme } = useThemeStore();
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   return (
     <View style={[styles.container, containerStyle]}>

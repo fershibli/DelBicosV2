@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
-import colors from '@theme/colors';
 
-export const inputBaseStyle = StyleSheet.create({
+export const createInputBaseStyle = (colors: any) => ({
   input: {
     backgroundColor: colors.secondaryGray,
     borderRadius: 8,
@@ -19,27 +18,30 @@ export const inputBaseStyle = StyleSheet.create({
   },
 });
 
-export const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    marginBottom: 16,
-  },
-  label: {
-    marginBottom: 8,
-    fontSize: 16,
-    color: colors.primaryBlack,
-    fontFamily: 'Afacad-SemiBold',
-  },
-  input: {
-    ...inputBaseStyle.input,
-  },
-  inputError: {
-    ...inputBaseStyle.inputError,
-  },
-  errorText: {
-    color: '#D32F2F',
-    fontSize: 14,
-    marginTop: 4,
-    fontFamily: 'Afacad-Regular',
-  },
-});
+export const createStyles = (colors: any) => {
+  const inputBaseStyle = createInputBaseStyle(colors);
+  return StyleSheet.create({
+    container: {
+      width: '100%',
+      marginBottom: 16,
+    },
+    label: {
+      marginBottom: 8,
+      fontSize: 16,
+      color: colors.primaryBlack,
+      fontFamily: 'Afacad-SemiBold',
+    },
+    input: {
+      ...inputBaseStyle.input,
+    },
+    inputError: {
+      ...inputBaseStyle.inputError,
+    },
+    errorText: {
+      color: '#D32F2F',
+      fontSize: 14,
+      marginTop: 4,
+      fontFamily: 'Afacad-Regular',
+    },
+  });
+};
