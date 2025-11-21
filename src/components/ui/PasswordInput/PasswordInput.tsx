@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 import EyeOpen from '@assets/eye-open.png';
 import EyeOff from '@assets/eye-off.png';
-import { styles } from './styles';
-import colors from '@theme/colors';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
 
@@ -21,6 +21,8 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ error, ...props }) => {
   const [visible, setVisible] = useState(false);
   const { theme } = useThemeStore();
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   return (
     <View
