@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Category } from '@stores/Category/types';
-import colors from '@theme/colors';
-import { styles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
 
 // Imports dos seus SVGs
@@ -52,6 +52,8 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const cardStyle = [
     styles.categoryCard,
@@ -116,6 +118,8 @@ function CategoryList() {
   const [isLoading, setIsLoading] = useState(true);
   const { categories, fetchCategories } = useCategoryStore();
   const navigation = useNavigation();
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   useEffect(() => {
     if (!categories?.length) {
