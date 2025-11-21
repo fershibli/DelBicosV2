@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput } from 'react-native';
-import { styles } from './styles';
-import colors from '@theme/colors';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 
 interface PhoneInputProps {
   value: string;
@@ -17,6 +17,8 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   error,
 }) => {
   const [formattedPhone, setFormattedPhone] = useState(value);
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const formatPhone = (text: string) => {
     const cleanText = text.replace(/[^\d]/g, '');
