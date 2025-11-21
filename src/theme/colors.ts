@@ -3,43 +3,63 @@ import { ThemeMode } from '@stores/Theme/types';
 import lightScheme from './light';
 import darkScheme from './dark';
 import lightContrastScheme from './light-contrast';
-import { ColorsType } from '@theme/types';
+import { ColorsType } from './types';
 import { Platform } from 'react-native';
 
+// Static mapping of theme palettes
 const themes: Record<ThemeMode, ColorsType> = {
   [ThemeMode.LIGHT]: lightScheme,
   [ThemeMode.DARK]: darkScheme,
   [ThemeMode.LIGHT_HI_CONTRAST]: lightContrastScheme,
 };
 
+// Lightweight getter for current theme (reads store/localStorage at call-time)
 export const getColors = (): ColorsType => {
-  const currentTheme = useThemeStore.getState().getTheme();
-  console.log('getColors - Tema atual:', currentTheme);
-  return themes[currentTheme] || lightScheme;
-};
-
-// Busca o tema do localStorage na web ou da store
-const getCurrentTheme = (): ThemeMode => {
+  // Prefer reading persisted localStorage on web if present
   if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
-    const stored = localStorage.getItem('theme-storage');
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        const theme = parsed?.state?.theme;
-        console.log('colors.ts - Tema do localStorage:', theme);
-        return theme || ThemeMode.LIGHT;
-      } catch (e) {
-        console.error('Erro ao parsear theme do localStorage:', e);
+    try {
+      const stored = localStorage.getItem('theme-storage');
+      if (stored) {
+        const parsed = JSON.parse(stored as string);
+        const theme = parsed?.state?.theme as ThemeMode | undefined;
+        if (theme && themes[theme]) return themes[theme];
       }
+    } catch (e) {
+      // Ignore parse errors and fallback to store
     }
   }
-  const theme = useThemeStore.getState().getTheme();
-  console.log('colors.ts - Tema da store:', theme);
-  return theme;
+
+  // Read the current theme from the zustand store
+  const themeFromStore = useThemeStore.getState().theme as
+    | ThemeMode
+    | undefined;
+  if (themeFromStore && themes[themeFromStore]) return themes[themeFromStore];
+
+  return lightScheme;
 };
 
-const currentTheme = getCurrentTheme();
-console.log('colors.ts carregado - Tema sendo aplicado:', currentTheme);
-console.log('Cores sendo usadas:', themes[currentTheme]);
+// Default export: a Proxy that resolves color properties lazily from current theme.
+// This preserves the existing `import colors from '@theme/colors'` usage while
+// ensuring the values reflect the current theme at access time.
+const handler: ProxyHandler<any> = {
+  get(_, prop: string) {
+    const palette = getColors();
+    // Return undefined if property doesn't exist on palette
+    return (palette as any)[prop];
+  },
+  // Support enumeration and Object.keys
+  ownKeys() {
+    return Object.keys(getColors());
+  },
+  getOwnPropertyDescriptor(_, prop) {
+    return {
+      configurable: true,
+      enumerable: true,
+      value: (getColors() as any)[prop],
+    } as PropertyDescriptor;
+  },
+};
 
-export default themes[currentTheme] || lightScheme;
+const colorsProxy = new Proxy({}, handler) as ColorsType;
+
+export default colorsProxy;
