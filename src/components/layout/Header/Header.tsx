@@ -47,14 +47,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const isWebOrLargeScreen = width > 768;
   const logo = theme === ThemeMode.DARK ? DelBicosLogoDark : DelBicosLogo;
   const headerIconColor = isDark ? colors.primaryBlack : colors.primaryBlue;
-
-  console.log(
-    'Header renderizado. isWebOrLargeScreen:',
-    isWebOrLargeScreen,
-    'width:',
-    width,
-  );
-
   const { user, signOut } = useUserStore();
   const { address: userAddress } = useUserStore();
 
@@ -492,9 +484,9 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
           ) : (
             <View style={styles.authButtons}>
               <Button
-                colorVariant="primaryWhite"
+                colorVariant="primaryOrange"
                 sizeVariant="default"
-                fontVariant="AfacadSemiBold14"
+                fontVariant="AfacadBold16"
                 variant="contained"
                 onPress={() => navigateTo('Login')}>
                 Fazer login
