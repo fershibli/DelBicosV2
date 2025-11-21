@@ -6,9 +6,9 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 import { FontAwesome } from '@expo/vector-icons';
 import AccordionItem from '@components/ui/AccordionItem';
 
@@ -61,6 +61,8 @@ function HelpScreen() {
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const filteredData = useMemo(() => {
     if (!searchTerm) {
