@@ -1,11 +1,10 @@
 import { StyleSheet, Platform } from 'react-native';
-import colors from '@theme/colors';
 
 export const createStyles = (colors: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.secondaryGray,
+      backgroundColor: colors.primaryOrange,
     },
     contentContainer: {
       flexGrow: 1,
@@ -55,12 +54,12 @@ export const createStyles = (colors: any) =>
       textAlign: 'center',
     },
     button: {
-      height: 50,
       backgroundColor: colors.primaryBlue,
+      padding: 16,
       borderRadius: 8,
       width: '100%',
-      justifyContent: 'center',
       alignItems: 'center',
+      marginTop: 10,
     },
     inputContainer: {
       width: '100%',
