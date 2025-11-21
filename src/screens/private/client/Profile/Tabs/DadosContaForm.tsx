@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import CustomTextInput from '@components/ui/CustomTextInput';
-import { styles } from './styles';
-import colors from '@theme/colors';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
 
@@ -51,6 +51,8 @@ const StatusModal = ({
   const isSuccess = status === 'success';
   const isError = status === 'error';
   const isProgress = status === 'loading';
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const getIcon = () => {
     if (isSuccess) {
@@ -76,23 +78,19 @@ const StatusModal = ({
       animationType="fade"
       onRequestClose={onClose}
       transparent>
-      <View style={statusModalStyles.overlay}>
-        <View style={statusModalStyles.container}>
-          <Text style={statusModalStyles.icon}>{getIcon()}</Text>
-          <Text style={statusModalStyles.title}>{getTitle()}</Text>
-          <Text style={statusModalStyles.message}>{message}</Text>
+      <View style={styles.modalOverlay}>
+        <View style={styles.statusModalContainer}>
+          <Text style={styles.statusModalIcon}>{getIcon()}</Text>
+          <Text style={styles.statusModalTitle}>{getTitle()}</Text>
+          <Text style={styles.statusModalMessage}>{message}</Text>
           {isProgress && (
-            <ActivityIndicator
-              size="small"
-              color={colors.primaryBlue}
-              style={statusModalStyles.activityIndicator}
-            />
+            <ActivityIndicator size="small" color={colors.primaryBlue} />
           )}
           {!isProgress && (
             <TouchableOpacity
-              style={statusModalStyles.button}
+              style={styles.statusModalButton}
               onPress={onClose}>
-              <Text style={statusModalStyles.buttonText}>OK</Text>
+              <Text style={styles.statusModalButtonText}>OK</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -269,6 +267,8 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   return (
     <ScrollView style={styles.container}>
@@ -410,111 +410,55 @@ const AvatarOptionsModal = ({
   onRemovePhoto,
   hasPhoto,
   uploading,
-}: AvatarOptionsModalProps) => (
-  <Modal
-    visible={visible}
-    animationType="fade"
-    onRequestClose={onClose}
-    transparent>
-    <TouchableOpacity
-      style={styles.modalOverlay}
-      activeOpacity={1}
-      onPress={onClose}>
-      <View style={styles.optionsContainer}>
-        <TouchableOpacity
-          style={styles.optionButton}
-          onPress={onTakePhoto}
-          disabled={uploading}>
-          <Text style={styles.optionText}>
-            {uploading ? 'Processando...' : 'Tirar Foto'}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.optionButton}
-          onPress={onPickFromGallery}
-          disabled={uploading}>
-          <Text style={styles.optionText}>
-            {uploading ? 'Processando...' : 'Escolher da Galeria'}
-          </Text>
-        </TouchableOpacity>
-        {hasPhoto && (
+}: AvatarOptionsModalProps) => {
+  const colors = useColors();
+  const styles = createStyles(colors);
+
+  return (
+    <Modal
+      visible={visible}
+      animationType="fade"
+      onRequestClose={onClose}
+      transparent>
+      <TouchableOpacity
+        style={styles.modalOverlay}
+        activeOpacity={1}
+        onPress={onClose}>
+        <View style={styles.optionsContainer}>
           <TouchableOpacity
-            style={[styles.optionButton, styles.removeOption]}
-            onPress={onRemovePhoto}
+            style={styles.optionButton}
+            onPress={onTakePhoto}
             disabled={uploading}>
-            <Text style={[styles.optionText, styles.removeText]}>
-              Remover Foto
+            <Text style={styles.optionText}>
+              {uploading ? 'Processando...' : 'Tirar Foto'}
             </Text>
           </TouchableOpacity>
-        )}
-        <TouchableOpacity
-          style={[styles.optionButton, styles.cancelOption]}
-          onPress={onClose}
-          disabled={uploading}>
-          <Text style={[styles.optionText, styles.cancelText]}>Cancelar</Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  </Modal>
-);
-
-const statusModalStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  container: {
-    backgroundColor: colors.primaryWhite,
-    padding: 25,
-    borderRadius: 15,
-    alignItems: 'center',
-    width: '80%',
-    maxWidth: 350,
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.primaryBlack,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-      },
-      android: {
-        elevation: 8,
-      },
-    }),
-  },
-  icon: {
-    fontSize: 50,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: colors.primaryBlack,
-  },
-  message: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: colors.textSecondary,
-    marginBottom: 20,
-  },
-  activityIndicator: {
-    marginTop: 10,
-  },
-  button: {
-    marginTop: 10,
-    backgroundColor: colors.primaryBlue,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    width: '100%',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: colors.primaryWhite,
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});
+          <TouchableOpacity
+            style={styles.optionButton}
+            onPress={onPickFromGallery}
+            disabled={uploading}>
+            <Text style={styles.optionText}>
+              {uploading ? 'Processando...' : 'Escolher da Galeria'}
+            </Text>
+          </TouchableOpacity>
+          {hasPhoto && (
+            <TouchableOpacity
+              style={[styles.optionButton, styles.removeOption]}
+              onPress={onRemovePhoto}
+              disabled={uploading}>
+              <Text style={[styles.optionText, styles.removeText]}>
+                Remover Foto
+              </Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={[styles.optionButton, styles.cancelOption]}
+            onPress={onClose}
+            disabled={uploading}>
+            <Text style={[styles.optionText, styles.cancelText]}>Cancelar</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    </Modal>
+  );
+};

@@ -4,8 +4,8 @@ import { useForm, Controller } from 'react-hook-form';
 import { useUserStore } from '@stores/User';
 import CustomTextInput from '@components/ui/CustomTextInput';
 import PasswordInput from '@components/ui/PasswordInput';
-import { styles } from './styles';
-import colors from '@theme/colors';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
 
@@ -39,6 +39,8 @@ const TrocarSenhaForm: React.FC = () => {
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const handleSalvar = async (data: any) => {
     // Limpa mensagens anteriores

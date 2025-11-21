@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { styles } from './styles';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 
 type MenuNavegacaoProps = {
   onItemSelected: (screen: string) => void;
@@ -17,6 +18,8 @@ const MenuNavegacao: React.FC<MenuNavegacaoProps> = ({
   onItemSelected,
   activeItem,
 }) => {
+  const colors = useColors();
+  const styles = createStyles(colors);
   const menuItems: MenuItem[] = [
     { id: 1, title: 'Conta', screen: 'DadosContaForm' },
     { id: 2, title: 'Endereços', screen: 'MeusEnderecos' },
