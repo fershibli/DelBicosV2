@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { ListedProfessional } from '@stores/Professional/types';
-import { styles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
-import colors from '@theme/colors';
 
 interface ProfessionalCardProps {
   professional: ListedProfessional;
@@ -16,6 +16,8 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
   const [isHovered, setIsHovered] = useState(false);
 
   const navigateToProfile = () => {
