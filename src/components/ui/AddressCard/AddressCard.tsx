@@ -3,9 +3,9 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { FontAwesome } from '@expo/vector-icons';
 import CustomTextInput from '@components/ui/CustomTextInput';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { Address } from '@stores/Address';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 
 interface AddressCardProps {
   addressData: Address;
@@ -67,6 +67,9 @@ export const AddressCard: React.FC<AddressCardProps> = ({
     setLocalData(addressData); // Restaura os dados originais
     setIsEditing(false);
   };
+
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   return (
     <View style={styles.card}>
