@@ -90,6 +90,7 @@ const FeedScreen: React.FC = () => {
   };
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
 
   return (
     <ScrollView
