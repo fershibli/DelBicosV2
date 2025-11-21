@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput } from 'react-native';
-import { styles } from './styles';
-import colors from '@theme/colors';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 
 interface DateInputProps {
   value: string;
@@ -30,6 +30,8 @@ const DateInput: React.FC<DateInputProps> = ({
   onBlur,
   error,
 }) => {
+  const colors = useColors();
+  const styles = createStyles(colors);
   const [formattedDate, setFormattedDate] = useState(() =>
     formatDate(value || ''),
   );
