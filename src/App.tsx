@@ -6,10 +6,13 @@ import { useFonts } from 'expo-font';
 import { Navigation } from '@screens/NavigationStack';
 import { LocationProvider } from '@lib/hooks/LocationContext';
 import { MenuProvider } from 'react-native-popup-menu';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types';
+import colors from '@theme/colors';
 import { initGAWeb } from './utils/ga-web';
-import { initClarityWeb } from './utils/clarity'
-import { GOOGLE_ANALYTICS_ID, CLARITY_ID  } from './config/varEnvs';
+import { initClarityWeb } from './utils/clarity';
+import { GOOGLE_ANALYTICS_ID, CLARITY_ID } from './config/varEnvs';
 
 Asset.loadAsync([...NavigationAssets]);
 
@@ -53,16 +56,31 @@ export function App() {
   return (
     <MenuProvider>
       <LocationProvider>
-        <Navigation
-          linking={{
-            enabled: 'auto',
-            prefixes: ['delbicos://'],
-          }}
-          onReady={() => {
-            SplashScreen.hideAsync();
-          }}
-        />
+        <InnerNavigation />
       </LocationProvider>
     </MenuProvider>
+  );
+}
+
+function InnerNavigation() {
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+
+  return (
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: isDark ? colors.primaryWhite : colors.secondaryGray,
+      }}>
+      <Navigation
+        linking={{
+          enabled: 'auto',
+          prefixes: ['delbicos://'],
+        }}
+        onReady={() => {
+          SplashScreen.hideAsync();
+        }}
+      />
+    </View>
   );
 }
