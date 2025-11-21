@@ -10,11 +10,11 @@ import {
   Platform,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { useSubCategoryStore } from '@stores/SubCategory';
 import { SubCategory } from '@stores/SubCategory/types';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
 
 type SubCategoryRouteParams = {
@@ -32,6 +32,8 @@ const SubCategoryButton: React.FC<{
   const isDark = theme === ThemeMode.DARK;
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
   const [isHovered, setIsHovered] = useState(false);
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const buttonStyle = [
     styles.subCategoryButton,
@@ -139,6 +141,9 @@ function SubCategoryScreen() {
 
   const { subCategories, fetchSubCategoriesByCategoryId } =
     useSubCategoryStore();
+
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   useEffect(() => {
     const loadSubCategories = async () => {
