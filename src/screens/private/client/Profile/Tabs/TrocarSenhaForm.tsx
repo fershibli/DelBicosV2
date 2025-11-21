@@ -38,6 +38,7 @@ const TrocarSenhaForm: React.FC = () => {
   const { changePassword } = useUserStore();
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
 
   const handleSalvar = async (data: any) => {
     // Limpa mensagens anteriores
@@ -98,7 +99,15 @@ const TrocarSenhaForm: React.FC = () => {
         </View>
       )}
 
-      <View style={[styles.card, isDark && { backgroundColor: '#323232' }]}>
+      <View
+        style={[
+          styles.card,
+          isDark && { backgroundColor: '#323232' },
+          isHighContrast && {
+            borderWidth: 3,
+            borderColor: colors.primaryBlack,
+          },
+        ]}>
         <View style={styles.formContainer}>
           <Controller
             control={control}

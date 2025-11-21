@@ -268,11 +268,20 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
   const avatarUriToDisplay = user?.avatarSource?.uri;
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.pageTitle}>Dados da Conta</Text>
-      <View style={[styles.card, isDark && { backgroundColor: '#323232' }]}>
+      <View
+        style={[
+          styles.card,
+          isDark && { backgroundColor: '#323232' },
+          isHighContrast && {
+            borderWidth: 3,
+            borderColor: colors.primaryBlack,
+          },
+        ]}>
         <View style={styles.contentWrapper}>
           <View style={styles.avatarContainer}>
             <TouchableOpacity
