@@ -10,6 +10,7 @@ import { Platform } from 'react-native';
 import { initGAWeb } from './utils/ga-web';
 import { initClarityWeb } from './utils/clarity'
 import { GOOGLE_ANALYTICS_ID, CLARITY_ID  } from './config/varEnvs';
+import VLibrasSetup from '@components/features/Accessibility/VLibrasSetup';
 
 Asset.loadAsync([...NavigationAssets]);
 
@@ -53,6 +54,7 @@ export function App() {
   return (
     <MenuProvider>
       <LocationProvider>
+        <VLibrasSetup />
         <Navigation
           linking={{
             enabled: 'auto',
