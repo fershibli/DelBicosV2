@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, TextInput } from 'react-native';
-import { styles } from './styles';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 
 interface CodeInputProps {
   verificationCode: string[];
@@ -39,6 +40,9 @@ const CodeInput: React.FC<CodeInputProps> = ({
       inputRefs.current[focusedIndex]?.focus();
     }
   }, [focusedIndex]);
+
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   return (
     <View style={styles.codeContainer}>
