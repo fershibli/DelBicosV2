@@ -60,6 +60,7 @@ function HelpScreen() {
   const [searchTerm, setSearchTerm] = useState('');
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
 
   const filteredData = useMemo(() => {
     if (!searchTerm) {
