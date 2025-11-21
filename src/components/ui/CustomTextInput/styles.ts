@@ -3,7 +3,7 @@ import colors from '@theme/colors';
 
 export const inputBaseStyle = StyleSheet.create({
   input: {
-    backgroundColor: colors.primaryWhite,
+    backgroundColor: colors.secondaryGray,
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 14,
