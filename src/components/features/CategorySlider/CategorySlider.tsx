@@ -49,6 +49,7 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
   const image = getCategoryImagesById(category.id);
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
 
   // 6. ADICIONE o estado de hover
   const [isHovered, setIsHovered] = useState(false);
@@ -60,26 +61,42 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
       backgroundColor: isDark ? colors.secondaryGray : colors.cardBackground,
       borderColor: isDark ? colors.secondaryGray : colors.borderColor,
     },
+    isHighContrast && {
+      backgroundColor: colors.primaryWhite,
+      borderWidth: 2,
+      borderColor: colors.borderColor,
+    },
     isHovered &&
-      (isDark
-        ? {
-            backgroundColor: colors.primaryOrange,
-            borderColor: colors.primaryOrange,
-          }
-        : styles.categoryCardHovered),
+      isDark && {
+        backgroundColor: colors.primaryOrange,
+        borderColor: colors.primaryOrange,
+      },
+    isHovered &&
+      isHighContrast && {
+        backgroundColor: colors.primaryBlue,
+        borderColor: colors.primaryBlue,
+      },
+    isHovered && !isDark && !isHighContrast && styles.categoryCardHovered,
   ];
 
   const titleStyle = [
     styles.categoryTitle,
     { color: isDark ? colors.primaryBlack : undefined },
-    isHovered && (isDark ? { color: '#E2E8F0' } : styles.categoryTitleHovered),
+    isHighContrast && { color: colors.primaryOrange, fontWeight: 'bold' },
+    isHovered && isDark && { color: '#E2E8F0' },
+    isHovered && isHighContrast && { color: colors.primaryWhite },
+    isHovered && !isDark && !isHighContrast && styles.categoryTitleHovered,
   ];
 
   const iconColor = isDark
     ? '#E2E8F0'
-    : isHovered
-      ? '#E2E8F0'
-      : colors.primaryOrange;
+    : isHighContrast
+      ? isHovered
+        ? colors.primaryWhite
+        : colors.primaryOrange
+      : isHovered
+        ? '#E2E8F0'
+        : colors.primaryOrange;
 
   return (
     // 8. Mude para Pressable e adicione eventos de hover
