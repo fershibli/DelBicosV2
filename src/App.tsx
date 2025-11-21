@@ -6,10 +6,11 @@ import { useFonts } from 'expo-font';
 import { Navigation } from '@screens/NavigationStack';
 import { LocationProvider } from '@lib/hooks/LocationContext';
 import { MenuProvider } from 'react-native-popup-menu';
+import ThemeProvider from '@theme/ThemeProvider';
 import { Platform } from 'react-native';
 import { initGAWeb } from './utils/ga-web';
-import { initClarityWeb } from './utils/clarity'
-import { GOOGLE_ANALYTICS_ID, CLARITY_ID  } from './config/varEnvs';
+import { initClarityWeb } from './utils/clarity';
+import { GOOGLE_ANALYTICS_ID, CLARITY_ID } from './config/varEnvs';
 import VLibrasSetup from '@components/features/Accessibility/VLibrasSetup';
 
 Asset.loadAsync([...NavigationAssets]);
@@ -53,18 +54,20 @@ export function App() {
 
   return (
     <MenuProvider>
-      <LocationProvider>
-        <VLibrasSetup />
-        <Navigation
-          linking={{
-            enabled: 'auto',
-            prefixes: ['delbicos://'],
-          }}
-          onReady={() => {
-            SplashScreen.hideAsync();
-          }}
-        />
-      </LocationProvider>
+      <ThemeProvider>
+        <LocationProvider>
+          <VLibrasSetup />
+          <Navigation
+            linking={{
+              enabled: 'auto',
+              prefixes: ['delbicos://'],
+            }}
+            onReady={() => {
+              SplashScreen.hideAsync();
+            }}
+          />
+        </LocationProvider>
+      </ThemeProvider>
     </MenuProvider>
   );
 }

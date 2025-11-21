@@ -3,9 +3,9 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { FontAwesome } from '@expo/vector-icons';
 import CustomTextInput from '@components/ui/CustomTextInput';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { Address } from '@stores/Address';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 
 interface AddressCardProps {
   addressData: Address;
@@ -67,6 +67,9 @@ export const AddressCard: React.FC<AddressCardProps> = ({
     setLocalData(addressData); // Restaura os dados originais
     setIsEditing(false);
   };
+
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   return (
     <View style={styles.card}>
@@ -179,18 +182,18 @@ export const AddressCard: React.FC<AddressCardProps> = ({
           <FontAwesome
             name={localData.isPrimary ? 'star' : 'star-o'}
             size={22}
-            color={localData.isPrimary ? '#ffc107' : colors.primaryBlue}
+            color={localData.isPrimary ? '#ffc107' : colors.textSecondary}
           />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() => setIsEditing(true)}>
-          <FontAwesome name="pencil" size={22} color="#007bff" />
+          <FontAwesome name="pencil" size={22} color={colors.textSecondary} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() => onDelete(localData.id)}>
-          <FontAwesome name="trash-o" size={22} color="#dc3545" />
+          <FontAwesome name="trash-o" size={22} color={colors.primaryOrange} />
         </TouchableOpacity>
       </View>
     </View>

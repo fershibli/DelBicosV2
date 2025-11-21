@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { styles } from './styles';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 import { useNavigation } from '@react-navigation/native';
 
 // Esta é a interface mockada baseada na sua imagem.
@@ -30,6 +31,8 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
   professional,
   selectedDate,
 }) => {
+  const colors = useColors();
+  const styles = createStyles(colors);
   const navigation = useNavigation();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 

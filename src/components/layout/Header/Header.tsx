@@ -12,13 +12,16 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import * as Location from 'expo-location';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
 import { useLocation } from '@lib/hooks/LocationContext';
 import DelBicosLogo from '@assets/DelBicos_LogoH.png';
+import DelBicosLogoDark from 'assets/DelBicos_git.png';
 import { Button } from '@components/ui/Button';
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types';
 import { NavigationParams } from '@screens/types';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import { FontAwesome } from '@expo/vector-icons';
@@ -30,13 +33,20 @@ import {
 } from 'react-native-popup-menu';
 import { MapComponent } from '@components/ui/MapComponent/MapComponent';
 import { Region } from '@lib/hooks/types';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
+import { ThemeToggle } from '@components/ui/ThemeToggle';
 
 const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const { width } = useWindowDimensions();
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
   // const isWebOrLargeScreen = Platform.OS === 'web' || width > 768;
   const isWebOrLargeScreen = width > 768;
-
+  const logo = theme === ThemeMode.DARK ? DelBicosLogoDark : DelBicosLogo;
+  const headerIconColor = isDark ? colors.primaryBlack : colors.primaryBlue;
   const { user, signOut } = useUserStore();
   const { address: userAddress } = useUserStore();
 
@@ -51,9 +61,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
 
   const navigation = useNavigation();
   const [search, setSearch] = useState('');
-
-  const [loginHovered, setLoginHovered] = useState(false);
-  const [registerHovered, setRegisterHovered] = useState(false);
 
   const [isMapModalVisible, setIsMapModalVisible] = useState(false);
   const [tempMarker, setTempMarker] = useState<{
@@ -196,16 +203,28 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
   // --- RENDERIZAÇÃO PARA MOBILE ---
   if (!isWebOrLargeScreen) {
     return (
-      <View style={styles.mobileHeader}>
+      <View
+        style={[
+          styles.mobileHeader,
+          isDark
+            ? { backgroundColor: colors.secondaryGray }
+            : isHighContrast
+              ? {
+                  backgroundColor: colors.primaryWhite,
+                  borderBottomWidth: 3,
+                  borderBottomColor: colors.primaryBlack,
+                }
+              : null,
+        ]}>
         {/* Logo Clicável */}
         <TouchableOpacity onPress={() => navigateTo('Feed')}>
-          <Image source={DelBicosLogo} style={styles.mobileLogo} />
+          <Image source={logo} style={styles.mobileLogo} />
         </TouchableOpacity>
 
         {/* Menu Sanduíche */}
         <Menu>
           <MenuTrigger style={styles.mobileMenuTrigger}>
-            <FontAwesome name="bars" size={24} color={colors.primaryBlue} />
+            <FontAwesome name="bars" size={24} color={headerIconColor} />
           </MenuTrigger>
 
           <MenuOptions
@@ -218,7 +237,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                 <FontAwesome
                   name="home"
                   size={18}
-                  color={colors.primaryBlue}
+                  color={headerIconColor}
                   style={styles.menuIcon}
                 />
                 <Text style={styles.menuOptionText}>Página Inicial</Text>
@@ -229,7 +248,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                 <FontAwesome
                   name="th-large"
                   size={18}
-                  color={colors.primaryBlue}
+                  color={headerIconColor}
                   style={styles.menuIcon}
                 />
                 <Text style={styles.menuOptionText}>Categorias</Text>
@@ -240,7 +259,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                 <FontAwesome
                   name="question-circle-o"
                   size={18}
-                  color={colors.primaryBlue}
+                  color={headerIconColor}
                   style={styles.menuIcon}
                 />
                 <Text style={styles.menuOptionText}>FAQ</Text>
@@ -255,7 +274,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                     <FontAwesome
                       name="calendar-check-o"
                       size={18}
-                      color={colors.primaryBlue}
+                      color={headerIconColor}
                       style={styles.menuIcon}
                     />
                     <Text style={styles.menuOptionText}>Meus Agendamentos</Text>
@@ -269,7 +288,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                     <FontAwesome
                       name="briefcase"
                       size={18}
-                      color={colors.primaryBlue}
+                      color={headerIconColor}
                       style={styles.menuIcon}
                     />
                     <Text style={styles.menuOptionText}>
@@ -283,7 +302,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                       <FontAwesome
                         name="bar-chart"
                         size={18}
-                        color={colors.primaryBlue}
+                        color={headerIconColor}
                         style={styles.menuIcon}
                       />
                       <Text style={styles.menuOptionText}>Analytics</Text>
@@ -292,6 +311,20 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                 )}
               </>
             )}
+
+            <View style={styles.menuDivider} />
+
+            {/* Seletor de Tema */}
+            <View style={styles.menuOption}>
+              <FontAwesome
+                name="paint-brush"
+                size={18}
+                color={headerIconColor}
+                style={styles.menuIcon}
+              />
+              <Text style={styles.menuOptionText}>Tema:</Text>
+              <ThemeToggle />
+            </View>
 
             <View style={styles.menuDivider} />
 
@@ -304,7 +337,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                     <FontAwesome
                       name="user-circle-o"
                       size={18}
-                      color={colors.primaryBlue}
+                      color={headerIconColor}
                       style={styles.menuIcon}
                     />
                     <Text style={styles.menuOptionText}>Meu Perfil</Text>
@@ -331,7 +364,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                     <FontAwesome
                       name="sign-in"
                       size={18}
-                      color={colors.primaryBlue}
+                      color={headerIconColor}
                       style={styles.menuIcon}
                     />
                     <Text style={styles.menuOptionText}>Fazer Login</Text>
@@ -342,7 +375,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                     <FontAwesome
                       name="user-plus"
                       size={18}
-                      color={colors.primaryBlue}
+                      color={headerIconColor}
                       style={styles.menuIcon}
                     />
                     <Text style={styles.menuOptionText}>Cadastre-se</Text>
@@ -358,16 +391,16 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
 
   // --- RENDERIZAÇÃO PARA WEB/TELAS GRANDES ---
   return (
-    <View style={styles.headerContainer}>
+    <View
+      style={[
+        styles.headerContainer,
+        isDark ? { backgroundColor: colors.secondaryGray } : null,
+      ]}>
       {/* Topo com Logo, Menu, Localização, Usuário */}
       <View style={styles.topBar}>
         {/* Logo */}
         <TouchableOpacity onPress={() => navigateTo('Feed')}>
-          <Image
-            source={DelBicosLogo}
-            style={styles.logoImage}
-            resizeMode="contain"
-          />
+          <Image source={logo} style={styles.logoImage} resizeMode="contain" />
         </TouchableOpacity>
 
         {/* Menu Centralizado (Adaptado) */}
@@ -388,6 +421,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
 
         {/* Localização + Usuário */}
         <View style={styles.rightSection}>
+          <ThemeToggle />
           <View style={styles.locationContainer}>
             <Text style={styles.locationLabel}>Estou em:</Text>
             <Button
@@ -425,7 +459,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                     <FontAwesome
                       name="user-circle-o"
                       size={18}
-                      color={colors.primaryBlue}
+                      color={headerIconColor}
                       style={styles.menuIcon}
                     />
                     <Text style={styles.menuOptionText}>Meu Perfil</Text>
@@ -450,9 +484,9 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
           ) : (
             <View style={styles.authButtons}>
               <Button
-                colorVariant="primaryWhite"
+                colorVariant="primaryOrange"
                 sizeVariant="default"
-                fontVariant="AfacadSemiBold14"
+                fontVariant="AfacadBold16"
                 variant="contained"
                 onPress={() => navigateTo('Login')}>
                 Fazer login

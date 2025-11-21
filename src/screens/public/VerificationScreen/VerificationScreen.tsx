@@ -19,7 +19,7 @@ import { HTTP_DOMAIN } from '@config/varEnvs';
 import { useUserStore } from '@stores/User';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { Address } from '@stores/User/types';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 
 function VerificationScreen() {
   const navigation = useNavigation();
@@ -28,6 +28,8 @@ function VerificationScreen() {
     setVerificationEmail,
     setLoggedInUser,
   } = useUserStore();
+
+  const colors = useColors();
 
   const [code, setCode] = useState<string[]>(Array(6).fill(''));
   const [isLoading, setIsLoading] = useState(false);

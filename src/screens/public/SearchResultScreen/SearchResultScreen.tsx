@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import { styles } from './styles';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 import { FontAwesome } from '@expo/vector-icons';
 import ProfessionalResultCard, {
   ProfessionalResult,
@@ -46,6 +47,9 @@ function SearchResultScreen() {
 
     loadResults();
   }, [subCategoryId, date, fetchProfessionalsByAvailability, address]);
+
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const renderFilterBar = () => (
     <View style={styles.filterBar}>

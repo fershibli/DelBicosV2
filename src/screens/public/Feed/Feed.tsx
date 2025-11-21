@@ -9,12 +9,14 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
-import { styles } from './styles';
+import { createStyles } from './styles';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
+import { useColors } from '@theme/ThemeProvider';
 import CategorySlider from '@components/features/CategorySlider';
 import ListProfessionals from '@components/features/ListProfessionals';
 import { FontAwesome } from '@expo/vector-icons';
 import { HighlightCard, HighlightItem } from '@components/ui/HighlightCard';
-import colors from '@theme/colors';
+import { useUserStore } from '@stores/User';
 
 const HIGHLIGHT_DATA: HighlightItem[] = [
   {
@@ -55,6 +57,9 @@ const SNAP_INTERVAL = CARD_WIDTH + CARD_MARGIN * 2;
 const FeedScreen: React.FC = () => {
   const scrollRef = useRef<ScrollView | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { user } = useUserStore();
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const handleScrollLeft = () => {
     const newIndex = currentIndex - 1;
@@ -85,9 +90,16 @@ const FeedScreen: React.FC = () => {
       setCurrentIndex(newIndex);
     }
   };
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+
   return (
     <ScrollView
-      style={styles.container}
+      style={[
+        styles.container,
+        isDark ? { backgroundColor: colors.primaryWhite } : null,
+      ]}
       contentContainerStyle={styles.contentContainer}>
       <View style={styles.carouselSection}>
         {/* <Text style={styles.title}>Destaques para você</Text> */}

@@ -1,9 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
-import { styles } from './styles';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 import MeusAgendamentos from '../Profile/Tabs/MeusAgendamentos';
 
 function MySchedulesScreen() {
+  const colors = useColors();
+  const styles = createStyles(colors);
   return (
     <View style={styles.container}>
       <MeusAgendamentos />

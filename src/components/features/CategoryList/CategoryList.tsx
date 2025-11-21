@@ -10,8 +10,9 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Category } from '@stores/Category/types';
-import colors from '@theme/colors';
-import { styles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 
 // Imports dos seus SVGs
 // @ts-ignore
@@ -48,16 +49,54 @@ interface CategoryCardProps {
 function CategoryCard({ category, onPress }: CategoryCardProps) {
   const info = getCategoryInfo(category.id);
   const [isHovered, setIsHovered] = useState(false);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const cardStyle = [
     styles.categoryCard,
-    isHovered && styles.categoryCardHovered,
+    {
+      backgroundColor: isDark ? colors.secondaryGray : colors.cardBackground,
+      borderColor: isDark ? colors.secondaryGray : colors.borderColor,
+    },
+    isHighContrast && {
+      backgroundColor: colors.primaryWhite,
+      borderWidth: 2,
+      borderColor: colors.borderColor,
+    },
+    isHovered &&
+      isDark && {
+        backgroundColor: colors.primaryOrange,
+        borderColor: colors.primaryOrange,
+      },
+    isHovered &&
+      isHighContrast && {
+        backgroundColor: colors.primaryBlue,
+        borderColor: colors.primaryBlue,
+      },
+    isHovered && !isDark && !isHighContrast && styles.categoryCardHovered,
   ];
+
   const titleStyle = [
     styles.categoryTitle,
-    isHovered && styles.categoryTitleHovered,
+    { color: isDark ? colors.primaryBlack : undefined },
+    isHighContrast && { color: colors.primaryOrange, fontWeight: 'bold' },
+    isHovered && isDark && { color: '#E2E8F0' },
+    isHovered && isHighContrast && { color: colors.primaryWhite },
+    isHovered && !isDark && !isHighContrast && styles.categoryTitleHovered,
   ];
-  const iconColor = isHovered ? colors.primaryWhite : colors.primaryOrange;
+
+  const iconColor = isDark
+    ? '#E2E8F0'
+    : isHighContrast
+      ? isHovered
+        ? colors.primaryWhite
+        : colors.primaryOrange
+      : isHovered
+        ? '#E2E8F0'
+        : colors.primaryOrange;
 
   return (
     <Pressable
@@ -79,6 +118,8 @@ function CategoryList() {
   const [isLoading, setIsLoading] = useState(true);
   const { categories, fetchCategories } = useCategoryStore();
   const navigation = useNavigation();
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   useEffect(() => {
     if (!categories?.length) {

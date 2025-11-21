@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { View, ActivityIndicator, Alert } from 'react-native';
 import ProfileWrapper from './ProfileWrapper';
 import { useUserStore } from '@stores/User';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 import DefaultAvatar from '@assets/logo.png';
 
 const UserProfileScreen: React.FC = () => {
   const [uploading, setUploading] = useState<boolean>(false);
   const { user, avatarBase64, uploadAvatar, removeAvatar } = useUserStore();
+  const colors = useColors();
 
   const handleAvatarChange = async (base64Image: string | null) => {
     if (uploading) return;

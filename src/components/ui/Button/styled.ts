@@ -1,12 +1,16 @@
-import { ButtonStyleProps, ButtonStyles } from "@components/Button/types";
-import { TextStyle, ViewStyle } from "react-native";
+import { ButtonStyleProps, ButtonStyles } from '@components/Button/types';
+import { TextStyle, ViewStyle } from 'react-native';
 import { StyleSheet } from 'react-native';
-import { 
-  ButtonColorVariantsKeys, 
-  ButtonSizeVariantsKeys, 
-  ButtonFontVariantsKeys 
+import {
+  ButtonColorVariantsKeys,
+  ButtonSizeVariantsKeys,
+  ButtonFontVariantsKeys,
 } from './types';
-import { buttonColorVariants, buttonSizeVariants, buttonFontVariants } from './variants';
+import {
+  createButtonColorVariants,
+  buttonSizeVariants,
+  buttonFontVariants,
+} from './variants';
 
 export const baseStyles = StyleSheet.create({
   loadingContainer: {
@@ -36,7 +40,7 @@ export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
   } = props;
 
   const isOutlined = variant === 'outlined';
-  
+
   const backgroundColor = defaultColors.backgroundColor;
   const color = defaultColors.color;
 
@@ -78,9 +82,10 @@ export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
     hover: {
       container: {
         backgroundColor: hoverColors?.backgroundColor || backgroundColor,
-        ...(shouldHaveBorder && hoverColors?.color && {
-          borderColor: hoverColors.color,
-        }),
+        ...(shouldHaveBorder &&
+          hoverColors?.color && {
+            borderColor: hoverColors.color,
+          }),
       } as ViewStyle,
       text: {
         color: hoverColors?.color || color,
@@ -109,13 +114,15 @@ export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
 };
 
 export const getStyledButtonFromVariants = (
+  colors: any,
   colorVariant: ButtonColorVariantsKeys = 'primary',
   sizeVariant: ButtonSizeVariantsKeys = 'medium',
   fontVariant: ButtonFontVariantsKeys = 'AfacadRegular20',
   variant: 'contained' | 'outlined' = 'contained',
   disabled: boolean = false,
-  noWrap: boolean = false
+  noWrap: boolean = false,
 ): ButtonStyles => {
+  const buttonColorVariants = createButtonColorVariants(colors);
   const buttonColor = buttonColorVariants[colorVariant];
   const buttonSize = buttonSizeVariants[sizeVariant];
   const buttonFont = buttonFontVariants[fontVariant];
