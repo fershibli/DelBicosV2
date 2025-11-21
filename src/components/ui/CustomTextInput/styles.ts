@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
   label: {
     marginBottom: 8,
     fontSize: 16,
-    color: colors.primaryBlue,
+    color: colors.primaryBlack,
     fontFamily: 'Afacad-SemiBold',
   },
   input: {

@@ -29,12 +29,12 @@ export const styles = StyleSheet.create({
   title: {
     fontFamily: 'Afacad-Bold',
     fontSize: 24,
-    color: colors.primaryWhite,
+    color: '#E2E8F0',
     marginBottom: 4,
   },
   description: {
     fontFamily: 'Afacad-Regular',
     fontSize: 16,
-    color: colors.primaryWhite,
+    color: '#E2E8F0',
   },
 });
