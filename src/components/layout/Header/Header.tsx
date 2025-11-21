@@ -40,6 +40,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const { width } = useWindowDimensions();
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
   // const isWebOrLargeScreen = Platform.OS === 'web' || width > 768;
   const isWebOrLargeScreen = width > 768;
   const logo = theme === ThemeMode.DARK ? DelBicosLogoDark : DelBicosLogo;
@@ -66,9 +67,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
 
   const navigation = useNavigation();
   const [search, setSearch] = useState('');
-
-  const [loginHovered, setLoginHovered] = useState(false);
-  const [registerHovered, setRegisterHovered] = useState(false);
 
   const [isMapModalVisible, setIsMapModalVisible] = useState(false);
   const [tempMarker, setTempMarker] = useState<{
@@ -214,7 +212,15 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       <View
         style={[
           styles.mobileHeader,
-          isDark ? { backgroundColor: colors.secondaryGray } : null,
+          isDark
+            ? { backgroundColor: colors.secondaryGray }
+            : isHighContrast
+              ? {
+                  backgroundColor: colors.primaryWhite,
+                  borderBottomWidth: 3,
+                  borderBottomColor: colors.primaryBlack,
+                }
+              : null,
         ]}>
         {/* Logo Clicável */}
         <TouchableOpacity onPress={() => navigateTo('Feed')}>
