@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
   subCategoryTextActive: {
-    color: colors.primaryWhite,
+    color: '#E2E8F0',
   },
   calendarContainer: {
     backgroundColor: colors.primaryOrange,
@@ -88,20 +88,40 @@ export const styles = StyleSheet.create({
     }),
   },
   continueButton: {
-    backgroundColor: colors.primaryBlue,
+    backgroundColor: '#323232',
     paddingVertical: 16,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 24,
+    ...Platform.select({
+      web: {
+        transition: 'all 0.2s ease-in-out',
+        cursor: 'pointer',
+      },
+    }),
+  },
+  continueButtonHovered: {
+    ...Platform.select({
+      web: {
+        backgroundColor: '#FB923C',
+      },
+    }),
   },
   continueButtonDisabled: {
     backgroundColor: '#6c757d',
     opacity: 0.7,
   },
   continueButtonText: {
-    color: colors.primaryWhite,
+    color: colors.primaryBlack,
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
+  },
+  continueButtonTextHovered: {
+    ...Platform.select({
+      web: {
+        color: '#E2E8F0',
+      },
+    }),
   },
   footer: {
     padding: 20,

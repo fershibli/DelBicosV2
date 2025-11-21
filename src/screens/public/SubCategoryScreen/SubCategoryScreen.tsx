@@ -5,6 +5,7 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
+  Pressable,
   ActivityIndicator,
   Platform,
 } from 'react-native';
@@ -14,6 +15,7 @@ import { useSubCategoryStore } from '@stores/SubCategory';
 import { SubCategory } from '@stores/SubCategory/types';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import colors from '@theme/colors';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 
 type SubCategoryRouteParams = {
   categoryId: number;
@@ -25,22 +27,48 @@ const SubCategoryButton: React.FC<{
   item: SubCategory;
   onPress: () => void;
   isActive: boolean;
-}> = ({ item, onPress, isActive }) => (
-  <TouchableOpacity
-    style={[
-      styles.subCategoryButton,
-      isActive && styles.subCategoryButtonActive,
-    ]}
-    onPress={onPress}>
-    <Text
-      style={[
-        styles.subCategoryText,
-        isActive && styles.subCategoryTextActive,
-      ]}>
-      {item.title}
-    </Text>
-  </TouchableOpacity>
-);
+}> = ({ item, onPress, isActive }) => {
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const [isHovered, setIsHovered] = useState(false);
+
+  const buttonStyle = [
+    styles.subCategoryButton,
+    {
+      backgroundColor: isDark ? colors.secondaryGray : colors.primaryWhite,
+      borderColor: isDark ? colors.secondaryGray : colors.secondaryBeige,
+    },
+    isActive &&
+      (isDark
+        ? {
+            backgroundColor: colors.primaryOrange,
+            borderColor: colors.primaryOrange,
+          }
+        : styles.subCategoryButtonActive),
+    isHovered && isDark
+      ? {
+          backgroundColor: colors.primaryOrange,
+          borderColor: colors.primaryOrange,
+        }
+      : null,
+  ];
+
+  const textStyle = [
+    styles.subCategoryText,
+    isDark ? { color: '#E2E8F0' } : null,
+    isActive && (isDark ? { color: '#E2E8F0' } : styles.subCategoryTextActive),
+  ];
+
+  return (
+    <Pressable
+      style={buttonStyle}
+      onPress={onPress}
+      onHoverIn={() => setIsHovered(true)}
+      onHoverOut={() => setIsHovered(false)}>
+      <Text style={textStyle}>{item.title}</Text>
+    </Pressable>
+  );
+};
 
 LocaleConfig.locales['pt-br'] = {
   monthNames: [
@@ -94,6 +122,9 @@ function SubCategoryScreen() {
     null,
   );
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
 
   const { subCategories, fetchSubCategoriesByCategoryId } =
     useSubCategoryStore();
@@ -143,7 +174,10 @@ function SubCategoryScreen() {
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[
+        styles.container,
+        isDark ? { backgroundColor: colors.primaryWhite } : null,
+      ]}
       contentContainerStyle={styles.scrollContainer}>
       <View style={styles.mainContent}>
         {/* COLUNA DA ESQUERDA: SUB-CATEGORIAS */}
@@ -223,15 +257,28 @@ function SubCategoryScreen() {
             />
           </View>
 
-          <TouchableOpacity
+          <Pressable
             style={[
               styles.continueButton,
               isButtonDisabled && styles.continueButtonDisabled,
+              isButtonHovered &&
+                !isButtonDisabled &&
+                styles.continueButtonHovered,
             ]}
             onPress={handleContinue}
-            disabled={isButtonDisabled}>
-            <Text style={styles.continueButtonText}>Continuar</Text>
-          </TouchableOpacity>
+            disabled={isButtonDisabled}
+            onHoverIn={() => setIsButtonHovered(true)}
+            onHoverOut={() => setIsButtonHovered(false)}>
+            <Text
+              style={[
+                styles.continueButtonText,
+                isButtonHovered &&
+                  !isButtonDisabled &&
+                  styles.continueButtonTextHovered,
+              ]}>
+              Continuar
+            </Text>
+          </Pressable>
         </View>
       </View>
       <Text style={styles.footer}>

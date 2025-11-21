@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import AppointmentItem from '@components/features/AppointmentItem';
 import colors from '@theme/colors';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 
 type SortOption = 'recentes' | 'avaliacao' | 'distancia';
 type FilterOption =
@@ -25,6 +26,8 @@ function MeusAgendamentos() {
   const [showInfo, setShowInfo] = useState<'avaliacao' | 'distancia'>(
     'avaliacao',
   );
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
 
   const { appointments, fetchAppointments } = useAppointmentStore();
 
@@ -278,8 +281,8 @@ const styles = StyleSheet.create({
     borderColor: '#D0D0D0',
   },
   filterButtonActive: {
-    backgroundColor: colors.primaryBlue,
-    borderColor: colors.primaryBlue,
+    backgroundColor: '#FB923C',
+    borderColor: '#FB923C',
   },
   filterButtonText: {
     fontSize: 13,
@@ -287,7 +290,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   filterButtonTextActive: {
-    color: colors.primaryWhite,
+    color: '#E2E8F0',
     fontWeight: '700',
   },
   infoIndicator: {

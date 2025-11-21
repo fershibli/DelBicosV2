@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontFamily: 'Afacad-Bold',
-    color: colors.primaryBlue,
+    color: colors.primaryBlack,
     paddingHorizontal: 24,
     marginTop: 24,
     marginBottom: 10,

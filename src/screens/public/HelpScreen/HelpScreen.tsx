@@ -7,9 +7,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { styles } from './styles';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
+import colors from '@theme/colors';
 import { FontAwesome } from '@expo/vector-icons';
 import AccordionItem from '@components/ui/AccordionItem';
-import colors from '@theme/colors';
 
 // Dados Mockados para o FAQ (Mova para um JSON/store se crescer)
 const FAQ_DATA = [
@@ -57,6 +58,8 @@ const FAQ_DATA = [
 
 function HelpScreen() {
   const [searchTerm, setSearchTerm] = useState('');
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
 
   const filteredData = useMemo(() => {
     if (!searchTerm) {
@@ -75,7 +78,11 @@ function HelpScreen() {
   }, [searchTerm]);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={[
+        styles.container,
+        isDark ? { backgroundColor: colors.primaryWhite } : null,
+      ]}>
       <View style={styles.contentContainer}>
         <View style={styles.mainContent}>
           <Text style={styles.title}>Central de Ajuda</Text>

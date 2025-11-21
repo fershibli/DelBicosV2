@@ -7,6 +7,8 @@ import TrocarSenhaForm from './Tabs/TrocarSenhaForm';
 import MeusAgendamentos from './Tabs/MeusAgendamentos';
 import NotificacoesContent from './Tabs/NotificacoesContent';
 import colors from '@theme/colors';
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types';
 import HistoricoCompras from '@screens/private/client/Profile/Tabs/HistoricoCompras';
 
 interface UserProfileProps {
@@ -43,8 +45,15 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
     }
   };
 
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        isDark ? { backgroundColor: colors.primaryWhite } : null,
+      ]}>
       <View style={styles.bodyWrapper}>
         <ScrollView style={styles.menuSection}>
           <MenuNavegacao activeItem={activeTab} onItemSelected={setActiveTab} />

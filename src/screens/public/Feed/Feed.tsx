@@ -10,11 +10,12 @@ import {
   NativeScrollEvent,
 } from 'react-native';
 import { styles } from './styles';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
+import colors from '@theme/colors';
 import CategorySlider from '@components/features/CategorySlider';
 import ListProfessionals from '@components/features/ListProfessionals';
 import { FontAwesome } from '@expo/vector-icons';
 import { HighlightCard, HighlightItem } from '@components/ui/HighlightCard';
-import colors from '@theme/colors';
 import { useUserStore } from '@stores/User';
 
 const HIGHLIGHT_DATA: HighlightItem[] = [
@@ -87,9 +88,15 @@ const FeedScreen: React.FC = () => {
       setCurrentIndex(newIndex);
     }
   };
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+
   return (
     <ScrollView
-      style={styles.container}
+      style={[
+        styles.container,
+        isDark ? { backgroundColor: colors.primaryWhite } : null,
+      ]}
       contentContainerStyle={styles.contentContainer}>
       <View style={styles.carouselSection}>
         {/* <Text style={styles.title}>Destaques para você</Text> */}
