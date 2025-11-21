@@ -19,9 +19,9 @@ export const styles = StyleSheet.create({
     height: 140,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.primaryWhite,
+    backgroundColor: colors.cardBackground,
     borderWidth: 1,
-    borderColor: colors.secondaryBeige,
+    borderColor: colors.borderColor,
     ...Platform.select({
       ios: {
         shadowColor: colors.primaryBlack,
@@ -55,6 +55,6 @@ export const styles = StyleSheet.create({
     marginTop: 10,
   },
   categoryTitleHovered: {
-    color: colors.primaryWhite,
+    color: '#E2E8F0',
   },
 });

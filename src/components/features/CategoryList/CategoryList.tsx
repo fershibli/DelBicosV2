@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Category } from '@stores/Category/types';
 import colors from '@theme/colors';
 import { styles } from './styles';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 
 // Imports dos seus SVGs
 // @ts-ignore
@@ -48,16 +49,35 @@ interface CategoryCardProps {
 function CategoryCard({ category, onPress }: CategoryCardProps) {
   const info = getCategoryInfo(category.id);
   const [isHovered, setIsHovered] = useState(false);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
 
   const cardStyle = [
     styles.categoryCard,
-    isHovered && styles.categoryCardHovered,
+    {
+      backgroundColor: isDark ? colors.secondaryGray : colors.cardBackground,
+      borderColor: isDark ? colors.secondaryGray : colors.borderColor,
+    },
+    isHovered &&
+      (isDark
+        ? {
+            backgroundColor: colors.primaryOrange,
+            borderColor: colors.primaryOrange,
+          }
+        : styles.categoryCardHovered),
   ];
+
   const titleStyle = [
     styles.categoryTitle,
-    isHovered && styles.categoryTitleHovered,
+    { color: isDark ? colors.primaryBlack : undefined },
+    isHovered && (isDark ? { color: '#E2E8F0' } : styles.categoryTitleHovered),
   ];
-  const iconColor = isHovered ? colors.primaryWhite : colors.primaryOrange;
+
+  const iconColor = isDark
+    ? '#E2E8F0'
+    : isHovered
+      ? '#E2E8F0'
+      : colors.primaryOrange;
 
   return (
     <Pressable

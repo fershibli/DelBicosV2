@@ -11,6 +11,7 @@ import { Category } from '@stores/Category/types';
 import { useNavigation } from '@react-navigation/native';
 import colors from '@theme/colors';
 import { styles } from './styles';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 
 // @ts-ignore
 import beautySVG from '@assets/categories/beauty.svg';
@@ -46,6 +47,8 @@ interface CategoryCardProps {
 
 function CategoryCard({ category, onPress }: CategoryCardProps) {
   const image = getCategoryImagesById(category.id);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
 
   // 6. ADICIONE o estado de hover
   const [isHovered, setIsHovered] = useState(false);
@@ -53,13 +56,30 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
   // 7. Estilos dinâmicos para o card, texto e ícone
   const cardStyle = [
     styles.categoryCard,
-    isHovered && styles.categoryCardHovered,
+    {
+      backgroundColor: isDark ? colors.secondaryGray : colors.cardBackground,
+      borderColor: isDark ? colors.secondaryGray : colors.borderColor,
+    },
+    isHovered &&
+      (isDark
+        ? {
+            backgroundColor: colors.primaryOrange,
+            borderColor: colors.primaryOrange,
+          }
+        : styles.categoryCardHovered),
   ];
+
   const titleStyle = [
     styles.categoryTitle,
-    isHovered && styles.categoryTitleHovered,
+    { color: isDark ? colors.primaryBlack : undefined },
+    isHovered && (isDark ? { color: '#E2E8F0' } : styles.categoryTitleHovered),
   ];
-  const iconColor = isHovered ? colors.primaryWhite : colors.primaryOrange; // Ícone branco no hover
+
+  const iconColor = isDark
+    ? '#E2E8F0'
+    : isHovered
+      ? '#E2E8F0'
+      : colors.primaryOrange;
 
   return (
     // 8. Mude para Pressable e adicione eventos de hover

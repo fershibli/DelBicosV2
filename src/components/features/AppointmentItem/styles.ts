@@ -4,7 +4,7 @@ import colors from '@theme/colors';
 export const styles = StyleSheet.create({
   // ===== CARD PRINCIPAL =====
   card: {
-    backgroundColor: colors.secondaryGray,
+    backgroundColor: colors.cardBackground,
     borderRadius: 8,
     padding: 0,
     marginVertical: 0,

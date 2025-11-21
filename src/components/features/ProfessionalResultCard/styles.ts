@@ -146,6 +146,7 @@ export const styles = StyleSheet.create({
     borderTopRightRadius: 12,
     borderBottomRightRadius: 12,
     overflow: 'hidden',
+    backgroundColor: '#000', // Fallback caso a imagem não carregue
   },
   image: {
     width: '100%',
