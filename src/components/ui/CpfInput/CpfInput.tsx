@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput } from 'react-native';
-import { styles } from './styles';
-import colors from '@theme/colors';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 
 interface CpfInputProps {
   value: string;
@@ -23,6 +23,8 @@ const CpfInput: React.FC<CpfInputProps> = ({
   onBlur,
   error,
 }) => {
+  const colors = useColors();
+  const styles = createStyles(colors);
   const [formattedCpf, setFormattedCpf] = useState(value);
 
   const handleChangeText = (text: string) => {
