@@ -7,9 +7,9 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { FontAwesome } from '@expo/vector-icons';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 
 // Habilita LayoutAnimation no Android
 if (
@@ -26,6 +26,8 @@ type AccordionItemProps = {
 
 const AccordionItem: React.FC<AccordionItemProps> = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const toggleOpen = () => {
     // Anima a transição de abertura/fechamento
