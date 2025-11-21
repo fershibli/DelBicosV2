@@ -168,7 +168,7 @@ export const styles = StyleSheet.create({
   menuItemHovered: {
     ...Platform.select({
       web: {
-        backgroundColor: colors.secondaryGray,
+        backgroundColor: '#FB923C',
       },
     }),
   },
@@ -180,7 +180,7 @@ export const styles = StyleSheet.create({
   menuItemTextHovered: {
     ...Platform.select({
       web: {
-        color: colors.primaryBlue,
+        color: '#E2E8F0',
       },
     }),
   },
