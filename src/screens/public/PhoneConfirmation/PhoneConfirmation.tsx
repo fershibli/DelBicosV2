@@ -16,7 +16,7 @@ import { MaskedTextInput } from 'react-native-mask-text';
 import CustomTextInput from '@components/ui/CustomTextInput';
 import LogoV3 from '@assets/LogoV3.png';
 import { styles } from './styles';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 
 type NavigationProp = NativeStackNavigationProp<NavigationParams>;
 
@@ -24,6 +24,7 @@ function PhoneConfirmationScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const colors = useColors();
 
   const handleContinue = () => {
     // A máscara já garante um formato próximo, então só validamos o comprimento
