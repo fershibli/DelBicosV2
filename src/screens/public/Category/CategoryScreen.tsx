@@ -1,13 +1,15 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 import CategoryList from '@components/features/CategoryList';
-import { styles } from './styles';
+import { createStyles } from './styles';
 
 function CategoryScreen() {
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
+  const colors = useColors();
+  const styles = createStyles(colors);
   return (
     <View
       style={[
