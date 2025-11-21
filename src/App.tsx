@@ -10,6 +10,7 @@ import { Platform, View } from 'react-native';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
 import colors from '@theme/colors';
+import { ThemeProvider as AppThemeProvider } from '@theme/ThemeProvider';
 import { initGAWeb } from './utils/ga-web';
 import { initClarityWeb } from './utils/clarity';
 import { GOOGLE_ANALYTICS_ID, CLARITY_ID } from './config/varEnvs';
@@ -56,7 +57,9 @@ export function App() {
   return (
     <MenuProvider>
       <LocationProvider>
-        <InnerNavigation />
+        <AppThemeProvider>
+          <InnerNavigation />
+        </AppThemeProvider>
       </LocationProvider>
     </MenuProvider>
   );
