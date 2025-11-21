@@ -65,12 +65,17 @@ export function App() {
 function InnerNavigation() {
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
 
   return (
     <View
       style={{
         flex: 1,
-        backgroundColor: isDark ? colors.primaryWhite : colors.secondaryGray,
+        backgroundColor: isDark
+          ? colors.primaryWhite
+          : isHighContrast
+            ? colors.backgroundElevated
+            : colors.secondaryGray,
       }}>
       <Navigation
         linking={{
