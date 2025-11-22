@@ -59,21 +59,22 @@ const AvaliacoesTab: React.FC = () => {
         </View>
       ) : (
         <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}>
-          {avaliacoesFeitas.map((appointment) => (
-            <View key={appointment.id} style={styles.cardWrapper}>
-              <ReviewCard
-                rating={appointment.rating || 0}
-                title={getTitleFromRating(appointment.rating || 0)}
-                serviceTitle={appointment.Service.title}
-                clientName={appointment.Professional.User.name}
-                clientAvatar={appointment.Professional.User.avatar_uri || undefined}
-                date={formatarData(appointment.start_time)}
-              />
-            </View>
-          ))}
+          <View style={styles.gridContainer}>
+            {avaliacoesFeitas.map((appointment) => (
+              <View key={appointment.id} style={styles.cardWrapper}>
+                <ReviewCard
+                  rating={appointment.rating || 0}
+                  title={getTitleFromRating(appointment.rating || 0)}
+                  serviceTitle={appointment.Service.title}
+                  clientName={appointment.Professional.User.name}
+                  clientAvatar={appointment.Professional.User.avatar_uri || undefined}
+                  date={formatarData(appointment.start_time)}
+                />
+              </View>
+            ))}
+          </View>
         </ScrollView>
       )}
     </View>
@@ -124,11 +125,16 @@ const createAvaliacoesStyles = (colors: any) =>
       lineHeight: 20,
     },
     scrollContent: {
-      paddingRight: 16,
-      paddingBottom: 8,
+      paddingBottom: 20,
+    },
+    gridContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 16,
     },
     cardWrapper: {
-      marginRight: 12,
+      width: 300,
+      maxWidth: '100%',
     },
   });
 
