@@ -14,7 +14,6 @@ import {
 import axios from 'axios';
 import { HTTP_DOMAIN } from '@config/varEnvs';
 
-// Interface atualizada com todas as propriedades da API
 interface Notification {
   id: number;
   title: string;
@@ -78,7 +77,7 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
 
       try {
         await axios.patch(
-          `${HTTP_DOMAIN}/notifications/${notificationId}/read/${userId}`,
+          `${HTTP_DOMAIN}/api/notifications/${notificationId}/read/${userId}`,
         );
         setNotifications((prev) =>
           prev.map((notif) =>
