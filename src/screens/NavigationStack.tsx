@@ -10,10 +10,9 @@ import ConfirmPhoneNumber from './public/ConfirmPhoneNumber';
 import RegisterScreen from './public/RegisterScreen';
 import VerificationScreen from './public/VerificationScreen';
 import PartnerProfile from './public/PartnerProfile';
-import ServiceStatusScreen from './public/ServicesStatus';
 import { NavigationParams } from './types';
 import Login from './public/Login';
-import Header from '@components/Header';
+import Header from '@components/layout/Header';
 import { useUserStore } from '@stores/User';
 import { LoginPassword } from './public/LoginPassword';
 import ProfileScreen from './private/client/Profile';
@@ -21,9 +20,12 @@ import CategoryScreen from './public/Category';
 import SubCategoryScreen from './public/SubCategoryScreen';
 import SearchResultScreen from './public/SearchResultScreen';
 import CheckoutScreen from './public/CheckoutScreen';
-import { PaymentCompletionScreen } from './private/client/PaymentCompletion';
 import PaymentStatusScreen from './public/PaymentStatusScreen';
 import MySchedulesScreen from './private/client/MySchedulesScreen';
+import HelpScreen from '@screens/public/HelpScreen';
+import AdminDashboard from './private/admin/AdminDashboard';
+import AdminAnalytics from './private/admin/AdminAnalytics';
+import ProviderDashboard from './private/ProviderDashboard';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -75,12 +77,6 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
         },
       },
     },
-    ServiceStatus: {
-      screen: ServiceStatusScreen,
-      linking: {
-        path: 'service-status',
-      },
-    },
     PhoneConfirmation: {
       screen: PhoneConfirmation,
       options: {
@@ -112,15 +108,6 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: ProfileScreen,
       linking: {
         path: 'client-profile',
-      },
-    },
-    PaymentCompletion: {
-      screen: PaymentCompletionScreen,
-      linking: {
-        path: 'payment-completion',
-      },
-      options: {
-        title: 'Pagamento Realizado',
       },
     },
     NotFound: {
@@ -181,6 +168,36 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: MySchedulesScreen,
       options: {
         title: 'Meus Agendamentos',
+      },
+    },
+    ProviderDashboard: {
+      screen: ProviderDashboard,
+      options: {
+        title: 'Painel do Prestador',
+      },
+    },
+    Help: {
+      screen: HelpScreen,
+      options: {
+        title: 'Central de Ajuda',
+      },
+    },
+    AdminDashboard: {
+      screen: AdminDashboard,
+      linking: {
+        path: 'admin-dashboard',
+      },
+      options: {
+        title: 'Admin',
+      },
+    },
+    AdminAnalytics: {
+      screen: AdminAnalytics,
+      linking: {
+        path: 'admin-analytics',
+      },
+      options: {
+        title: 'Analytics',
       },
     },
   },

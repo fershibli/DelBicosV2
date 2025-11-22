@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useUserStore } from '@stores/User';
-import CustomTextInput from '@components/CustomTextInput';
-import PasswordInput from '@components/PasswordInput';
-import { styles } from './styles';
-import colors from '@theme/colors';
+import CustomTextInput from '@components/ui/CustomTextInput';
+import PasswordInput from '@components/ui/PasswordInput';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types';
 
 type MessageType = 'success' | 'error' | null;
 
@@ -34,6 +36,11 @@ const TrocarSenhaForm: React.FC = () => {
   const novaSenha = watch('novaSenha');
 
   const { changePassword } = useUserStore();
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const handleSalvar = async (data: any) => {
     // Limpa mensagens anteriores
@@ -94,7 +101,15 @@ const TrocarSenhaForm: React.FC = () => {
         </View>
       )}
 
-      <View style={styles.card}>
+      <View
+        style={[
+          styles.card,
+          isDark && { backgroundColor: '#323232' },
+          isHighContrast && {
+            borderWidth: 3,
+            borderColor: colors.primaryBlack,
+          },
+        ]}>
         <View style={styles.formContainer}>
           <Controller
             control={control}

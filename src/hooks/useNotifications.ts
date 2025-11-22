@@ -9,23 +9,27 @@ interface UseNotificationsReturn {
   error: string | null;
 }
 
-export const useNotifications = (userId: string, pollingInterval: number = 30000): UseNotificationsReturn => {
+export const useNotifications = (
+  userId: string,
+  pollingInterval: number = 30000,
+): UseNotificationsReturn => {
   const [lastChecked, setLastChecked] = useState<Date>(new Date());
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [hasNewNotifications, setHasNewNotifications] = useState<boolean>(false);
+  const [hasNewNotifications, setHasNewNotifications] =
+    useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const checkNotifications = useCallback(async () => {
     if (isLoading) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       console.log('Iniciando verificação de notificações...');
       const hasNew = await checkForNewNotifications(userId, lastChecked);
       setHasNewNotifications(hasNew);
-      
+
       if (hasNew) {
         console.log('Novas notificações detectadas!');
         setLastChecked(new Date());
@@ -33,7 +37,8 @@ export const useNotifications = (userId: string, pollingInterval: number = 30000
         console.log('Nenhuma nova notificação');
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro desconhecido';
       setError(errorMessage);
       console.error('Erro no checkNotifications:', errorMessage);
     } finally {
@@ -43,12 +48,14 @@ export const useNotifications = (userId: string, pollingInterval: number = 30000
 
   useEffect(() => {
     console.log('Iniciando sistema de notificações para usuário:', userId);
-    
+
     checkNotifications();
-    
+
     const interval = setInterval(checkNotifications, pollingInterval);
-    console.log(`Polling configurado a cada ${pollingInterval/1000} segundos`);
-    
+    console.log(
+      `Polling configurado a cada ${pollingInterval / 1000} segundos`,
+    );
+
     return () => {
       console.log('Limpando intervalo de notificações');
       clearInterval(interval);
@@ -60,6 +67,6 @@ export const useNotifications = (userId: string, pollingInterval: number = 30000
     isLoading,
     lastChecked,
     hasNewNotifications,
-    error
+    error,
   };
 };

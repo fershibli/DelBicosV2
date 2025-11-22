@@ -6,6 +6,12 @@ import { useFonts } from 'expo-font';
 import { Navigation } from '@screens/NavigationStack';
 import { LocationProvider } from '@lib/hooks/LocationContext';
 import { MenuProvider } from 'react-native-popup-menu';
+import ThemeProvider from '@theme/ThemeProvider';
+import { Platform } from 'react-native';
+import { initGAWeb } from './utils/ga-web';
+import { initClarityWeb } from './utils/clarity';
+import { GOOGLE_ANALYTICS_ID, CLARITY_ID } from './config/varEnvs';
+import VLibrasSetup from '@components/features/Accessibility/VLibrasSetup';
 
 Asset.loadAsync([...NavigationAssets]);
 
@@ -23,6 +29,20 @@ export function App() {
   });
 
   React.useEffect(() => {
+    if (Platform.OS === 'web') {
+      if (GOOGLE_ANALYTICS_ID) {
+        initGAWeb(GOOGLE_ANALYTICS_ID);
+      } else {
+        console.warn('Variável de conexão do GA não definida');
+      }
+
+      if (CLARITY_ID) {
+        initClarityWeb(CLARITY_ID);
+      } else {
+        console.warn('Variável de conexão do Clarity não definida');
+      }
+    }
+
     if (loaded || error) {
       SplashScreen.hideAsync();
     }
@@ -34,17 +54,20 @@ export function App() {
 
   return (
     <MenuProvider>
-      <LocationProvider>
-        <Navigation
-          linking={{
-            enabled: 'auto',
-            prefixes: ['delbicos://'],
-          }}
-          onReady={() => {
-            SplashScreen.hideAsync();
-          }}
-        />
-      </LocationProvider>
+      <ThemeProvider>
+        <LocationProvider>
+          <VLibrasSetup />
+          <Navigation
+            linking={{
+              enabled: 'auto',
+              prefixes: ['delbicos://'],
+            }}
+            onReady={() => {
+              SplashScreen.hideAsync();
+            }}
+          />
+        </LocationProvider>
+      </ThemeProvider>
     </MenuProvider>
   );
 }

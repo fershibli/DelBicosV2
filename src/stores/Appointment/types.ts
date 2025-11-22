@@ -10,7 +10,7 @@ export interface Service {
   title: string;
   description: string;
   price: string;
-  duration: number; // duration in minutes
+  duration: number;
   banner_uri: string | null;
   active: boolean;
   subcategory_id: number;
@@ -30,7 +30,6 @@ export interface User {
   name: string;
   email: string;
   phone: string;
-  password: string;
   active: boolean;
   avatar_uri: string | null;
   banner_uri: string | null;
@@ -68,11 +67,11 @@ export interface Appointment {
   address_id: number;
   rating: number | null;
   review: string | null;
-  start_time: string; // ISO date string
-  end_time: string; // ISO date string
+  start_time: string;
+  end_time: string;
   status: AppointmentStatus;
-  createdAt: string; // ISO date string
-  updatedAt: string; // ISO date string
+  createdAt: string;
+  updatedAt: string;
   Service: Service;
   Client: Client;
   payment_intent_id?: string | null;
@@ -93,19 +92,32 @@ export interface InvoiceData {
   serviceDate: string;
   serviceTime: string;
   total: number;
-  // Novos campos para melhor rastreabilidade
   paymentMethod?: string;
   transactionId?: string;
-  dueDate?: string;
-  observations?: string;
+}
+
+export interface AppointmentSheetRow {
+  ID: number;
+  Professional: string;
+  Client: string;
+  Service: string;
+  Date: string;
+  Status: string;
 }
 
 export interface AppointmentStore {
-  fetchAppointments: () => Promise<Appointment[]>;
+  appointments: Appointment[];
+  loading: boolean;
+
+  fetchAppointments: () => Promise<void>;
+
+  fetchAppointmentsAsSheet: () => Promise<AppointmentSheetRow[]>;
+
   reviewAppointment: (
     appointmentId: number,
     rating: number,
     review: string,
   ) => Promise<boolean>;
+
   fetchInvoice: (appointmentId: number) => Promise<InvoiceData | null>;
 }

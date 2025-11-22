@@ -4,7 +4,6 @@ export type NavigationParams = {
   LoginPassword: undefined;
   Feed: undefined;
   PartnerProfile: { id: string };
-  ServiceStatus: undefined;
   PhoneConfirmation: undefined;
   ConfirmPhoneNumber: { code: string };
   Register: undefined;
@@ -20,8 +19,12 @@ export type NavigationParams = {
     selectedTime: string;
     imageUrl?: string;
     professionalName?: string;
+    serviceId: number;
   };
-  PaymentCompletion: undefined;
   PaymentStatus: undefined;
   MySchedules: undefined;
+  ProviderDashboard: undefined;
+  Help: undefined;
+  AdminDashboard: undefined;
+  AdminAnalytics: undefined;
 };

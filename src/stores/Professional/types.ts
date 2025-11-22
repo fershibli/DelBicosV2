@@ -1,5 +1,5 @@
 import { User } from '@stores/User/types';
-import { Service } from '@stores/Appointment/types';
+import { ProfessionalResult } from '@components/features/ProfessionalResultCard';
 
 export interface ListedProfessional {
   id: number;
@@ -11,6 +11,75 @@ export interface ListedProfessional {
   location: string;
 }
 
+export interface Address {
+  id: number;
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipcode: string;
+}
+
+export interface Subcategory {
+  id: number;
+  name: string;
+}
+
+export interface Service {
+  id: number;
+  title: string;
+  description?: string;
+  price: string;
+  duration: number;
+  banner_uri?: string;
+  active: boolean;
+  subcategory_id: number;
+  professional_id: number;
+  Subcategory?: Subcategory;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ClientUser {
+  name: string;
+  avatar_uri?: string;
+}
+
+export interface AppointmentClient {
+  User: ClientUser;
+}
+
+export interface Review {
+  id: number;
+  rating?: number;
+  review?: string;
+  start_time: string;
+  Client: AppointmentClient;
+}
+
+export interface Professional {
+  id: number;
+  user_id: number;
+  main_address_id?: number;
+  cpf: string;
+  cnpj?: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+
+  // Relacionamentos
+  User: User;
+  MainAddress?: Address;
+  Services: Service[];
+  Appointments: Review[];
+
+  // Dados calculados
+  rating?: number;
+  ratings_count?: number;
+}
+
 export interface ProfessionalStore {
   professionals: ListedProfessional[];
   selectedProfessional: Professional | null;
@@ -20,27 +89,10 @@ export interface ProfessionalStore {
     limit?: number,
   ) => Promise<ListedProfessional[]>;
   fetchProfessionalById: (id: number) => Promise<Professional | null>;
-}
-
-export interface Professional {
-  id: number;
-  user_id: number;
-  main_service_id?: number;
-  description?: string | null;
-  active: boolean;
-  createdAt: string; // Data ISO
-  updatedAt: string; // Data ISO
-
-  // --- Dados Aninhados Essenciais ---
-  User: User; // Informações do usuário associado
-  Service?: Service; // O serviço principal ou relevante para o contexto
-
-  // --- Dados Calculados/Agregados (Opcional, mas útil) ---
-  rating?: number | null; // Média de avaliações
-  ratings_count?: number; // Contagem de avaliações
-
-  // --- Outros Relacionamentos (Adicione se seu backend retornar) ---
-  // Addresses?: Address[];
-  // Availabilities?: Availability[];
-  // GalleryImages?: GalleryImage[];
+  fetchProfessionalsByAvailability: (
+    subCategoryId: number,
+    date: string,
+    lat?: number,
+    lng?: number,
+  ) => Promise<ProfessionalResult[] | null>;
 }

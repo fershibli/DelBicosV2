@@ -8,9 +8,9 @@ import {
   ActivityIndicator,
   View,
 } from 'react-native';
-import { AddressCard } from '@components/AddressCard';
-import ConfirmationModal from '@components/ConfirmationModal';
-import colors from '@theme/colors';
+import { AddressCard } from '@components/ui/AddressCard';
+import ConfirmationModal from '@components/ui/ConfirmationModal';
+import { useColors } from '@theme/ThemeProvider';
 import { Address, useAddressStore } from '@stores/Address';
 import { useUserStore } from '@stores/User';
 
@@ -28,6 +28,8 @@ export default function AlterarEnderecoForm() {
   const { user } = useUserStore();
   const [isModalVisible, setModalVisible] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<Address | null>(null);
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   useEffect(() => {
     if (user?.id) {
@@ -158,83 +160,83 @@ export default function AlterarEnderecoForm() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F4F7FA',
-  },
-  contentContainer: {
-    padding: 20,
-  },
-  pageTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#003366',
-    marginBottom: 24,
-    fontFamily: 'Afacad-Bold',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 40,
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#666',
-    fontFamily: 'Afacad-Regular',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 40,
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#dc3545',
-    textAlign: 'center',
-    marginBottom: 20,
-    fontFamily: 'Afacad-Regular',
-  },
-  retryButton: {
-    backgroundColor: '#007bff',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-  },
-  retryButtonText: {
-    color: colors.primaryWhite,
-    fontWeight: 'bold',
-    fontSize: 16,
-    fontFamily: 'Afacad-Bold',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 40,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    fontFamily: 'Afacad-Regular',
-  },
-  newButton: {
-    backgroundColor: '#ff7f00',
-    paddingVertical: 14,
-    paddingHorizontal: 22,
-    borderRadius: 8,
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginTop: 10,
-  },
-  newButtonText: {
-    color: colors.primaryWhite,
-    fontWeight: 'bold',
-    fontSize: 16,
-    fontFamily: 'Afacad-Bold',
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    contentContainer: {
+      padding: 20,
+    },
+    pageTitle: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: colors.primaryBlue,
+      marginBottom: 24,
+      fontFamily: 'Afacad-Bold',
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 40,
+    },
+    loadingText: {
+      marginTop: 10,
+      fontSize: 16,
+      color: colors.primaryBlack,
+      fontFamily: 'Afacad-Regular',
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 40,
+    },
+    errorText: {
+      fontSize: 16,
+      color: colors.primaryOrange,
+      textAlign: 'center',
+      marginBottom: 20,
+      fontFamily: 'Afacad-Regular',
+    },
+    retryButton: {
+      backgroundColor: colors.primaryBlue,
+      paddingVertical: 12,
+      paddingHorizontal: 24,
+      borderRadius: 8,
+    },
+    retryButtonText: {
+      color: colors.primaryWhite,
+      fontWeight: 'bold',
+      fontSize: 16,
+      fontFamily: 'Afacad-Bold',
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 40,
+    },
+    emptyText: {
+      fontSize: 16,
+      color: colors.primaryBlack,
+      textAlign: 'center',
+      fontFamily: 'Afacad-Regular',
+    },
+    newButton: {
+      backgroundColor: colors.primaryOrange,
+      paddingVertical: 14,
+      paddingHorizontal: 22,
+      borderRadius: 8,
+      alignItems: 'center',
+      alignSelf: 'center',
+      marginTop: 10,
+    },
+    newButtonText: {
+      color: colors.primaryWhite,
+      fontWeight: 'bold',
+      fontSize: 16,
+      fontFamily: 'Afacad-Bold',
+    },
+  });

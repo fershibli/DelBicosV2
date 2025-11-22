@@ -1,17 +1,18 @@
 import { StyleSheet } from 'react-native';
 
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F4F7FA',
-  },
-  contentContainer: {
-    padding: 20,
-  },
-  pageTitle: {
-    fontSize: 28,
-    fontFamily: 'Afacad-Bold',
-    color: '#003366',
-    marginBottom: 24,
-  },
-});
+export const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.secondaryGray,
+    },
+    contentContainer: {
+      padding: 20,
+    },
+    pageTitle: {
+      fontSize: 28,
+      fontFamily: 'Afacad-Bold',
+      color: colors.primaryBlue,
+      marginBottom: 24,
+    },
+  });

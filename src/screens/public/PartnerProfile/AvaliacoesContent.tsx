@@ -1,21 +1,10 @@
 import { Text } from '@react-navigation/elements';
 import { FlatList, StyleSheet, View, Image } from 'react-native';
 import { Rating } from 'react-native-ratings';
-
-type Avaliacao = {
-  id: string;
-  usuario: {
-    nome: string;
-    foto: string;
-  };
-  nota: number;
-  titulo?: string;
-  descricao?: string;
-  data: string;
-};
+import { Review } from '@stores/Professional/types';
 
 type AvaliacoesContentProps = {
-  avaliacoes?: Avaliacao[];
+  avaliacoes?: Review[];
 };
 
 export function AvaliacoesContent({ avaliacoes = [] }: AvaliacoesContentProps) {
@@ -28,35 +17,40 @@ export function AvaliacoesContent({ avaliacoes = [] }: AvaliacoesContentProps) {
     return new Date(dataString).toLocaleDateString('pt-BR', options);
   };
 
-  const renderItem = ({ item }: { item: Avaliacao }) => (
+  const renderItem = ({ item }: { item: Review }) => (
     <View style={styles.avaliacaoContainer}>
       <View style={styles.cabecalhoAvaliacao}>
         <Image
           source={{
-            uri: item.usuario.foto || 'https://via.placeholder.com/50',
+            uri:
+              item.Client.User.avatar_uri || 'https://via.placeholder.com/50',
           }}
           style={styles.fotoUsuario}
         />
         <View style={styles.infoUsuario}>
-          <Text style={styles.nomeUsuario}>{item.usuario.nome}</Text>
+          <Text style={styles.nomeUsuario}>{item.Client.User.name}</Text>
           <View style={styles.ratingContainer}>
-            <Rating
-              type="star"
-              ratingCount={5}
-              imageSize={16}
-              readonly
-              startingValue={item.nota}
-              fractions={1}
-              tintColor="#f8f8f8"
-            />
-            <Text style={styles.dataAvaliacao}>{formatarData(item.data)}</Text>
+            {item.rating && (
+              <Rating
+                type="star"
+                ratingCount={5}
+                imageSize={16}
+                readonly
+                startingValue={item.rating}
+                fractions={1}
+                tintColor="#f8f8f8"
+              />
+            )}
+            <Text style={styles.dataAvaliacao}>
+              {formatarData(item.start_time)}
+            </Text>
           </View>
         </View>
       </View>
 
-      {item.titulo && <Text style={styles.tituloAvaliacao}>{item.titulo}</Text>}
-
-      <Text style={styles.descricaoAvaliacao}>{item.descricao}</Text>
+      {item.review && (
+        <Text style={styles.descricaoAvaliacao}>{item.review}</Text>
+      )}
     </View>
   );
 
@@ -66,7 +60,7 @@ export function AvaliacoesContent({ avaliacoes = [] }: AvaliacoesContentProps) {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Avaliações</Text>
           <Text style={styles.sectionText}>
-            Sem avaliações para este parceiro
+            Sem avaliações para este profissional
           </Text>
         </View>
       ) : (
@@ -77,7 +71,7 @@ export function AvaliacoesContent({ avaliacoes = [] }: AvaliacoesContentProps) {
           <FlatList
             data={avaliacoes}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => String(item.id)}
             contentContainerStyle={styles.listContainer}
             ItemSeparatorComponent={() => <View style={styles.separador} />}
           />

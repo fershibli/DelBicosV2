@@ -12,16 +12,16 @@ import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
 
 import { useUserStore } from '@stores/User';
-import CustomTextInput from '@components/CustomTextInput';
+import CustomTextInput from '@components/ui/CustomTextInput';
 
 // @ts-ignore
 import IconPerson from '@assets/person.svg';
 // @ts-ignore
-import IconPhone from '@assets/phone.svg';
+// import IconPhone from '@assets/phone.svg';
 import LogoV3 from '@assets/LogoV3.png';
 
-import { styles } from './styles';
-import colors from '@theme/colors';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 
 type FormData = {
   email: string;
@@ -32,8 +32,11 @@ export const LoginPassword = () => {
   const navigation = useNavigation();
   const { signInPassword } = useUserStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const colors = useColors();
+  const styles = createStyles(colors);
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const {
     control,
@@ -48,8 +51,20 @@ export const LoginPassword = () => {
     setIsSubmitting(true);
     setErrorModalVisible(false);
     try {
-      await signInPassword(data.email, data.password);
-      navigation.navigate('Feed');
+      if (isAdmin) {
+        // admin login
+        // @ts-ignore
+        await (useUserStore.getState().signInAdmin || signInPassword)(
+          data.email,
+          data.password,
+        );
+        // After admin login, keep the user on the normal Home/Feed screen.
+        // The admin can access Analytics via the Header -> Analytics menu.
+        navigation.navigate('Feed');
+      } else {
+        await signInPassword(data.email, data.password);
+        navigation.navigate('Feed');
+      }
     } catch (error: any) {
       setErrorMessage(
         error.message || 'Ocorreu um erro ao tentar fazer login.',
@@ -70,6 +85,23 @@ export const LoginPassword = () => {
         </TouchableOpacity>
 
         <View style={styles.formContainer}>
+          <View style={styles.roleToggle}>
+            <TouchableOpacity
+              onPress={() => setIsAdmin(false)}
+              style={[styles.roleButton, !isAdmin && styles.roleButtonActive]}>
+              <Text
+                style={[styles.roleText, !isAdmin && styles.roleTextActive]}>
+                Usuário
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setIsAdmin(true)}
+              style={[styles.roleButton, isAdmin && styles.roleButtonActive]}>
+              <Text style={[styles.roleText, isAdmin && styles.roleTextActive]}>
+                Administrador
+              </Text>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.title}>Bem-vindo!</Text>
           <Text style={styles.subtitle}>Acesse sua conta para continuar.</Text>
 
@@ -112,6 +144,7 @@ export const LoginPassword = () => {
                 value={value}
                 error={errors.password}
                 secureTextEntry
+                onSubmitEditing={handleSubmit(onLoginPress)}
               />
             )}
           />
@@ -126,31 +159,32 @@ export const LoginPassword = () => {
             {isSubmitting ? (
               <ActivityIndicator color={colors.primaryWhite} />
             ) : (
-              <Text style={styles.buttonText}>
+              <View style={styles.buttonContent}>
                 <IconPerson
-                  width={16}
-                  height={16}
+                  width={18}
+                  height={18}
                   color={colors.primaryWhite}
-                  style={{ marginRight: 8 }}
-                />{' '}
-                Login
-              </Text>
+                />
+                <Text style={styles.buttonText}>Login</Text>
+              </View>
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, styles.buttonSecondary]}
-            onPress={() => navigation.navigate('PhoneConfirmation')}>
-            <Text style={[styles.buttonText, styles.buttonTextSecondary]}>
-              <IconPhone
-                width={16}
-                height={16}
-                stroke="#003366"
-                style={{ marginRight: 8 }}
-              />{' '}
-              Login por Telefone
-            </Text>
-          </TouchableOpacity>
+          {/* <TouchableOpacity
+            style={[
+              styles.button,
+              styles.buttonSecondary,
+              styles.buttonDisabled,
+            ]}
+            onPress={() => {}}
+            disabled={true}>
+            <View style={styles.buttonContent}>
+              <IconPhone width={18} height={18} stroke={colors.primaryBlue} />
+              <Text style={[styles.buttonText, styles.buttonTextSecondary]}>
+                Login por Telefone
+              </Text>
+            </View>
+          </TouchableOpacity> */}
 
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>
             <Text style={styles.linkText}>

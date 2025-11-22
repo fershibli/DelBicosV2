@@ -10,7 +10,7 @@ import {
   Modal,
 } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 
 type Imagem = {
   id: string;
@@ -58,6 +58,9 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
   }));
 
   const safeIndex = Math.max(0, Math.min(currentIndex, imagens.length - 1));
+
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   return (
     <View style={styles.container}>
@@ -107,53 +110,54 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.primaryWhite,
-  },
-  galleryContainer: {
-    padding: 8,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 40,
-    right: 20,
-    zIndex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  indicator: {
-    position: 'absolute',
-    bottom: 20,
-    alignSelf: 'center',
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    borderRadius: 15,
-  },
-  indicatorText: {
-    color: 'white',
-    fontSize: 16,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.primaryWhite,
+    },
+    galleryContainer: {
+      padding: 8,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    emptyText: {
+      fontSize: 16,
+      color: '#666',
+      textAlign: 'center',
+    },
+    closeButton: {
+      position: 'absolute',
+      top: 40,
+      right: 20,
+      zIndex: 1,
+      backgroundColor: 'rgba(0,0,0,0.6)',
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    closeButtonText: {
+      color: 'white',
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    indicator: {
+      position: 'absolute',
+      bottom: 20,
+      alignSelf: 'center',
+      backgroundColor: 'rgba(0,0,0,0.6)',
+      paddingHorizontal: 15,
+      paddingVertical: 5,
+      borderRadius: 15,
+    },
+    indicatorText: {
+      color: 'white',
+      fontSize: 16,
+    },
+  });

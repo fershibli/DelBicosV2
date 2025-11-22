@@ -1,0 +1,182 @@
+import React, { useEffect, useState } from 'react';
+import { useCategoryStore } from '@stores/Category/Category';
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  View,
+  Pressable,
+} from 'react-native';
+import { Category } from '@stores/Category/types';
+import { useNavigation } from '@react-navigation/native';
+import colors from '@theme/colors';
+import { styles } from './styles';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
+
+// @ts-ignore
+import beautySVG from '@assets/categories/beauty.svg';
+// @ts-ignore
+import healthSVG from '@assets/categories/health.svg';
+// @ts-ignore
+import homeSVG from '@assets/categories/home.svg';
+// @ts-ignore
+import miscSVG from '@assets/categories/miscellaneous.svg';
+// @ts-ignore
+import petsSVG from '@assets/categories/pets.svg';
+// @ts-ignore
+import repairSVG from '@assets/categories/repair.svg';
+
+// {IconComponent, width, height}
+const categoryImagesById: Record<number, any> = {
+  1: { IconComponent: healthSVG, width: 72, height: 70 },
+  2: { IconComponent: beautySVG, width: 63, height: 87 },
+  3: { IconComponent: repairSVG, width: 70, height: 75 },
+  4: { IconComponent: miscSVG, width: 51, height: 69 },
+  5: { IconComponent: homeSVG, width: 61, height: 50 },
+  6: { IconComponent: petsSVG, width: 74, height: 74 },
+};
+
+function getCategoryImagesById(id: number) {
+  return categoryImagesById[id] || categoryImagesById[4];
+}
+
+interface CategoryCardProps {
+  category: Category;
+  onPress: (category: Category) => void;
+}
+
+function CategoryCard({ category, onPress }: CategoryCardProps) {
+  const image = getCategoryImagesById(category.id);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+
+  // 6. ADICIONE o estado de hover
+  const [isHovered, setIsHovered] = useState(false);
+
+  // 7. Estilos dinâmicos para o card, texto e ícone
+  const cardStyle = [
+    styles.categoryCard,
+    {
+      backgroundColor: isDark ? colors.secondaryGray : colors.cardBackground,
+      borderColor: isDark ? colors.secondaryGray : colors.borderColor,
+    },
+    isHighContrast && {
+      backgroundColor: colors.primaryWhite,
+      borderWidth: 2,
+      borderColor: colors.borderColor,
+    },
+    isHovered &&
+      isDark && {
+        backgroundColor: colors.primaryOrange,
+        borderColor: colors.primaryOrange,
+      },
+    isHovered &&
+      isHighContrast && {
+        backgroundColor: colors.primaryBlue,
+        borderColor: colors.primaryBlue,
+      },
+    isHovered && !isDark && !isHighContrast && styles.categoryCardHovered,
+  ];
+
+  const titleStyle = [
+    styles.categoryTitle,
+    { color: isDark ? colors.primaryBlack : undefined },
+    isHighContrast && { color: colors.primaryOrange, fontWeight: 'bold' },
+    isHovered && isDark && { color: '#E2E8F0' },
+    isHovered && isHighContrast && { color: colors.primaryWhite },
+    isHovered && !isDark && !isHighContrast && styles.categoryTitleHovered,
+  ];
+
+  const iconColor = isDark
+    ? '#E2E8F0'
+    : isHighContrast
+      ? isHovered
+        ? colors.primaryWhite
+        : colors.primaryOrange
+      : isHovered
+        ? '#E2E8F0'
+        : colors.primaryOrange;
+
+  return (
+    // 8. Mude para Pressable e adicione eventos de hover
+    <Pressable
+      style={cardStyle}
+      onPress={() => onPress(category)}
+      onHoverIn={() => setIsHovered(true)}
+      onHoverOut={() => setIsHovered(false)}>
+      <image.IconComponent
+        style={{
+          width: image.width * 0.7, // Ícones um pouco menores
+          height: image.height * 0.7,
+          resizeMode: 'contain',
+        }}
+        color={iconColor} // Cor do ícone agora é dinâmica
+      />
+      <Text style={titleStyle}>{category.title}</Text>
+    </Pressable>
+  );
+}
+
+function CategorySlider() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { categories, fetchCategories } = useCategoryStore();
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    if (!categories?.length) {
+      setIsLoading(true);
+      fetchCategories().then(() => {
+        setIsLoading(false);
+      });
+    } else {
+      setIsLoading(false);
+    }
+  }, [categories, fetchCategories]);
+
+  const handleCategoryPress = (category: Category) => {
+    // @ts-ignore
+    navigation.navigate('SubCategoryScreen', {
+      categoryId: category.id,
+      categoryTitle: category.title,
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <View style={styles.externalContainer}>
+        <ActivityIndicator size="large" color={colors.primaryBlue} />
+      </View>
+    );
+  }
+
+  if (!categories || categories.length === 0) {
+    return (
+      <View style={styles.externalContainer}>
+        <Text>No categories available</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.externalContainer}>
+      <FlatList
+        contentContainerStyle={styles.flatList}
+        data={categories}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <CategoryCard
+            category={item}
+            onPress={handleCategoryPress} // Passa a função de navegação
+          />
+        )}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
+    </View>
+  );
+}
+
+export default CategorySlider;

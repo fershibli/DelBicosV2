@@ -11,10 +11,10 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { useLocation } from '@lib/hooks/LocationContext';
-import CustomTextInput from '@components/CustomTextInput';
+import CustomTextInput from '@components/ui/CustomTextInput';
 import LogoV3 from '@assets/LogoV3.png';
-import { styles } from './styles';
-import colors from '@theme/colors';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 
 function LoginScreen() {
   const navigation = useNavigation();
@@ -22,6 +22,9 @@ function LoginScreen() {
   const [cep, setCep] = useState('');
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [isLoadingCep, setIsLoadingCep] = useState(false);
+
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   // Função para buscar localização automática
   const handleUseLocation = async () => {

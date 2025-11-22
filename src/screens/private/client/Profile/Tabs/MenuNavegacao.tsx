@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { styles } from './styles'; // Importando os estilos nativos
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 
 type MenuNavegacaoProps = {
-  onItemSelected?: (screen: string) => void;
-  initialActive?: string;
+  onItemSelected: (screen: string) => void;
+  activeItem: string;
 };
 
 type MenuItem = {
@@ -15,14 +16,10 @@ type MenuItem = {
 
 const MenuNavegacao: React.FC<MenuNavegacaoProps> = ({
   onItemSelected,
-  initialActive = 'DadosContaForm',
+  activeItem,
 }) => {
-  const [activeItem, setActiveItem] = useState(initialActive);
-
-  useEffect(() => {
-    setActiveItem(initialActive);
-  }, [initialActive]);
-
+  const colors = useColors();
+  const styles = createStyles(colors);
   const menuItems: MenuItem[] = [
     { id: 1, title: 'Conta', screen: 'DadosContaForm' },
     { id: 2, title: 'Endereços', screen: 'MeusEnderecos' },
@@ -38,10 +35,7 @@ const MenuNavegacao: React.FC<MenuNavegacaoProps> = ({
   ];
 
   const handlePress = (screen: string) => {
-    setActiveItem(screen);
-    if (onItemSelected) {
-      onItemSelected(screen);
-    }
+    onItemSelected(screen);
   };
 
   return (

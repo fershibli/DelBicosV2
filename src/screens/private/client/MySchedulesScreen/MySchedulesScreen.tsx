@@ -1,20 +1,16 @@
 import React from 'react';
-import { ScrollView } from 'react-native';
-import { styles } from './styles';
-// Importe o componente que você já tem e que mostra a lista
+import { View } from 'react-native';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 import MeusAgendamentos from '../Profile/Tabs/MeusAgendamentos';
 
 function MySchedulesScreen() {
+  const colors = useColors();
+  const styles = createStyles(colors);
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}>
-      {/* Removido o título da página daqui, pois o componente MeusAgendamentos já tem 
-        um título "Meus Agendamentos". Se ele não tiver, descomente esta linha:
-        <Text style={styles.pageTitle}>Meus Agendamentos</Text> 
-      */}
+    <View style={styles.container}>
       <MeusAgendamentos />
-    </ScrollView>
+    </View>
   );
 }
 
