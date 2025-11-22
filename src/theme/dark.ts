@@ -29,7 +29,18 @@ const darkColors: ColorsType = {
   borderColor: '#334155', // Bordas sutis
   textSecondary: '#94A3B8', // Texto secundário
   textTertiary: '#64748B', // Texto terciário/placeholders
-  backgroundElevated: '#334155', // Elementos elevados (modais, dropdowns)
+  backgroundElevated: '#334155',
+    notification: {
+    unreadBorder: '#FB923C',
+    unreadTitle: '#FB923C',
+    unreadMessage: '#E2E8F0',
+    readTitle: '#94A3B8',
+    readMessage: '#94A3B8',
+    cardBackground: '#545454',
+    modalBackground: '#545454',
+  },
+   // Elementos elevados (modais, dropdowns)
+  
 };
 
 export default darkColors;
