@@ -130,7 +130,7 @@ export function RateServiceModal({
             <TextInput
               style={styles.textInput}
               placeholder="Conte-nos sobre sua experiência..."
-              placeholderTextColor={colors.textGray}
+              placeholderTextColor={colors.secondaryGray || '#999'}
               multiline
               numberOfLines={4}
               value={review}
@@ -257,7 +257,7 @@ const createStyles = (colors: any) =>
     },
     charCount: {
       fontSize: 12,
-      color: colors.textGray || '#999',
+      color: colors.secondaryGray || '#999',
       textAlign: 'right',
       marginTop: 4,
     },
