@@ -15,4 +15,13 @@ export type ColorsType = {
   textSecondary: string;
   textTertiary: string;
   backgroundElevated: string;
+  notification: {
+    unreadBorder: string;
+    unreadTitle: string;
+    unreadMessage: string;
+    readTitle: string;
+    readMessage: string;
+    cardBackground: string;
+    modalBackground: string;
+  };
 };
