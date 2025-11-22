@@ -1,5 +1,5 @@
 import { useAppointmentStore } from '@stores/Appointment';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Text,
   View,
@@ -10,11 +10,15 @@ import {
 } from 'react-native';
 import { useColors } from '@theme/ThemeProvider';
 import { Rating } from 'react-native-ratings';
+import { AppointmentDetailsModal } from '@components/features/AppointmentDetailsModal';
+import { Appointment } from '@stores/Appointment/types';
 
 function MeusAgendamentos() {
   const { appointments, fetchAppointments } = useAppointmentStore();
   const colors = useColors();
   const styles = createStyles(colors);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     fetchAppointments();
@@ -32,6 +36,22 @@ function MeusAgendamentos() {
       .filter((apt) => apt.status === 'completed')
       .slice(0, 2); // Limitar a 2
   }, [appointments]);
+
+  const handleOpenDetails = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setSelectedAppointment(null);
+  };
+
+  const handleCancelAppointment = () => {
+    // Implementar cancelamento do agendamento
+    console.log('Cancelar agendamento:', selectedAppointment?.id);
+    fetchAppointments();
+  };
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -93,7 +113,10 @@ function MeusAgendamentos() {
           <Text style={styles.dateTime}>
             Qui, {formatDateTime(appointment.start_time)} - {formatTime(appointment.start_time)}
           </Text>
-          <TouchableOpacity style={styles.detailsButton}>
+          <TouchableOpacity 
+            style={styles.detailsButton}
+            onPress={() => handleOpenDetails(appointment)}
+          >
             <Text style={styles.detailsButtonText}>Detalhes</Text>
           </TouchableOpacity>
           {status === 'completed' && (
@@ -137,6 +160,13 @@ function MeusAgendamentos() {
           )}
         </View>
       </View>
+
+      <AppointmentDetailsModal
+        visible={isModalVisible}
+        onClose={handleCloseModal}
+        appointment={selectedAppointment}
+        onCancel={handleCancelAppointment}
+      />
     </ScrollView>
   );
 }
