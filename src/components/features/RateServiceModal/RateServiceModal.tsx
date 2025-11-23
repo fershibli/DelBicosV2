@@ -113,7 +113,7 @@ export function RateServiceModal({
             <TextInput
               style={styles.textInput}
               placeholder="Fale sobre sua avaliação!"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor={colors.textTertiary}
               multiline
               numberOfLines={5}
               value={review}
@@ -132,7 +132,7 @@ export function RateServiceModal({
             onPress={handleSubmit}
             disabled={isSubmitting}>
             {isSubmitting ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.primaryWhite} />
             ) : (
               <Text style={styles.submitButtonText}>Enviar</Text>
             )}
@@ -178,12 +178,12 @@ const createStyles = (colors: any) =>
       padding: 20,
     },
     modalContainer: {
-      backgroundColor: '#fff',
+      backgroundColor: colors.cardBackground,
       borderRadius: 16,
       padding: 32,
       width: '100%',
       maxWidth: 500,
-      shadowColor: '#000',
+      shadowColor: colors.primaryBlack,
       shadowOffset: {
         width: 0,
         height: 4,
@@ -195,7 +195,7 @@ const createStyles = (colors: any) =>
     title: {
       fontSize: 24,
       fontWeight: '700',
-      color: '#1f2937',
+      color: colors.primaryBlack,
       marginBottom: 32,
       textAlign: 'center',
     },
@@ -212,23 +212,23 @@ const createStyles = (colors: any) =>
     ratingSubtext: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#1f2937',
+      color: colors.primaryBlack,
     },
     commentSection: {
       marginBottom: 24,
     },
     textInput: {
       borderWidth: 1,
-      borderColor: '#d1d5db',
+      borderColor: colors.borderColor,
       borderRadius: 8,
       padding: 16,
       fontSize: 14,
-      color: '#1f2937',
+      color: colors.primaryBlack,
       minHeight: 120,
-      backgroundColor: '#f9fafb',
+      backgroundColor: colors.secondaryGray,
     },
     submitButton: {
-      backgroundColor: '#0891b2',
+      backgroundColor: colors.primaryBlue,
       paddingVertical: 14,
       borderRadius: 8,
       alignItems: 'center',
@@ -238,18 +238,18 @@ const createStyles = (colors: any) =>
       opacity: 0.6,
     },
     submitButtonText: {
-      color: '#fff',
+      color: colors.primaryWhite,
       fontSize: 16,
       fontWeight: '600',
     },
     charCounter: {
       fontSize: 12,
-      color: '#9ca3af',
+      color: colors.textTertiary,
       textAlign: 'right',
       marginTop: 4,
     },
     successModal: {
-      backgroundColor: '#0891b2',
+      backgroundColor: colors.primaryBlue,
       borderRadius: 16,
       padding: 32,
       width: '100%',
@@ -259,25 +259,25 @@ const createStyles = (colors: any) =>
     successTitle: {
       fontSize: 20,
       fontWeight: '700',
-      color: '#fff',
+      color: colors.primaryWhite,
       textAlign: 'center',
       marginBottom: 16,
     },
     successMessage: {
       fontSize: 16,
-      color: '#fff',
+      color: colors.primaryWhite,
       textAlign: 'center',
       marginBottom: 24,
       lineHeight: 24,
     },
     successButton: {
-      backgroundColor: '#f97316',
+      backgroundColor: colors.primaryOrange,
       paddingHorizontal: 48,
       paddingVertical: 12,
       borderRadius: 24,
     },
     successButtonText: {
-      color: '#fff',
+      color: colors.primaryWhite,
       fontSize: 16,
       fontWeight: '600',
     },
