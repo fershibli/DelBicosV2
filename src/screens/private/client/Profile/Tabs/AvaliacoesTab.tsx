@@ -71,6 +71,7 @@ const AvaliacoesTab: React.FC = () => {
                   clientName={appointment.Professional.User.name}
                   clientAvatar={appointment.Professional.User.avatar_uri || undefined}
                   date={formatarData(appointment.start_time)}
+                  review={appointment.review || undefined}
                 />
               </View>
             ))}
