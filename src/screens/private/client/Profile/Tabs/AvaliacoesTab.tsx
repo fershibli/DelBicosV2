@@ -13,10 +13,10 @@ const AvaliacoesTab: React.FC = () => {
     fetchAppointments();
   }, [fetchAppointments]);
 
-  // Filtrar apenas appointments que foram avaliados pelo cliente
-  const avaliacoesFeitas = appointments.filter(
-    (apt) => apt.rating !== null && apt.rating !== undefined && apt.rating > 0
-  );
+  // Filtrar apenas appointments que foram avaliados pelo cliente (limitar a 2)
+  const avaliacoesFeitas = appointments
+    .filter((apt) => apt.rating !== null && apt.rating !== undefined && apt.rating > 0)
+    .slice(0, 2);
 
   const formatarData = (dataString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -71,6 +71,7 @@ const AvaliacoesTab: React.FC = () => {
                   clientName={appointment.Professional.User.name}
                   clientAvatar={appointment.Professional.User.avatar_uri || undefined}
                   date={formatarData(appointment.start_time)}
+                  review={appointment.review || undefined}
                 />
               </View>
             ))}
@@ -86,13 +87,13 @@ const createAvaliacoesStyles = (colors: any) =>
     container: {
       flex: 1,
       padding: 20,
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: 'transparent',
     },
     pageTitle: {
       fontSize: 28,
       fontWeight: '700',
       color: colors.primaryBlack,
-      marginBottom: 20,
+      marginBottom: 24,
     },
     loadingContainer: {
       flex: 1,

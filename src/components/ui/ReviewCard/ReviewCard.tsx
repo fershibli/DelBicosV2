@@ -10,6 +10,7 @@ interface ReviewCardProps {
   clientName: string;
   clientAvatar?: string;
   date: string;
+  review?: string;
 }
 
 export function ReviewCard({
@@ -19,6 +20,7 @@ export function ReviewCard({
   clientName,
   clientAvatar,
   date,
+  review,
 }: ReviewCardProps) {
   const colors = useColors();
   const styles = createStyles(colors);
@@ -43,6 +45,11 @@ export function ReviewCard({
 
       {/* Service */}
       <Text style={styles.service}>{serviceTitle}</Text>
+
+      {/* Review comment */}
+      {review && review.trim() !== '' && (
+        <Text style={styles.reviewText}>{review}</Text>
+      )}
 
       {/* Client info */}
       <View style={styles.clientContainer}>
@@ -94,7 +101,14 @@ const createStyles = (colors: any) =>
     service: {
       fontSize: 14,
       color: colors.textGray || '#666',
+      marginBottom: 8,
+    },
+    reviewText: {
+      fontSize: 13,
+      color: colors.primaryBlack || '#000',
+      lineHeight: 20,
       marginBottom: 12,
+      fontStyle: 'italic',
     },
     clientContainer: {
       flexDirection: 'row',

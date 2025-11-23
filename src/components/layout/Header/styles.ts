@@ -84,7 +84,7 @@ export const createStyles = (colors: any) =>
     },
 
     searchBar: {
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.primaryBlue,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
@@ -93,7 +93,7 @@ export const createStyles = (colors: any) =>
       gap: 20,
     },
     searchText: {
-      color: colors.primaryBlack,
+      color: colors.primaryWhite,
       fontSize: 16,
       fontFamily: 'Afacad-SemiBold',
     },
