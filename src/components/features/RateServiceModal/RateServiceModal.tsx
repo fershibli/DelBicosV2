@@ -18,6 +18,8 @@ interface RateServiceModalProps {
   appointmentId: number;
   professionalName: string;
   serviceTitle: string;
+  existingRating?: number | null;
+  existingReview?: string | null;
   onClose: () => void;
   onSuccess?: () => void;
 }
@@ -27,6 +29,8 @@ export function RateServiceModal({
   appointmentId,
   professionalName,
   serviceTitle,
+  existingRating,
+  existingReview,
   onClose,
   onSuccess,
 }: RateServiceModalProps) {
@@ -34,9 +38,10 @@ export function RateServiceModal({
   const styles = createStyles(colors);
   const { reviewAppointment } = useAppointmentStore();
 
-  const [rating, setRating] = useState(5);
-  const [review, setReview] = useState('');
+  const [rating, setRating] = useState(existingRating || 5);
+  const [review, setReview] = useState(existingReview || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleSubmit = async () => {
     if (rating === 0) {
@@ -50,19 +55,7 @@ export function RateServiceModal({
       const success = await reviewAppointment(appointmentId, rating, review);
 
       if (success) {
-        Alert.alert(
-          'Sucesso!',
-          'Sua avaliação foi registrada com sucesso.',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                onSuccess?.();
-                handleClose();
-              },
-            },
-          ]
-        );
+        setShowSuccessModal(true);
       } else {
         Alert.alert(
           'Erro',
@@ -83,6 +76,14 @@ export function RateServiceModal({
     onClose();
   };
 
+  const handleSuccessClose = () => {
+    setShowSuccessModal(false);
+    setRating(5);
+    setReview('');
+    onSuccess?.();
+    onClose();
+  };
+
   return (
     <Modal
       visible={visible}
@@ -91,81 +92,78 @@ export function RateServiceModal({
       onRequestClose={handleClose}>
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
-          <Text style={styles.title}>Avaliar Serviço</Text>
+          <Text style={styles.title}>
+            {existingRating ? 'Editar sua avaliação' : 'Como foi sua experiência?'}
+          </Text>
 
           <View style={styles.infoContainer}>
-            <Text style={styles.label}>Profissional:</Text>
-            <Text style={styles.value}>{professionalName}</Text>
-          </View>
-
-          <View style={styles.infoContainer}>
-            <Text style={styles.label}>Serviço:</Text>
-            <Text style={styles.value}>{serviceTitle}</Text>
-          </View>
-
-          <View style={styles.ratingSection}>
-            <Text style={styles.ratingLabel}>Sua avaliação:</Text>
             <Rating
               type="star"
               ratingCount={5}
-              imageSize={40}
+              imageSize={50}
               startingValue={rating}
               onFinishRating={setRating}
               tintColor={colors.primaryWhite}
               style={styles.rating}
             />
-            <Text style={styles.ratingText}>
-              {rating === 5 && 'Excelente!'}
-              {rating === 4 && 'Muito Bom!'}
-              {rating === 3 && 'Bom'}
-              {rating === 2 && 'Regular'}
-              {rating === 1 && 'Ruim'}
-            </Text>
+            <Text style={styles.ratingSubtext}>Ótimo! 5 estrelas!</Text>
           </View>
 
           <View style={styles.commentSection}>
-            <Text style={styles.commentLabel}>
-              Comentário (opcional):
-            </Text>
             <TextInput
               style={styles.textInput}
-              placeholder="Conte-nos sobre sua experiência..."
-              placeholderTextColor={colors.secondaryGray || '#999'}
+              placeholder="Fale sobre sua avaliação!"
+              placeholderTextColor="#9ca3af"
               multiline
-              numberOfLines={4}
+              numberOfLines={5}
               value={review}
               onChangeText={setReview}
               maxLength={500}
               textAlignVertical="top"
             />
-            <Text style={styles.charCount}>{review.length}/500</Text>
+            <Text style={styles.charCounter}>{review.length}/500</Text>
           </View>
 
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
-              onPress={handleClose}
-              disabled={isSubmitting}>
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
-            </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.submitButton,
+              isSubmitting && styles.submitButtonDisabled,
+            ]}
+            onPress={handleSubmit}
+            disabled={isSubmitting}>
+            {isSubmitting ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.submitButtonText}>Enviar</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
 
+      {/* Modal de Sucesso */}
+      <Modal
+        visible={showSuccessModal}
+        transparent
+        animationType="fade"
+        onRequestClose={handleSuccessClose}>
+        <View style={styles.overlay}>
+          <View style={styles.successModal}>
+            <Text style={styles.successTitle}>
+              {existingRating ? 'Avaliação atualizada!' : 'Obrigado pela sua avaliação!'}
+            </Text>
+            <Text style={styles.successMessage}>
+              {existingRating 
+                ? 'Sua avaliação foi atualizada com sucesso!' 
+                : 'Ela vai ajudar as outras pessoas a encontrarem ótimos profissionais!'}
+            </Text>
             <TouchableOpacity
-              style={[
-                styles.button,
-                styles.submitButton,
-                isSubmitting && styles.submitButtonDisabled,
-              ]}
-              onPress={handleSubmit}
-              disabled={isSubmitting}>
-              {isSubmitting ? (
-                <ActivityIndicator color={colors.primaryWhite} />
-              ) : (
-                <Text style={styles.submitButtonText}>Enviar Avaliação</Text>
-              )}
+              style={styles.successButton}
+              onPress={handleSuccessClose}>
+              <Text style={styles.successButtonText}>Ok</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </Modal>
     </Modal>
   );
 }
@@ -180,9 +178,9 @@ const createStyles = (colors: any) =>
       padding: 20,
     },
     modalContainer: {
-      backgroundColor: colors.primaryWhite || '#fff',
+      backgroundColor: '#fff',
       borderRadius: 16,
-      padding: 24,
+      padding: 32,
       width: '100%',
       maxWidth: 500,
       shadowColor: '#000',
@@ -195,99 +193,91 @@ const createStyles = (colors: any) =>
       elevation: 8,
     },
     title: {
-      fontSize: 22,
-      fontWeight: 'bold',
-      color: colors.primaryBlack || '#000',
-      marginBottom: 20,
+      fontSize: 24,
+      fontWeight: '700',
+      color: '#1f2937',
+      marginBottom: 32,
       textAlign: 'center',
     },
     infoContainer: {
       marginBottom: 12,
     },
-    label: {
-      fontSize: 14,
-      fontWeight: '600',
-      color: colors.textGray || '#666',
-      marginBottom: 4,
-    },
-    value: {
-      fontSize: 16,
-      color: colors.primaryBlack || '#000',
-    },
     ratingSection: {
       alignItems: 'center',
-      marginVertical: 24,
-      paddingVertical: 16,
-      backgroundColor: colors.secondaryBeige || '#f9f9f9',
-      borderRadius: 12,
-    },
-    ratingLabel: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: colors.primaryBlack || '#000',
-      marginBottom: 12,
+      marginBottom: 24,
     },
     rating: {
-      marginVertical: 8,
+      marginBottom: 16,
     },
-    ratingText: {
-      fontSize: 14,
-      fontWeight: '500',
-      color: colors.primaryOrange || '#FF6B35',
-      marginTop: 8,
+    ratingSubtext: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: '#1f2937',
     },
     commentSection: {
       marginBottom: 24,
     },
-    commentLabel: {
-      fontSize: 14,
-      fontWeight: '600',
-      color: colors.primaryBlack || '#000',
-      marginBottom: 8,
-    },
     textInput: {
       borderWidth: 1,
-      borderColor: colors.secondaryBeige || '#ddd',
+      borderColor: '#d1d5db',
       borderRadius: 8,
-      padding: 12,
+      padding: 16,
       fontSize: 14,
-      color: colors.primaryBlack || '#000',
-      minHeight: 100,
-      backgroundColor: colors.primaryWhite || '#fff',
+      color: '#1f2937',
+      minHeight: 120,
+      backgroundColor: '#f9fafb',
     },
-    charCount: {
-      fontSize: 12,
-      color: colors.secondaryGray || '#999',
-      textAlign: 'right',
-      marginTop: 4,
-    },
-    buttonContainer: {
-      flexDirection: 'row',
-      gap: 12,
-    },
-    button: {
-      flex: 1,
+    submitButton: {
+      backgroundColor: '#0891b2',
       paddingVertical: 14,
       borderRadius: 8,
       alignItems: 'center',
       justifyContent: 'center',
     },
-    cancelButton: {
-      backgroundColor: colors.secondaryGray || '#f0f0f0',
-    },
-    cancelButtonText: {
-      color: colors.primaryBlack || '#000',
-      fontSize: 16,
-      fontWeight: '600',
-    },
-    submitButton: {
-      backgroundColor: colors.primaryOrange || '#FF6B35',
-    },
     submitButtonDisabled: {
       opacity: 0.6,
     },
     submitButtonText: {
-      color: colors.primaryWhite || '#fff',
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    charCounter: {
+      fontSize: 12,
+      color: '#9ca3af',
+      textAlign: 'right',
+      marginTop: 4,
+    },
+    successModal: {
+      backgroundColor: '#0891b2',
+      borderRadius: 16,
+      padding: 32,
+      width: '100%',
+      maxWidth: 450,
+      alignItems: 'center',
+    },
+    successTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: '#fff',
+      textAlign: 'center',
+      marginBottom: 16,
+    },
+    successMessage: {
+      fontSize: 16,
+      color: '#fff',
+      textAlign: 'center',
+      marginBottom: 24,
+      lineHeight: 24,
+    },
+    successButton: {
+      backgroundColor: '#f97316',
+      paddingHorizontal: 48,
+      paddingVertical: 12,
+      borderRadius: 24,
+    },
+    successButtonText: {
+      color: '#fff',
       fontSize: 16,
       fontWeight: '600',
     },
