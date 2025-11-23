@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { HTTP_DOMAIN } from '@config/varEnvs';
+import { useColors } from '@theme/ThemeProvider';
 
 interface Notification {
   id: number;
@@ -22,7 +23,6 @@ interface Notification {
   createdAt: string;
   user_id: number;
 }
-
 
 interface NotificacoesContentProps {
   userId: string;
@@ -34,20 +34,14 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedNotification, setSelectedNotification] =
-    useState<Notification | null>(null);
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
 
-  const colors = {
-    primary: '#FC8200',
-    error: '#FF0000',
-    surface: '#FFFFFF',
-    onSurfaceVariant: '#666666',
-  };
+  const colors = useColors();
 
   const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${HTTP_DOMAIN}/notifications/${userId}`);
+      const response = await axios.get(`${HTTP_DOMAIN}/api/notifications/${userId}`);
       const apiNotifications = response.data as Notification[];
       setNotifications(apiNotifications);
     } catch (err) {
@@ -77,7 +71,7 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
 
       try {
         await axios.patch(
-          `${HTTP_DOMAIN}/notifications/${notificationId}/read/${userId}`,
+          `${HTTP_DOMAIN}/api/notifications/${notificationId}/read/${userId}`,
         );
         setNotifications((prev) =>
           prev.map((notif) =>
@@ -117,12 +111,23 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
       : require('../../../../../assets/delbicos-logo-grey.png');
 
     const cardStyle = isUnread ? styles.unreadCard : styles.readCard;
-    const titleColor = isUnread ? '#FC8200' : colors.onSurfaceVariant;
-    const descriptionColor = isUnread ? '#005A93' : colors.onSurfaceVariant;
+    const titleColor = isUnread 
+      ? colors.notification.unreadTitle 
+      : colors.notification.readTitle;
+    const descriptionColor = isUnread 
+      ? colors.notification.unreadMessage 
+      : colors.notification.readMessage;
 
     return (
       <TouchableOpacity
-        style={[styles.card, cardStyle]}
+        style={[
+          styles.card, 
+          cardStyle, 
+          { 
+            backgroundColor: colors.notification.cardBackground,
+            borderColor: isUnread ? colors.notification.unreadBorder : colors.borderColor
+          }
+        ]}
         onPress={() => handleNotificationPress(item)}
         activeOpacity={0.7}>
         <View style={styles.cardContent}>
@@ -132,7 +137,10 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
             <Text
               style={[
                 styles.title,
-                { color: titleColor, fontWeight: isUnread ? '700' : '400' },
+                { 
+                  color: titleColor, 
+                  fontWeight: isUnread ? '700' : '400' 
+                },
               ]}
               numberOfLines={1}>
               {item.title}
@@ -149,7 +157,7 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
             style={[
               styles.date,
               {
-                color: colors.onSurfaceVariant,
+                color: colors.textTertiary,
                 fontWeight: isUnread ? '400' : '300',
               },
             ]}>
@@ -164,7 +172,7 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
     return (
       <ActivityIndicator
         size="large"
-        color={colors.primary}
+        color={colors.primaryOrange}
         style={styles.centered}
       />
     );
@@ -172,16 +180,20 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
 
   if (error) {
     return (
-      <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
+      <Text style={[styles.errorText, { color: colors.primaryOrange }]}>{error}</Text>
     );
   }
 
   if (notifications.length === 0 && !loading) {
-    return <Text style={styles.emptyText}>Você não tem notificações.</Text>;
+    return (
+      <Text style={[styles.emptyText, { color: colors.textTertiary }]}>
+        Você não tem notificações.
+      </Text>
+    );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.surface }]}>
+    <View style={[styles.container, { backgroundColor: colors.primaryWhite }]}>
       <FlatList
         data={notifications}
         renderItem={renderItem}
@@ -195,20 +207,32 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
         transparent={true}
         onRequestClose={hideModal}>
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+          <View style={[
+            styles.modalContent, 
+            { backgroundColor: colors.notification.modalBackground }
+          ]}>
             {selectedNotification && (
               <View style={styles.modalInnerContainer}>
-                <Text style={[styles.modalTitle, { color: '#FC8200' }]}>
+                <Text style={[
+                  styles.modalTitle, 
+                  { color: colors.primaryOrange }
+                ]}>
                   {selectedNotification.title}
                 </Text>
 
                 <ScrollView style={styles.modalMessageScroll}>
-                  <Text style={styles.modalMessage}>
+                  <Text style={[
+                    styles.modalMessage, 
+                    { color: colors.primaryBlack }
+                  ]}>
                     {selectedNotification.message}
                   </Text>
                 </ScrollView>
 
-                <Text style={styles.modalDate}>
+                <Text style={[
+                  styles.modalDate, 
+                  { color: colors.textTertiary }
+                ]}>
                   {new Date(selectedNotification.createdAt).toLocaleDateString(
                     'pt-BR',
                   )}{' '}
@@ -216,7 +240,10 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
                 </Text>
 
                 <TouchableOpacity
-                  style={[styles.modalButton, { backgroundColor: '#FC8200' }]}
+                  style={[
+                    styles.modalButton, 
+                    { backgroundColor: colors.primaryOrange }
+                  ]}
                   onPress={hideModal}>
                   <Text style={styles.modalButtonLabel}>Fechar</Text>
                 </TouchableOpacity>
@@ -245,7 +272,6 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: 10,
     borderRadius: 50,
-    backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -254,11 +280,9 @@ const styles = StyleSheet.create({
   },
   unreadCard: {
     borderWidth: 2,
-    borderColor: '#FC8200',
   },
   readCard: {
     borderWidth: 1,
-    borderColor: '#eee',
   },
   cardContent: {
     flexDirection: 'row',
@@ -291,7 +315,6 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 16,
     lineHeight: 20,
-    color: '#000000',
     marginLeft: 10,
     alignSelf: 'center',
   },
@@ -302,7 +325,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: 'center',
-    color: '#666',
     marginTop: 20,
     fontSize: 16,
   },
@@ -337,12 +359,10 @@ const styles = StyleSheet.create({
   modalMessage: {
     fontSize: 16,
     lineHeight: 22,
-    color: '#333',
     textAlign: 'left',
   },
   modalDate: {
     fontSize: 14,
-    color: '#666',
     textAlign: 'center',
     marginBottom: 16,
   },

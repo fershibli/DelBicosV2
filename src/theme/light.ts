@@ -17,6 +17,15 @@ const lightColors: ColorsType = {
   textSecondary: '#6B7280',
   textTertiary: '#9CA3AF',
   backgroundElevated: '#FFFFFF',
+  notification: {
+    unreadBorder: '#FB923C',
+    unreadTitle: '#FB923C',
+    unreadMessage: '#000000',
+    readTitle: '#666666',
+    readMessage: '#666666',
+    cardBackground: '#FFFFFF',
+    modalBackground: '#FFFFFF',
+  },
 };
 
 export default lightColors;
