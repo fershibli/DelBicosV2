@@ -13,10 +13,10 @@ const AvaliacoesTab: React.FC = () => {
     fetchAppointments();
   }, [fetchAppointments]);
 
-  // Filtrar apenas appointments que foram avaliados pelo cliente
-  const avaliacoesFeitas = appointments.filter(
-    (apt) => apt.rating !== null && apt.rating !== undefined && apt.rating > 0
-  );
+  // Filtrar apenas appointments que foram avaliados pelo cliente (limitar a 2)
+  const avaliacoesFeitas = appointments
+    .filter((apt) => apt.rating !== null && apt.rating !== undefined && apt.rating > 0)
+    .slice(0, 2);
 
   const formatarData = (dataString: string) => {
     const options: Intl.DateTimeFormatOptions = {
