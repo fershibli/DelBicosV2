@@ -87,13 +87,13 @@ const createAvaliacoesStyles = (colors: any) =>
     container: {
       flex: 1,
       padding: 20,
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: 'transparent',
     },
     pageTitle: {
       fontSize: 28,
       fontWeight: '700',
       color: colors.primaryBlack,
-      marginBottom: 20,
+      marginBottom: 24,
     },
     loadingContainer: {
       flex: 1,

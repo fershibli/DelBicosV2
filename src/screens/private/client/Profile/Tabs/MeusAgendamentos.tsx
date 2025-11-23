@@ -216,7 +216,7 @@ const createStyles = (colors: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: 'transparent',
       padding: 20,
     },
     pageTitle: {
