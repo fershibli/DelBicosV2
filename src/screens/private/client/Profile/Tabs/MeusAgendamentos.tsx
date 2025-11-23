@@ -11,6 +11,7 @@ import {
 import { useColors } from '@theme/ThemeProvider';
 import { Rating } from 'react-native-ratings';
 import { AppointmentDetailsModal } from '@components/features/AppointmentDetailsModal';
+import { RateServiceModal } from '@components/features/RateServiceModal';
 import { Appointment } from '@stores/Appointment/types';
 
 function MeusAgendamentos() {
@@ -19,6 +20,8 @@ function MeusAgendamentos() {
   const styles = createStyles(colors);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isRateModalVisible, setIsRateModalVisible] = useState(false);
+  const [appointmentToRate, setAppointmentToRate] = useState<Appointment | null>(null);
 
   useEffect(() => {
     fetchAppointments();
@@ -32,9 +35,11 @@ function MeusAgendamentos() {
   }, [appointments]);
 
   const agendamentosRealizados = useMemo(() => {
-    return appointments
+    const realizados = appointments
       .filter((apt) => apt.status === 'completed')
       .slice(0, 2); // Limitar a 2
+    
+    return realizados;
   }, [appointments]);
 
   const handleOpenDetails = (appointment: Appointment) => {
@@ -50,6 +55,20 @@ function MeusAgendamentos() {
   const handleCancelAppointment = () => {
     // Implementar cancelamento do agendamento
     console.log('Cancelar agendamento:', selectedAppointment?.id);
+    fetchAppointments();
+  };
+
+  const handleOpenRateModal = (appointment: Appointment) => {
+    setAppointmentToRate(appointment);
+    setIsRateModalVisible(true);
+  };
+
+  const handleCloseRateModal = () => {
+    setIsRateModalVisible(false);
+    setAppointmentToRate(null);
+  };
+
+  const handleRateSuccess = () => {
     fetchAppointments();
   };
 
@@ -95,15 +114,17 @@ function MeusAgendamentos() {
               {appointment.Professional.User.name}
             </Text>
             <View style={styles.ratingRow}>
-              <Rating
-                type="star"
-                ratingCount={5}
-                imageSize={10}
-                readonly
-                startingValue={appointment.rating || 4.5}
-                tintColor="#fff"
-                style={{ marginRight: 4 }}
-              />
+              {appointment.rating !== null && (
+                <Rating
+                  type="star"
+                  ratingCount={5}
+                  imageSize={10}
+                  readonly
+                  startingValue={appointment.rating}
+                  tintColor="#fff"
+                  style={{ marginRight: 4 }}
+                />
+              )}
               <Text style={styles.subcategoryText}>
                 {appointment.Service.Subcategory?.name || 'Serviços Gerais'}
               </Text>
@@ -120,8 +141,15 @@ function MeusAgendamentos() {
             <Text style={styles.detailsButtonText}>Detalhes</Text>
           </TouchableOpacity>
           {status === 'completed' && (
-            <TouchableOpacity style={styles.reviewButton}>
-              <Text style={styles.reviewButtonText}>Avaliar</Text>
+            <TouchableOpacity 
+              style={styles.reviewButton}
+              onPress={() => {
+                handleOpenRateModal(appointment);
+              }}
+            >
+              <Text style={styles.reviewButtonText}>
+                Avaliar
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -149,7 +177,7 @@ function MeusAgendamentos() {
 
       {/* Agendamentos Realizados */}
       <View style={styles.section}>
-        <View style={styles.sectionHeader}>
+        <View style={styles.sectionHeaderOrange}>
           <Text style={styles.sectionTitle}>Agendamentos Realizados</Text>
         </View>
         <View style={styles.grid}>
@@ -167,6 +195,19 @@ function MeusAgendamentos() {
         appointment={selectedAppointment}
         onCancel={handleCancelAppointment}
       />
+
+      {appointmentToRate && (
+        <RateServiceModal
+          visible={isRateModalVisible}
+          appointmentId={appointmentToRate.id}
+          professionalName={appointmentToRate.Professional.User.name}
+          serviceTitle={appointmentToRate.Service.title}
+          existingRating={appointmentToRate.rating}
+          existingReview={appointmentToRate.review}
+          onClose={handleCloseRateModal}
+          onSuccess={handleRateSuccess}
+        />
+      )}
     </ScrollView>
   );
 }
@@ -188,7 +229,14 @@ const createStyles = (colors: any) =>
       marginBottom: 32,
     },
     sectionHeader: {
-      backgroundColor: colors.primaryOrange,
+      backgroundColor: '#1e3a8a',
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 8,
+      marginBottom: 16,
+    },
+    sectionHeaderOrange: {
+      backgroundColor: '#f97316',
       paddingVertical: 12,
       paddingHorizontal: 16,
       borderRadius: 8,
@@ -306,7 +354,7 @@ const createStyles = (colors: any) =>
       marginBottom: 12,
     },
     detailsButton: {
-      backgroundColor: '#f97316',
+      backgroundColor: '#2563eb',
       paddingVertical: 8,
       borderRadius: 6,
       alignItems: 'center',
@@ -318,15 +366,13 @@ const createStyles = (colors: any) =>
       fontWeight: '600',
     },
     reviewButton: {
-      backgroundColor: '#fff',
+      backgroundColor: '#10b981',
       paddingVertical: 8,
       borderRadius: 6,
       alignItems: 'center',
-      borderWidth: 1,
-      borderColor: '#e5e7eb',
     },
     reviewButtonText: {
-      color: '#374151',
+      color: '#fff',
       fontSize: 13,
       fontWeight: '600',
     },
