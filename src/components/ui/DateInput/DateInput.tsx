@@ -7,10 +7,13 @@ interface DateInputProps {
   value: string;
   onChangeText: (text: string) => void;
   onBlur?: () => void;
-  error?: boolean;
+  error?: any;
 }
 
-const formatDate = (cleanText: string) => {
+const cleanString = (text: string) => text.replace(/[^\d]/g, '').slice(0, 8);
+
+const formatDate = (text: string) => {
+  const cleanText = cleanString(text);
   let formatted = cleanText;
   if (cleanText.length > 2) {
     formatted = `${cleanText.slice(0, 2)}/${cleanText.slice(2)}`;
@@ -32,18 +35,14 @@ const DateInput: React.FC<DateInputProps> = ({
 }) => {
   const colors = useColors();
   const styles = createStyles(colors);
-  const [formattedDate, setFormattedDate] = useState(() =>
-    formatDate(value || ''),
-  );
+  const [formattedDate, setFormattedDate] = useState('');
 
   const handleChangeText = (text: string) => {
-    const cleanText = text.replace(/[^\d]/g, '').slice(0, 8);
-
-    const formatted = formatDate(cleanText);
+    const formatted = formatDate(text);
 
     setFormattedDate(formatted);
 
-    onChangeText(cleanText);
+    onChangeText(formatted);
   };
 
   useEffect(() => {
