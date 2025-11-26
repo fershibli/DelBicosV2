@@ -20,8 +20,6 @@
   <a href="https://github.com/fershibli/DelBicosBackend">Backend Project</a>
 </p>
 
-teste
-
 # 💻 About
 
 DelBicos - Delivery de Bicos, é um projeto que propõe conectar clientes e trabalhadores informais na mesma vizinhança, garantindo demanda local, qualidade e segurança e será projetado através de um website.
@@ -41,104 +39,88 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 🔗 **Documentações das disciplinas do projeto**
 
-- <a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf"> Gestão Ágil de Projetos de Software - 3 Semestre </a>
-- <a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf"> Interação Humano-Computador - 3 Semestre </a>
+<details>
+  <summary> Documentações das disciplinas do projeto 3 Semestre</summary>
+  <p>
+- <a href="assets/DelBicos - Projeto Interdisciplinar III - Gestão Ágil.pdf"> Gestão Ágil de Projetos de Software - 3 Semestre </a><p>
+- <a href="assets/Projeto_IHC-DelBicos-Projeto_Interdisciplinar_III.pdf"> Interação Humano-Computador - 3 Semestre </a><p>
+</p>
+</details>
 
 <br>
 
 ## 🏁 Entregas de Sprints
 
-| Sprint |    Período    | Entregas                                                                                                                                                                                                                                                                              |     Status      |
-| :----: | :-----------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------: |
-|   01   | 04/06 - 20/06 | Figma do protótipo de agendar e pagar serviço, Página de Feed, Header, Endpoint GET de profissionais com filtros opcionais `<br>` (termo pesquisado, localização, categoria, subcategoria, data_inicio, data_fim) e com ordenação (relevância, avaliação, distância, disponibilidade) |  ✅ Concluído   |
-|   02   | 10/06 - 17/06 | Página de Meus Agendamentos, Figma do protótipo de Página de Login, Página de Login por E-mail e Senha,`<br>` dois endpoints POST de login por senha, endpoint POST de cadastro, endpoint POST de cancelar agendamento                                                                |  ✅ Concluído   |
-|   03   | 17/06 - 24/06 | Interações do protótipo do Figma, endpoint POST de cadastro de parceiro,`<br>` endpoint POST de aceitar agendamento, endpoint POST de editar disponibilidade                                                                                                                          |  ✅ Concluído   |
-|   04   | 24/06 - 25/08 | Implementação de Envio de E-mails Automatizados                                                                                                                                                                                                                                       |  ✅ Concluído   |
-|   05   | 26/08 - 08/09 | Implementação de Sistema de Agendamento com Calendário                                                                                                                                                                                                                                |  ✅ Concluído   |
-|   06   | 09/09 - 15/09 | Implementação de Sistema de Agendamento com Calendário                                                                                                                                                                                                                                |  ✅ Concluído   |
-|   07   | 16/09 - 22/09 | Implementação de Upload e Armazenamento de Arquivos                                                                                                                                                                                                                                   |  ✅ Concluído   |
-|   08   | 23/09 - 07/10 | Implementação de Sistema de Avaliações ou Comentários                                                                                                                                                                                                                                 |  ✅ Concluído   |
-|   09   | 08/10 - 14/10 | Implementação de Geração de Entrega de Relatórios em PDF                                                                                                                                                                                                                              |  ✅ Concluído   |
-|   10   | 15/10 - 20/10 | Implementação de Envio de Notificações em Tempo Real                                                                                                                                                                                                                                  |  ✅ Concluído   |
-|   11   |    21/10-     | Implementação de Integração com API de Pagamentos                                                                                                                                                                                                                                     | ⏳ Em Andamento |
-|   12   |    21/10 -    | Implementação de Visualização de Dados com Gráficos                                                                                                                                                                                                                                   | ⏳ Em Andamento |
-|   13   |    21/10-     | Implementação de Exportação de Dados para Excel/CSV                                                                                                                                                                                                                                   | ⏳ Em Andamento |
+<image src="assets/Entrega_de_sprints.png" alt="Entregas de Sprints do projeto DelBicos" width="80%">
+
+| Sprint |    Período    | Entregas                                                                                                                                                                                                                                                                              |    Status    |
+| :----: | :-----------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :----------: |
+|   01   | 04/06 - 20/06 | Figma do protótipo de agendar e pagar serviço, Página de Feed, Header, Endpoint GET de profissionais com filtros opcionais `<br>` (termo pesquisado, localização, categoria, subcategoria, data_inicio, data_fim) e com ordenação (relevância, avaliação, distância, disponibilidade) | ✅ Concluído |
+|   02   | 10/06 - 17/06 | Página de Meus Agendamentos, Figma do protótipo de Página de Login, Página de Login por E-mail e Senha,`<br>` dois endpoints POST de login por senha, endpoint POST de cadastro, endpoint POST de cancelar agendamento                                                                | ✅ Concluído |
+|   03   | 17/06 - 24/06 | Interações do protótipo do Figma, endpoint POST de cadastro de parceiro,`<br>` endpoint POST de aceitar agendamento, endpoint POST de editar disponibilidade                                                                                                                          | ✅ Concluído |
+|   04   | 24/06 - 25/08 | Implementação de Envio de E-mails Automatizados                                                                                                                                                                                                                                       | ✅ Concluído |
+|   05   | 26/08 - 08/09 | Implementação de Sistema de Agendamento com Calendário                                                                                                                                                                                                                                | ✅ Concluído |
+|   06   | 09/09 - 15/09 | Implementação de Geolocalização e Mapas                                                                                                                                                                                                                                               | ✅ Concluído |
+|   07   | 16/09 - 22/09 | Implementação de Upload e Armazenamento de Arquivos                                                                                                                                                                                                                                   | ✅ Concluído |
+|   08   | 23/09 - 06/10 | Implementação de Sistema de Avaliações ou Comentários                                                                                                                                                                                                                                 | ✅ Concluído |
+|   09   | 07/10 - 13/10 | Implementação de Geração de Entrega de Relatórios em PDF                                                                                                                                                                                                                              | ✅ Concluído |
+|   10   | 14/10 - 20/10 | Implementação de Envio de Notificações em Tempo Real                                                                                                                                                                                                                                  | ✅ Concluído |
+|   11   | 21/10 - 03/11 | Implementação de Integração com API de Pagamentos                                                                                                                                                                                                                                     | ✅ Concluído |
+|   12   | 04/11 - 10/11 | Implementação de IExportação de Dados para Excel/CSV                                                                                                                                                                                                                                  | ✅ Concluído |
+|   13   | 11/11 - 17/11 | Implementação de Visualização com Gráficos                                                                                                                                                                                                                                            | ✅ Concluído |
 
 ### 🎬 Apresentação
 
-<image src="assets/delbicos_pitch_HD.gif" alt="Vídeo PITCH do projeto DelBicos" width="40%">
+<image src="assets/delbicos_pitch_HD.gif" alt="Vídeo PITCH do projeto DelBicos" width="60%">
 <p>Vídeo PITCH do projeto DelBicos
-
-<image src="assets/login01.gif" alt="tela de login" width="40%">
+<p>
+<image src="assets/login01.gif" alt="tela de login" width="60%">
 <p>Tela de login
-
-<image src="assets/apresentação.gif" alt="tela da Área do Cliente" width="40%">
+<p>
+<image src="assets/apresentação.gif" alt="tela da Área do Cliente" width="60%">
 <p>Tela da Área do Cliente
 
 <br>
 
 ## 🎯 Backlogs
 
-<image src="assets/backlogP.png" alt="Backlog de Produtos do projeto DelBicos" width="30%">
-<image src="assets/backlogS.png" alt="Backlog de Sprints do projeto DelBicos" width="28.8%">
-
-<br>
+<details>
+  <summary> Backlogs </summary>
+  <p>
+<image src="assets/backlogP.png" alt="Backlog de Produtos do projeto DelBicos" width="60%"><p>
+<image src="assets/backlogS.png" alt="Backlog de Sprints do projeto DelBicos" width="60%">
+</p>
+</details>
 
 ## 🎥 User Stories
 
-<image src="assets/sprint01-1.png" alt="User Stories do projeto DelBicos" width="30%"><p>
-<image src="assets/sprint01-2.png" alt="User Stories do projeto DelBicos" width="30%"><p>
-<image src="assets/sprint01-3.png" alt="User Stories do projeto DelBicos" width="30%"><p>
-<image src="assets/sprint02-1.png" alt="User Stories do projeto DelBicos" width="30%"><p>
-<image src="assets/sprint02-2.png" alt="User Stories do projeto DelBicos" width="30%"><p>
-<image src="assets/sprint03-1.png" alt="User Stories do projeto DelBicos" width="30%"><p>
-<image src="assets/sprint03-2.png" alt="User Stories do projeto DelBicos" width="30%"><p>
-<image src="assets/sprint04.png" alt="User Stories do projeto DelBicos" width="30%"><p>
+<details>
+  <summary> User Stories </summary>
+  <p>
+<image src="assets/sprint01-1.png" alt="User Stories do projeto DelBicos" width="60%"><p>
+<image src="assets/sprint01-2.png" alt="User Stories do projeto DelBicos" width="60%"><p>
+<image src="assets/sprint01-3.png" alt="User Stories do projeto DelBicos" width="60%"><p>
+<image src="assets/sprint02-1.png" alt="User Stories do projeto DelBicos" width="60%"><p>
+<image src="assets/sprint02-2.png" alt="User Stories do projeto DelBicos" width="60%"><p>
+<image src="assets/sprint03-1.png" alt="User Stories do projeto DelBicos" width="60%"><p>
+<image src="assets/sprint03-2.png" alt="User Stories do projeto DelBicos" width="60%"><p>
+<image src="assets/sprint04.png" alt="User Stories do projeto DelBicos" width="60%"><p>
 
 <br>
 
 ## 💡 Functional Requirements
 
-- **_Requisitos Funcionais - Cliente_**
-
-| Número do Requisito | Nome                                      | Descrição                                                                                              |
-| :-----------------: | ----------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-|        RFC01        | Efetuar Login                             | O cliente pode fazer login no sistema.                                                                 |
-|        RFC02        | Acessar Home                              | O cliente pode acessar a página inicial após o login.                                                  |
-|        RFC03        | Cadastrar Cliente                         | O cliente tem a opção de se cadastrar no sistema.                                                      |
-|        RFC04        | Alternar Cliente/Profissional             | O cliente pode alternar entre as visualizações de cliente e profissional, caso tenha múltiplos perfis. |
-|        RFC05        | Listar Serviços por Categoria             | O cliente pode listar serviços por categoria.                                                          |
-|        RFC06        | Listar Serviços por Profissional          | O cliente pode listar serviços oferecidos por um profissional específico.                              |
-|        RFC07        | Escolher Horários e Datas do Profissional | O cliente pode escolher um horário e data para o serviço desejado com o profissional.                  |
-|        RFC08        | Efetuar Pagamento                         | O cliente pode realizar o pagamento dos serviços.                                                      |
-|        RFC09        | Consultar Serviços Agendados              | O cliente pode consultar os serviços já agendados.                                                     |
-
-<p>
-
-- **_Requisitos Funcionais - Profissional_**
-
-| Número do Requisito | Nome                                | Descrição                                                            |
-| :-----------------: | ----------------------------------- | -------------------------------------------------------------------- |
-|        RFP01        | Efetuar Login                       | O profissional pode fazer login no sistema.                          |
-|        RFP02        | Cadastrar Profissional              | O usuário tem a opção de se cadastrar no sistema como profissional.  |
-|        RFP03        | Acessar Painel do Profissional      | O profissional pode acessar o painel com suas funcionalidades.       |
-|        RFP04        | Verificar Serviços Agendados        | O profissional pode verificar os serviços já agendados por clientes. |
-|        RFP05        | Alterar Tabela de Valores           | O profissional pode alterar a tabela de valores de seus serviços.    |
-|        RFP06        | Alterar Disponibilidade de Horários | O profissional pode alterar sua disponibilidade de horários.         |
-
-<p>
-
-- **_Requisitos Funcionais - Administrador_**
-
-| Número do Requisito | Nome                                      | Descrição                                                                             |
-| :-----------------: | ----------------------------------------- | ------------------------------------------------------------------------------------- |
-|        RFA01        | Autenticar Administrador                  | O administrador pode se autenticar no sistema.                                        |
-|        RFA02        | Gerenciar Clientes                        | O administrador pode gerenciar o cadastro de clientes.                                |
-|        RFA03        | Gerenciar Profissionais                   | O administrador pode gerenciar o cadastro de profissionais.                           |
-|        RFA04        | Analisar chamados                         | O administrador pode analisar chamados de clientes e profissionais.                   |
-|        RFA05        | Gerenciar Serviços Realizados e Pendentes | O administrador pode gerenciar os serviços realizados e os que ainda estão pendentes. |
-|        RFA06        | Aprovar/Desaprovar Estornos               | O administrador pode aprovar ou desaprovar pedidos de estorno.                        |
-
+<details>
+  <summary> Requisitos Funcionais - Cliente </summary>
+  <image src="assets/requisitos_tabela_requisitos_funcionais_cliente.png" alt="Requisitos Funcionais do projeto DelBicos" width="80%"><p>
+  <p>
+ <summary> Requisitos Funcionais - Profissional </summary>
+  <image src="assets/requisitos_tabela_requisitos_funcionais_profissional.png" alt="Requisitos Funcionais do projeto DelBicos" width="80%"><p>
+  <p>
+   <summary> Requisitos Funcionais - Administrador </summary>
+  <image src="assets/requisitos_tabela_requisitos_funcionais_administrador.png" alt="Requisitos Funcionais do projeto DelBicos" width="80%"><p>
+  <p>
+</p></details>
 <br>
 
 ## 🎨 Prototype
