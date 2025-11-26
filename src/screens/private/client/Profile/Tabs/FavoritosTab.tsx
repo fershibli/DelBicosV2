@@ -47,7 +47,7 @@ const FavoritosTab: React.FC = () => {
                   style={styles.removeButton}
                   onPress={() => removeFavorite(favorite.professionalId)}
                 >
-                  <FontAwesome name="heart" size={20} color="#FF0000" />
+                  <FontAwesome name="heart" size={20} color={colors.primaryOrange} />
                 </TouchableOpacity>
               </View>
               
