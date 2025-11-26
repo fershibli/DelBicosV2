@@ -86,6 +86,7 @@ function MeusAgendamentos() {
         professionalName: appointment.Professional.User.name,
         professionalAvatar: appointment.Professional.User.avatar_uri || undefined,
         category: appointment.Service.Subcategory?.name,
+        serviceTitle: appointment.Service.title,
         addedAt: new Date().toISOString(),
       });
     }
