@@ -30,7 +30,7 @@ export const createStyles = (colors: any) =>
       flexWrap: 'wrap',
     },
     inputReadOnly: {
-      backgroundColor: colors.secondaryGray,
+      backgroundColor: colors.cardBackground,
       color: colors.textSecondary,
       borderRadius: 8,
       borderColor: colors.borderColor,
@@ -40,7 +40,7 @@ export const createStyles = (colors: any) =>
       borderWidth: 1,
     },
     input: {
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.cardBackground,
       borderRadius: 8,
       paddingHorizontal: 16,
       paddingVertical: 14,
@@ -89,7 +89,7 @@ export const createStyles = (colors: any) =>
       borderColor: colors.borderColor,
       borderRadius: 8,
       justifyContent: 'center',
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.cardBackground,
     },
     pickerWrapper: {
       borderWidth: 1,
@@ -98,7 +98,7 @@ export const createStyles = (colors: any) =>
       overflow: 'hidden',
     },
     picker: {
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.cardBackground,
       borderRadius: 8,
       paddingHorizontal: 16,
       paddingVertical: 14,
