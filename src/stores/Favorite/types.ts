@@ -3,6 +3,7 @@ export interface FavoriteProfessional {
   professionalName: string;
   professionalAvatar?: string;
   category?: string;
+  serviceTitle?: string;
   addedAt: string;
 }
 
