@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useFavoriteStore } from '@stores/Favorite';
 import { useColors } from '@theme/ThemeProvider';
@@ -8,8 +8,13 @@ import { useNavigation } from '@react-navigation/native';
 const FavoritosTab: React.FC = () => {
   const colors = useColors();
   const styles = createStyles(colors);
-  const { favorites, removeFavorite } = useFavoriteStore();
+  const { favorites, removeFavorite, syncWithServer } = useFavoriteStore();
   const navigation = useNavigation();
+
+  // Sincroniza com servidor ao abrir a tela
+  useEffect(() => {
+    syncWithServer();
+  }, []);
 
   const handleViewProfile = (professionalId: number) => {
     (navigation as any).navigate('PartnerProfile', { id: professionalId });
