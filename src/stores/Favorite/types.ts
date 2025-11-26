@@ -7,6 +7,20 @@ export interface FavoriteProfessional {
   addedAt: string;
 }
 
+export interface FavoriteResponse {
+  id: number;
+  professionalId: number;
+  professionalName: string;
+  professionalAvatar: string | null;
+  category: string | null;
+  lastServiceTitle: string | null;
+  addedAt: string;
+}
+
+export interface FavoritesListResponse {
+  favorites: FavoriteResponse[];
+}
+
 export interface FavoriteState {
   favorites: FavoriteProfessional[];
   loading: boolean;
