@@ -18,17 +18,7 @@ import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
-
-interface UserProfileProps {
-  userId: string;
-  userName: string;
-  userEmail: string;
-  userPhone: string;
-  avatarSource: { uri: string | null };
-  onAvatarChange: (base64: string | null) => Promise<void>;
-  uploading?: boolean;
-}
-
+import { UserProfileProps } from '../types';
 interface DadosContaFormProps {
   user?: UserProfileProps;
 }
