@@ -17,7 +17,7 @@ const darkColors: ColorsType = {
   primaryWhite: '#323232', // Fundo principal (cinza escuro)
 
   // Tons secundários para header/cards
-  secondaryGray: '#545454', // Fundo header/navbar/cards (cinza médio)
+  secondaryGray: '#323232', // Fundo header/navbar/cards (cinza escuro - navbar)
   secondaryBeige: '#334155', // Elementos terciários
 
   // Hovers / estados
@@ -30,7 +30,7 @@ const darkColors: ColorsType = {
   textSecondary: '#94A3B8', // Texto secundário
   textTertiary: '#64748B', // Texto terciário/placeholders
   backgroundElevated: '#334155',
-    notification: {
+  notification: {
     unreadBorder: '#FB923C',
     unreadTitle: '#FB923C',
     unreadMessage: '#E2E8F0',
@@ -39,8 +39,6 @@ const darkColors: ColorsType = {
     cardBackground: '#545454',
     modalBackground: '#545454',
   },
-   // Elementos elevados (modais, dropdowns)
-  
 };
 
 export default darkColors;

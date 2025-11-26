@@ -39,12 +39,12 @@ const SubCategoryButton: React.FC<{
     styles.subCategoryButton,
     {
       backgroundColor: isDark
-        ? colors.secondaryGray
+        ? colors.cardBackground
         : isHighContrast
           ? colors.cardBackground
           : colors.primaryWhite,
       borderColor: isDark
-        ? colors.secondaryGray
+        ? colors.cardBackground
         : isHighContrast
           ? colors.primaryBlack
           : colors.secondaryBeige,

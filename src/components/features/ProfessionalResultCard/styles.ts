@@ -2,6 +2,13 @@ import { StyleSheet } from 'react-native';
 
 export const createStyles = (colors: any) =>
   StyleSheet.create({
+    // Card container (alias 'card' used by the component)
+    card: {
+      backgroundColor: colors.primaryWhite,
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 12,
+    },
     container: {
       backgroundColor: colors.primaryWhite,
       borderRadius: 12,
@@ -137,7 +144,11 @@ export const createStyles = (colors: any) =>
       fontFamily: 'Afacad-Bold',
       fontSize: 12,
     },
-
+    // --- Coluna Esquerda: Detalhes ---
+    detailsContainer: {
+      flex: 2.5, // Ocupa mais espaço
+      padding: 16,
+    },
     // --- Coluna Direita: Imagem e Tags ---
     imageContainer: {
       flex: 1.5, // Ocupa menos espaço

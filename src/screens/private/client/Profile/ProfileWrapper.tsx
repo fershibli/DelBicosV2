@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
 import MenuNavegacao from './Tabs/MenuNavegacao';
 import AlterarEnderecoForm from './Tabs/AlterarEnderecoForm';
@@ -11,35 +11,35 @@ import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
 import HistoricoCompras from '@screens/private/client/Profile/Tabs/HistoricoCompras';
+import { useRoute } from '@react-navigation/native';
+import { ClientProfileSubRoutes } from '@screens/types';
+import { UserProfileProps } from './types';
 
-interface UserProfileProps {
-  userId: string;
-  userName: string;
-  userEmail: string;
-  userPhone: string;
-  avatarSource: { uri: string | null };
-  onAvatarChange: (base64: string | null) => Promise<void>;
-  uploading?: boolean;
-}
+type ClientProfileRouteParams = {
+  subroute?: ClientProfileSubRoutes;
+};
 
 const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
-  const [activeTab, setActiveTab] = useState('DadosContaForm');
+  const route = useRoute();
+  const subroute =
+    (route.params as ClientProfileRouteParams)?.subroute ||
+    ClientProfileSubRoutes.DadosConta;
 
   const renderScreen = () => {
-    switch (activeTab) {
-      case 'DadosContaForm':
+    switch (subroute) {
+      case ClientProfileSubRoutes.DadosConta:
         return <DadosContaForm user={user} />;
-      case 'MeusEnderecos':
+      case ClientProfileSubRoutes.MeusEnderecos:
         return <AlterarEnderecoForm />;
-      case 'TrocarSenhaForm':
+      case ClientProfileSubRoutes.TrocarSenha:
         return <TrocarSenhaForm />;
-      case 'MeusAgendamentos':
+      case ClientProfileSubRoutes.MeusAgendamentos:
         return <MeusAgendamentos />;
-      case 'Notificacoes':
-        return <NotificacoesContent userId={user.userId} />;
-      case 'Avaliacoes':
+      case ClientProfileSubRoutes.Notificacoes:
+        return <NotificacoesContent />;
+      case ClientProfileSubRoutes.Avaliacoes:
         return <AvaliacoesTab />;
-      case 'Historico':
+      case ClientProfileSubRoutes.Historico:
         return <HistoricoCompras />;
       default:
         return (
@@ -72,7 +72,7 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
             styles.menuSection,
             isDark ? { backgroundColor: 'transparent' } : null,
           ]}>
-          <MenuNavegacao activeItem={activeTab} onItemSelected={setActiveTab} />
+          <MenuNavegacao />
         </ScrollView>
 
         <View

@@ -58,8 +58,8 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
   const cardStyle = [
     styles.categoryCard,
     {
-      backgroundColor: isDark ? colors.secondaryGray : colors.cardBackground,
-      borderColor: isDark ? colors.secondaryGray : colors.borderColor,
+      backgroundColor: colors.cardBackground,
+      borderColor: isDark ? colors.cardBackground : colors.borderColor,
     },
     isHighContrast && {
       backgroundColor: colors.primaryWhite,
@@ -82,7 +82,10 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
   const titleStyle = [
     styles.categoryTitle,
     { color: isDark ? colors.primaryBlack : undefined },
-    isHighContrast && { color: colors.primaryOrange, fontWeight: 'bold' },
+    isHighContrast && {
+      color: colors.primaryOrange,
+      fontWeight: 'bold' as const,
+    },
     isHovered && isDark && { color: '#E2E8F0' },
     isHovered && isHighContrast && { color: colors.primaryWhite },
     isHovered && !isDark && !isHighContrast && styles.categoryTitleHovered,

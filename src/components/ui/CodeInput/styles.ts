@@ -16,5 +16,7 @@ export const createStyles = (colors: any) =>
       borderRadius: 8,
       textAlign: 'center',
       fontSize: 20,
+      backgroundColor: colors.cardBackground,
+      color: colors.primaryBlack,
     },
   });

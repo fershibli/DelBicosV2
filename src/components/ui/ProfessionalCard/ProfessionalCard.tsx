@@ -29,8 +29,8 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
     styles.card,
     isDark
       ? {
-          backgroundColor: colors.secondaryGray,
-          borderColor: colors.secondaryGray,
+          backgroundColor: colors.cardBackground,
+          borderColor: colors.cardBackground,
         }
       : null,
     isHovered && isDark
