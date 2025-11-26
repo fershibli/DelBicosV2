@@ -14,12 +14,12 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LogoV3 from '@assets/LogoV3.png';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { HTTP_DOMAIN } from '@config/varEnvs';
 import { useUserStore } from '@stores/User';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { Address } from '@stores/User/types';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 
 function VerificationScreen() {
   const navigation = useNavigation();
@@ -29,6 +29,8 @@ function VerificationScreen() {
     setLoggedInUser,
   } = useUserStore();
 
+  const colors = useColors();
+  const styles = createStyles(colors);
   const [code, setCode] = useState<string[]>(Array(6).fill(''));
   const [isLoading, setIsLoading] = useState(false);
   const inputs = useRef<(TextInput | null)[]>([]);

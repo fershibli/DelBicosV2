@@ -107,7 +107,8 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
     ClientProfile: {
       screen: ProfileScreen,
       linking: {
-        path: 'client-profile',
+        // Use wildcard so any nested path under client-profile is handled by the app
+        path: 'client-profile/*',
       },
     },
     NotFound: {

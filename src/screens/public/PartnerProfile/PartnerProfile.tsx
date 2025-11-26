@@ -17,7 +17,7 @@ import { GaleriaContent } from './GaleriaContent';
 import { AvaliacoesContent } from './AvaliacoesContent';
 import { Rating } from 'react-native-ratings';
 import { useProfessionalStore } from '@stores/Professional';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 
 function PartnerProfileScreen() {
   const navigation = useNavigation();
@@ -31,6 +31,9 @@ function PartnerProfileScreen() {
   const { selectedProfessional, fetchProfessionalById } =
     useProfessionalStore();
   const [isLoading, setIsLoading] = useState(true);
+
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   useEffect(() => {
     const loadProfessional = async () => {
@@ -196,110 +199,111 @@ function PartnerProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.secondaryGray,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.primaryWhite,
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: colors.primaryBlack,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: colors.primaryWhite,
-  },
-  errorText: {
-    fontSize: 18,
-    color: colors.primaryBlack,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  backButtonError: {
-    backgroundColor: colors.primaryOrange,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  backButtonTextError: {
-    color: colors.primaryWhite,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  headerImage: {
-    height: 174,
-    width: '100%',
-  },
-  gradientOverlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    padding: 16,
-  },
-  backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 12,
-    padding: 4,
-  },
-  profileInfo: {
-    marginBottom: 8,
-  },
-  profileName: {
-    color: 'white',
-    fontSize: 17,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingVertical: 2,
-  },
-  ratingText: {
-    color: 'white',
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-  addressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    gap: 8,
-  },
-  addressText: {
-    fontSize: 11,
-    fontWeight: '300',
-    flexShrink: 1,
-  },
-  navTabs: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.secondaryBeige,
-  },
-  tab: {
-    fontSize: 17,
-    color: colors.primaryBlack,
-  },
-  activeTab: {
-    color: colors.primaryOrange,
-    fontWeight: 'bold',
-  },
-  contentContainer: {
-    flex: 1,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.secondaryGray,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.primaryWhite,
+    },
+    loadingText: {
+      marginTop: 12,
+      fontSize: 16,
+      color: colors.primaryBlack,
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+      backgroundColor: colors.primaryWhite,
+    },
+    errorText: {
+      fontSize: 18,
+      color: colors.primaryBlack,
+      marginBottom: 20,
+      textAlign: 'center',
+    },
+    backButtonError: {
+      backgroundColor: colors.primaryOrange,
+      paddingHorizontal: 24,
+      paddingVertical: 12,
+      borderRadius: 8,
+    },
+    backButtonTextError: {
+      color: colors.primaryWhite,
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    headerImage: {
+      height: 174,
+      width: '100%',
+    },
+    gradientOverlay: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      padding: 16,
+    },
+    backButton: {
+      position: 'absolute',
+      top: 40,
+      left: 12,
+      padding: 4,
+    },
+    profileInfo: {
+      marginBottom: 8,
+    },
+    profileName: {
+      color: 'white',
+      fontSize: 17,
+      fontWeight: 'bold',
+      marginBottom: 4,
+    },
+    ratingContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+      paddingVertical: 2,
+    },
+    ratingText: {
+      color: 'white',
+      fontSize: 10,
+      fontWeight: 'bold',
+    },
+    addressContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 16,
+      gap: 8,
+    },
+    addressText: {
+      fontSize: 11,
+      fontWeight: '300',
+      flexShrink: 1,
+    },
+    navTabs: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.secondaryBeige,
+    },
+    tab: {
+      fontSize: 17,
+      color: colors.primaryBlack,
+    },
+    activeTab: {
+      color: colors.primaryOrange,
+      fontWeight: 'bold',
+    },
+    contentContainer: {
+      flex: 1,
+    },
+  });
 
 export default PartnerProfileScreen;

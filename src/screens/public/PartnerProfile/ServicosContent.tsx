@@ -8,7 +8,7 @@ import {
   Image,
   Platform,
 } from 'react-native';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 import { Service } from '@stores/Professional/types';
 
 type ServicosContentProps = {
@@ -16,6 +16,8 @@ type ServicosContentProps = {
 };
 
 export function ServicosContent({ servicos }: ServicosContentProps) {
+  const colors = useColors();
+  const styles = createStyles(colors);
   const formatarPreco = (preco: string) => {
     const valor = parseFloat(preco);
     return new Intl.NumberFormat('pt-BR', {
@@ -94,96 +96,97 @@ export function ServicosContent({ servicos }: ServicosContentProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: colors.secondaryGray,
-  },
-  listContainer: {
-    paddingBottom: 16,
-  },
-  servicoCard: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    overflow: 'hidden',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-      web: {
-        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-      },
-    }),
-  },
-  servicoImagem: {
-    width: '100%',
-    height: 150,
-    resizeMode: 'cover',
-  },
-  servicoInfo: {
-    padding: 16,
-  },
-  servicoNome: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  servicoDescricao: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 12,
-    lineHeight: 20,
-  },
-  servicoDetalhes: {
-    marginBottom: 12,
-  },
-  detalhesRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  servicoPreco: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.primaryOrange,
-  },
-  servicoDuracao: {
-    fontSize: 14,
-    color: '#666',
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  agendarButton: {
-    backgroundColor: colors.primaryOrange,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  agendarButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  separador: {
-    height: 16,
-  },
-  emptyContainer: {
-    padding: 32,
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 16,
+      backgroundColor: colors.secondaryGray,
+    },
+    listContainer: {
+      paddingBottom: 16,
+    },
+    servicoCard: {
+      backgroundColor: 'white',
+      borderRadius: 12,
+      overflow: 'hidden',
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+        },
+        android: {
+          elevation: 3,
+        },
+        web: {
+          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+        },
+      }),
+    },
+    servicoImagem: {
+      width: '100%',
+      height: 150,
+      resizeMode: 'cover',
+    },
+    servicoInfo: {
+      padding: 16,
+    },
+    servicoNome: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#333',
+      marginBottom: 8,
+    },
+    servicoDescricao: {
+      fontSize: 14,
+      color: '#666',
+      marginBottom: 12,
+      lineHeight: 20,
+    },
+    servicoDetalhes: {
+      marginBottom: 12,
+    },
+    detalhesRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    servicoPreco: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: colors.primaryOrange,
+    },
+    servicoDuracao: {
+      fontSize: 14,
+      color: '#666',
+      backgroundColor: '#f0f0f0',
+      paddingHorizontal: 12,
+      paddingVertical: 4,
+      borderRadius: 12,
+    },
+    agendarButton: {
+      backgroundColor: colors.primaryOrange,
+      paddingVertical: 12,
+      borderRadius: 8,
+      alignItems: 'center',
+    },
+    agendarButtonText: {
+      color: 'white',
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    separador: {
+      height: 16,
+    },
+    emptyContainer: {
+      padding: 32,
+      alignItems: 'center',
+    },
+    emptyText: {
+      fontSize: 16,
+      color: '#666',
+      textAlign: 'center',
+    },
+  });

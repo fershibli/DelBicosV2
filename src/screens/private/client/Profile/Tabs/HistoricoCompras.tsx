@@ -8,10 +8,12 @@ import {
   generateXLSX,
 } from '@lib/helpers/fileGenerator';
 import { downloadFile, shareContent } from '@lib/helpers/shareHelperSimple';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 
 export default function HistoricoCompras() {
   const { fetchAppointmentsAsSheet } = useAppointmentStore();
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const handleDownloadCSV = async () => {
     const rows = await fetchAppointmentsAsSheet();
@@ -99,22 +101,35 @@ export default function HistoricoCompras() {
     <View style={styles.container}>
       <Text style={styles.pageTitle}>Historico de Pagamentos</Text>
       <View style={styles.buttonContainer}>
-        <Button onPress={handleDownloadCSV}>Exportar CSV</Button>
-        <Button onPress={handleDownloadExcel}>Exportar Excel</Button>
+        <Button
+          colorVariant="primaryOrange"
+          sizeVariant="default"
+          variant="contained"
+          onPress={handleDownloadCSV}>
+          Exportar CSV
+        </Button>
+        <Button
+          colorVariant="primaryOrange"
+          sizeVariant="default"
+          variant="contained"
+          onPress={handleDownloadExcel}>
+          Exportar Excel
+        </Button>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  pageTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.primaryBlack,
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 16,
-  },
-  container: { display: 'flex', gap: 16, margin: 20 },
-  buttonContainer: { flexDirection: 'row', gap: 10 },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    pageTitle: {
+      fontSize: 28,
+      fontWeight: '700',
+      color: colors.primaryBlack,
+      paddingHorizontal: 16,
+      paddingTop: 20,
+      paddingBottom: 16,
+    },
+    container: { display: 'flex', gap: 16, margin: 20 },
+    buttonContainer: { flexDirection: 'row', gap: 10 },
+  });

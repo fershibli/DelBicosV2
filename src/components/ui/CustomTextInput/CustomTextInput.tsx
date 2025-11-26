@@ -7,8 +7,11 @@ import {
   StyleProp,
   ViewStyle,
 } from 'react-native';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { FieldError } from 'react-hook-form';
+import { useColors } from '@theme/ThemeProvider';
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types';
 
 interface CustomTextInputProps extends TextInputProps {
   label: string;
@@ -24,16 +27,30 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   containerStyle,
   ...rest
 }) => {
+  const { theme } = useThemeStore();
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
+
   return (
     <View style={[styles.container, containerStyle]}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, isHighContrast && { fontWeight: 'bold' }]}>
+        {label}
+      </Text>
       <View>
         {children ? (
           children
         ) : (
           <TextInput
-            style={[styles.input, !!error && styles.inputError]}
-            placeholderTextColor="#999"
+            style={[
+              styles.input,
+              !!error && styles.inputError,
+              isHighContrast && {
+                borderWidth: 2,
+                borderColor: colors.primaryBlack,
+              },
+            ]}
+            placeholderTextColor={colors.textTertiary}
             {...rest}
           />
         )}

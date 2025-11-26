@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput } from 'react-native';
-import { styles } from './styles';
+import { createStyles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
 
 interface DateInputProps {
   value: string;
   onChangeText: (text: string) => void;
   onBlur?: () => void;
-  error?: boolean;
+  error?: any;
 }
 
-const formatDate = (cleanText: string) => {
+const cleanString = (text: string) => text.replace(/[^\d]/g, '').slice(0, 8);
+
+const formatDate = (text: string) => {
+  const cleanText = cleanString(text);
   let formatted = cleanText;
   if (cleanText.length > 2) {
     formatted = `${cleanText.slice(0, 2)}/${cleanText.slice(2)}`;
@@ -29,18 +33,16 @@ const DateInput: React.FC<DateInputProps> = ({
   onBlur,
   error,
 }) => {
-  const [formattedDate, setFormattedDate] = useState(() =>
-    formatDate(value || ''),
-  );
+  const colors = useColors();
+  const styles = createStyles(colors);
+  const [formattedDate, setFormattedDate] = useState('');
 
   const handleChangeText = (text: string) => {
-    const cleanText = text.replace(/[^\d]/g, '').slice(0, 8);
-
-    const formatted = formatDate(cleanText);
+    const formatted = formatDate(text);
 
     setFormattedDate(formatted);
 
-    onChangeText(cleanText);
+    onChangeText(formatted);
   };
 
   useEffect(() => {
@@ -51,7 +53,7 @@ const DateInput: React.FC<DateInputProps> = ({
     <TextInput
       style={[styles.input, error && styles.inputError]}
       placeholder="DD/MM/AAAA"
-      placeholderTextColor="#999"
+      placeholderTextColor={colors.textTertiary}
       value={formattedDate}
       onChangeText={handleChangeText}
       onBlur={onBlur}

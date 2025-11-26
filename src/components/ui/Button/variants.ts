@@ -1,5 +1,3 @@
-import colors from '@theme/colors';
-
 export const buttonFontVariants = {
   AfacadRegular32: {
     fontFamily: 'Afacad-Regular',
@@ -20,7 +18,7 @@ export const buttonFontVariants = {
   AfacadBold16: {
     fontFamily: 'Afacad-Bold',
     fontSize: 16,
-  }
+  },
 };
 
 export const buttonSizeVariants = {
@@ -61,7 +59,7 @@ export const buttonSizeVariants = {
   },
 };
 
-export const buttonColorVariants = {
+export const createButtonColorVariants = (colors: any) => ({
   primary: {
     backgroundColor: colors.primaryBlue,
     color: colors.primaryWhite,
@@ -74,7 +72,7 @@ export const buttonColorVariants = {
       color: '#A9A9A9',
     },
   },
-    primaryBlue: {
+  primaryBlue: {
     backgroundColor: 'transparent',
     color: colors.primaryBlue,
     hover: {
@@ -147,8 +145,10 @@ export const buttonColorVariants = {
       color: '#A9A9A9',
     },
   },
-};
+});
 
 export type ButtonFontVariantsKeys = keyof typeof buttonFontVariants;
-export type ButtonColorVariantsKeys = keyof typeof buttonColorVariants;
+export type ButtonColorVariantsKeys = keyof ReturnType<
+  typeof createButtonColorVariants
+>;
 export type ButtonSizeVariantsKeys = keyof typeof buttonSizeVariants;

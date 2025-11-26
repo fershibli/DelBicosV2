@@ -9,13 +9,14 @@ import {
   View,
 } from 'react-native';
 import {
-  buttonColorVariants,
+  createButtonColorVariants,
   buttonSizeVariants,
   buttonFontVariants,
   ButtonColorVariantsKeys,
   ButtonSizeVariantsKeys,
   ButtonFontVariantsKeys,
 } from './variants';
+import { useColors } from '@theme/ThemeProvider';
 
 export interface ButtonProps {
   children?: React.ReactNode;
@@ -42,6 +43,8 @@ export const ButtonNative: React.FC<ButtonProps> = ({
   endIcon,
   ...props
 }) => {
+  const colors = useColors();
+  const buttonColorVariants = createButtonColorVariants(colors);
   const buttonColor = buttonColorVariants[colorVariant];
   const buttonSize = buttonSizeVariants[sizeVariant];
   const buttonFont = buttonFontVariants[fontVariant];

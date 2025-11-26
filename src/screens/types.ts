@@ -1,3 +1,21 @@
+export enum ClientProfileSubRoutes {
+  DadosConta = 'DadosConta',
+  MeusEnderecos = 'MeusEnderecos',
+  TrocarSenha = 'TrocarSenha',
+  MeusAgendamentos = 'MeusAgendamentos',
+  Notificacoes = 'Notificacoes',
+  Conversas = 'Conversas',
+  Favoritos = 'Favoritos',
+  Avaliacoes = 'Avaliacoes',
+  Historico = 'Historico',
+  Pagamentos = 'Pagamentos',
+  Ajuda = 'Ajuda',
+}
+
+export type ClientProfileParams = {
+  [K in ClientProfileSubRoutes]: undefined;
+};
+
 export type NavigationParams = {
   Home: undefined;
   Login: undefined;
@@ -9,9 +27,9 @@ export type NavigationParams = {
   Register: undefined;
   NotFound: undefined;
   VerificationScreen: { email: string };
-  ClientProfile: undefined;
   Category: undefined;
   SubCategoryScreen: { categoryId: string };
+  ClientProfile: { subroute?: ClientProfileSubRoutes };
   SearchResult: { subcategoryId: number; date: string };
   Checkout: {
     professionalId: number;

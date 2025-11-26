@@ -20,9 +20,9 @@ export const styles = StyleSheet.create({
     marginHorizontal: 8,
     paddingHorizontal: 16,
     borderRadius: 12,
-    backgroundColor: colors.primaryWhite,
+    backgroundColor: colors.cardBackground,
     borderWidth: 1,
-    borderColor: colors.secondaryBeige,
+    borderColor: colors.borderColor,
     justifyContent: 'center',
     alignItems: 'center',
     ...Platform.select({
@@ -60,6 +60,6 @@ export const styles = StyleSheet.create({
     marginLeft: 12,
   },
   categoryTitleHovered: {
-    color: colors.primaryWhite,
+    color: '#E2E8F0',
   },
 });

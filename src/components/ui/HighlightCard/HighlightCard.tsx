@@ -1,7 +1,8 @@
 import React from 'react';
 import { Text, ImageBackground, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { styles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 
 export interface HighlightItem {
   id: string;
@@ -16,6 +17,8 @@ interface HighlightCardProps {
 }
 
 export const HighlightCard: React.FC<HighlightCardProps> = ({ item }) => {
+  const colors = useColors();
+  const styles = createStyles(colors);
   const handlePress = () => {
     if (item.link) {
       item.link();

@@ -13,7 +13,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Rating } from 'react-native-ratings';
 import { styles } from './styles';
 import { NavigationParams } from '@screens/types';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
 
 import { stripePromise } from '@lib/stripe/stripe';
 import { Elements } from '@stripe/react-stripe-js';
@@ -94,6 +94,8 @@ function CheckoutScreen() {
   const { user } = useUserStore();
   const { selectedProfessional, fetchProfessionalById } =
     useProfessionalStore();
+
+  const colors = useColors();
 
   const service = useMemo(() => {
     if (selectedProfessional && serviceId) {
