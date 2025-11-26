@@ -152,7 +152,7 @@ function MeusAgendamentos() {
                   imageSize={10}
                   readonly
                   startingValue={appointment.rating}
-                  tintColor="#fff"
+                  tintColor={colors.cardBackground}
                   style={{ marginRight: 4 }}
                 />
               )}
