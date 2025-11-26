@@ -309,7 +309,7 @@ const createStyles = (colors: any) =>
     completedBadge: {
       position: 'absolute',
       top: 8,
-      right: 8,
+      left: 8,
       backgroundColor: colors.primaryGreen,
       paddingHorizontal: 8,
       paddingVertical: 4,
