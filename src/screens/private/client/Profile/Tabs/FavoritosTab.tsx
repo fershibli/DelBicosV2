@@ -3,11 +3,17 @@ import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from 'rea
 import { useFavoriteStore } from '@stores/Favorite';
 import { useColors } from '@theme/ThemeProvider';
 import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const FavoritosTab: React.FC = () => {
   const colors = useColors();
   const styles = createStyles(colors);
   const { favorites, removeFavorite } = useFavoriteStore();
+  const navigation = useNavigation();
+
+  const handleViewProfile = (professionalId: number) => {
+    (navigation as any).navigate('PartnerProfile', { id: professionalId });
+  };
 
   if (favorites.length === 0) {
     return (
@@ -60,7 +66,15 @@ const FavoritosTab: React.FC = () => {
                     {favorite.category}
                   </Text>
                 )}
-                <TouchableOpacity style={styles.profileButton}>
+                {favorite.serviceTitle && (
+                  <Text style={styles.serviceTitle}>
+                    {favorite.serviceTitle}
+                  </Text>
+                )}
+                <TouchableOpacity 
+                  style={styles.profileButton}
+                  onPress={() => handleViewProfile(favorite.professionalId)}
+                >
                   <Text style={styles.profileButtonText}>Ver Perfil</Text>
                 </TouchableOpacity>
               </View>
@@ -157,7 +171,14 @@ const createStyles = (colors: any) =>
     category: {
       fontSize: 12,
       color: colors.textSecondary,
+      marginBottom: 4,
+    },
+    serviceTitle: {
+      fontSize: 13,
+      color: colors.primaryBlack,
+      textAlign: 'center',
       marginBottom: 12,
+      fontWeight: '500',
     },
     profileButton: {
       backgroundColor: colors.primaryBlue,
