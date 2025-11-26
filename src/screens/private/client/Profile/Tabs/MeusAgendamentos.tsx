@@ -1,4 +1,5 @@
 import { useAppointmentStore } from '@stores/Appointment';
+import { useFavoriteStore } from '@stores/Favorite';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Text,
@@ -13,9 +14,11 @@ import { Rating } from 'react-native-ratings';
 import { AppointmentDetailsModal } from '@components/features/AppointmentDetailsModal';
 import { RateServiceModal } from '@components/features/RateServiceModal';
 import { Appointment } from '@stores/Appointment/types';
+import { FontAwesome } from '@expo/vector-icons';
 
 function MeusAgendamentos() {
   const { appointments, fetchAppointments } = useAppointmentStore();
+  const { addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
   const colors = useColors();
   const styles = createStyles(colors);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -72,6 +75,22 @@ function MeusAgendamentos() {
     fetchAppointments();
   };
 
+  const handleToggleFavorite = (appointment: Appointment) => {
+    const professionalId = appointment.Professional.id;
+    
+    if (isFavorite(professionalId)) {
+      removeFavorite(professionalId);
+    } else {
+      addFavorite({
+        professionalId,
+        professionalName: appointment.Professional.User.name,
+        professionalAvatar: appointment.Professional.User.avatar_uri || undefined,
+        category: appointment.Service.Subcategory?.name,
+        addedAt: new Date().toISOString(),
+      });
+    }
+  };
+
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, '0');
@@ -95,9 +114,21 @@ function MeusAgendamentos() {
         <View style={styles.imageContainer}>
           <Image source={{ uri: imageUrl }} style={styles.cardImage} />
           {status === 'completed' && (
-            <View style={styles.completedBadge}>
-              <Text style={styles.completedBadgeText}>REALIZADO</Text>
-            </View>
+            <>
+              <View style={styles.completedBadge}>
+                <Text style={styles.completedBadgeText}>REALIZADO</Text>
+              </View>
+              <TouchableOpacity 
+                style={styles.favoriteButton}
+                onPress={() => handleToggleFavorite(appointment)}
+              >
+                <FontAwesome 
+                  name={isFavorite(appointment.Professional.id) ? 'heart' : 'heart-o'} 
+                  size={24} 
+                  color={isFavorite(appointment.Professional.id) ? '#FF0000' : 'rgba(255, 255, 255, 0.7)'}
+                />
+              </TouchableOpacity>
+            </>
           )}
           {status === 'upcoming' && (
             <View style={styles.categoryBadge}>
@@ -381,6 +412,13 @@ const createStyles = (colors: any) =>
       color: colors.textGray,
       textAlign: 'center',
       paddingVertical: 20,
+    },
+    favoriteButton: {
+      position: 'absolute',
+      top: 8,
+      right: 8,
+      padding: 4,
+      zIndex: 10,
     },
   });
 
