@@ -12,10 +12,9 @@ export interface FavoriteState {
   loading: boolean;
   error: string | null;
 
-  initFavorites: () => Promise<void>;
-
-  addFavorite: (professional: FavoriteProfessional) => void;
-  removeFavorite: (professionalId: number) => void;
+  syncWithServer: () => Promise<void>;
+  addFavorite: (professional: FavoriteProfessional) => Promise<void>;
+  removeFavorite: (professionalId: number) => Promise<void>;
   isFavorite: (professionalId: number) => boolean;
   clearFavorites: () => void;
 }
