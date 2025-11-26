@@ -5,7 +5,7 @@ import {
   useElements,
   PaymentElement,
 } from '@stripe/react-stripe-js';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 
 const CheckoutForm = () => {
@@ -14,6 +14,7 @@ const CheckoutForm = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const colors = useColors();
+  const styles = createStyles(colors);
 
   const handleSubmit = async () => {
     if (!stripe || !elements) return;
