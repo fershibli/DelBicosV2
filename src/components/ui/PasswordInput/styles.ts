@@ -6,7 +6,7 @@ export const createStyles = (colors: any) =>
       flexDirection: 'row',
       alignItems: 'center',
       width: '100%',
-      backgroundColor: colors.secondaryGray,
+      backgroundColor: colors.cardBackground,
       borderRadius: 8,
       borderWidth: 1,
       borderColor: colors.borderColor,
