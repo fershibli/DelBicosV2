@@ -7,6 +7,7 @@ import TrocarSenhaForm from './Tabs/TrocarSenhaForm';
 import MeusAgendamentos from './Tabs/MeusAgendamentos';
 import NotificacoesContent from './Tabs/NotificacoesContent';
 import AvaliacoesTab from './Tabs/AvaliacoesTab';
+import FavoritosTab from './Tabs/FavoritosTab';
 import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
@@ -39,6 +40,8 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
         return <NotificacoesContent userId={user.userId} />;
       case 'Avaliacoes':
         return <AvaliacoesTab />;
+      case 'Favoritos':
+        return <FavoritosTab />;
       case 'Historico':
         return <HistoricoCompras />;
       default:
