@@ -207,7 +207,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         style={[
           styles.mobileHeader,
           isDark
-            ? { backgroundColor: colors.secondaryGray }
+            ? { backgroundColor: colors.cardBackground }
             : isHighContrast
               ? {
                   backgroundColor: colors.primaryWhite,
@@ -394,7 +394,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
     <View
       style={[
         styles.headerContainer,
-        isDark ? { backgroundColor: colors.secondaryGray } : null,
+        isDark ? { backgroundColor: colors.cardBackground } : null,
       ]}>
       {/* Topo com Logo, Menu, Localização, Usuário */}
       <View style={styles.topBar}>
@@ -507,7 +507,11 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       </View>
 
       {/* Barra Azul de busca */}
-      <View style={styles.searchBar}>
+      <View
+        style={[
+          styles.searchBar,
+          isDark ? { backgroundColor: colors.secondaryGray } : null,
+        ]}>
         <Text style={styles.searchText}>
           Olá, {user ? user.name.split(' ')[0] : ''}! Como podemos te ajudar
           hoje?

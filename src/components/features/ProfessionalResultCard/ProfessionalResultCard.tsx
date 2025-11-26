@@ -4,6 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 import { useNavigation } from '@react-navigation/native';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 
 // Esta é a interface mockada baseada na sua imagem.
 // Importe a sua interface real quando a tiver.
@@ -33,6 +34,8 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
 }) => {
   const colors = useColors();
   const styles = createStyles(colors);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
   const navigation = useNavigation();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
@@ -57,7 +60,11 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
   };
 
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        isDark ? { backgroundColor: colors.cardBackground } : null,
+      ]}>
       {/* --- COLUNA ESQUERDA: DETALHES --- */}
       <View style={styles.detailsContainer}>
         <View style={styles.header}>

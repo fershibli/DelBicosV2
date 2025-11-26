@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 export const createInputBaseStyle = (colors: any) => ({
   input: {
-    backgroundColor: colors.secondaryGray,
+    backgroundColor: colors.cardBackground,
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 14,

@@ -14,6 +14,7 @@ import {
 import axios from 'axios';
 import { HTTP_DOMAIN } from '@config/varEnvs';
 import { useColors } from '@theme/ThemeProvider';
+import { useUserStore } from '@stores/User';
 
 interface Notification {
   id: number;
@@ -24,24 +25,22 @@ interface Notification {
   user_id: number;
 }
 
-interface NotificacoesContentProps {
-  userId: string;
-}
-
-const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
-  userId,
-}) => {
+const NotificacoesContent: React.FC = () => {
+  const { user } = useUserStore();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  const [selectedNotification, setSelectedNotification] =
+    useState<Notification | null>(null);
 
   const colors = useColors();
 
   const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${HTTP_DOMAIN}/api/notifications/${userId}`);
+      const response = await axios.get(
+        `${HTTP_DOMAIN}/api/notifications/${user?.id}`,
+      );
       const apiNotifications = response.data as Notification[];
       setNotifications(apiNotifications);
     } catch (err) {
@@ -50,7 +49,7 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [user?.id]);
 
   useEffect(() => {
     fetchNotifications();
@@ -71,7 +70,7 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
 
       try {
         await axios.patch(
-          `${HTTP_DOMAIN}/api/notifications/${notificationId}/read/${userId}`,
+          `${HTTP_DOMAIN}/api/notifications/${notificationId}/read/${user?.id}`,
         );
         setNotifications((prev) =>
           prev.map((notif) =>
@@ -83,7 +82,7 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
         console.error('Erro ao marcar como lida:', err);
       }
     },
-    [userId, notifications],
+    [user?.id, notifications],
   );
 
   const handleNotificationPress = (item: Notification) => {
@@ -111,22 +110,24 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
       : require('../../../../../assets/delbicos-logo-grey.png');
 
     const cardStyle = isUnread ? styles.unreadCard : styles.readCard;
-    const titleColor = isUnread 
-      ? colors.notification.unreadTitle 
+    const titleColor = isUnread
+      ? colors.notification.unreadTitle
       : colors.notification.readTitle;
-    const descriptionColor = isUnread 
-      ? colors.notification.unreadMessage 
+    const descriptionColor = isUnread
+      ? colors.notification.unreadMessage
       : colors.notification.readMessage;
 
     return (
       <TouchableOpacity
         style={[
-          styles.card, 
-          cardStyle, 
-          { 
+          styles.card,
+          cardStyle,
+          {
             backgroundColor: colors.notification.cardBackground,
-            borderColor: isUnread ? colors.notification.unreadBorder : colors.borderColor
-          }
+            borderColor: isUnread
+              ? colors.notification.unreadBorder
+              : colors.borderColor,
+          },
         ]}
         onPress={() => handleNotificationPress(item)}
         activeOpacity={0.7}>
@@ -137,9 +138,9 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
             <Text
               style={[
                 styles.title,
-                { 
-                  color: titleColor, 
-                  fontWeight: isUnread ? '700' : '400' 
+                {
+                  color: titleColor,
+                  fontWeight: isUnread ? '700' : '400',
                 },
               ]}
               numberOfLines={1}>
@@ -180,7 +181,9 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
 
   if (error) {
     return (
-      <Text style={[styles.errorText, { color: colors.primaryOrange }]}>{error}</Text>
+      <Text style={[styles.errorText, { color: colors.primaryOrange }]}>
+        {error}
+      </Text>
     );
   }
 
@@ -207,32 +210,30 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
         transparent={true}
         onRequestClose={hideModal}>
         <View style={styles.modalOverlay}>
-          <View style={[
-            styles.modalContent, 
-            { backgroundColor: colors.notification.modalBackground }
-          ]}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: colors.notification.modalBackground },
+            ]}>
             {selectedNotification && (
               <View style={styles.modalInnerContainer}>
-                <Text style={[
-                  styles.modalTitle, 
-                  { color: colors.primaryOrange }
-                ]}>
+                <Text
+                  style={[styles.modalTitle, { color: colors.primaryOrange }]}>
                   {selectedNotification.title}
                 </Text>
 
                 <ScrollView style={styles.modalMessageScroll}>
-                  <Text style={[
-                    styles.modalMessage, 
-                    { color: colors.primaryBlack }
-                  ]}>
+                  <Text
+                    style={[
+                      styles.modalMessage,
+                      { color: colors.primaryBlack },
+                    ]}>
                     {selectedNotification.message}
                   </Text>
                 </ScrollView>
 
-                <Text style={[
-                  styles.modalDate, 
-                  { color: colors.textTertiary }
-                ]}>
+                <Text
+                  style={[styles.modalDate, { color: colors.textTertiary }]}>
                   {new Date(selectedNotification.createdAt).toLocaleDateString(
                     'pt-BR',
                   )}{' '}
@@ -241,8 +242,8 @@ const NotificacoesContent: React.FC<NotificacoesContentProps> = ({
 
                 <TouchableOpacity
                   style={[
-                    styles.modalButton, 
-                    { backgroundColor: colors.primaryOrange }
+                    styles.modalButton,
+                    { backgroundColor: colors.primaryOrange },
                   ]}
                   onPress={hideModal}>
                   <Text style={styles.modalButtonLabel}>Fechar</Text>

@@ -21,10 +21,12 @@ function MeusAgendamentos() {
   const { addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
   const colors = useColors();
   const styles = createStyles(colors);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isRateModalVisible, setIsRateModalVisible] = useState(false);
-  const [appointmentToRate, setAppointmentToRate] = useState<Appointment | null>(null);
+  const [appointmentToRate, setAppointmentToRate] =
+    useState<Appointment | null>(null);
 
   useEffect(() => {
     fetchAppointments();
@@ -41,7 +43,7 @@ function MeusAgendamentos() {
     const realizados = appointments
       .filter((apt) => apt.status === 'completed')
       .slice(0, 2); // Limitar a 2
-    
+
     return realizados;
   }, [appointments]);
 
@@ -106,10 +108,17 @@ function MeusAgendamentos() {
     return `${hours}:${minutes}`;
   };
 
-  const renderAppointmentCard = (appointment: any, status: 'upcoming' | 'completed') => {
-    const imageUrl = appointment.Service.banner_uri || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400';
-    const professionalAvatar = appointment.Professional.User.avatar_uri || 'https://via.placeholder.com/50';
-    
+  const renderAppointmentCard = (
+    appointment: any,
+    status: 'upcoming' | 'completed',
+  ) => {
+    const imageUrl =
+      appointment.Service.banner_uri ||
+      'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400';
+    const professionalAvatar =
+      appointment.Professional.User.avatar_uri ||
+      'https://via.placeholder.com/50';
+
     return (
       <View key={appointment.id} style={styles.card}>
         <View style={styles.imageContainer}>
@@ -137,7 +146,10 @@ function MeusAgendamentos() {
             </View>
           )}
           <View style={styles.avatarContainer}>
-            <Image source={{ uri: professionalAvatar }} style={styles.professionalAvatar} />
+            <Image
+              source={{ uri: professionalAvatar }}
+              style={styles.professionalAvatar}
+            />
           </View>
         </View>
         <View style={styles.cardContent}>
@@ -164,24 +176,21 @@ function MeusAgendamentos() {
           </View>
           <Text style={styles.serviceTitle}>{appointment.Service.title}</Text>
           <Text style={styles.dateTime}>
-            Qui, {formatDateTime(appointment.start_time)} - {formatTime(appointment.start_time)}
+            Qui, {formatDateTime(appointment.start_time)} -{' '}
+            {formatTime(appointment.start_time)}
           </Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.detailsButton}
-            onPress={() => handleOpenDetails(appointment)}
-          >
+            onPress={() => handleOpenDetails(appointment)}>
             <Text style={styles.detailsButtonText}>Detalhes</Text>
           </TouchableOpacity>
           {status === 'completed' && (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.reviewButton}
               onPress={() => {
                 handleOpenRateModal(appointment);
-              }}
-            >
-              <Text style={styles.reviewButtonText}>
-                Avaliar
-              </Text>
+              }}>
+              <Text style={styles.reviewButtonText}>Avaliar</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -202,7 +211,9 @@ function MeusAgendamentos() {
           {proximosAgendamentos.length === 0 ? (
             <Text style={styles.emptyText}>Nenhum agendamento próximo</Text>
           ) : (
-            proximosAgendamentos.map((apt) => renderAppointmentCard(apt, 'upcoming'))
+            proximosAgendamentos.map((apt) =>
+              renderAppointmentCard(apt, 'upcoming'),
+            )
           )}
         </View>
       </View>
@@ -216,7 +227,9 @@ function MeusAgendamentos() {
           {agendamentosRealizados.length === 0 ? (
             <Text style={styles.emptyText}>Nenhum agendamento realizado</Text>
           ) : (
-            agendamentosRealizados.map((apt) => renderAppointmentCard(apt, 'completed'))
+            agendamentosRealizados.map((apt) =>
+              renderAppointmentCard(apt, 'completed'),
+            )
           )}
         </View>
       </View>
@@ -248,7 +261,7 @@ const createStyles = (colors: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: 'transparent',
+      backgroundColor: colors.secondaryGray,
       padding: 20,
     },
     pageTitle: {
