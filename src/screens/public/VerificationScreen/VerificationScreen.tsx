@@ -20,6 +20,10 @@ import { useUserStore } from '@stores/User';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { Address } from '@stores/User/types';
 import { useColors } from '@theme/ThemeProvider';
+import {
+  checkForNewNotifications,
+  setupNotifications,
+} from '@utils/usePushNotifications';
 
 function VerificationScreen() {
   const navigation = useNavigation();
@@ -123,6 +127,20 @@ function VerificationScreen() {
 
         Alert.alert('Sucesso!', 'Sua conta foi verificada com sucesso.');
         setVerificationEmail(null);
+
+        // Verificar imediatamente por notificações de boas-vindas (sem logs)
+        setTimeout(async () => {
+          try {
+            await checkForNewNotifications(
+              user.id.toString(),
+              new Date(Date.now() - 60000), // Últimos 60 segundos
+              false, // Sem logs
+            );
+          } catch {
+            // Silencioso
+          }
+        }, 2000);
+
         navigation.navigate('Home');
       } else {
         Alert.alert(
