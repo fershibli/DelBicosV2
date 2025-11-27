@@ -10,7 +10,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { Elements, useStripe } from '@stripe/react-stripe-js';
 import { stripePromise } from '@lib/stripe/stripe';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { FontAwesome } from '@expo/vector-icons';
 import { HTTP_DOMAIN } from '@config/varEnvs';
 import { useUserStore } from '@stores/User';
@@ -22,6 +22,7 @@ import {
 import InvoiceTemplate from '@components/features/InvoiceTemplate';
 import { generatePDF } from '@lib/helpers/fileGenerator';
 import { downloadFile } from '@lib/helpers/shareHelperSimple';
+import { useColors } from '@theme/ThemeProvider';
 
 type StatusType = 'loading' | 'success' | 'error';
 
@@ -36,6 +37,9 @@ function PaymentStatusLogic() {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
+
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   useEffect(() => {
     if (!stripe || !user || Platform.OS !== 'web') {
