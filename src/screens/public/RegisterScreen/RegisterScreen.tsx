@@ -248,7 +248,6 @@ function RegisterScreen() {
           <Controller
             control={control}
             name="location"
-            rules={{ required: 'A localização é obrigatória' }}
             render={({ field: { value } }) => (
               <CustomTextInput label="Localização" error={errors.location}>
                 <View style={styles.locationContainer}>
