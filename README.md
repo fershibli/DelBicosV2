@@ -39,6 +39,9 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 🔗 **Documentações das disciplinas do projeto**
 
+- <a href="assets/DelBicos - Projeto Interdisciplinar IV.pdf"> Projeto Interdisciplinar IV - 4 Semestre </a><p>
+- <a href="assets/DelBicos - Projeto Interdisciplinar IV - UX.pdf"> UX Design - 4 Semestre </a><p>
+
 <details>
   <summary> Documentações das disciplinas do projeto 3 Semestre</summary>
   <p>
