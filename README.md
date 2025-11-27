@@ -82,8 +82,11 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 <image src="assets/Tela-de-Login.gif" alt="tela de login" width="80%">
 <p>Tela de login
 <p>
-<image src="assets/apresentação.gif" alt="tela da Área do Cliente" width="80%">
+<image src="assets/tela-de-profile.gif" alt="tela da Área do Cliente" width="80%">
 <p>Tela da Área do Cliente
+<p>
+<image src="assets/tela-dark-light.gif" alt="tela dark e light mode" width="80%">
+<p>Tela Light, Dark e Contrast Mode
 
 <br>
 
