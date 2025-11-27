@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import CustomTextInput from '@components/ui/CustomTextInput';
 import { useViaCepStore } from '@stores/ViaCep';
+import { Button } from '@components/ui/Button';
+import { useColors } from '@theme/ThemeProvider';
 
 interface AddressFormProps {
   onSubmit: (data: any) => void;
@@ -9,22 +13,23 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onSubmit }) => {
   const [cep, setCep] = useState('');
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
-  const [state, setState] = useState('');
+  const [stateValue, setStateValue] = useState('');
   const [neighborhood, setNeighborhood] = useState('');
   const [number, setNumber] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const { fetchCep, loading } = useViaCepStore();
+  const colors = useColors();
+  const styles = createStyles(colors);
 
-  const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  const handleCepChange = async (value: string) => {
     setCep(value);
     if (value.replace(/\D/g, '').length === 8) {
       const data = await fetchCep(value);
       if (data) {
         setStreet(data.logradouro || '');
         setCity(data.localidade || '');
-        setState(data.uf || '');
+        setStateValue(data.uf || '');
         setNeighborhood(data.bairro || '');
         setError(null);
       } else {
@@ -33,56 +38,51 @@ export const AddressForm: React.FC<AddressFormProps> = ({ onSubmit }) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     onSubmit({
       cep,
       street,
       city,
-      state,
+      state: stateValue,
       neighborhood,
       number,
     });
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        CEP:
-        <input
-          value={cep}
-          onChange={handleCepChange}
-          maxLength={9}
-          placeholder="00000-000"
-        />
-      </label>
-      <label>
-        Rua:
-        <input value={street} onChange={(e) => setStreet(e.target.value)} />
-      </label>
-      <label>
-        Cidade:
-        <input value={city} onChange={(e) => setCity(e.target.value)} />
-      </label>
-      <label>
-        Estado:
-        <input value={state} onChange={(e) => setState(e.target.value)} />
-      </label>
-      <label>
-        Bairro:
-        <input
-          value={neighborhood}
-          onChange={(e) => setNeighborhood(e.target.value)}
-        />
-      </label>
-      <label>
-        Número:
-        <input value={number} onChange={(e) => setNumber(e.target.value)} />
-      </label>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
-      <button type="submit" disabled={loading}>
+    <View style={styles.container}>
+      <CustomTextInput
+        label="CEP"
+        value={cep}
+        onChangeText={handleCepChange}
+        maxLength={9}
+        keyboardType="numeric"
+      />
+      <CustomTextInput label="Rua" value={street} onChangeText={setStreet} />
+      <CustomTextInput label="Cidade" value={city} onChangeText={setCity} />
+      <CustomTextInput
+        label="Estado"
+        value={stateValue}
+        onChangeText={setStateValue}
+      />
+      <CustomTextInput
+        label="Bairro"
+        value={neighborhood}
+        onChangeText={setNeighborhood}
+      />
+      <CustomTextInput label="Número" value={number} onChangeText={setNumber} />
+
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+      <Button onPress={handleSubmit} loading={loading} style={styles.button}>
         Salvar
-      </button>
-    </form>
+      </Button>
+    </View>
   );
 };
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: { padding: 8 },
+    errorText: { color: colors.danger || 'red', marginVertical: 8 },
+    button: { marginTop: 12 },
+  });
