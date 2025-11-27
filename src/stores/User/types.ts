@@ -35,6 +35,18 @@ export type UploadAvatarResponse = {
   avatar_uri?: string;
 };
 
+export type RegisterFormData = {
+  name: string;
+  surname: string;
+  birthDate: string;
+  cpf: string;
+  location: string;
+  email: string;
+  phone: string;
+  password: string;
+  acceptTerms: boolean;
+};
+
 export type UserStore = {
   user: User | null;
   address: Address | null;
@@ -47,6 +59,7 @@ export type UserStore = {
     user: User;
     address: Address | null;
   }) => void;
+  registerUser: (formData: RegisterFormData) => Promise<void>;
   signInPassword: (email: string, password: string) => Promise<void>;
   changePassword: (
     currentPassword: string,
