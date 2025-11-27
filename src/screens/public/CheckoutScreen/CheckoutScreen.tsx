@@ -11,7 +11,7 @@ import {
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Rating } from 'react-native-ratings';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { NavigationParams } from '@screens/types';
 import { useColors } from '@theme/ThemeProvider';
 
@@ -96,6 +96,7 @@ function CheckoutScreen() {
     useProfessionalStore();
 
   const colors = useColors();
+  const styles = createStyles(colors);
 
   const service = useMemo(() => {
     if (selectedProfessional && serviceId) {
