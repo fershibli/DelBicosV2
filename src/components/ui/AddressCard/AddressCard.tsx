@@ -214,5 +214,3 @@ export const AddressCard: React.FC<{
     </View>
   );
 };
-
-export default AddressCard;
