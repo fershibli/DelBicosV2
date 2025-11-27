@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
   View,
@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   TextInput,
   Image,
+  Platform,
 } from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
@@ -19,7 +20,6 @@ import CpfInput from '@components/ui/CpfInput';
 import DateInput from '@components/ui/DateInput';
 import { createStyles } from './styles';
 import { createInputBaseStyle } from '@components/ui/CustomTextInput/styles';
-import { HTTP_DOMAIN } from '@config/varEnvs';
 import { isValidCPF } from '../../../utils/validators';
 import LogoV3 from '@assets/LogoV3.png';
 import { useUserStore } from '@stores/User';
@@ -44,7 +44,8 @@ function RegisterScreen() {
   const [isLocationLoading, setLocationLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { setVerificationEmail } = useUserStore();
+  const [isTimeoutError, setIsTimeoutError] = useState(false);
+  const { setVerificationEmail, registerUser } = useUserStore();
 
   const colors = useColors();
   const inputBaseStyle = createInputBaseStyle(colors);
@@ -72,6 +73,9 @@ function RegisterScreen() {
 
   const handleUseLocation = async () => {
     setLocationLoading(true);
+    setTimeout(() => {
+      setIsTimeoutError(true);
+    }, 7000);
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert(
@@ -109,32 +113,47 @@ function RegisterScreen() {
   const handleRegister = async (formData: FormData) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`${HTTP_DOMAIN}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        Alert.alert(
-          'Quase lá!',
-          'Enviamos um código de verificação para o seu e-mail.',
-        );
-        setVerificationEmail(formData.email);
-        navigation.navigate('VerificationScreen');
-      } else {
-        Alert.alert('Erro no Cadastro', data.error || 'Ocorreu um problema.');
-      }
-    } catch (error) {
-      console.error('Erro ao conectar com o servidor:', error);
+      await registerUser(formData);
       Alert.alert(
-        'Erro de Conexão',
-        'Não foi possível se conectar ao servidor.',
+        'Quase lá!',
+        'Enviamos um código de verificação para o seu e-mail.',
       );
+      setVerificationEmail(formData.email);
+      navigation.navigate('VerificationScreen');
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Erro no Cadastro', error.message);
+      } else {
+        console.error('Erro ao conectar com o servidor:', error);
+        Alert.alert(
+          'Erro de Conexão',
+          'Não foi possível se conectar ao servidor.',
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (isTimeoutError && isLocationLoading) {
+      setLocationLoading(false);
+      Platform.select({
+        web: () => {
+          alert(
+            'Serviço de Localização Indisponível.\n Tente novamente mais tarde.',
+          );
+        },
+        default: () => {
+          Alert.alert(
+            'Serviço de Localização Indisponível',
+            'Tente novamente mais tarde.',
+          );
+        },
+      })();
+      setIsTimeoutError(false);
+    }
+  }, [isTimeoutError, isLocationLoading]);
 
   return (
     <View style={styles.container}>
@@ -229,7 +248,6 @@ function RegisterScreen() {
           <Controller
             control={control}
             name="location"
-            rules={{ required: 'A localização é obrigatória' }}
             render={({ field: { value } }) => (
               <CustomTextInput label="Localização" error={errors.location}>
                 <View style={styles.locationContainer}>
