@@ -1,6 +1,6 @@
 {
   "name": "delbicos",
-  "version": "6.6.0",
+  "version": "6.7.0",
   "main": "index.tsx",
   "scripts": {
     "start": "expo start --dev-client",
