@@ -181,9 +181,12 @@ export const useUserStore = create<UserStore>(
       },
       uploadAvatar: async (base64Image: string) => {
         try {
-          const response = await backendHttpClient.post(`/api/user/avatar`, {
-            base64Image: base64Image,
-          });
+          const response = await backendHttpClient.post(
+            `/api/user/imgbb/avatar`,
+            {
+              base64Image: base64Image,
+            },
+          );
 
           const { data } = response;
 
