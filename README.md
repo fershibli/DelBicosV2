@@ -120,7 +120,9 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
    <summary> Requisitos Funcionais - Administrador </summary>
   <image src="assets/requisitos_tabela_requisitos_funcionais_administrador.png" alt="Requisitos Funcionais do projeto DelBicos" width="80%"><p>
   <p>
-</p></details>
+</p>
+</details>
+
 <br>
 
 ## 🎨 Prototype
