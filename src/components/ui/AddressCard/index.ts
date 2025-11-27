@@ -1,2 +1,1 @@
-export { default } from './AddressCard';
-export { default as AddressCard } from './AddressCard';
+export { AddressCard } from './AddressCard';
