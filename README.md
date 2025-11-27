@@ -105,7 +105,7 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 <image src="assets/sprint03-1.png" alt="User Stories do projeto DelBicos" width="60%"><p>
 <image src="assets/sprint03-2.png" alt="User Stories do projeto DelBicos" width="60%"><p>
 <image src="assets/sprint04.png" alt="User Stories do projeto DelBicos" width="60%"><p>
-
+</details>
 <br>
 
 ## 💡 Functional Requirements
