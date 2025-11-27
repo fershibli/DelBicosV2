@@ -76,13 +76,13 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 
 ### 🎬 Apresentação
 
-<image src="assets/delbicos_pitch_HD.gif" alt="Vídeo PITCH do projeto DelBicos" width="60%">
+<image src="assets/delbicos_pitch_HD.gif" alt="Vídeo PITCH do projeto DelBicos" width="80%">
 <p>Vídeo PITCH do projeto DelBicos
 <p>
-<image src="assets/Tela-de-Login.gif" alt="tela de login" width="60%">
+<image src="assets/Tela-de-Login.gif" alt="tela de login" width="80%">
 <p>Tela de login
 <p>
-<image src="assets/apresentação.gif" alt="tela da Área do Cliente" width="60%">
+<image src="assets/apresentação.gif" alt="tela da Área do Cliente" width="80%">
 <p>Tela da Área do Cliente
 
 <br>
