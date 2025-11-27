@@ -13,6 +13,32 @@ export const useUserStore = create<UserStore>(
       token: null,
       verificationEmail: null,
       avatarBase64: null,
+
+      fetchCurrentUser: async () => {
+        try {
+          const { user } = (await backendHttpClient.get('/api/user/me')).data;
+
+          const userData: User = {
+            id: user.id,
+            client_id: user.Client.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            cpf: user.Client.cpf,
+            avatar_uri: user.avatar_uri,
+            banner_uri: user.banner_uri,
+          };
+
+          const prevUser = get().user;
+          set({
+            user: { ...prevUser, ...userData },
+            avatarBase64: userData.avatar_uri || null,
+          });
+        } catch (error) {
+          console.error('Erro ao buscar usuário atual:', error);
+        }
+      },
+
       setVerificationEmail: (email) => set({ verificationEmail: email }),
 
       setLoggedInUser: (data: {
