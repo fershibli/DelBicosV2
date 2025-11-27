@@ -1,18 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { FontAwesome } from '@expo/vector-icons';
 import CustomTextInput from '@components/ui/CustomTextInput';
 import { createStyles } from './styles';
 import { Address } from '@stores/Address';
+import { useViaCepStore } from '@stores/ViaCep';
 import { useColors } from '@theme/ThemeProvider';
-
-interface AddressCardProps {
-  addressData: Address;
-  onUpdate: (id: number, data: Partial<Address>) => void;
-  onDelete: (id: number) => void;
-  onSetPrimary: (id: number) => void;
-}
 
 const UFs = [
   'AC',
@@ -44,15 +38,35 @@ const UFs = [
   'TO',
 ];
 
-export const AddressCard: React.FC<AddressCardProps> = ({
-  addressData,
-  onUpdate,
-  onDelete,
-  onSetPrimary,
-}) => {
+export const AddressCard: React.FC<{
+  addressData: Address;
+  onUpdate: (id: number, data: Partial<Address>) => void;
+  onDelete: (id: number) => void;
+  onSetPrimary: (id: number) => void;
+}> = ({ addressData, onUpdate, onDelete, onSetPrimary }) => {
   const [isEditing, setIsEditing] = useState(false);
-  // Estado local para edição, para não alterar o estado global a cada digitação
   const [localData, setLocalData] = useState(addressData);
+  const { fetchCep, loading: loadingCep, error: errorCep } = useViaCepStore();
+  const colors = useColors();
+  const styles = createStyles(colors);
+
+  useEffect(() => {
+    const cep = localData.postal_code?.replace(/\D/g, '');
+    if (isEditing && cep && cep.length === 8) {
+      (async () => {
+        const data = await fetchCep(localData.postal_code);
+        if (data) {
+          setLocalData((prev) => ({
+            ...prev,
+            street: data.logradouro || prev.street,
+            city: data.localidade || prev.city,
+            state: data.uf || prev.state,
+            neighborhood: data.bairro || prev.neighborhood,
+          }));
+        }
+      })();
+    }
+  }, [localData.postal_code, isEditing, fetchCep]);
 
   const handleInputChange = (field: keyof Address, value: string) => {
     setLocalData((prev) => ({ ...prev, [field]: value }));
@@ -64,33 +78,41 @@ export const AddressCard: React.FC<AddressCardProps> = ({
   };
 
   const handleCancel = () => {
-    setLocalData(addressData); // Restaura os dados originais
+    setLocalData(addressData);
     setIsEditing(false);
   };
-
-  const colors = useColors();
-  const styles = createStyles(colors);
 
   return (
     <View style={styles.card}>
       <View style={styles.formRow}>
-        <CustomTextInput
-          label="CEP"
-          value={localData.postal_code}
-          onChangeText={(text) => handleInputChange('postal_code', text)}
-          editable={isEditing}
-          style={!isEditing ? styles.inputReadOnly : styles.input}
-        />
+        <View style={{ flex: 1 }}>
+          <CustomTextInput
+            label="CEP"
+            value={localData.postal_code}
+            onChangeText={(text) => handleInputChange('postal_code', text)}
+            editable={isEditing}
+            style={!isEditing ? styles.inputReadOnly : styles.input}
+            keyboardType="numeric"
+            maxLength={9}
+          />
+          {isEditing && loadingCep && (
+            <Text style={{ color: 'orange', marginLeft: 8 }}>
+              Buscando endereço...
+            </Text>
+          )}
+          {isEditing && errorCep && (
+            <Text style={{ color: 'red', marginLeft: 8 }}>{errorCep}</Text>
+          )}
+        </View>
         <CustomTextInput
           label="Endereço"
           value={localData.street}
           onChangeText={(text) => handleInputChange('street', text)}
           editable={isEditing}
           style={!isEditing ? styles.inputReadOnly : styles.input}
-          containerStyle={{ flex: 2 }} // Ocupa mais espaço
+          containerStyle={{ flex: 2 }}
         />
       </View>
-
       <View style={styles.formRow}>
         <CustomTextInput
           label="Número"
@@ -110,15 +132,13 @@ export const AddressCard: React.FC<AddressCardProps> = ({
           containerStyle={{ flex: 2 }}
         />
       </View>
-
       <View style={styles.formRow}>
         <CustomTextInput
           label="UF"
           value={localData.state}
-          editable={false} // O CustomTextInput nunca será editável diretamente
-          style={styles.inputReadOnly} // Aplica sempre o estilo de leitura
+          editable={false}
+          style={styles.inputReadOnly}
           containerStyle={{ flex: 1 }}>
-          {/* A lógica condicional agora acontece DENTRO do CustomTextInput */}
           {isEditing ? (
             <View style={styles.pickerContainer}>
               <Picker
@@ -132,9 +152,7 @@ export const AddressCard: React.FC<AddressCardProps> = ({
                 ))}
               </Picker>
             </View>
-          ) : // Em modo de leitura, o CustomTextInput já exibe o valor `value`
-          // Portanto, não precisamos renderizar nada aqui.
-          null}
+          ) : null}
         </CustomTextInput>
         <CustomTextInput
           label="Cidade"
@@ -145,7 +163,6 @@ export const AddressCard: React.FC<AddressCardProps> = ({
           containerStyle={{ flex: 2 }}
         />
       </View>
-
       {localData.complement && (
         <View style={styles.formRow}>
           <CustomTextInput
@@ -157,7 +174,6 @@ export const AddressCard: React.FC<AddressCardProps> = ({
           />
         </View>
       )}
-
       {isEditing && (
         <View style={styles.saveRow}>
           <TouchableOpacity
@@ -174,7 +190,6 @@ export const AddressCard: React.FC<AddressCardProps> = ({
           </TouchableOpacity>
         </View>
       )}
-
       <View style={styles.actionsRow}>
         <TouchableOpacity
           style={styles.iconButton}
@@ -199,3 +214,5 @@ export const AddressCard: React.FC<AddressCardProps> = ({
     </View>
   );
 };
+
+export default AddressCard;
