@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FlatList,
   StyleSheet,
@@ -11,84 +11,33 @@ import {
   ActivityIndicator,
   Text,
 } from 'react-native';
-import axios from 'axios';
-import { HTTP_DOMAIN } from '@config/varEnvs';
 import { useColors } from '@theme/ThemeProvider';
 import { useUserStore } from '@stores/User';
-
-interface Notification {
-  id: number;
-  title: string;
-  message: string;
-  is_read: boolean;
-  createdAt: string;
-  user_id: number;
-}
+import { useNotificationStore, Notification } from '@stores/Notification';
 
 const NotificacoesContent: React.FC = () => {
   const { user } = useUserStore();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { notifications, loading, error, fetchNotifications, markAsRead } =
+    useNotificationStore();
   const [selectedNotification, setSelectedNotification] =
     useState<Notification | null>(null);
 
   const colors = useColors();
 
-  const fetchNotifications = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `${HTTP_DOMAIN}/api/notifications/${user?.id}`,
-      );
-      const apiNotifications = response.data as Notification[];
-      setNotifications(apiNotifications);
-    } catch (err) {
-      setError('Erro ao carregar notificações.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [user?.id]);
-
   useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications]);
+    if (user?.id) {
+      fetchNotifications(user.id, false);
+    }
+  }, [user?.id, fetchNotifications]);
 
-  const markAsRead = useCallback(
-    async (notificationId: number) => {
-      const isCurrentlyUnread = notifications.find(
-        (n) => n.id === notificationId && !n.is_read,
-      );
-
-      if (!isCurrentlyUnread) {
-        console.log(
-          `Notificação ${notificationId} já está lida. Ignorando chamada à API.`,
-        );
-        return;
-      }
-
-      try {
-        await axios.patch(
-          `${HTTP_DOMAIN}/api/notifications/${notificationId}/read/${user?.id}`,
-        );
-        setNotifications((prev) =>
-          prev.map((notif) =>
-            notif.id === notificationId ? { ...notif, is_read: true } : notif,
-          ),
-        );
-      } catch (err) {
-        Alert.alert('Erro', 'Não foi possível marcar a notificação como lida.');
-        console.error('Erro ao marcar como lida:', err);
-      }
-    },
-    [user?.id, notifications],
-  );
-
-  const handleNotificationPress = (item: Notification) => {
+  const handleNotificationPress = async (item: Notification) => {
     setSelectedNotification(item);
-    if (!item.is_read) {
-      markAsRead(item.id);
+    if (!item.is_read && user?.id) {
+      try {
+        await markAsRead(item.id, user.id);
+      } catch {
+        Alert.alert('Erro', 'Não foi possível marcar a notificação como lida.');
+      }
     }
   };
 
@@ -189,9 +138,12 @@ const NotificacoesContent: React.FC = () => {
 
   if (notifications.length === 0 && !loading) {
     return (
-      <Text style={[styles.emptyText, { color: colors.textTertiary }]}>
-        Você não tem notificações.
-      </Text>
+      <View
+        style={[styles.container, { backgroundColor: colors.primaryWhite }]}>
+        <Text style={[styles.emptyText, { color: colors.textTertiary }]}>
+          Você não tem notificações.
+        </Text>
+      </View>
     );
   }
 
@@ -328,6 +280,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
     fontSize: 16,
+  },
+  refreshButton: {
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginTop: 10,
+  },
+  refreshButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   modalOverlay: {
     flex: 1,

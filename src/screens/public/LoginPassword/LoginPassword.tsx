@@ -13,6 +13,7 @@ import { useForm, Controller } from 'react-hook-form';
 
 import { useUserStore } from '@stores/User';
 import CustomTextInput from '@components/ui/CustomTextInput';
+import { checkForNewNotifications } from '@utils/usePushNotifications';
 
 // @ts-ignore
 import IconPerson from '@assets/person.svg';
@@ -63,6 +64,23 @@ export const LoginPassword = () => {
         navigation.navigate('Feed');
       } else {
         await signInPassword(data.email, data.password);
+
+        // Verificar notificações após login (sem logs)
+        const userId = useUserStore.getState().user?.id;
+        if (userId) {
+          setTimeout(async () => {
+            try {
+              await checkForNewNotifications(
+                userId.toString(),
+                new Date(Date.now() - 60000), // Últimos 60 segundos
+                false, // Sem logs
+              );
+            } catch {
+              // Silencioso
+            }
+          }, 1000);
+        }
+
         navigation.navigate('Feed');
       }
     } catch (error: any) {

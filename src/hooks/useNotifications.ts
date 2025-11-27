@@ -26,15 +26,11 @@ export const useNotifications = (
     setError(null);
 
     try {
-      console.log('Iniciando verificação de notificações...');
       const hasNew = await checkForNewNotifications(userId, lastChecked);
       setHasNewNotifications(hasNew);
 
       if (hasNew) {
-        console.log('Novas notificações detectadas!');
         setLastChecked(new Date());
-      } else {
-        console.log('Nenhuma nova notificação');
       }
     } catch (error) {
       const errorMessage =
@@ -47,17 +43,16 @@ export const useNotifications = (
   }, [userId, lastChecked, isLoading]);
 
   useEffect(() => {
-    console.log('Iniciando sistema de notificações para usuário:', userId);
+    // Não executa se não houver userId
+    if (!userId) {
+      return;
+    }
 
     checkNotifications();
 
     const interval = setInterval(checkNotifications, pollingInterval);
-    console.log(
-      `Polling configurado a cada ${pollingInterval / 1000} segundos`,
-    );
 
     return () => {
-      console.log('Limpando intervalo de notificações');
       clearInterval(interval);
     };
   }, [checkNotifications, pollingInterval, userId]);
