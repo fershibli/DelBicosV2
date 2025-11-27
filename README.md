@@ -79,7 +79,7 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 <image src="assets/delbicos_pitch_HD.gif" alt="Vídeo PITCH do projeto DelBicos" width="60%">
 <p>Vídeo PITCH do projeto DelBicos
 <p>
-<image src="assets/login01.gif" alt="tela de login" width="60%">
+<image src="assets/tela_login.gif" alt="tela de login" width="60%">
 <p>Tela de login
 <p>
 <image src="assets/apresentação.gif" alt="tela da Área do Cliente" width="60%">
