@@ -99,6 +99,7 @@ Ao solucionar esse problema, notaria-se também os seguintes benefícios para a 
 <image src="assets/backlogS.png" alt="Backlog de Sprints do projeto DelBicos" width="60%">
 </p>
 </details>
+<br>
 
 ## 🎥 User Stories
 
