@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   View,
 } from 'react-native';
-import AddressCard from '@components/ui/AddressCard';
+import { AddressCard } from '@components/ui/AddressCard';
 import ConfirmationModal from '@components/ui/ConfirmationModal';
 import { useColors } from '@theme/ThemeProvider';
 import { Address, useAddressStore } from '@stores/Address';
