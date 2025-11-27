@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
   View,
@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   TextInput,
   Image,
+  Platform,
 } from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
@@ -44,6 +45,7 @@ function RegisterScreen() {
   const [isLocationLoading, setLocationLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isTimeoutError, setIsTimeoutError] = useState(false);
   const { setVerificationEmail } = useUserStore();
 
   const colors = useColors();
@@ -72,6 +74,9 @@ function RegisterScreen() {
 
   const handleUseLocation = async () => {
     setLocationLoading(true);
+    setTimeout(() => {
+      setIsTimeoutError(true);
+    }, 7000);
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert(
@@ -135,6 +140,26 @@ function RegisterScreen() {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (isTimeoutError && isLocationLoading) {
+      setLocationLoading(false);
+      Platform.select({
+        web: () => {
+          alert(
+            'Serviço de Localização Indisponível.\n Tente novamente mais tarde.',
+          );
+        },
+        default: () => {
+          Alert.alert(
+            'Serviço de Localização Indisponível',
+            'Tente novamente mais tarde.',
+          );
+        },
+      })();
+      setIsTimeoutError(false);
+    }
+  }, [isTimeoutError, isLocationLoading]);
 
   return (
     <View style={styles.container}>
