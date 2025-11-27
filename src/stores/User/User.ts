@@ -267,7 +267,7 @@ export const useUserStore = create<UserStore>(
       },
       registerUser: async (formData) => {
         const { data } = await backendHttpClient.post(
-          '/api/user/register',
+          '/auth/register',
           formData,
         );
 
