@@ -7,8 +7,6 @@ export const ThemeToggle: React.FC = () => {
   const { theme, setTheme } = useThemeStore();
   const currentTheme = theme || ThemeMode.LIGHT;
 
-  console.log('ThemeToggle renderizado. Tema atual:', currentTheme);
-
   const handleThemeChange = (newTheme: ThemeMode) => {
     console.log('Mudando tema de', currentTheme, 'para', newTheme);
     setTheme(newTheme);
