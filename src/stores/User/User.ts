@@ -5,7 +5,7 @@ import { UserStore, Address, ErrorResponse, User } from './types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { AxiosError } from 'axios';
 
-export const useUserStore = create<UserStore>()(
+export const useUserStore = create<UserStore>(
   persist(
     (set, get) => ({
       user: null,
@@ -264,6 +264,18 @@ export const useUserStore = create<UserStore>()(
           avatarBase64: null,
           verificationEmail: null,
         });
+      },
+      registerUser: async (formData) => {
+        const { data } = await backendHttpClient.post(
+          '/auth/register',
+          formData,
+        );
+
+        if (!data || data.error) {
+          throw new Error(data.error || 'Ocorreu um problema.');
+        }
+
+        return data;
       },
     }),
     {
