@@ -21,7 +21,6 @@ export const createStyles = (colors: any) =>
         },
         web: {
           boxShadow: '0px 1px 4px rgba(0, 0, 0, 0.1)',
-          transition: 'transform 0.2s ease-in-out',
         },
       }),
     },
@@ -37,37 +36,60 @@ export const createStyles = (colors: any) =>
       paddingHorizontal: 12,
       justifyContent: 'center',
     },
-    Name: {
-      fontSize: 18,
+    name: {
+      fontSize: 16,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryOrange,
+      marginBottom: 2,
     },
-    Category: {
-      fontSize: 14,
+    services: {
+      fontSize: 13,
       fontFamily: 'Afacad-Regular',
       color: colors.primaryBlack,
+      marginBottom: 4,
     },
-    ratingRow: {
+    ratingContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginTop: 4,
+      marginBottom: 4,
     },
-    Rating: {
+    rating: {
       fontSize: 12,
-      fontFamily: 'Afacad-Regular',
+      fontFamily: 'Afacad-Bold',
       color: colors.primaryBlack,
       marginLeft: 4,
-      marginRight: 2,
     },
-    RatingCount: {
+    ratingCount: {
       fontSize: 12,
       fontFamily: 'Afacad-Regular',
       color: '#6c757d',
+      fontWeight: 'normal',
     },
-    Location: {
+    footer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: 2,
+    },
+    location: {
       fontSize: 12,
       fontFamily: 'Afacad-Regular',
       color: colors.primaryBlue,
-      marginTop: 4,
+      flex: 1,
+      marginRight: 8,
+    },
+    distanceBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.primaryBlue,
+      paddingVertical: 2,
+      paddingHorizontal: 6,
+      borderRadius: 4,
+    },
+    distanceText: {
+      color: colors.primaryWhite,
+      fontSize: 10,
+      fontFamily: 'Afacad-Bold',
+      marginLeft: 2,
     },
   });
