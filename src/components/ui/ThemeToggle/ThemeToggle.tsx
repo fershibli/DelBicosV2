@@ -8,10 +8,7 @@ export const ThemeToggle: React.FC = () => {
   const currentTheme = theme || ThemeMode.LIGHT;
 
   const handleThemeChange = (newTheme: ThemeMode) => {
-    console.log('Mudando tema de', currentTheme, 'para', newTheme);
     setTheme(newTheme);
-    console.log('Tema salvo, recarregando página...');
-    // Força um reload das cores apenas na web
     if (Platform.OS === 'web') {
       window.location.href = window.location.href;
     }
