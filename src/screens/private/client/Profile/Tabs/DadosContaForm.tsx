@@ -10,6 +10,8 @@ import {
   Animated,
   ActivityIndicator,
   ScrollView,
+  StyleSheet,
+  useWindowDimensions,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import CustomTextInput from '@components/ui/CustomTextInput';
@@ -18,48 +20,30 @@ import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
 import { UserProfileProps } from '../types';
+import { FontAwesome } from '@expo/vector-icons';
+import PhoneInput from '@components/ui/PhoneInput';
+import { useUserStore } from '@stores/User';
+
 interface DadosContaFormProps {
   user?: UserProfileProps;
 }
 
-type ModalStatus = 'success' | 'error' | 'loading' | null;
+const formatCPF = (value: string | undefined) => {
+  if (!value) return '';
+  const cleaned = value.replace(/\D/g, '');
+  return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+};
 
-interface StatusModalProps {
-  visible: boolean;
-  status: ModalStatus;
-  message: string;
-  onClose: () => void;
-}
-
-const StatusModal = ({
-  visible,
-  status,
-  message,
-  onClose,
-}: StatusModalProps) => {
+const StatusModal = ({ visible, status, message, onClose }: any) => {
   const isSuccess = status === 'success';
   const isError = status === 'error';
   const isProgress = status === 'loading';
   const colors = useColors();
   const styles = createStyles(colors);
 
-  const getIcon = () => {
-    if (isSuccess) {
-      return '✔️';
-    } else if (isError) {
-      return '❌';
-    }
-    return '⏳';
-  };
-
-  const getTitle = () => {
-    if (isSuccess) {
-      return 'Sucesso!';
-    } else if (isError) {
-      return 'Ops...';
-    }
-    return 'Salvando...';
-  };
+  const getIcon = () => (isSuccess ? '✔️' : isError ? '❌' : '⏳');
+  const getTitle = () =>
+    isSuccess ? 'Sucesso!' : isError ? 'Ops...' : 'Salvando...';
 
   return (
     <Modal
@@ -72,10 +56,9 @@ const StatusModal = ({
           <Text style={styles.statusModalIcon}>{getIcon()}</Text>
           <Text style={styles.statusModalTitle}>{getTitle()}</Text>
           <Text style={styles.statusModalMessage}>{message}</Text>
-          {isProgress && (
+          {isProgress ? (
             <ActivityIndicator size="small" color={colors.primaryBlue} />
-          )}
-          {!isProgress && (
+          ) : (
             <TouchableOpacity
               style={styles.statusModalButton}
               onPress={onClose}>
@@ -88,309 +71,6 @@ const StatusModal = ({
   );
 };
 
-export default function DadosContaForm({ user }: DadosContaFormProps) {
-  const [nome, setNome] = useState('');
-  const [sobrenome, setSobrenome] = useState('');
-  const [cpf, setCpf] = useState('001.112.223-45');
-  const [email, setEmail] = useState('');
-  const [telefone, setTelefone] = useState('');
-
-  const [showOptions, setShowOptions] = useState(false);
-  const [overlayOpacity] = useState(new Animated.Value(0));
-
-  const [showStatusModal, setShowStatusModal] = useState(false);
-  const [status, setStatus] = useState<ModalStatus>(null);
-  const [statusMessage, setStatusMessage] = useState('');
-
-  useEffect(() => {
-    requestPermissions();
-
-    if (user) {
-      const fullNameParts = user.userName.split(' ');
-      setNome(fullNameParts[0] || '');
-      setSobrenome(fullNameParts.slice(1).join(' ') || '');
-      setEmail(user.userEmail || '');
-      setTelefone(user.userPhone || '');
-    }
-  }, [user]);
-
-  const requestPermissions = async () => {
-    if (Platform.OS !== 'web') {
-      const { status: cameraStatus } =
-        await ImagePicker.requestCameraPermissionsAsync();
-      const { status: libraryStatus } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (cameraStatus !== 'granted' || libraryStatus !== 'granted') {
-        Alert.alert(
-          'Permissões necessárias',
-          'Precisamos de acesso à câmera e galeria para esta funcionalidade.',
-        );
-      }
-    }
-  };
-
-  const handleHoverIn = () => {
-    Animated.timing(overlayOpacity, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  };
-  const handleHoverOut = () => {
-    Animated.timing(overlayOpacity, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleImageSelection = async (asset: ImagePicker.ImagePickerAsset) => {
-    if (!asset.base64) {
-      Alert.alert('Erro', 'Imagem não contém dados base64.');
-      return;
-    }
-    const dataUri = `data:image/jpeg;base64,${asset.base64}`;
-
-    try {
-      if (user?.onAvatarChange) {
-        await user.onAvatarChange(dataUri);
-      }
-    } catch (error) {
-      console.error('Erro ao processar a imagem:', error);
-      Alert.alert('Erro', 'Não foi possível processar a imagem para upload.');
-    }
-  };
-
-  const handleTakePhoto = async () => {
-    if (user?.uploading) return;
-    try {
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-        base64: true,
-      });
-      if (!result.canceled && result.assets?.length > 0) {
-        handleImageSelection(result.assets[0]);
-      }
-    } catch {
-      Alert.alert('Erro', 'Não foi possível acessar a câmera.');
-    } finally {
-      setShowOptions(false);
-    }
-  };
-
-  const handlePickFromGallery = async () => {
-    if (user?.uploading) return;
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-        base64: true,
-      });
-      if (!result.canceled && result.assets?.length > 0) {
-        handleImageSelection(result.assets[0]);
-      }
-    } catch {
-      Alert.alert('Erro', 'Não foi possível acessar a galeria.');
-    } finally {
-      setShowOptions(false);
-    }
-  };
-
-  const removePhoto = () => {
-    if (user?.uploading) return;
-    Alert.alert(
-      'Remover foto',
-      'Tem certeza que deseja remover a foto de perfil?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Remover',
-          style: 'destructive',
-          onPress: () => {
-            if (user?.onAvatarChange) {
-              user.onAvatarChange(null);
-            }
-          },
-        },
-      ],
-    );
-    setShowOptions(false);
-  };
-
-  const handleSaveChanges = async () => {
-    setShowStatusModal(true);
-    setStatus('loading');
-    setStatusMessage('Estamos salvando suas alterações...');
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const success = Math.random() > 0.2;
-
-      if (success) {
-        setStatus('success');
-        setStatusMessage('Suas informações foram salvas com sucesso!');
-      } else {
-        throw new Error('Falha ao salvar os dados. Tente novamente.');
-      }
-    } catch (error: any) {
-      setStatus('error');
-      setStatusMessage(
-        error.message ||
-          'Ocorreu um erro inesperado. Tente novamente mais tarde.',
-      );
-      console.error('Erro ao salvar:', error);
-    }
-  };
-
-  const handleCloseStatusModal = () => {
-    setShowStatusModal(false);
-    setStatus(null);
-  };
-
-  const avatarUriToDisplay = user?.avatarSource?.uri;
-  const { theme } = useThemeStore();
-  const isDark = theme === ThemeMode.DARK;
-  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
-  const colors = useColors();
-  const styles = createStyles(colors);
-
-  return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.pageTitle}>Dados da Conta</Text>
-      <View
-        style={[
-          styles.card,
-          isDark && { backgroundColor: '#323232' },
-          isHighContrast && {
-            borderWidth: 3,
-            borderColor: colors.primaryBlack,
-          },
-        ]}>
-        <View style={styles.contentWrapper}>
-          <View style={styles.avatarContainer}>
-            <TouchableOpacity
-              style={styles.avatarTouchable}
-              onPress={() => setShowOptions(true)}
-              onPressIn={handleHoverIn}
-              onPressOut={handleHoverOut}
-              activeOpacity={0.9}
-              disabled={user?.uploading}>
-              <Animated.View style={styles.avatarAnimatedWrapper}>
-                {avatarUriToDisplay ? (
-                  <Image
-                    source={{ uri: avatarUriToDisplay }}
-                    style={styles.avatarImage}
-                  />
-                ) : (
-                  <Text style={styles.avatarInitials}>{nome[0] || ''}</Text>
-                )}
-                <Animated.View
-                  style={[styles.avatarOverlay, { opacity: overlayOpacity }]}>
-                  {user?.uploading ? (
-                    <ActivityIndicator
-                      size="small"
-                      color={colors.primaryWhite}
-                    />
-                  ) : (
-                    <Text style={styles.avatarOverlayText}>Alterar Foto</Text>
-                  )}
-                </Animated.View>
-              </Animated.View>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.formGrid}>
-            <View style={styles.formRow}>
-              <View style={styles.formCol}>
-                <CustomTextInput
-                  label="Nome"
-                  value={nome}
-                  onChangeText={setNome}
-                />
-              </View>
-              <View style={styles.formCol}>
-                <CustomTextInput
-                  label="Sobrenome"
-                  value={sobrenome}
-                  onChangeText={setSobrenome}
-                />
-              </View>
-            </View>
-
-            <View style={styles.formRow}>
-              <View style={styles.formCol}>
-                <CustomTextInput
-                  label="CPF"
-                  value={cpf}
-                  onChangeText={setCpf}
-                  editable={false}
-                />
-              </View>
-              <View style={styles.formCol}>
-                <CustomTextInput
-                  label="E-mail"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                />
-              </View>
-            </View>
-
-            <View style={styles.formRow}>
-              <View style={styles.formCol}>
-                <CustomTextInput
-                  label="Telefone"
-                  value={telefone}
-                  onChangeText={setTelefone}
-                  keyboardType="phone-pad"
-                />
-              </View>
-              <View style={styles.saveButtonContainer}>
-                <TouchableOpacity
-                  style={styles.saveButton}
-                  onPress={handleSaveChanges}>
-                  <Text style={styles.saveButtonText}>Salvar Alterações</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      <AvatarOptionsModal
-        visible={showOptions}
-        onClose={() => setShowOptions(false)}
-        onTakePhoto={handleTakePhoto}
-        onPickFromGallery={handlePickFromGallery}
-        onRemovePhoto={removePhoto}
-        hasPhoto={!!avatarUriToDisplay}
-        uploading={user?.uploading}
-      />
-      <StatusModal
-        visible={showStatusModal}
-        status={status}
-        message={statusMessage}
-        onClose={handleCloseStatusModal}
-      />
-    </ScrollView>
-  );
-}
-
-interface AvatarOptionsModalProps {
-  visible: boolean;
-  onClose: () => void;
-  onTakePhoto: () => void;
-  onPickFromGallery: () => void;
-  onRemovePhoto: () => void;
-  hasPhoto: boolean;
-  uploading?: boolean;
-}
-
 const AvatarOptionsModal = ({
   visible,
   onClose,
@@ -399,7 +79,7 @@ const AvatarOptionsModal = ({
   onRemovePhoto,
   hasPhoto,
   uploading,
-}: AvatarOptionsModalProps) => {
+}: any) => {
   const colors = useColors();
   const styles = createStyles(colors);
 
@@ -451,3 +131,326 @@ const AvatarOptionsModal = ({
     </Modal>
   );
 };
+
+export default function DadosContaForm({ user }: DadosContaFormProps) {
+  const [nome, setNome] = useState('');
+  const [sobrenome, setSobrenome] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefone, setTelefone] = useState('');
+
+  const [showOptions, setShowOptions] = useState(false);
+  const [overlayOpacity] = useState(new Animated.Value(0));
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [status, setStatus] = useState<'success' | 'error' | 'loading' | null>(
+    null,
+  );
+  const [statusMessage, setStatusMessage] = useState('');
+  const [tempAvatarBase64, setTempAvatarBase64] = useState<string | null>(null);
+  const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
+  const { updateUserProfile, uploadAvatar, removeAvatar } = useUserStore();
+
+  const { theme } = useThemeStore();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const colors = useColors();
+  const styles = createStyles(colors);
+
+  const responsiveStyles = StyleSheet.create({
+    contentWrapper: {
+      flexDirection: isMobile ? 'column' : 'row',
+      alignItems: isMobile ? 'center' : 'flex-start',
+    },
+    avatarContainer: {
+      marginRight: isMobile ? 0 : 24,
+      marginBottom: isMobile ? 24 : 0,
+    },
+    formGrid: {
+      flex: 1,
+      width: '100%',
+    },
+    formRowResponsive: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 16,
+      marginBottom: 16,
+    },
+    inputWrapper: {
+      flexGrow: 1,
+      flexBasis: 200,
+    },
+    disabledInput: {
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      borderRadius: 8,
+      borderWidth: 1,
+      fontSize: 16,
+      fontFamily: 'Afacad-Regular',
+      backgroundColor: isDark ? '#444' : '#F5F5F5',
+      color: isDark ? '#AAA' : '#888',
+      borderColor: isDark ? '#555' : '#E0E0E0',
+    },
+  });
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') {
+      (async () => {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert(
+            'Permissão necessária',
+            'Precisamos de acesso à galeria para alterar a foto.',
+          );
+        }
+      })();
+    }
+
+    if (user) {
+      const fullNameParts = user.userName.split(' ');
+      setNome(fullNameParts[0] || '');
+      setSobrenome(fullNameParts.slice(1).join(' ') || '');
+      setEmail(user.userEmail || '');
+      setTelefone(user.userPhone || '');
+      setCpf(formatCPF(user.userCpf));
+    }
+  }, [user]);
+
+  const handleHoverIn = () => {
+    Animated.timing(overlayOpacity, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  };
+  const handleHoverOut = () => {
+    Animated.timing(overlayOpacity, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handleImageSelection = async (asset: ImagePicker.ImagePickerAsset) => {
+    if (!asset.base64) return;
+    const dataUri = `data:image/jpeg;base64,${asset.base64}`;
+
+    setTempAvatarBase64(dataUri);
+    setIsAvatarRemoved(false);
+    setShowOptions(false);
+  };
+
+  const handlePickFromGallery = async () => {
+    if (user?.uploading) return;
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+        base64: true,
+      });
+      if (!result.canceled && result.assets[0]) {
+        handleImageSelection(result.assets[0]);
+      }
+    } catch {
+      Alert.alert('Erro', 'Erro ao abrir galeria.');
+    } finally {
+      setShowOptions(false);
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    setShowOptions(false);
+  };
+
+  const handleRemovePhoto = () => {
+    setIsAvatarRemoved(true);
+    setTempAvatarBase64(null);
+    setShowOptions(false);
+  };
+
+  const handleSaveChanges = async () => {
+    setShowStatusModal(true);
+    setStatus('loading');
+    setStatusMessage('Salvando alterações...');
+
+    try {
+      await updateUserProfile({
+        name: `${nome} ${sobrenome}`.trim(),
+        email,
+        phone: telefone.replace(/\D/g, ''),
+      });
+
+      if (isAvatarRemoved) {
+        await removeAvatar();
+      } else if (tempAvatarBase64) {
+        await uploadAvatar(tempAvatarBase64);
+      }
+
+      setTempAvatarBase64(null);
+      setIsAvatarRemoved(false);
+
+      setStatus('success');
+      setStatusMessage('Dados atualizados com sucesso!');
+    } catch (error: any) {
+      setStatus('error');
+      setStatusMessage(error.message || 'Erro ao salvar os dados.');
+    }
+  };
+
+  const handleCloseStatusModal = () => {
+    setShowStatusModal(false);
+    setStatus(null);
+  };
+
+  let avatarUriToDisplay = null;
+  if (!isAvatarRemoved) {
+    avatarUriToDisplay = tempAvatarBase64 || user?.avatarSource?.uri;
+  }
+
+  return (
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 40 }}>
+      <Text style={styles.pageTitle}>Dados da Conta</Text>
+
+      <View
+        style={[
+          styles.card,
+          isDark && { backgroundColor: '#323232' },
+          isHighContrast && {
+            borderWidth: 3,
+            borderColor: colors.primaryBlack,
+          },
+        ]}>
+        <View style={[styles.contentWrapper, responsiveStyles.contentWrapper]}>
+          <View
+            style={[styles.avatarContainer, responsiveStyles.avatarContainer]}>
+            <TouchableOpacity
+              style={styles.avatarTouchable}
+              onPress={() => setShowOptions(true)}
+              // @ts-ignore
+              onHoverIn={handleHoverIn}
+              onHoverOut={handleHoverOut}
+              activeOpacity={0.9}
+              disabled={user?.uploading}>
+              <Animated.View style={styles.avatarAnimatedWrapper}>
+                {avatarUriToDisplay &&
+                avatarUriToDisplay !== '[object Object]' ? (
+                  <Image
+                    source={{ uri: avatarUriToDisplay }}
+                    style={styles.avatarImage}
+                  />
+                ) : (
+                  <Image
+                    source={require('@assets/logo.png')}
+                    style={styles.avatarImage}
+                  />
+                )}
+
+                <Animated.View
+                  style={[styles.avatarOverlay, { opacity: overlayOpacity }]}>
+                  {user?.uploading ? (
+                    <ActivityIndicator
+                      size="small"
+                      color={colors.primaryWhite}
+                    />
+                  ) : (
+                    <View style={{ alignItems: 'center' }}>
+                      <FontAwesome name="camera" size={20} color="white" />
+                      <Text style={styles.avatarOverlayText}>Alterar</Text>
+                    </View>
+                  )}
+                </Animated.View>
+              </Animated.View>
+            </TouchableOpacity>
+          </View>
+
+          <View style={responsiveStyles.formGrid}>
+            <View style={responsiveStyles.formRowResponsive}>
+              <View style={responsiveStyles.inputWrapper}>
+                <CustomTextInput
+                  label="Nome"
+                  value={nome}
+                  onChangeText={setNome}
+                />
+              </View>
+              <View style={responsiveStyles.inputWrapper}>
+                <CustomTextInput
+                  label="Sobrenome"
+                  value={sobrenome}
+                  onChangeText={setSobrenome}
+                />
+              </View>
+            </View>
+
+            <View style={responsiveStyles.formRowResponsive}>
+              <View style={responsiveStyles.inputWrapper}>
+                <CustomTextInput
+                  label="CPF"
+                  value={cpf}
+                  editable={false}
+                  style={responsiveStyles.disabledInput}
+                />
+              </View>
+              <View style={responsiveStyles.inputWrapper}>
+                <CustomTextInput
+                  label="E-mail"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                />
+              </View>
+            </View>
+
+            <View style={responsiveStyles.formRowResponsive}>
+              <View style={responsiveStyles.inputWrapper}>
+                <CustomTextInput label="Telefone">
+                  <PhoneInput value={telefone} onChangeText={setTelefone} />
+                </CustomTextInput>
+              </View>
+            </View>
+
+            <View style={styles.saveButtonContainer}>
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={handleSaveChanges}>
+                <Text style={styles.saveButtonText}>Salvar Alterações</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      <AvatarOptionsModal
+        visible={showOptions}
+        onClose={() => setShowOptions(false)}
+        onTakePhoto={handleTakePhoto}
+        onPickFromGallery={handlePickFromGallery}
+        onRemovePhoto={handleRemovePhoto}
+        hasPhoto={
+          !!avatarUriToDisplay && avatarUriToDisplay !== '[object Object]'
+        }
+        uploading={user?.uploading}
+      />
+
+      <StatusModal
+        visible={showStatusModal}
+        status={status}
+        message={statusMessage}
+        onClose={handleCloseStatusModal}
+      />
+
+      <StatusModal
+        visible={showStatusModal}
+        status={status}
+        message={statusMessage}
+        onClose={() => setShowStatusModal(false)}
+      />
+    </ScrollView>
+  );
+}
