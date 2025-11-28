@@ -89,6 +89,8 @@ export interface ProfessionalStore {
     filter?: string,
     page?: number,
     limit?: number,
+    lat?: number,
+    lng?: number,
   ) => Promise<ListedProfessional[]>;
   fetchProfessionalById: (id: number) => Promise<Professional | null>;
   fetchProfessionalsByAvailability: (
