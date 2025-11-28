@@ -1,9 +1,16 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'expo-zustand-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserStore, Address, ErrorResponse, User } from './types';
+import {
+  UserStore,
+  Address,
+  ErrorResponse,
+  User,
+  UpdateUserData,
+} from './types';
 import { AxiosError } from 'axios';
 import { AuthService } from '@services/AuthService';
+import { backendHttpClient } from '@lib/helpers/httpClient';
 
 export const useUserStore = create<UserStore>()(
   persist(
@@ -220,21 +227,48 @@ export const useUserStore = create<UserStore>()(
         }
       },
 
+      updateUserProfile: async (data: UpdateUserData) => {
+        try {
+          const response = await backendHttpClient.put('/api/user/me', data);
+
+          if (response.status === 200) {
+            const currentUser = get().user;
+            if (currentUser) {
+              set({
+                user: {
+                  ...currentUser,
+                  name: data.name,
+                  email: data.email,
+                  phone: data.phone,
+                },
+              });
+            }
+          } else {
+            throw new Error('Falha ao atualizar perfil.');
+          }
+        } catch (error: any) {
+          console.error('Erro ao atualizar perfil:', error);
+          throw new Error(
+            error.response?.data?.error || 'Erro ao salvar alterações.',
+          );
+        }
+      },
+
       uploadAvatar: async (base64Image: string) => {
         try {
           const data = await AuthService.uploadAvatar(base64Image);
 
           const currentUser = get().user;
 
-          if (data.user) {
-            set({ user: data.user });
-          } else if (currentUser) {
+          if (currentUser) {
             set({
-              user: { ...currentUser, avatar_uri: data.avatar_uri },
+              user: {
+                ...currentUser,
+                avatar_uri: data.avatar_uri || data.user?.avatar_uri,
+              },
+              avatarBase64: base64Image,
             });
           }
-
-          set({ avatarBase64: base64Image });
 
           return {
             erro: false,
