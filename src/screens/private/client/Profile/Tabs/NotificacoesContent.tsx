@@ -55,8 +55,8 @@ const NotificacoesContent: React.FC = () => {
   const renderItem = ({ item }: { item: Notification }) => {
     const isUnread = !item.is_read;
     const logoSource = isUnread
-      ? require('../../../../../assets/delbicos-logo.png')
-      : require('../../../../../assets/delbicos-logo-grey.png');
+      ? require('@assets/delbicos-logo.png')
+      : require('@assets/delbicos-logo-grey.png');
 
     const cardStyle = isUnread ? styles.unreadCard : styles.readCard;
     const titleColor = isUnread
