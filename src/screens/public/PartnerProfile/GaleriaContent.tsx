@@ -8,9 +8,12 @@ import {
   Dimensions,
   Text,
   Modal,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useColors } from '@theme/ThemeProvider';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
 type Imagem = {
   id: string;
@@ -20,35 +23,53 @@ type Imagem = {
 type GaleriaContentProps = {
   imagens: Imagem[];
 };
+
 export function GaleriaContent({ imagens }: GaleriaContentProps) {
   const [visible, setVisible] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const flatListRef = useRef<FlatList>(null);
+  const colors = useColors();
+  const styles = createStyles(colors);
+
   const numColumns = 3;
   const screenWidth = Dimensions.get('window').width;
-  const imageSize = (screenWidth - 32) / numColumns;
+  const containerPadding = 16;
+  const gap = 10;
+
+  const availableWidth =
+    screenWidth - containerPadding * 2 - gap * (numColumns - 1);
+  const imageSize = availableWidth / numColumns;
 
   const openImageViewer = (index: number) => {
     setCurrentIndex(index);
     setVisible(true);
   };
 
-  const renderItem = ({ item, index }: { item: Imagem; index: number }) => (
-    <TouchableOpacity
-      onPress={() => openImageViewer(index)}
-      activeOpacity={0.8}>
-      <Image
-        source={{ uri: item.url }}
-        style={{
-          width: imageSize,
-          height: imageSize,
-          margin: 1,
-          backgroundColor: '#f0f0f0',
-        }}
-        resizeMode="cover"
-      />
-    </TouchableOpacity>
-  );
+  const renderItem = ({ item, index }: { item: Imagem; index: number }) => {
+    const isLastInRow = (index + 1) % numColumns === 0;
+    const marginRight = isLastInRow ? 0 : gap;
+
+    return (
+      <TouchableOpacity
+        onPress={() => openImageViewer(index)}
+        activeOpacity={0.8}
+        style={[
+          styles.imageContainer,
+          {
+            width: imageSize,
+            height: imageSize,
+            marginRight,
+            marginBottom: gap,
+          },
+        ]}>
+        <Image
+          source={{ uri: item.url }}
+          style={styles.imageThumbnail}
+          resizeMode="cover"
+        />
+      </TouchableOpacity>
+    );
+  };
 
   const imagesForViewer = imagens.map((img) => ({
     url: img.url,
@@ -59,14 +80,33 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
 
   const safeIndex = Math.max(0, Math.min(currentIndex, imagens.length - 1));
 
-  const colors = useColors();
-  const styles = createStyles(colors);
+  const renderModalHeader = () => (
+    <View style={styles.modalHeaderContainer}>
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={() => setVisible(false)}
+        hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}>
+        <MaterialIcons name="close" size={24} color="white" />
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderModalFooter = (currentIndex?: number, total?: number) => (
+    <View style={styles.indicatorContainer}>
+      <Text style={styles.indicatorText}>
+        {(currentIndex ?? 0) + 1} de {total ?? 0}
+      </Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
       {imagens.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Nenhuma imagem disponível</Text>
+          <FontAwesome name="image" size={50} color={colors.secondaryBeige} />
+          <Text style={styles.emptyText}>
+            Nenhuma imagem disponível na galeria.
+          </Text>
         </View>
       ) : (
         <>
@@ -76,9 +116,18 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
             renderItem={renderItem}
             keyExtractor={(item: Imagem) => item.id}
             numColumns={numColumns}
-            contentContainerStyle={styles.galleryContainer}
+            contentContainerStyle={[
+              styles.galleryList,
+              { padding: containerPadding },
+            ]}
+            showsVerticalScrollIndicator={false}
           />
-          <Modal visible={visible} transparent>
+
+          <Modal
+            visible={visible}
+            transparent
+            onRequestClose={() => setVisible(false)}>
+            <StatusBar barStyle="light-content" backgroundColor="black" />
             <ImageViewer
               imageUrls={imagesForViewer}
               index={safeIndex}
@@ -88,20 +137,10 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
               }
               enableSwipeDown={true}
               enablePreload={true}
-              renderHeader={() => (
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => setVisible(false)}>
-                  <Text style={styles.closeButtonText}>✕</Text>
-                </TouchableOpacity>
-              )}
-              renderIndicator={(currentIndex?: number, total?: number) => (
-                <View style={styles.indicator}>
-                  <Text style={styles.indicatorText}>
-                    {(currentIndex ?? 0) + 1} / {total ?? 0}
-                  </Text>
-                </View>
-              )}
+              useNativeDriver={true}
+              renderHeader={renderModalHeader}
+              renderIndicator={renderModalFooter}
+              backgroundColor="black"
             />
           </Modal>
         </>
@@ -114,50 +153,76 @@ const createStyles = (colors: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.primaryWhite,
     },
-    galleryContainer: {
-      padding: 8,
+    galleryList: {
+      paddingBottom: 20,
     },
+    // Estilo do container de cada miniatura
+    imageContainer: {
+      borderRadius: 12,
+      overflow: 'hidden',
+      backgroundColor: colors.secondaryGray,
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+        },
+        android: {
+          elevation: 3,
+          backgroundColor: colors.primaryWhite,
+        },
+      }),
+    },
+    imageThumbnail: {
+      width: '100%',
+      height: '100%',
+    },
+
+    // Estado Vazio
     emptyContainer: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 20,
+      padding: 40,
+      minHeight: 200,
     },
     emptyText: {
+      marginTop: 16,
       fontSize: 16,
-      color: '#666',
+      fontFamily: 'Afacad-Regular',
+      color: colors.textTertiary,
       textAlign: 'center',
     },
-    closeButton: {
+
+    // Estilos do Modal (Visualizador)
+    modalHeaderContainer: {
       position: 'absolute',
-      top: 40,
+      top: Platform.OS === 'ios' ? 50 : 30,
       right: 20,
-      zIndex: 1,
+      zIndex: 10,
+    },
+    closeButton: {
       backgroundColor: 'rgba(0,0,0,0.6)',
-      width: 40,
-      height: 40,
-      borderRadius: 20,
+      width: 44,
+      height: 44,
+      borderRadius: 22,
       justifyContent: 'center',
       alignItems: 'center',
     },
-    closeButtonText: {
-      color: 'white',
-      fontSize: 20,
-      fontWeight: 'bold',
-    },
-    indicator: {
+    indicatorContainer: {
       position: 'absolute',
-      bottom: 20,
+      bottom: 40,
       alignSelf: 'center',
-      backgroundColor: 'rgba(0,0,0,0.6)',
-      paddingHorizontal: 15,
-      paddingVertical: 5,
-      borderRadius: 15,
+      backgroundColor: 'rgba(0,0,0,0.7)',
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
     },
     indicatorText: {
       color: 'white',
       fontSize: 16,
+      fontFamily: 'Afacad-Bold',
     },
   });
