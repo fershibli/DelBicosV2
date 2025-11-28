@@ -50,9 +50,6 @@ const ListProfessionals = () => {
       const lat = address?.lat ? parseFloat(address.lat.toString()) : undefined;
       const lng = address?.lon ? parseFloat(address.lon.toString()) : undefined;
 
-      console.log('📍 ListProfessionals - Address:', address);
-      console.log('📡 Enviando coordenadas:', { lat, lng });
-
       return fetchProfessionals('', p, l, lat, lng);
     },
     [fetchProfessionals, address],
