@@ -36,7 +36,10 @@ export function AppointmentDetailsModal({
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   const handleCancelAppointment = () => {
@@ -58,7 +61,7 @@ export function AppointmentDetailsModal({
             onClose();
           },
         },
-      ]
+      ],
     );
   };
 
@@ -97,10 +100,13 @@ export function AppointmentDetailsModal({
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={onClose}
-    >
+      onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <View style={[styles.modalContainer, { backgroundColor: colors.primaryWhite }]}>
+        <View
+          style={[
+            styles.modalContainer,
+            { backgroundColor: colors.primaryWhite },
+          ]}>
           <ScrollView showsVerticalScrollIndicator={false}>
             {/* Header com foto do profissional */}
             <View style={styles.header}>
@@ -171,8 +177,7 @@ export function AppointmentDetailsModal({
                   style={[
                     styles.statusText,
                     { color: getStatusColor(appointment.status) },
-                  ]}
-                >
+                  ]}>
                   {getStatusText(appointment.status)}
                 </Text>
               </View>
@@ -183,8 +188,7 @@ export function AppointmentDetailsModal({
               <TouchableOpacity
                 style={styles.okButton}
                 onPress={onClose}
-                activeOpacity={0.8}
-              >
+                activeOpacity={0.8}>
                 <Text style={styles.okButtonText}>Ok</Text>
               </TouchableOpacity>
 
@@ -193,8 +197,7 @@ export function AppointmentDetailsModal({
                   <TouchableOpacity
                     style={styles.cancelButton}
                     onPress={handleCancelAppointment}
-                    activeOpacity={0.8}
-                  >
+                    activeOpacity={0.8}>
                     <Text style={styles.cancelButtonText}>
                       Cancelar Agendamento
                     </Text>
