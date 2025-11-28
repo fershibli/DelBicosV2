@@ -22,8 +22,6 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({ item }) => {
   const handlePress = () => {
     if (item.link) {
       item.link();
-    } else {
-      console.log('Destaque pressionado:', item.title);
     }
   };
 
