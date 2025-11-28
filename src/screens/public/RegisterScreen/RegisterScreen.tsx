@@ -11,10 +11,8 @@ import {
   Image,
   Platform,
 } from 'react-native';
-import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
-import { useLocation } from '@lib/hooks/LocationContext';
 import CustomTextInput from '@components/ui/CustomTextInput';
 import CpfInput from '@components/ui/CpfInput';
 import DateInput from '@components/ui/DateInput';
@@ -25,8 +23,11 @@ import LogoV3 from '@assets/LogoV3.png';
 import { useUserStore } from '@stores/User';
 import PhoneInput from '@components/ui/PhoneInput';
 import { useColors } from '@theme/ThemeProvider';
+import { AddressForm, AddressFormData } from '@components/features/AddressForm';
+import { HTTP_DOMAIN } from '@config/varEnvs';
+import { FeedbackModal } from '@components/ui/FeedbackModal/FeedbackModal';
 
-type FormData = {
+type RegisterFormData = {
   name: string;
   surname: string;
   birthDate: string;
@@ -36,16 +37,22 @@ type FormData = {
   phone: string;
   password: string;
   acceptTerms: boolean;
-};
+} & AddressFormData;
 
 function RegisterScreen() {
   const navigation = useNavigation();
-  const { setLocation: updateLocationInContext } = useLocation();
   const [isLocationLoading, setLocationLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTimeoutError, setIsTimeoutError] = useState(false);
-  const { setVerificationEmail, registerUser } = useUserStore();
+  const { setVerificationEmail } = useUserStore();
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const [feedbackData, setFeedbackData] = useState({
+    type: 'info' as 'success' | 'error' | 'info',
+    title: '',
+    message: '',
+    onClose: () => setFeedbackVisible(false),
+  });
 
   const colors = useColors();
   const inputBaseStyle = createInputBaseStyle(colors);
@@ -56,8 +63,8 @@ function RegisterScreen() {
     handleSubmit,
     setValue,
     formState: { errors, isValid },
-  } = useForm<FormData>({
-    mode: 'onTouched',
+  } = useForm<RegisterFormData>({
+    mode: 'onChange',
     defaultValues: {
       name: '',
       surname: '',
@@ -68,68 +75,82 @@ function RegisterScreen() {
       phone: '',
       password: '',
       acceptTerms: false,
+      cep: '',
+      street: '',
+      number: '',
+      complement: '',
+      neighborhood: '',
+      city: '',
+      state: '',
     },
   });
 
-  const handleUseLocation = async () => {
-    setLocationLoading(true);
-    setTimeout(() => {
-      setIsTimeoutError(true);
-    }, 7000);
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(
-        'Permissão negada',
-        'Não foi possível acessar sua localização.',
-      );
-      setLocationLoading(false);
-      return;
-    }
-    try {
-      const locationData = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = locationData.coords;
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
-      );
-      const data = await response.json();
-      if (data && data.address) {
-        const { city, state, town, village, municipality } = data.address;
-        const cityName = city || town || village || municipality || '';
-        const stateName = state || '';
-        const newLocation = `${cityName}, ${stateName}`;
-        setValue('location', newLocation, { shouldValidate: true });
-        updateLocationInContext(cityName, stateName);
-      } else {
-        Alert.alert('Erro', 'Endereço não encontrado.');
-      }
-    } catch (error) {
-      console.error('Erro ao obter localização:', error);
-      Alert.alert('Erro', 'Ocorreu um problema ao buscar sua localização.');
-    } finally {
-      setLocationLoading(false);
-    }
-  };
-
-  const handleRegister = async (formData: FormData) => {
+  const handleRegister = async (formData: RegisterFormData) => {
     setIsSubmitting(true);
     try {
-      await registerUser(formData);
-      Alert.alert(
-        'Quase lá!',
-        'Enviamos um código de verificação para o seu e-mail.',
-      );
-      setVerificationEmail(formData.email);
-      navigation.navigate('VerificationScreen');
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert('Erro no Cadastro', error.message);
+      const payload = {
+        name: formData.name,
+        surname: formData.surname,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        cpf: formData.cpf,
+        birthDate: formData.birthDate,
+        address: {
+          postal_code: formData.cep,
+          street: formData.street,
+          number: formData.number,
+          complement: formData.complement,
+          neighborhood: formData.neighborhood,
+          city: formData.city,
+          state: formData.state,
+          country_iso: 'BR',
+        },
+      };
+
+      const response = await fetch(`${HTTP_DOMAIN}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setVerificationEmail(formData.email);
+
+        setFeedbackData({
+          type: 'success',
+          title: 'Quase lá!',
+          message: `Enviamos um código de verificação para ${formData.email}. Verifique sua caixa de entrada.`,
+          onClose: () => {
+            setFeedbackVisible(false);
+            navigation.navigate('VerificationScreen');
+          },
+        });
+        setFeedbackVisible(true);
       } else {
-        console.error('Erro ao conectar com o servidor:', error);
-        Alert.alert(
-          'Erro de Conexão',
-          'Não foi possível se conectar ao servidor.',
-        );
+        const errorMessage =
+          data.error || 'Ocorreu um problema ao realizar o cadastro.';
+
+        setFeedbackData({
+          type: 'error',
+          title: 'Erro no Cadastro',
+          message: errorMessage,
+          onClose: () => setFeedbackVisible(false),
+        });
+        setFeedbackVisible(true);
       }
+    } catch (error) {
+      console.error('Erro de conexão:', error);
+      setFeedbackData({
+        type: 'error',
+        title: 'Erro de Conexão',
+        message:
+          'Não foi possível se conectar ao servidor. Verifique sua internet.',
+        onClose: () => setFeedbackVisible(false),
+      });
+      setFeedbackVisible(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -171,6 +192,7 @@ function RegisterScreen() {
             Preencha os campos abaixo para começar.
           </Text>
 
+          {/* --- Campos Pessoais --- */}
           <View style={styles.row}>
             <View style={styles.col}>
               <Controller
@@ -213,10 +235,7 @@ function RegisterScreen() {
             name="birthDate"
             rules={{
               required: 'Data de nascimento é obrigatória.',
-              pattern: {
-                value: /^\d{2}\/\d{2}\/\d{4}$/,
-                message: 'Use o formato DD/MM/AAAA.',
-              },
+              minLength: { value: 10, message: 'Data incompleta' },
             }}
             render={({ field: { onChange, value } }) => (
               <CustomTextInput
@@ -241,38 +260,6 @@ function RegisterScreen() {
                   onChangeText={onChange}
                   error={!!errors.cpf}
                 />
-              </CustomTextInput>
-            )}
-          />
-
-          <Controller
-            control={control}
-            name="location"
-            render={({ field: { value } }) => (
-              <CustomTextInput label="Localização" error={errors.location}>
-                <View style={styles.locationContainer}>
-                  <TextInput
-                    style={[
-                      inputBaseStyle.input,
-                      styles.locationInput,
-                      errors.location && inputBaseStyle.inputError,
-                    ]}
-                    placeholder="Clique no ícone para buscar"
-                    placeholderTextColor={colors.textTertiary}
-                    value={value}
-                    editable={false}
-                  />
-                  <TouchableOpacity
-                    style={styles.locationButton}
-                    onPress={handleUseLocation}
-                    disabled={isLocationLoading}>
-                    {isLocationLoading ? (
-                      <ActivityIndicator />
-                    ) : (
-                      <Text style={styles.locationButtonText}>📍</Text>
-                    )}
-                  </TouchableOpacity>
-                </View>
               </CustomTextInput>
             )}
           />
@@ -310,10 +297,6 @@ function RegisterScreen() {
                 value: 10,
                 message: 'Telefone inválido',
               },
-              maxLength: {
-                value: 11,
-                message: 'Telefone inválido',
-              },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <CustomTextInput label="Telefone" error={errors.phone}>
@@ -327,11 +310,14 @@ function RegisterScreen() {
             )}
           />
 
+          <AddressForm control={control} errors={errors} setValue={setValue} />
+
           <Controller
             control={control}
             name="password"
             rules={{
               required: 'A senha é obrigatória',
+              minLength: { value: 6, message: 'Mínimo 6 caracteres' },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <CustomTextInput label="Senha" error={errors.password}>
@@ -418,6 +404,15 @@ function RegisterScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <FeedbackModal
+        visible={feedbackVisible}
+        type={feedbackData.type}
+        title={feedbackData.title}
+        message={feedbackData.message}
+        onClose={feedbackData.onClose}
+      />
+
       <Text style={styles.footer}>
         © DelBicos - 2025 – Todos os direitos reservados.
       </Text>
