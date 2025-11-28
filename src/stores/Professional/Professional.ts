@@ -27,13 +27,6 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
         ? response.data
         : response.data.professionals || [];
 
-      if (rawData.length > 0) {
-        console.log(
-          '🔍 RAW PROFESSIONAL DATA (Primeiro Item):',
-          JSON.stringify(rawData[0], null, 2),
-        );
-      }
-
       const mappedProfessionals: ListedProfessional[] = rawData.map(
         (prof: any) => {
           const rawDist =
@@ -88,7 +81,6 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
 
       const professional: Professional = response.data;
 
-      // Calcula a média de avaliações
       const ratings = professional.Appointments?.filter((a) => a.rating) || [];
       const averageRating =
         ratings.length > 0
@@ -96,10 +88,8 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
             ratings.length
           : 0;
 
-      // Arredonda a média para 1 casa decimal
       const roundedRating = Math.round(averageRating * 10) / 10;
 
-      // Adiciona a média calculada ao objeto
       const professionalWithRating = {
         ...professional,
         rating: roundedRating,
