@@ -77,6 +77,8 @@ export const useUserStore = create<UserStore>()(
             email: user.email,
             phone: user.phone,
             cpf: user.cpf,
+            avatar_uri: user.avatar_uri || null,
+            banner_uri: user.banner_uri || null,
           };
 
           const addressData: Address | null = user.address
@@ -109,7 +111,19 @@ export const useUserStore = create<UserStore>()(
             address: addressData,
           });
 
-          set({ user: userData, address: addressData, token });
+          set({
+            user: userData,
+            address: addressData,
+            token,
+            avatarBase64: userData.avatar_uri || null,
+          });
+
+          get().setLoggedInUser({
+            token,
+            user: userData,
+            address: addressData,
+          });
+
           return;
         } catch (error: any | AxiosError) {
           if (error instanceof AxiosError) {
