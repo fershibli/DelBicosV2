@@ -7,9 +7,10 @@ import {
   StyleSheet,
 } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { styles as globalStyles } from '../../lib/utils/styles';
-import { MapComponentProps } from '../../lib/hooks/types';
+import { createStyles } from '@lib/utils/styles';
+import { MapComponentProps } from '@lib/hooks/types';
 import { MapErrorBoundary } from '../MapComponent/MapErrorBoundary';
+import { useColors } from '@theme/ThemeProvider';
 
 interface NativeMapRendererProps extends MapComponentProps {
   style?: any;
@@ -25,6 +26,8 @@ const NativeMapRenderer: React.FC<NativeMapRendererProps> = ({
 }) => {
   const mapRef = useRef<MapView>(null);
   const [mapReady, setMapReady] = useState(false);
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   // Só renderiza se não for web
   if (Platform.OS === 'web') {
@@ -47,11 +50,11 @@ const NativeMapRenderer: React.FC<NativeMapRendererProps> = ({
 
   return (
     <MapErrorBoundary>
-      <View style={globalStyles.mapContainer}>
+      <View style={styles.mapContainer}>
         <MapView
           ref={mapRef}
           provider={PROVIDER_GOOGLE}
-          style={globalStyles.map}
+          style={styles.map}
           region={region ?? undefined}
           onRegionChangeComplete={handleRegionChangeComplete}
           onPress={handlePress}
