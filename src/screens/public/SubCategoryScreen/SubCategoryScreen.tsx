@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   FlatList,
-  TouchableOpacity,
   Pressable,
   ActivityIndicator,
   Platform,
@@ -137,7 +136,6 @@ function SubCategoryScreen() {
   const [isButtonHovered, setIsButtonHovered] = useState(false);
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
-  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
 
   const { subCategories, fetchSubCategoriesByCategoryId } =
     useSubCategoryStore();
