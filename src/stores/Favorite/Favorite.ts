@@ -17,7 +17,6 @@ export const useFavoriteStore = create<FavoriteState>()(
 
       syncWithServer: async () => {
         try {
-          console.log('🔄 Sincronizando favoritos com servidor...');
           set({ loading: true, error: null });
 
           const response =
@@ -25,11 +24,6 @@ export const useFavoriteStore = create<FavoriteState>()(
               '/api/favorites',
             );
           const serverFavorites = response.data.favorites;
-
-          console.log(
-            '✅ Favoritos recebidos do servidor:',
-            serverFavorites.length,
-          );
 
           const favorites: FavoriteProfessional[] = serverFavorites.map(
             (fav) => ({
@@ -43,7 +37,6 @@ export const useFavoriteStore = create<FavoriteState>()(
           );
 
           set({ favorites, loading: false });
-          console.log('✅ Favoritos sincronizados:', favorites.length);
           return;
         } catch (error: any) {
           console.error('❌ Erro ao sincronizar favoritos:', error);
@@ -62,29 +55,15 @@ export const useFavoriteStore = create<FavoriteState>()(
             (fav) => fav.professionalId === professional.professionalId,
           )
         ) {
-          console.log(
-            '⚠️ Profissional já está nos favoritos:',
-            professional.professionalId,
-          );
           return;
         }
-
-        console.log(
-          '➕ Adicionando favorito local:',
-          professional.professionalName,
-        );
         const newFavorites = [...favorites, professional];
         set({ favorites: newFavorites });
 
         try {
-          console.log(
-            '📤 Enviando favorito para servidor:',
-            professional.professionalId,
-          );
           await backendHttpClient.post('/api/favorites', {
             professionalId: professional.professionalId,
           });
-          console.log('✅ Favorito salvo no servidor!');
           return;
         } catch (error: any) {
           console.error('❌ Erro ao salvar favorito no servidor:', error);
@@ -102,13 +81,10 @@ export const useFavoriteStore = create<FavoriteState>()(
           (fav) => fav.professionalId !== professionalId,
         );
 
-        console.log('➖ Removendo favorito local:', professionalId);
         set({ favorites: newFavorites });
 
         try {
-          console.log('📤 Enviando remoção para servidor:', professionalId);
           await backendHttpClient.delete(`/api/favorites/${professionalId}`);
-          console.log('✅ Favorito removido do servidor!');
           return;
         } catch (error: any) {
           console.error('❌ Erro ao remover favorito do servidor:', error);
