@@ -22,6 +22,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   cancelText = 'Cancelar',
   confirmText = 'Confirmar',
 }) => {
+  const colors = useColors();
+  const styles = createStyles(colors);
+
   return (
     <Modal
       animationType="fade"
@@ -29,8 +32,6 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       onRequestClose={onCancel}
       transparent>
       {(() => {
-        const colors = useColors();
-        const styles = createStyles(colors);
         return (
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
