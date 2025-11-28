@@ -37,9 +37,10 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
               ? `${prof.MainAddress.city}, ${prof.MainAddress.state || 'BR'}`
               : 'Localização não informada',
 
-          distance: prof.dataValues?.distance_km
-            ? parseFloat(prof.dataValues.distance_km).toFixed(1)
-            : undefined,
+          distance:
+            prof.distance_km && prof.distance_km > 0
+              ? Number(parseFloat(prof.distance_km).toFixed(1))
+              : undefined,
 
           offeredServices: prof.Services
             ? prof.Services.map((s: any) => s.title)
