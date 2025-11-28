@@ -26,37 +26,34 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
 
   const cardStyle = [
     styles.card,
-    isDark
-      ? {
-          backgroundColor: colors.cardBackground,
-          borderColor: colors.cardBackground,
-        }
-      : null,
-    isHovered && isDark
-      ? {
-          backgroundColor: colors.primaryOrange,
-          borderColor: colors.primaryOrange,
-        }
-      : null,
+    isDark && {
+      backgroundColor: colors.cardBackground,
+      borderColor: colors.cardBackground,
+    },
+    isHovered &&
+      isDark && {
+        backgroundColor: colors.primaryOrange,
+      },
   ];
 
-  const nameStyle = [
-    styles.Name,
+  const textPrimaryStyle = [
     isDark ? { color: '#E2E8F0' } : null,
+    isHovered && isDark ? { color: '#FFFFFF' } : null,
+  ];
+
+  const textSecondaryStyle = [
+    isDark ? { color: '#94A3B8' } : null,
     isHovered && isDark ? { color: '#E2E8F0' } : null,
   ];
 
-  const textStyle = [styles.Category, isDark ? { color: '#E2E8F0' } : null];
-
-  const ratingStyle = [styles.Rating, isDark ? { color: '#E2E8F0' } : null];
-
-  const locationStyle = [styles.Location, isDark ? { color: '#E2E8F0' } : null];
+  const servicesText =
+    professional.offeredServices?.slice(0, 3).join(', ') ||
+    professional.category;
 
   return (
     <Pressable
-      style={cardStyle}
+      style={({ pressed }) => [cardStyle, pressed && { opacity: 0.9 }]}
       onPress={navigateToProfile}
-      android_ripple={{ color: 'rgba(0,0,0,0.1)' }}
       onHoverIn={() => setIsHovered(true)}
       onHoverOut={() => setIsHovered(false)}>
       <Image
@@ -64,25 +61,53 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
         style={styles.image}
         resizeMode="cover"
       />
+
       <View style={styles.content}>
-        <Text style={nameStyle} numberOfLines={1}>
+        <Text
+          style={[styles.name, isDark && { color: colors.primaryOrange }]}
+          numberOfLines={1}>
           {professional.name}
         </Text>
-        <Text style={textStyle} numberOfLines={1}>
-          {professional.category}
+
+        <Text style={[styles.services, textPrimaryStyle]} numberOfLines={1}>
+          {servicesText}
         </Text>
-        <View style={styles.ratingRow}>
+
+        <View style={styles.ratingContainer}>
           <FontAwesome name="star" color="#FFC107" size={12} />
-          <Text style={ratingStyle}>{professional.rating}</Text>
-          <Text style={styles.RatingCount} numberOfLines={1}>
-            ({professional.ratingsCount} reviews)
+          <Text style={[styles.rating, textPrimaryStyle]}>
+            {professional.rating.toFixed(1)}
+            <Text style={[styles.ratingCount, textSecondaryStyle]}>
+              {' '}
+              ({professional.ratingsCount} reviews)
+            </Text>
           </Text>
         </View>
-        <Text style={locationStyle} numberOfLines={1} ellipsizeMode="tail">
-          {professional.location}
-        </Text>
+
+        <View style={styles.footer}>
+          <Text
+            style={[styles.location, textPrimaryStyle]}
+            numberOfLines={1}
+            ellipsizeMode="tail">
+            {professional.location}
+          </Text>
+
+          {professional.distance && (
+            <View style={styles.distanceBadge}>
+              <FontAwesome
+                name="map-marker"
+                size={10}
+                color={colors.primaryWhite}
+              />
+              <Text style={styles.distanceText}>
+                {professional.distance} km
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
     </Pressable>
   );
 }
+
 export default ProfessionalCard;
