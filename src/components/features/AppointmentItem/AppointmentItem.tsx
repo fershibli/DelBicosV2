@@ -6,8 +6,6 @@ import {
   Modal,
   TextInput,
   Alert,
-  // Linking,
-  // Platform,
   Image,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
@@ -15,10 +13,7 @@ import { Rating } from 'react-native-ratings';
 import { Appointment } from '@stores/Appointment/types';
 import { useAppointmentStore } from '@stores/Appointment';
 import { styles, getStatusStyle } from './styles';
-// import { HTTP_DOMAIN } from '@config/varEnvs';
-// import { useUserStore } from '@stores/User';
 
-// Componente do Modal de Avaliação
 const ReviewAppointment = ({
   appointment,
   onClose,
@@ -94,7 +89,6 @@ const ReviewAppointment = ({
   );
 };
 
-// Componente Principal do Card de Agendamento
 const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
   appointment,
 }) => {
@@ -103,30 +97,9 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
     Professional: professional,
     Service: service,
     status,
-    // rating,
     start_time,
   } = appointment;
   const statusInfo = getStatusStyle(status);
-  // const { user } = useUserStore();
-
-  // const renderStars = () => {
-  //   const stars = [];
-  //   const totalStars = 5;
-  //   const filledStars = rating || 0;
-
-  //   for (let i = 1; i <= totalStars; i++) {
-  //     stars.push(
-  //       <FontAwesome
-  //         key={i}
-  //         name={i <= filledStars ? 'star' : 'star-o'}
-  //         size={14}
-  //         color={i <= filledStars ? '#FFC107' : '#D1D1D1'}
-  //         style={styles.starIcon}
-  //       />,
-  //     );
-  //   }
-  //   return stars;
-  // };
 
   const formatDateTime = () => {
     if (!start_time) return '';
@@ -143,36 +116,6 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
     return `${weekDay}, ${day}/${month}/${year} - ${hours}:${minutes}`;
   };
 
-  // const handleViewReceipt = async () => {
-  //   if (!user) {
-  //     Alert.alert('Erro', 'Você precisa estar logado para ver um recibo.');
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await fetch(
-  //       `${HTTP_DOMAIN}/api/appointments/${appointment.id}/receipt?userId=${user.id}`,
-  //       {
-  //         method: 'GET',
-  //       },
-  //     );
-
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       throw new Error(data.error || 'Não foi possível buscar o recibo.');
-  //     }
-
-  //     if (Platform.OS === 'web') {
-  //       window.open(data.receiptUrl, '_blank');
-  //     } else {
-  //       Linking.openURL(data.receiptUrl);
-  //     }
-  //   } catch (error: any) {
-  //     Alert.alert('Erro ao buscar recibo', error.message);
-  //   }
-  // };
-
   const handleCancel = () => {
     Alert.alert(
       'Cancelar Agendamento',
@@ -183,7 +126,6 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
           text: 'Sim',
           style: 'destructive',
           onPress: () => {
-            // Lógica de cancelamento será implementada
             Alert.alert(
               'Info',
               'Funcionalidade de cancelamento em desenvolvimento',
@@ -203,7 +145,6 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
       'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=600&fit=crop', // Evento/Grupo
     ];
 
-    // Usa o ID do appointment para escolher uma imagem consistente
     const index = appointment.id % images.length;
     return images[index];
   };
@@ -349,7 +290,6 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
           appointment={appointment}
           onClose={() => setIsReviewModalOpen(false)}
           onSuccess={() => {
-            // Forçar re-render do componente para mostrar a avaliação
             setIsReviewModalOpen(false);
           }}
         />
