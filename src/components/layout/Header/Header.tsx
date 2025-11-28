@@ -441,12 +441,28 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
             <Menu>
               <MenuTrigger>
                 <View style={styles.userContainer}>
-                  {/* Idealmente, usar user.avatar_uri aqui */}
-                  <Image
-                    source={require('../../../assets/logo.png')}
-                    style={styles.profileImage}
-                  />
-                  {/* <Text style={styles.userName}>{user.name}</Text> // Nome pode ser removido se só a imagem for usada */}
+                  {user.avatar_uri ? (
+                    <Image
+                      source={{ uri: user.avatar_uri }}
+                      style={styles.profileImage}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View
+                      style={[
+                        styles.profileImage,
+                        {
+                          backgroundColor: colors.secondaryGray,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        },
+                      ]}>
+                      <Image
+                        source={require('../../../assets/logo.png')}
+                        style={styles.profileImage}
+                      />
+                    </View>
+                  )}
                 </View>
               </MenuTrigger>
               <MenuOptions
