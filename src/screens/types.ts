@@ -2,6 +2,7 @@ export enum ClientProfileSubRoutes {
   DadosConta = 'DadosConta',
   MeusEnderecos = 'MeusEnderecos',
   TrocarSenha = 'TrocarSenha',
+  Seguranca = 'Seguranca',
   MeusAgendamentos = 'MeusAgendamentos',
   Notificacoes = 'Notificacoes',
   Conversas = 'Conversas',
