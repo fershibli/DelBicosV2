@@ -11,43 +11,63 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
   professionals: [],
   selectedProfessional: null,
 
-  fetchProfessionals: async (filter = '', page = 0, limit = 12) => {
+  fetchProfessionals: async (
+    filter = '',
+    page = 0,
+    limit = 12,
+    lat?: number,
+    lng?: number,
+  ) => {
     try {
       const response = await backendHttpClient.get('/api/professionals', {
-        params: { termo: filter, page, limit },
+        params: { termo: filter, page, limit, lat, lng },
       });
 
       const rawData = Array.isArray(response.data)
         ? response.data
         : response.data.professionals || [];
 
+      if (rawData.length > 0) {
+        console.log(
+          '🔍 RAW PROFESSIONAL DATA (Primeiro Item):',
+          JSON.stringify(rawData[0], null, 2),
+        );
+      }
+
       const mappedProfessionals: ListedProfessional[] = rawData.map(
-        (prof: any) => ({
-          id: prof.id,
-          name: prof.User?.name || prof.name || 'Profissional',
-          rating: Number(prof.rating || 0),
-          ratingsCount: Number(prof.ratings_count || 0),
-          imageUrl:
-            prof.avatar_uri ||
-            prof.User?.avatar_uri ||
-            'https://via.placeholder.com/150',
+        (prof: any) => {
+          const rawDist =
+            prof.distance_km ?? prof.dataValues?.distance_km ?? null;
 
-          location:
-            prof.MainAddress && prof.MainAddress.city
-              ? `${prof.MainAddress.city}, ${prof.MainAddress.state || 'BR'}`
-              : 'Localização não informada',
+          return {
+            id: prof.id,
+            name: prof.name || prof.User?.name || 'Profissional',
+            rating: Number(prof.rating || 0),
+            ratingsCount: Number(prof.ratings_count || 0),
+            imageUrl:
+              prof.avatar_uri ||
+              prof.User?.avatar_uri ||
+              'https://via.placeholder.com/150',
 
-          distance:
-            prof.distance_km && prof.distance_km > 0
-              ? Number(parseFloat(prof.distance_km).toFixed(1))
-              : undefined,
+            location:
+              prof.MainAddress && prof.MainAddress.city
+                ? `${prof.MainAddress.city}, ${prof.MainAddress.state || 'BR'}`
+                : 'Localização não informada',
 
-          offeredServices: prof.Services
-            ? prof.Services.map((s: any) => s.title)
-            : ['Serviços Gerais'],
+            distance:
+              rawDist !== null && rawDist !== undefined
+                ? parseFloat(String(rawDist)).toFixed(1)
+                : undefined,
 
-          category: prof.Services?.[0]?.title || 'Serviços Diversos',
-        }),
+            offeredServices: prof.Services
+              ? prof.Services.map((s: any) =>
+                  typeof s === 'string' ? s : s.title,
+                )
+              : ['Serviços Gerais'],
+
+            category: prof.Services?.[0]?.title || 'Serviços Diversos',
+          };
+        },
       );
 
       return mappedProfessionals;
