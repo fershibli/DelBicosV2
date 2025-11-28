@@ -3,6 +3,7 @@ export interface UserProfileProps {
   userName: string;
   userEmail: string;
   userPhone: string;
+  userCpf: string;
   avatarSource: { uri: string | null };
   onAvatarChange: (base64: string | null) => Promise<void>;
   uploading?: boolean;
