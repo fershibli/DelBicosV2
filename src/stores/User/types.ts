@@ -53,8 +53,10 @@ export type UserStore = {
   token: string | null;
   verificationEmail: string | null;
   avatarBase64: string | null;
+  lastCodeSentAt: number | null;
   fetchCurrentUser: () => Promise<void>;
   setVerificationEmail: (email: string | null) => void;
+  recordCodeSent: () => void;
   setLoggedInUser: (data: {
     token: string;
     user: User;
