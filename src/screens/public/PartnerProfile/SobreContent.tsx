@@ -1,6 +1,7 @@
 import { Text } from '@react-navigation/elements';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { useColors } from '@theme/ThemeProvider';
+import { Address } from '@stores/Professional/types';
 
 export const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -58,7 +59,6 @@ export const createStyles = (colors: any) =>
       textAlign: 'center',
     },
   });
-import { Address } from '@stores/Professional/types';
 
 export type SobreContentProps = {
   nome?: string;
