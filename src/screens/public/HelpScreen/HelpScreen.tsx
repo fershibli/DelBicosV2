@@ -60,7 +60,6 @@ function HelpScreen() {
   const [searchTerm, setSearchTerm] = useState('');
   const { theme } = useThemeStore();
   const isDark = theme === ThemeMode.DARK;
-  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
   const colors = useColors();
   const styles = createStyles(colors);
 
