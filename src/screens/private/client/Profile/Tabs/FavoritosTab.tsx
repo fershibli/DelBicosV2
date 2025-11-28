@@ -1,5 +1,12 @@
 import React, { useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import { useFavoriteStore } from '@stores/Favorite';
 import { useColors } from '@theme/ThemeProvider';
 import { FontAwesome } from '@expo/vector-icons';
@@ -14,7 +21,7 @@ const FavoritosTab: React.FC = () => {
   // Sincroniza com servidor ao abrir a tela
   useEffect(() => {
     syncWithServer();
-  }, []);
+  }, [syncWithServer]);
 
   const handleViewProfile = (professionalId: number) => {
     (navigation as any).navigate('PartnerProfile', { id: professionalId });
@@ -40,7 +47,7 @@ const FavoritosTab: React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.pageTitle}>Favoritos</Text>
-      
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}>
@@ -48,38 +55,40 @@ const FavoritosTab: React.FC = () => {
           {favorites.map((favorite) => (
             <View key={favorite.professionalId} style={styles.card}>
               <View style={styles.cardHeader}>
-                <Image 
-                  source={{ 
-                    uri: favorite.professionalAvatar || 'https://via.placeholder.com/80' 
-                  }} 
-                  style={styles.avatar} 
+                <Image
+                  source={{
+                    uri:
+                      favorite.professionalAvatar ||
+                      'https://via.placeholder.com/80',
+                  }}
+                  style={styles.avatar}
                 />
                 <TouchableOpacity
                   style={styles.removeButton}
-                  onPress={() => removeFavorite(favorite.professionalId)}
-                >
-                  <FontAwesome name="heart" size={20} color={colors.primaryOrange} />
+                  onPress={() => removeFavorite(favorite.professionalId)}>
+                  <FontAwesome
+                    name="heart"
+                    size={20}
+                    color={colors.primaryOrange}
+                  />
                 </TouchableOpacity>
               </View>
-              
+
               <View style={styles.cardContent}>
                 <Text style={styles.professionalName}>
                   {favorite.professionalName}
                 </Text>
                 {favorite.category && (
-                  <Text style={styles.category}>
-                    {favorite.category}
-                  </Text>
+                  <Text style={styles.category}>{favorite.category}</Text>
                 )}
                 {favorite.serviceTitle && (
                   <Text style={styles.serviceTitle}>
                     {favorite.serviceTitle}
                   </Text>
                 )}
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.profileButton}
-                  onPress={() => handleViewProfile(favorite.professionalId)}
-                >
+                  onPress={() => handleViewProfile(favorite.professionalId)}>
                   <Text style={styles.profileButtonText}>Ver Perfil</Text>
                 </TouchableOpacity>
               </View>
