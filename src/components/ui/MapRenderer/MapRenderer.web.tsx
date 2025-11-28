@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import { Region, AddressData } from '../../lib/hooks/types';
+import { Region, AddressData } from '@lib/hooks/types';
 
 interface WebMapWrapperProps {
   region: Region | null;
