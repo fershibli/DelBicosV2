@@ -1,6 +1,5 @@
-import React, { Component, ReactNode } from 'react';
+import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { styles as globalStyles } from '../../lib/utils/styles';
 
 interface Props {
   children: ReactNode;
@@ -19,10 +18,12 @@ export class MapErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
+    // Atualiza o estado para que a próxima renderização mostre a UI alternativa.
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // Você pode registrar o erro em um serviço de relatório de erros (ex: Sentry)
     console.error('MapErrorBoundary capturou erro:', error, errorInfo);
   }
 
@@ -30,14 +31,16 @@ export class MapErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         this.props.fallback || (
-          <View style={[globalStyles.mapContainer, styles.errorContainer]}>
+          // Removi 'globalStyles.mapContainer' pois não estava definido
+          <View style={styles.errorContainer}>
             <View style={styles.errorContent}>
               <Text style={styles.errorTitle}>🗺️ Mapa Indisponível</Text>
               <Text style={styles.errorText}>
-                Erro ao carregar o mapa nativo
+                Erro ao carregar o mapa nativo.
               </Text>
               <Text style={styles.errorSubtext}>
-                A funcionalidade de geolocalização continua funcionando
+                A funcionalidade de geolocalização continua funcionando em
+                segundo plano.
               </Text>
             </View>
           </View>
@@ -51,9 +54,12 @@ export class MapErrorBoundary extends Component<Props, State> {
 
 const styles = StyleSheet.create({
   errorContainer: {
+    flex: 1, // Garante que ocupe o espaço do mapa
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fef2f2',
+    borderRadius: 8, // Borda arredondada para ficar bonito dentro do card
+    minHeight: 200, // Altura mínima caso o flex falhe
   },
   errorContent: {
     alignItems: 'center',
@@ -77,3 +83,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default MapErrorBoundary;
