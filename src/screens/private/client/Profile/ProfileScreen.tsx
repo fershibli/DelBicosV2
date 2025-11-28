@@ -61,6 +61,7 @@ const UserProfileScreen: React.FC = () => {
         userName: user.name,
         userEmail: user.email,
         userPhone: user.phone,
+        userCpf: user.cpf,
         avatarSource: {
           uri: avatarBase64 ? avatarBase64 : DefaultAvatar.toString(),
         },
