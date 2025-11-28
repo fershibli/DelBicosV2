@@ -12,7 +12,6 @@ export const useThemeStore = create<ThemeStore>()(
       setTheme: (theme: ThemeMode) => {
         set({ theme });
 
-        // Salva também no localStorage para web
         if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
           const storeValue = JSON.stringify({ state: { theme }, version: 0 });
           localStorage.setItem('theme-storage', storeValue);
