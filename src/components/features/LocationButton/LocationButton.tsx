@@ -8,7 +8,6 @@ import {
   Modal,
   Dimensions,
 } from 'react-native';
-import { styles as globalStyles } from '@lib/utils/styles';
 import { MapComponent } from '../../ui/MapComponent/MapComponent';
 import { Region } from '@lib/hooks/types';
 import { useColors } from '@theme/ThemeProvider';
@@ -24,6 +23,23 @@ interface LocationButtonProps {
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
+    button: {
+      backgroundColor: '#3b82f6',
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 8,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+      marginBottom: 10,
+    },
+    buttonText: {
+      color: colors.primaryWhite,
+      fontSize: 16,
+      fontWeight: '600',
+      textAlign: 'center',
+    },
     modalContainer: {
       flex: 1,
       justifyContent: 'center',
@@ -127,7 +143,7 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
     <View>
       <TouchableOpacity
         style={[
-          globalStyles.button,
+          styles.button,
           (loading || disabled || mapLoading) && { opacity: 0.6 },
         ]}
         onPress={handleOpen}
@@ -135,7 +151,7 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
         {loading || mapLoading ? (
           <ActivityIndicator size="small" color="white" />
         ) : (
-          <Text style={globalStyles.buttonText}>📍Obter Localização Atual</Text>
+          <Text style={styles.buttonText}>📍Obter Localização Atual</Text>
         )}
       </TouchableOpacity>
 
