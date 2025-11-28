@@ -45,7 +45,10 @@ export function RateServiceModal({
 
   const handleSubmit = async () => {
     if (rating === 0) {
-      Alert.alert('Atenção', 'Por favor, selecione uma nota de 1 a 5 estrelas.');
+      Alert.alert(
+        'Atenção',
+        'Por favor, selecione uma nota de 1 a 5 estrelas.',
+      );
       return;
     }
 
@@ -59,7 +62,7 @@ export function RateServiceModal({
       } else {
         Alert.alert(
           'Erro',
-          'Não foi possível registrar sua avaliação. Tente novamente.'
+          'Não foi possível registrar sua avaliação. Tente novamente.',
         );
       }
     } catch (error) {
@@ -93,7 +96,9 @@ export function RateServiceModal({
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           <Text style={styles.title}>
-            {existingRating ? 'Editar sua avaliação' : 'Como foi sua experiência?'}
+            {existingRating
+              ? 'Editar sua avaliação'
+              : 'Como foi sua experiência?'}
           </Text>
 
           <View style={styles.infoContainer}>
@@ -149,11 +154,13 @@ export function RateServiceModal({
         <View style={styles.overlay}>
           <View style={styles.successModal}>
             <Text style={styles.successTitle}>
-              {existingRating ? 'Avaliação atualizada!' : 'Obrigado pela sua avaliação!'}
+              {existingRating
+                ? 'Avaliação atualizada!'
+                : 'Obrigado pela sua avaliação!'}
             </Text>
             <Text style={styles.successMessage}>
-              {existingRating 
-                ? 'Sua avaliação foi atualizada com sucesso!' 
+              {existingRating
+                ? 'Sua avaliação foi atualizada com sucesso!'
                 : 'Ela vai ajudar as outras pessoas a encontrarem ótimos profissionais!'}
             </Text>
             <TouchableOpacity
