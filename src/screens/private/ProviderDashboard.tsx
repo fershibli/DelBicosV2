@@ -31,7 +31,6 @@ const ProviderDashboard: React.FC = () => {
         await fetchCategories(from, to);
       } catch (err) {
         // ensure we log the real error for debugging (and avoid unhandled rejection)
-        // eslint-disable-next-line no-console
         console.error('Erro ao carregar dados do Dashboard:', err);
       }
     })();
