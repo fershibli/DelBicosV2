@@ -9,6 +9,8 @@ export interface ListedProfessional {
   ratingsCount: number;
   imageUrl: string;
   location: string;
+  distance?: number;
+  offeredServices: string[];
 }
 
 export interface Address {
