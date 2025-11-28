@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useColors } from '@theme/ThemeProvider';
 import { Service } from '@stores/Professional/types';
+import { useNavigation } from '@react-navigation/native'; // Importe useNavigation
 
 type ServicosContentProps = {
   servicos: Service[];
@@ -18,6 +19,8 @@ type ServicosContentProps = {
 export function ServicosContent({ servicos }: ServicosContentProps) {
   const colors = useColors();
   const styles = createStyles(colors);
+  const navigation = useNavigation(); // Hook de navegação
+
   const formatarPreco = (preco: string) => {
     const valor = parseFloat(preco);
     return new Intl.NumberFormat('pt-BR', {
@@ -40,8 +43,13 @@ export function ServicosContent({ servicos }: ServicosContentProps) {
   };
 
   const handleAgendar = (servico: Service) => {
-    // TODO: Navegar para tela de agendamento
-    console.log('Agendar serviço:', servico);
+    // Navega para a tela de seleção de serviço/data
+    // Passamos o ID da subcategoria para já abrir a lista certa
+    // @ts-ignore
+    navigation.navigate('SubCategoryScreen', {
+      categoryId: servico.subcategory_id, // Precisamos garantir que esse campo exista no tipo Service
+      categoryTitle: servico.title, // Usamos o título do serviço como título da tela
+    });
   };
 
   const renderItem = ({ item }: { item: Service }) => (
@@ -96,6 +104,7 @@ export function ServicosContent({ servicos }: ServicosContentProps) {
   );
 }
 
+// ... (mantenha os estilos createStyles iguais)
 const createStyles = (colors: any) =>
   StyleSheet.create({
     container: {
