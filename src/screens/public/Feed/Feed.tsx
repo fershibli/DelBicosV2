@@ -99,8 +99,6 @@ const FeedScreen: React.FC = () => {
       ]}
       contentContainerStyle={styles.contentContainer}>
       <View style={styles.carouselSection}>
-        {/* <Text style={styles.title}>Destaques para você</Text> */}
-
         <View style={styles.carouselContainer}>
           {Platform.OS === 'web' && currentIndex > 0 && (
             <TouchableOpacity
