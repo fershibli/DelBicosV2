@@ -47,6 +47,12 @@ export type RegisterFormData = {
   acceptTerms: boolean;
 };
 
+export interface UpdateUserData {
+  name: string;
+  email: string;
+  phone: string;
+}
+
 export type UserStore = {
   user: User | null;
   address: Address | null;
@@ -63,6 +69,7 @@ export type UserStore = {
     address: Address | null;
   }) => void;
   registerUser: (formData: RegisterFormData) => Promise<void>;
+  updateUserProfile: (data: UpdateUserData) => Promise<void>;
   signInPassword: (email: string, password: string) => Promise<void>;
   changePassword: (
     currentPassword: string,
