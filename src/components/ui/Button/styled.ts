@@ -1,11 +1,12 @@
-import { ButtonStyleProps, ButtonStyles } from '@components/Button/types';
-import { TextStyle, ViewStyle } from 'react-native';
-import { StyleSheet } from 'react-native';
 import {
+  ButtonStyleProps,
+  ButtonStyles,
   ButtonColorVariantsKeys,
   ButtonSizeVariantsKeys,
   ButtonFontVariantsKeys,
-} from './types';
+} from '@components/ui/Button/types';
+import { TextStyle, ViewStyle, StyleSheet } from 'react-native';
+
 import {
   createButtonColorVariants,
   buttonSizeVariants,
