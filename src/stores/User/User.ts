@@ -2,10 +2,10 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'expo-zustand-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserStore, Address, ErrorResponse, User } from './types';
-import { backendHttpClient } from '@lib/helpers/httpClient';
 import { AxiosError } from 'axios';
+import { AuthService } from '@services/AuthService';
 
-export const useUserStore = create<UserStore>(
+export const useUserStore = create<UserStore>()(
   persist(
     (set, get) => ({
       user: null,
@@ -14,9 +14,24 @@ export const useUserStore = create<UserStore>(
       verificationEmail: null,
       avatarBase64: null,
 
+      setVerificationEmail: (email) => set({ verificationEmail: email }),
+
+      setLoggedInUser: (data: {
+        token: string;
+        user: User;
+        address: Address | null;
+      }) => {
+        set({
+          token: data.token,
+          user: data.user,
+          address: data.address,
+        });
+      },
+
       fetchCurrentUser: async () => {
         try {
-          const { user } = (await backendHttpClient.get('/api/user/me')).data;
+          const data = await AuthService.me();
+          const { user } = data;
 
           const userData: User = {
             id: user.id,
@@ -39,35 +54,17 @@ export const useUserStore = create<UserStore>(
         }
       },
 
-      setVerificationEmail: (email) => set({ verificationEmail: email }),
-
-      setLoggedInUser: (data: {
-        token: string;
-        user: User;
-        address: Address | null;
-      }) => {
-        set({
-          token: data.token,
-          user: data.user,
-          address: data.address,
-        });
-      },
-
       signInPassword: async (email: string, password: string) => {
         try {
-          const response = await backendHttpClient.post('/api/user/login', {
-            email,
-            password,
-          });
-
-          if (!response.status.toString().startsWith('2')) {
-          }
+          const response = await AuthService.login(email, password);
 
           const { token, user } = response.data;
+
           if (!token) {
             console.error('No token received from the server');
             return;
           }
+
           const userData = {
             id: user.id,
             client_id: user.client_id,
@@ -76,6 +73,7 @@ export const useUserStore = create<UserStore>(
             phone: user.phone,
             cpf: user.cpf,
           };
+
           const addressData: Address | null = user.address
             ? {
                 id: user.address.id,
@@ -91,6 +89,7 @@ export const useUserStore = create<UserStore>(
                 postal_code: user.address.postal_code,
               }
             : null;
+
           get().setLoggedInUser({
             token,
             user: {
@@ -104,6 +103,7 @@ export const useUserStore = create<UserStore>(
             },
             address: addressData,
           });
+
           set({ user: userData, address: addressData, token });
           return;
         } catch (error: any | AxiosError) {
@@ -125,14 +125,12 @@ export const useUserStore = create<UserStore>(
           throw new Error('Erro ao fazer login. Por favor, tente novamente.');
         }
       },
+
       signInAdmin: async (email: string, password: string) => {
         try {
-          const response = await backendHttpClient.post('/api/admin/login', {
-            email,
-            password,
-          });
+          const data = await AuthService.loginAdmin(email, password);
+          const { token, user } = data;
 
-          const { token, user } = response.data;
           if (!token) {
             throw new Error('No token received from the server');
           }
@@ -174,12 +172,9 @@ export const useUserStore = create<UserStore>(
 
       changePassword: async (currentPassword: string, newPassword: string) => {
         try {
-          const response = await backendHttpClient.post(
-            '/api/user/change-password',
-            {
-              current_password: currentPassword,
-              new_password: newPassword,
-            },
+          const response = await AuthService.changePassword(
+            currentPassword,
+            newPassword,
           );
 
           if (response.status < 200 || response.status >= 300) {
@@ -205,18 +200,13 @@ export const useUserStore = create<UserStore>(
           throw new Error('Erro ao alterar a senha. Tente novamente.');
         }
       },
+
       uploadAvatar: async (base64Image: string) => {
         try {
-          const response = await backendHttpClient.post(
-            `/api/user/imgbb/avatar`,
-            {
-              base64Image: base64Image,
-            },
-          );
-
-          const { data } = response;
+          const data = await AuthService.uploadAvatar(base64Image);
 
           const currentUser = get().user;
+
           if (data.user) {
             set({ user: data.user });
           } else if (currentUser) {
@@ -250,7 +240,7 @@ export const useUserStore = create<UserStore>(
 
       removeAvatar: async (): Promise<ErrorResponse> => {
         try {
-          await backendHttpClient.delete(`/api/user/avatar`);
+          await AuthService.removeAvatar();
 
           const currentUser = get().user;
           if (currentUser) {
@@ -285,6 +275,16 @@ export const useUserStore = create<UserStore>(
         }
       },
 
+      registerUser: async (formData) => {
+        const data = await AuthService.register(formData);
+
+        if (!data || data.error) {
+          throw new Error(data.error || 'Ocorreu um problema.');
+        }
+
+        return data;
+      },
+
       signOut: () => {
         set({
           user: null,
@@ -293,18 +293,6 @@ export const useUserStore = create<UserStore>(
           avatarBase64: null,
           verificationEmail: null,
         });
-      },
-      registerUser: async (formData) => {
-        const { data } = await backendHttpClient.post(
-          '/auth/register',
-          formData,
-        );
-
-        if (!data || data.error) {
-          throw new Error(data.error || 'Ocorreu um problema.');
-        }
-
-        return data;
       },
     }),
     {
