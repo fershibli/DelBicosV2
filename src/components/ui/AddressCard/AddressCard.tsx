@@ -1,214 +1,91 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import { FontAwesome } from '@expo/vector-icons';
-import CustomTextInput from '@components/ui/CustomTextInput';
-import { createStyles } from './styles';
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Address } from '@stores/Address';
-import { useViaCepStore } from '@stores/ViaCep';
 import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 
-const UFs = [
-  'AC',
-  'AL',
-  'AP',
-  'AM',
-  'BA',
-  'CE',
-  'DF',
-  'ES',
-  'GO',
-  'MA',
-  'MT',
-  'MS',
-  'MG',
-  'PA',
-  'PB',
-  'PR',
-  'PE',
-  'PI',
-  'RJ',
-  'RN',
-  'RS',
-  'RO',
-  'RR',
-  'SC',
-  'SP',
-  'SE',
-  'TO',
-];
-
-export const AddressCard: React.FC<{
+interface AddressCardProps {
   addressData: Address;
   onUpdate: (id: number, data: Partial<Address>) => void;
   onDelete: (id: number) => void;
   onSetPrimary: (id: number) => void;
-}> = ({ addressData, onUpdate, onDelete, onSetPrimary }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [localData, setLocalData] = useState(addressData);
-  const { fetchCep, loading: loadingCep, error: errorCep } = useViaCepStore();
+  onEditPress?: (address: Address) => void;
+}
+
+export const AddressCard: React.FC<AddressCardProps> = ({
+  addressData,
+  onDelete,
+  onSetPrimary,
+  onEditPress,
+}) => {
   const colors = useColors();
   const styles = createStyles(colors);
-
-  useEffect(() => {
-    const cep = localData.postal_code?.replace(/\D/g, '');
-    if (isEditing && cep && cep.length === 8) {
-      (async () => {
-        const data = await fetchCep(localData.postal_code);
-        if (data) {
-          setLocalData((prev) => ({
-            ...prev,
-            street: data.logradouro || prev.street,
-            city: data.localidade || prev.city,
-            state: data.uf || prev.state,
-            neighborhood: data.bairro || prev.neighborhood,
-          }));
-        }
-      })();
-    }
-  }, [localData.postal_code, isEditing, fetchCep]);
-
-  const handleInputChange = (field: keyof Address, value: string) => {
-    setLocalData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSaveChanges = () => {
-    onUpdate(localData.id, localData);
-    setIsEditing(false);
-  };
-
-  const handleCancel = () => {
-    setLocalData(addressData);
-    setIsEditing(false);
-  };
+  const isPrimary = addressData.isPrimary;
 
   return (
-    <View style={styles.card}>
-      <View style={styles.formRow}>
-        <View style={{ flex: 1 }}>
-          <CustomTextInput
-            label="CEP"
-            value={localData.postal_code}
-            onChangeText={(text) => handleInputChange('postal_code', text)}
-            editable={isEditing}
-            style={!isEditing ? styles.inputReadOnly : styles.input}
-            keyboardType="numeric"
-            maxLength={9}
-          />
-          {isEditing && loadingCep && (
-            <Text style={{ color: 'orange', marginLeft: 8 }}>
-              Buscando endereço...
-            </Text>
-          )}
-          {isEditing && errorCep && (
-            <Text style={{ color: 'red', marginLeft: 8 }}>{errorCep}</Text>
-          )}
+    <View style={[styles.card, isPrimary && styles.cardPrimary]}>
+      {/* --- Cabeçalho do Card: Ícone + Badge Principal --- */}
+      <View style={styles.header}>
+        <View style={styles.iconContainer}>
+          <View
+            style={[styles.iconCircle, isPrimary && styles.iconCirclePrimary]}>
+            <FontAwesome
+              name={isPrimary ? 'star' : 'map-marker'}
+              size={16}
+              color={isPrimary ? colors.primaryWhite : colors.primaryOrange}
+            />
+          </View>
+          <Text style={styles.cardTitle}>
+            {isPrimary ? 'Endereço Principal' : 'Endereço Secundário'}
+          </Text>
         </View>
-        <CustomTextInput
-          label="Endereço"
-          value={localData.street}
-          onChangeText={(text) => handleInputChange('street', text)}
-          editable={isEditing}
-          style={!isEditing ? styles.inputReadOnly : styles.input}
-          containerStyle={{ flex: 2 }}
-        />
-      </View>
-      <View style={styles.formRow}>
-        <CustomTextInput
-          label="Número"
-          value={localData.number}
-          onChangeText={(text) => handleInputChange('number', text)}
-          editable={isEditing}
-          keyboardType="numeric"
-          style={!isEditing ? styles.inputReadOnly : styles.input}
-          containerStyle={{ flex: 1 }}
-        />
-        <CustomTextInput
-          label="Bairro"
-          value={localData.neighborhood}
-          onChangeText={(text) => handleInputChange('neighborhood', text)}
-          editable={isEditing}
-          style={!isEditing ? styles.inputReadOnly : styles.input}
-          containerStyle={{ flex: 2 }}
-        />
-      </View>
-      <View style={styles.formRow}>
-        <CustomTextInput
-          label="UF"
-          value={localData.state}
-          editable={false}
-          style={styles.inputReadOnly}
-          containerStyle={{ flex: 1 }}>
-          {isEditing ? (
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={localData.state}
-                onValueChange={(itemValue) =>
-                  handleInputChange('state', itemValue as string)
-                }
-                style={styles.picker}>
-                {UFs.map((uf) => (
-                  <Picker.Item key={uf} label={uf} value={uf} />
-                ))}
-              </Picker>
-            </View>
-          ) : null}
-        </CustomTextInput>
-        <CustomTextInput
-          label="Cidade"
-          value={localData.city}
-          onChangeText={(text) => handleInputChange('city', text)}
-          editable={isEditing}
-          style={!isEditing ? styles.inputReadOnly : styles.input}
-          containerStyle={{ flex: 2 }}
-        />
-      </View>
-      {localData.complement && (
-        <View style={styles.formRow}>
-          <CustomTextInput
-            label="Complemento"
-            value={localData.complement || ''}
-            onChangeText={(text) => handleInputChange('complement', text)}
-            editable={isEditing}
-            style={!isEditing ? styles.inputReadOnly : styles.input}
-          />
-        </View>
-      )}
-      {isEditing && (
-        <View style={styles.saveRow}>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.cancelButton]}
-            onPress={handleCancel}>
-            <Text style={[styles.actionButtonText, styles.cancelButtonText]}>
-              Cancelar
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.saveButton]}
-            onPress={handleSaveChanges}>
-            <Text style={styles.actionButtonText}>Salvar</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-      <View style={styles.actionsRow}>
+
         <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => onSetPrimary(localData.id)}>
-          <FontAwesome
-            name={localData.isPrimary ? 'star' : 'star-o'}
-            size={22}
-            color={localData.isPrimary ? '#ffc107' : colors.textSecondary}
-          />
+          onPress={() => onDelete(addressData.id)}
+          style={styles.deleteButton}>
+          <FontAwesome name="trash-o" size={18} color={colors.textTertiary} />
         </TouchableOpacity>
+      </View>
+
+      {/* --- Corpo: Informações do Endereço --- */}
+      <View style={styles.body}>
+        <Text style={styles.streetText} numberOfLines={1}>
+          {addressData.street}, {addressData.number}
+        </Text>
+
+        {addressData.complement && (
+          <Text style={styles.complementText}>{addressData.complement}</Text>
+        )}
+
+        <Text style={styles.detailText}>{addressData.neighborhood}</Text>
+
+        <Text style={styles.detailText}>
+          {addressData.city} - {addressData.state}
+        </Text>
+
+        <Text style={styles.zipText}>CEP: {addressData.postal_code}</Text>
+      </View>
+
+      {/* --- Rodapé: Ações --- */}
+      <View style={styles.footer}>
+        {!isPrimary && (
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => onSetPrimary(addressData.id)}>
+            <FontAwesome name="star-o" size={14} color={colors.primaryBlue} />
+            <Text style={styles.actionText}>Definir como Principal</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Botão Editar (Visual apenas, lógica dependerá do pai) */}
         <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => setIsEditing(true)}>
-          <FontAwesome name="pencil" size={22} color={colors.textSecondary} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => onDelete(localData.id)}>
-          <FontAwesome name="trash-o" size={22} color={colors.primaryOrange} />
+          style={[styles.actionButton, isPrimary && { marginLeft: 0 }]}
+          onPress={() => onEditPress && onEditPress(addressData)}>
+          <MaterialIcons name="edit" size={16} color={colors.textSecondary} />
+          <Text style={[styles.actionText, { color: colors.textSecondary }]}>
+            Editar
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
