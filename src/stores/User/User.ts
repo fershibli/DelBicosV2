@@ -12,9 +12,14 @@ export const useUserStore = create<UserStore>()(
       address: null,
       token: null,
       verificationEmail: null,
+      lastCodeSentAt: null,
       avatarBase64: null,
 
       setVerificationEmail: (email) => set({ verificationEmail: email }),
+
+      recordCodeSent: () => {
+        set({ lastCodeSentAt: Date.now() });
+      },
 
       setLoggedInUser: (data: {
         token: string;
@@ -292,6 +297,7 @@ export const useUserStore = create<UserStore>()(
           token: null,
           avatarBase64: null,
           verificationEmail: null,
+          lastCodeSentAt: null,
         });
       },
     }),
@@ -304,6 +310,8 @@ export const useUserStore = create<UserStore>()(
         address: state.address,
         token: state.token,
         avatarBase64: state.avatarBase64,
+        verificationEmail: state.verificationEmail,
+        lastCodeSentAt: state.lastCodeSentAt,
       }),
     },
   ),
