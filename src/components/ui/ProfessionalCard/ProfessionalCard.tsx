@@ -92,18 +92,19 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
             {professional.location}
           </Text>
 
-          {professional.distance && (
-            <View style={styles.distanceBadge}>
-              <FontAwesome
-                name="map-marker"
-                size={10}
-                color={colors.primaryWhite}
-              />
-              <Text style={styles.distanceText}>
-                {professional.distance} km
-              </Text>
-            </View>
-          )}
+          {professional.distance !== undefined &&
+            professional.distance !== null && (
+              <View style={styles.distanceBadge}>
+                <FontAwesome
+                  name="map-marker"
+                  size={10}
+                  color={colors.primaryWhite}
+                />
+                <Text style={styles.distanceText}>
+                  {professional.distance} km
+                </Text>
+              </View>
+            )}
         </View>
       </View>
     </Pressable>
