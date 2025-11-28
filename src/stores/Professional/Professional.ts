@@ -14,50 +14,47 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
   fetchProfessionals: async (filter = '', page = 0, limit = 12) => {
     try {
       const response = await backendHttpClient.get('/api/professionals', {
-        params: {
-          termo: filter,
-          page: page,
-          limit: limit,
-        },
+        params: { termo: filter, page, limit },
       });
-      const data = response.data;
 
-      if (!data) {
-        console.error(`[ProfessionalStore] Backend error: No data received.`);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const rawData = Array.isArray(response.data)
+        ? response.data
+        : response.data.professionals || [];
 
-      // Espera-se que o backend retorne um array de profissionais
-      // ou um objeto com { professionals: [], total: number }
-      const professionals = Array.isArray(data)
-        ? data
-        : data.professionals || [];
-
-      // Mapeia para o formato ListedProfessional
-      const listedData: ListedProfessional[] = professionals.map(
+      const mappedProfessionals: ListedProfessional[] = rawData.map(
         (prof: any) => ({
           id: prof.id,
-          name: prof.User?.name || prof.name || 'Nome não disponível',
-          category:
-            prof.Service?.Subcategory?.name || prof.category || 'Serviços',
-          rating: prof.rating ? Math.round(prof.rating * 10) / 10 : 0,
-          ratingsCount: prof.ratings_count || prof.ratingsCount || 0,
+          name: prof.User?.name || prof.name || 'Profissional',
+          rating: Number(prof.rating || 0),
+          ratingsCount: Number(prof.ratings_count || 0),
           imageUrl:
+            prof.avatar_uri ||
             prof.User?.avatar_uri ||
-            prof.Service?.banner_uri ||
-            prof.imageUrl ||
-            `https://picsum.photos/seed/${prof.id}/400/400`,
-          location: prof.location || 'São Paulo, SP',
+            'https://via.placeholder.com/150',
+
+          location:
+            prof.MainAddress && prof.MainAddress.city
+              ? `${prof.MainAddress.city}, ${prof.MainAddress.state || 'BR'}`
+              : 'Localização não informada',
+
+          distance: prof.dataValues?.distance_km
+            ? parseFloat(prof.dataValues.distance_km).toFixed(1)
+            : undefined,
+
+          offeredServices: prof.Services
+            ? prof.Services.map((s: any) => s.title)
+            : ['Serviços Gerais'],
+
+          category: prof.Services?.[0]?.title || 'Serviços Diversos',
         }),
       );
 
-      return listedData;
+      return mappedProfessionals;
     } catch (error) {
-      console.error('[ProfessionalStore] Error fetching professionals:', error);
+      console.error('[ProfessionalStore] Erro ao buscar profissionais:', error);
       return [];
     }
   },
-
   fetchProfessionalById: async (id: number): Promise<Professional | null> => {
     set({ selectedProfessional: null });
 
