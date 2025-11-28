@@ -4,11 +4,9 @@ import {
   Text,
   ActivityIndicator,
   ScrollView,
-  Button,
   Dimensions,
 } from 'react-native';
 import { backendHttpClient } from '@lib/helpers/httpClient';
-import { useNavigation } from '@react-navigation/native';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 import { styles } from './styles';
 
@@ -65,7 +63,6 @@ const AdminAnalytics: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<StatsResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchStats = async () => {
