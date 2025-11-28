@@ -79,14 +79,15 @@ function MeusAgendamentos() {
 
   const handleToggleFavorite = (appointment: Appointment) => {
     const professionalId = appointment.Professional.id;
-    
+
     if (isFavorite(professionalId)) {
       removeFavorite(professionalId);
     } else {
       addFavorite({
         professionalId,
         professionalName: appointment.Professional.User.name,
-        professionalAvatar: appointment.Professional.User.avatar_uri || undefined,
+        professionalAvatar:
+          appointment.Professional.User.avatar_uri || undefined,
         category: appointment.Service.Subcategory?.name,
         serviceTitle: appointment.Service.title,
         addedAt: new Date().toISOString(),
@@ -128,14 +129,21 @@ function MeusAgendamentos() {
               <View style={styles.completedBadge}>
                 <Text style={styles.completedBadgeText}>REALIZADO</Text>
               </View>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.favoriteButton}
-                onPress={() => handleToggleFavorite(appointment)}
-              >
-                <FontAwesome 
-                  name={isFavorite(appointment.Professional.id) ? 'heart' : 'heart-o'} 
-                  size={24} 
-                  color={isFavorite(appointment.Professional.id) ? '#FF0000' : 'rgba(255, 255, 255, 0.7)'}
+                onPress={() => handleToggleFavorite(appointment)}>
+                <FontAwesome
+                  name={
+                    isFavorite(appointment.Professional.id)
+                      ? 'heart'
+                      : 'heart-o'
+                  }
+                  size={24}
+                  color={
+                    isFavorite(appointment.Professional.id)
+                      ? '#FF0000'
+                      : 'rgba(255, 255, 255, 0.7)'
+                  }
                 />
               </TouchableOpacity>
             </>
