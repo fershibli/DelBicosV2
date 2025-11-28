@@ -22,7 +22,7 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
 
       const endpoint = `api/appointments/user/${user.id}`;
       const response = await backendHttpClient.get(endpoint);
-      
+
       set({ appointments: response.data, loading: false });
     } catch (error) {
       console.error('Failed to fetch appointments:', error);
