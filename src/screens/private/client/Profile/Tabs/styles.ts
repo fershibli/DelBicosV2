@@ -325,4 +325,17 @@ export const createStyles = (colors: any) =>
     errorText: {
       color: '#721C24',
     },
+
+    requirementsContainer: {
+      backgroundColor: colors.background,
+      padding: 16,
+      borderRadius: 8,
+      marginBottom: 24,
+    },
+    requirementsTitle: {
+      fontSize: 14,
+      fontFamily: 'Afacad-Bold',
+      color: colors.textSecondary,
+      marginBottom: 8,
+    },
   });
