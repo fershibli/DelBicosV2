@@ -46,4 +46,9 @@ export const AuthService = {
     const response = await backendHttpClient.delete(`/api/user/avatar`);
     return response.data;
   },
+
+  async resendCode(email: string) {
+    const response = await backendHttpClient.post('/auth/resend', { email });
+    return response;
+  },
 };
