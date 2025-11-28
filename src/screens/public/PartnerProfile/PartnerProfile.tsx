@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import {
   ImageBackground,
   StyleSheet,
@@ -9,25 +9,25 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
-  ScrollView,
+  Platform,
+  StatusBar,
+  Image,
 } from 'react-native';
 import { SobreContent } from './SobreContent';
 import { ServicosContent } from './ServicosContent';
 import { GaleriaContent } from './GaleriaContent';
 import { AvaliacoesContent } from './AvaliacoesContent';
-import { Rating } from 'react-native-ratings';
 import { useProfessionalStore } from '@stores/Professional';
 import { useColors } from '@theme/ThemeProvider';
+
+type TabType = 'sobre' | 'servicos' | 'galeria' | 'avaliacoes';
 
 function PartnerProfileScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { id } = route.params as { id: number };
 
-  const [activeTab, setActiveTab] = useState<
-    'sobre' | 'servicos' | 'galeria' | 'avaliacoes'
-  >('sobre');
-
+  const [activeTab, setActiveTab] = useState<TabType>('sobre');
   const { selectedProfessional, fetchProfessionalById } =
     useProfessionalStore();
   const [isLoading, setIsLoading] = useState(true);
@@ -68,6 +68,17 @@ function PartnerProfileScreen() {
 
   const parceiro = selectedProfessional;
 
+  const coverImageUri =
+    parceiro.User.banner_uri ||
+    parceiro.User.avatar_uri ||
+    `https://picsum.photos/seed/${parceiro.id}/800/600`;
+
+  const avatarUri = parceiro.User.avatar_uri;
+
+  const addressShort = parceiro.MainAddress
+    ? `${parceiro.MainAddress.city}, ${parceiro.MainAddress.state}`
+    : 'Localização não informada';
+
   const renderContent = () => {
     switch (activeTab) {
       case 'sobre':
@@ -81,120 +92,123 @@ function PartnerProfileScreen() {
       case 'servicos':
         return <ServicosContent servicos={parceiro.Services} />;
       case 'galeria':
-        return (
-          <GaleriaContent
-            imagens={[
-              parceiro.User.banner_uri,
-              parceiro.User.avatar_uri,
-              ...parceiro.Services.map((s) => s.banner_uri),
-            ]
-              .filter(Boolean)
-              .map((url, index) => ({
-                id: String(index),
-                url: url as string,
-              }))}
-          />
-        );
+        const images = [
+          parceiro.User.banner_uri,
+          parceiro.User.avatar_uri,
+          ...parceiro.Services.map((s) => s.banner_uri),
+        ]
+          .filter(Boolean)
+          .map((url, index) => ({ id: String(index), url: url as string }));
+
+        return <GaleriaContent imagens={images} />;
       case 'avaliacoes':
         return <AvaliacoesContent avaliacoes={parceiro.Appointments} />;
       default:
-        return (
-          <SobreContent
-            nome={parceiro.User.name}
-            descricao={parceiro.description}
-            endereco={parceiro.MainAddress}
-          />
-        );
+        return null;
     }
   };
 
-  const coverImageUri =
-    parceiro.User.banner_uri ||
-    parceiro.Services[0]?.banner_uri ||
-    `https://picsum.photos/seed/${parceiro.id}/800/400`;
-
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={{ uri: coverImageUri }}
-        style={styles.headerImage}>
-        <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.8)']}
-          style={styles.gradientOverlay}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}>
-            <MaterialIcons name="arrow-back" size={24} color="white" />
-          </TouchableOpacity>
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="transparent"
+      />
 
-          <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{parceiro.User.name}</Text>
-            <View style={styles.ratingContainer}>
-              <Rating
-                type="star"
-                ratingCount={5}
-                imageSize={12}
-                readonly
-                startingValue={parceiro.rating || 0}
-                fractions={1}
-                tintColor="black"
-                style={{ marginRight: 4 }}
-              />
-              <Text style={styles.ratingText}>
-                {(parceiro.rating || 0).toFixed(1)} (
-                {parceiro.ratings_count || 0} avaliações)
-              </Text>
+      {/* Header Imersivo com Imagem de Capa */}
+      <View style={styles.headerWrapper}>
+        <ImageBackground
+          source={{ uri: coverImageUri }}
+          style={styles.headerImage}
+          resizeMode="cover">
+          <LinearGradient
+            colors={['rgba(0,0,0,0.5)', 'transparent', 'rgba(0,0,0,0.2)']}
+            style={styles.gradientOverlay}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}>
+              <MaterialIcons name="arrow-back" size={28} color="white" />
+            </TouchableOpacity>
+          </LinearGradient>
+        </ImageBackground>
+
+        {/* Card Flutuante com Avatar e Informações */}
+        <View style={styles.floatingInfoCard}>
+          <View style={styles.floatingCardContentRow}>
+            {/* Avatar do Profissional */}
+            <View style={styles.avatarContainer}>
+              {avatarUri ? (
+                <Image source={{ uri: avatarUri }} style={styles.avatarImage} />
+              ) : (
+                <View style={[styles.avatarImage, styles.avatarFallback]}>
+                  <FontAwesome
+                    name="user"
+                    size={36}
+                    color={colors.textTertiary}
+                  />
+                </View>
+              )}
+            </View>
+
+            {/* Coluna de Informações (Nome, Rating, Local) */}
+            <View style={styles.infoColumn}>
+              <View style={styles.cardHeaderRow}>
+                <Text style={styles.profileName} numberOfLines={2}>
+                  {parceiro.User.name}
+                </Text>
+                {/* Badge de Rating */}
+                <View style={styles.ratingBadge}>
+                  <FontAwesome name="star" size={14} color="#FFC107" />
+                  <Text style={styles.ratingValue}>
+                    {parceiro.rating?.toFixed(1) || '0.0'}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.locationRow}>
+                <FontAwesome
+                  name="map-marker"
+                  size={14}
+                  color={colors.textTertiary}
+                />
+                <Text style={styles.locationText}>{addressShort}</Text>
+                {parceiro.ratings_count ? (
+                  <Text style={styles.reviewCount}>
+                    • {parceiro.ratings_count} avaliações
+                  </Text>
+                ) : null}
+              </View>
             </View>
           </View>
-        </LinearGradient>
-      </ImageBackground>
-
-      {parceiro.MainAddress && (
-        <View style={styles.addressContainer}>
-          <MaterialCommunityIcons
-            name="map-marker"
-            size={16}
-            color={colors.primaryBlack}
-          />
-          <Text style={styles.addressText}>
-            {`${parceiro.MainAddress.street}, ${parceiro.MainAddress.number} - ${parceiro.MainAddress.neighborhood} - ${parceiro.MainAddress.city} / ${parceiro.MainAddress.state}`}
-          </Text>
         </View>
-      )}
-
-      <View style={styles.navTabs}>
-        <TouchableOpacity onPress={() => setActiveTab('sobre')}>
-          <Text style={[styles.tab, activeTab === 'sobre' && styles.activeTab]}>
-            Sobre
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => setActiveTab('servicos')}>
-          <Text
-            style={[styles.tab, activeTab === 'servicos' && styles.activeTab]}>
-            Serviços
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => setActiveTab('galeria')}>
-          <Text
-            style={[styles.tab, activeTab === 'galeria' && styles.activeTab]}>
-            Galeria
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => setActiveTab('avaliacoes')}>
-          <Text
-            style={[
-              styles.tab,
-              activeTab === 'avaliacoes' && styles.activeTab,
-            ]}>
-            Avaliações
-          </Text>
-        </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.contentContainer}>{renderContent()}</ScrollView>
+      {/* Menu de Navegação (Tabs) */}
+      <View style={styles.tabsContainer}>
+        {(['sobre', 'servicos', 'galeria', 'avaliacoes'] as TabType[]).map(
+          (tab) => (
+            <TouchableOpacity
+              key={tab}
+              style={[
+                styles.tabItem,
+                activeTab === tab && styles.tabItemActive,
+              ]}
+              onPress={() => setActiveTab(tab)}>
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === tab && styles.tabTextActive,
+                ]}>
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ),
+        )}
+      </View>
+
+      {/* Conteúdo da Aba */}
+      <View style={styles.contentWrapper}>{renderContent()}</View>
     </View>
   );
 }
@@ -214,6 +228,7 @@ const createStyles = (colors: any) =>
     loadingText: {
       marginTop: 12,
       fontSize: 16,
+      fontFamily: 'Afacad-Regular',
       color: colors.primaryBlack,
     },
     errorContainer: {
@@ -221,13 +236,12 @@ const createStyles = (colors: any) =>
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
-      backgroundColor: colors.primaryWhite,
     },
     errorText: {
       fontSize: 18,
+      fontFamily: 'Afacad-Bold',
       color: colors.primaryBlack,
       marginBottom: 20,
-      textAlign: 'center',
     },
     backButtonError: {
       backgroundColor: colors.primaryOrange,
@@ -237,71 +251,169 @@ const createStyles = (colors: any) =>
     },
     backButtonTextError: {
       color: colors.primaryWhite,
-      fontSize: 16,
-      fontWeight: '600',
+      fontFamily: 'Afacad-Bold',
+    },
+
+    // Header Styles
+    headerWrapper: {
+      position: 'relative',
+      marginBottom: 70,
     },
     headerImage: {
-      height: 174,
       width: '100%',
+      height: 220,
     },
     gradientOverlay: {
       flex: 1,
-      justifyContent: 'flex-end',
-      padding: 16,
+      paddingTop: Platform.OS === 'android' ? 45 : 25,
+      paddingHorizontal: 16,
     },
     backButton: {
-      position: 'absolute',
-      top: 40,
-      left: 12,
-      padding: 4,
-    },
-    profileInfo: {
-      marginBottom: 8,
-    },
-    profileName: {
-      color: 'white',
-      fontSize: 17,
-      fontWeight: 'bold',
-      marginBottom: 4,
-    },
-    ratingContainer: {
-      flexDirection: 'row',
+      width: 40,
+      height: 40,
+      justifyContent: 'center',
       alignItems: 'center',
-      gap: 4,
-      paddingVertical: 2,
+      borderRadius: 20,
+      backgroundColor: 'rgba(0,0,0,0.25)',
     },
-    ratingText: {
-      color: 'white',
-      fontSize: 10,
-      fontWeight: 'bold',
+
+    // Floating Card Styles
+    floatingInfoCard: {
+      position: 'absolute',
+      bottom: -50,
+      left: 16,
+      right: 16,
+      backgroundColor: colors.primaryWhite,
+      borderRadius: 16,
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+        },
+        android: {
+          elevation: 6,
+        },
+        web: {
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+        },
+      }),
     },
-    addressContainer: {
+    floatingCardContentRow: {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 16,
-      gap: 8,
     },
-    addressText: {
-      fontSize: 11,
-      fontWeight: '300',
-      flexShrink: 1,
+
+    // Estilos do Avatar
+    avatarContainer: {
+      marginRight: 16,
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+        },
+        android: { elevation: 3 },
+      }),
     },
-    navTabs: {
+    avatarImage: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      borderWidth: 3,
+      borderColor: colors.primaryWhite,
+    },
+    avatarFallback: {
+      backgroundColor: colors.secondaryGray,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    // Coluna de Informações (à direita do avatar)
+    infoColumn: {
+      flex: 1,
+      justifyContent: 'center',
+    },
+
+    cardHeaderRow: {
       flexDirection: 'row',
-      justifyContent: 'space-around',
-      paddingVertical: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.secondaryBeige,
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: 6,
     },
-    tab: {
-      fontSize: 17,
+    profileName: {
+      fontSize: 20,
+      fontFamily: 'Afacad-Bold',
       color: colors.primaryBlack,
+      flex: 1,
+      marginRight: 8,
+      lineHeight: 24,
     },
-    activeTab: {
+    ratingBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#FFF8E1',
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 8,
+      gap: 4,
+    },
+    ratingValue: {
+      fontSize: 14,
+      fontFamily: 'Afacad-Bold',
+      color: '#FFA000',
+    },
+    locationRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+    },
+    locationText: {
+      fontSize: 14,
+      fontFamily: 'Afacad-Regular',
+      color: colors.textSecondary,
+    },
+    reviewCount: {
+      fontSize: 14,
+      fontFamily: 'Afacad-Regular',
+      color: colors.textTertiary,
+    },
+
+    // Tabs Styles
+    tabsContainer: {
+      flexDirection: 'row',
+      backgroundColor: colors.primaryWhite,
+      borderBottomWidth: 1,
+      borderBottomColor: '#E0E0E0',
+      paddingHorizontal: 16,
+      paddingTop: 0,
+      marginTop: 0,
+    },
+    tabItem: {
+      flex: 1,
+      alignItems: 'center',
+      paddingVertical: 14,
+      borderBottomWidth: 3,
+      borderBottomColor: 'transparent',
+    },
+    tabItemActive: {
+      borderBottomColor: colors.primaryOrange,
+    },
+    tabText: {
+      fontSize: 15,
+      fontFamily: 'Afacad-Regular',
+      color: colors.textTertiary,
+    },
+    tabTextActive: {
+      fontFamily: 'Afacad-Bold',
       color: colors.primaryOrange,
-      fontWeight: 'bold',
     },
-    contentContainer: {
+
+    // Content Wrapper
+    contentWrapper: {
       flex: 1,
     },
   });
