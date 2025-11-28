@@ -1,5 +1,11 @@
 import React, { useEffect } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  StyleSheet,
+} from 'react-native';
 import { ReviewCard } from '@components/ui/ReviewCard';
 import { useAppointmentStore } from '@stores/Appointment';
 import { useColors } from '@theme/ThemeProvider';
@@ -15,7 +21,10 @@ const AvaliacoesTab: React.FC = () => {
 
   // Filtrar apenas appointments que foram avaliados pelo cliente (limitar a 2)
   const avaliacoesFeitas = appointments
-    .filter((apt) => apt.rating !== null && apt.rating !== undefined && apt.rating > 0)
+    .filter(
+      (apt) =>
+        apt.rating !== null && apt.rating !== undefined && apt.rating > 0,
+    )
     .slice(0, 2);
 
   const formatarData = (dataString: string) => {
@@ -69,7 +78,9 @@ const AvaliacoesTab: React.FC = () => {
                   title={getTitleFromRating(appointment.rating || 0)}
                   serviceTitle={appointment.Service.title}
                   clientName={appointment.Professional.User.name}
-                  clientAvatar={appointment.Professional.User.avatar_uri || undefined}
+                  clientAvatar={
+                    appointment.Professional.User.avatar_uri || undefined
+                  }
                   date={formatarData(appointment.start_time)}
                   review={appointment.review || undefined}
                 />
