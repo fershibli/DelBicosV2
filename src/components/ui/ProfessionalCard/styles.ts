@@ -82,14 +82,15 @@ export const createStyles = (colors: any) =>
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.primaryBlue,
-      paddingVertical: 2,
+      paddingVertical: 3,
       paddingHorizontal: 6,
       borderRadius: 4,
+      alignSelf: 'flex-start',
     },
     distanceText: {
       color: colors.primaryWhite,
       fontSize: 10,
       fontFamily: 'Afacad-Bold',
-      marginLeft: 2,
+      marginLeft: 4,
     },
   });
