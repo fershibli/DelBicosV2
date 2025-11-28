@@ -1,88 +1,234 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+  Controller,
+  Control,
+  FieldErrors,
+  UseFormSetValue,
+} from 'react-hook-form';
 import CustomTextInput from '@components/ui/CustomTextInput';
 import { useViaCepStore } from '@stores/ViaCep';
-import { Button } from '@components/ui/Button';
 import { useColors } from '@theme/ThemeProvider';
-
-interface AddressFormProps {
-  onSubmit: (data: any) => void;
+export interface AddressFormData {
+  cep: string;
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
 }
 
-export const AddressForm: React.FC<AddressFormProps> = ({ onSubmit }) => {
-  const [cep, setCep] = useState('');
-  const [street, setStreet] = useState('');
-  const [city, setCity] = useState('');
-  const [stateValue, setStateValue] = useState('');
-  const [neighborhood, setNeighborhood] = useState('');
-  const [number, setNumber] = useState('');
-  const [error, setError] = useState<string | null>(null);
+interface AddressFormProps {
+  control: Control<any>;
+  errors: FieldErrors<any>;
+  setValue: UseFormSetValue<any>;
+}
 
-  const { fetchCep, loading } = useViaCepStore();
+export const AddressForm: React.FC<AddressFormProps> = ({
+  control,
+  errors,
+  setValue,
+}) => {
+  const { fetchCep, loading, error: cepError } = useViaCepStore();
   const colors = useColors();
   const styles = createStyles(colors);
 
-  const handleCepChange = async (value: string) => {
-    setCep(value);
-    if (value.replace(/\D/g, '').length === 8) {
-      const data = await fetchCep(value);
-      if (data) {
-        setStreet(data.logradouro || '');
-        setCity(data.localidade || '');
-        setStateValue(data.uf || '');
-        setNeighborhood(data.bairro || '');
-        setError(null);
-      } else {
-        setError('CEP não encontrado ou inválido.');
+  const handleCepBlur = async (cepValue: string) => {
+    const cleanCep = cepValue?.replace(/\D/g, '');
+
+    if (cleanCep?.length === 8) {
+      const data = await fetchCep(cleanCep);
+
+      if (data && !data.erro) {
+        setValue('street', data.logradouro || '', { shouldValidate: true });
+        setValue('neighborhood', data.bairro || '', { shouldValidate: true });
+        setValue('city', data.localidade || '', { shouldValidate: true });
+        setValue('state', data.uf || '', { shouldValidate: true });
       }
     }
   };
 
-  const handleSubmit = () => {
-    onSubmit({
-      cep,
-      street,
-      city,
-      state: stateValue,
-      neighborhood,
-      number,
-    });
-  };
-
   return (
     <View style={styles.container}>
-      <CustomTextInput
-        label="CEP"
-        value={cep}
-        onChangeText={handleCepChange}
-        maxLength={9}
-        keyboardType="numeric"
-      />
-      <CustomTextInput label="Rua" value={street} onChangeText={setStreet} />
-      <CustomTextInput label="Cidade" value={city} onChangeText={setCity} />
-      <CustomTextInput
-        label="Estado"
-        value={stateValue}
-        onChangeText={setStateValue}
-      />
-      <CustomTextInput
-        label="Bairro"
-        value={neighborhood}
-        onChangeText={setNeighborhood}
-      />
-      <CustomTextInput label="Número" value={number} onChangeText={setNumber} />
+      <Text style={styles.sectionTitle}>Endereço</Text>
 
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      {/* Campo CEP */}
+      <Controller
+        control={control}
+        name="cep"
+        rules={{
+          required: 'CEP é obrigatório',
+          pattern: { value: /^\d{5}-?\d{3}$/, message: 'CEP inválido' },
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <View>
+            <CustomTextInput
+              label="CEP"
+              placeholder="00000-000"
+              value={value}
+              onChangeText={(text) => {
+                const masked = text
+                  .replace(/\D/g, '')
+                  .replace(/^(\d{5})(\d)/, '$1-$2')
+                  .slice(0, 9);
+                onChange(masked);
+                if (masked.length === 9) handleCepBlur(masked);
+              }}
+              onBlur={() => {
+                onBlur();
+                handleCepBlur(value);
+              }}
+              keyboardType="numeric"
+              maxLength={9}
+            />
+            {loading && (
+              <ActivityIndicator
+                size="small"
+                color={colors.primaryOrange}
+                style={styles.loader}
+              />
+            )}
+            {cepError && <Text style={styles.errorText}>{cepError}</Text>}
+          </View>
+        )}
+      />
 
-      <Button onPress={handleSubmit} loading={loading} style={styles.button}>
-        Salvar
-      </Button>
+      <View style={styles.row}>
+        <View style={[styles.col, { flex: 3 }]}>
+          <Controller
+            control={control}
+            name="street"
+            rules={{ required: 'Rua é obrigatória' }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <CustomTextInput
+                label="Rua"
+                placeholder="Nome da rua"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
+          />
+        </View>
+        <View style={[styles.col, { flex: 1 }]}>
+          <Controller
+            control={control}
+            name="number"
+            rules={{ required: 'Nº obrigatório' }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <CustomTextInput
+                label="Número"
+                placeholder="123"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                keyboardType="numeric"
+              />
+            )}
+          />
+        </View>
+      </View>
+
+      <Controller
+        control={control}
+        name="complement"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <CustomTextInput
+            label="Complemento (Opcional)"
+            placeholder="Apto, Bloco, Casa 2..."
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="neighborhood"
+        rules={{ required: 'Bairro é obrigatório' }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <CustomTextInput
+            label="Bairro"
+            placeholder="Ex: Bairro da Liberdade"
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+          />
+        )}
+      />
+
+      <View style={styles.row}>
+        <View style={[styles.col, { flex: 2 }]}>
+          <Controller
+            control={control}
+            name="city"
+            rules={{ required: 'Cidade obrigatória' }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <CustomTextInput
+                label="Cidade"
+                placeholder="Ex: São Paulo"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
+          />
+        </View>
+        <View style={[styles.col, { flex: 1 }]}>
+          <Controller
+            control={control}
+            name="state"
+            rules={{
+              required: 'UF obrigatória',
+              maxLength: { value: 2, message: 'Max 2 letras' },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <CustomTextInput
+                label="UF"
+                placeholder="SP"
+                value={value}
+                onChangeText={(text) => onChange(text.toUpperCase())}
+                onBlur={onBlur}
+                maxLength={2}
+              />
+            )}
+          />
+        </View>
+      </View>
     </View>
   );
 };
+
 const createStyles = (colors: any) =>
   StyleSheet.create({
-    container: { padding: 8 },
-    errorText: { color: colors.danger || 'red', marginVertical: 8 },
-    button: { marginTop: 12 },
+    container: {
+      marginTop: 16,
+      marginBottom: 16,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontFamily: 'Afacad-Bold',
+      color: colors.primaryBlue,
+      marginBottom: 12,
+    },
+    row: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    col: {
+      // Flex é controlado inline para layout fluido
+    },
+    errorText: {
+      color: 'red',
+      fontSize: 12,
+      marginTop: -8,
+      marginBottom: 8,
+    },
+    loader: {
+      position: 'absolute',
+      right: 10,
+      top: 40,
+    },
   });
