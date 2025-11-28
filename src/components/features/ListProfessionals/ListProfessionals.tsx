@@ -11,7 +11,9 @@ import ProfessionalCard from '@components/ui/ProfessionalCard';
 import { useProfessionalStore } from '@stores/Professional';
 import { usePagination } from '@hooks/usePagination';
 import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles'; // <-- Importe os estilos criados
 
+// O hook useResponsiveColumns pode ficar aqui ou ser extraído para um arquivo separado
 const useResponsiveColumns = () => {
   const getCols = (width: number) => {
     if (Platform.OS === 'web') {
@@ -37,6 +39,7 @@ const useResponsiveColumns = () => {
 
 const ListProfessionals = () => {
   const colors = useColors();
+  const styles = createStyles(colors); // <-- Crie a instância de estilos com as cores atuais
   const { fetchProfessionals } = useProfessionalStore();
   const numColumns = useResponsiveColumns();
 
@@ -55,7 +58,7 @@ const ListProfessionals = () => {
 
   if (loadingInitial) {
     return (
-      <View style={{ paddingVertical: 40, alignItems: 'center' }}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primaryBlue} />
       </View>
     );
@@ -67,47 +70,36 @@ const ListProfessionals = () => {
       keyExtractor={(item) => item.id.toString()}
       numColumns={numColumns}
       key={numColumns.toString()}
-      columnWrapperStyle={
-        numColumns > 1
-          ? { justifyContent: 'flex-start', paddingHorizontal: 8 }
-          : undefined
-      }
+      contentContainerStyle={styles.listContent}
+      columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
       renderItem={({ item }) => (
-        <View style={{ width: `${100 / numColumns}%` }}>
+        <View style={[styles.cardWrapper, { width: `${100 / numColumns}%` }]}>
           <ProfessionalCard professional={item} />
         </View>
       )}
       onEndReached={onEndReached}
       onEndReachedThreshold={0.3}
       ListFooterComponent={() => {
-        if (loadingMore)
+        if (loadingMore) {
           return (
-            <View style={{ padding: 20 }}>
+            <View style={styles.footerContainer}>
               <ActivityIndicator color={colors.primaryOrange} />
             </View>
           );
-        if (!hasMore && professionals.length > 0)
+        }
+        if (!hasMore && professionals.length > 0) {
           return (
-            <Text
-              style={{
-                textAlign: 'center',
-                padding: 15,
-                color: colors.textTertiary,
-              }}>
-              Não há mais profissionais.
-            </Text>
+            <View style={styles.footerContainer}>
+              <Text style={styles.footerText}>Não há mais profissionais.</Text>
+            </View>
           );
+        }
         return null;
       }}
       ListEmptyComponent={
-        <Text
-          style={{
-            textAlign: 'center',
-            padding: 20,
-            color: colors.textTertiary,
-          }}>
-          Nenhum profissional encontrado.
-        </Text>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Nenhum profissional encontrado.</Text>
+        </View>
       }
     />
   );
