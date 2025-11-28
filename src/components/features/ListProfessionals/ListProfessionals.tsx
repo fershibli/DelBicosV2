@@ -11,9 +11,9 @@ import ProfessionalCard from '@components/ui/ProfessionalCard';
 import { useProfessionalStore } from '@stores/Professional';
 import { usePagination } from '@hooks/usePagination';
 import { useColors } from '@theme/ThemeProvider';
-import { createStyles } from './styles'; // <-- Importe os estilos criados
+import { createStyles } from './styles';
+import { useLocation } from '@lib/hooks/LocationContext';
 
-// O hook useResponsiveColumns pode ficar aqui ou ser extraído para um arquivo separado
 const useResponsiveColumns = () => {
   const getCols = (width: number) => {
     if (Platform.OS === 'web') {
@@ -39,13 +39,20 @@ const useResponsiveColumns = () => {
 
 const ListProfessionals = () => {
   const colors = useColors();
-  const styles = createStyles(colors); // <-- Crie a instância de estilos com as cores atuais
+  const styles = createStyles(colors);
   const { fetchProfessionals } = useProfessionalStore();
   const numColumns = useResponsiveColumns();
 
+  const { address } = useLocation();
+
   const fetcher = useCallback(
-    (p: number, l: number) => fetchProfessionals('', p, l),
-    [fetchProfessionals],
+    (p: number, l: number) => {
+      const lat = address?.lat ? parseFloat(address.lat.toString()) : undefined;
+      const lng = address?.lon ? parseFloat(address.lon.toString()) : undefined;
+
+      return fetchProfessionals('', p, l, lat, lng);
+    },
+    [fetchProfessionals, address],
   );
 
   const {
