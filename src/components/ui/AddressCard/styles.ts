@@ -1,115 +1,119 @@
 import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     card: {
-      width: '100%',
       backgroundColor: colors.primaryWhite,
-      borderRadius: 12,
+      borderRadius: 16,
       padding: 20,
-      marginBottom: 20,
+      marginBottom: 8,
+      borderWidth: 1,
+      borderColor: 'transparent', // Borda transparente por padrão
+      // Sombras suaves
       ...Platform.select({
         ios: {
-          shadowColor: colors.primaryBlack,
-          shadowOpacity: 0.1,
+          shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },
-          shadowRadius: 8,
+          shadowOpacity: 0.08,
+          shadowRadius: 6,
         },
         android: {
-          elevation: 4,
+          elevation: 3,
         },
         web: {
-          boxShadow: `0px 2px 8px rgba(0, 0, 0, 0.1)`,
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)',
+          transition: 'all 0.2s ease',
         },
       }),
     },
-    formRow: {
+    cardPrimary: {
+      borderColor: colors.primaryOrange, // Borda laranja sutil se for principal
+      backgroundColor: '#FFFBF5', // Fundo muito levemente laranja
+    },
+
+    // Cabeçalho
+    header: {
       flexDirection: 'row',
-      gap: 16,
-      width: '100%',
-      flexWrap: 'wrap',
-    },
-    inputReadOnly: {
-      backgroundColor: colors.cardBackground,
-      color: colors.textSecondary,
-      borderRadius: 8,
-      borderColor: colors.borderColor,
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      fontSize: 16,
-      borderWidth: 1,
-    },
-    input: {
-      backgroundColor: colors.cardBackground,
-      borderRadius: 8,
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      fontSize: 16,
-      borderWidth: 1,
-      borderColor: colors.borderColor,
-      fontFamily: 'Afacad-Regular',
-      color: colors.primaryBlack,
-    },
-    actionsRow: {
-      position: 'absolute',
-      right: 16,
-      top: 16,
-      flexDirection: 'row',
-      gap: 16,
+      justifyContent: 'space-between',
       alignItems: 'center',
-      zIndex: 10,
+      marginBottom: 16,
     },
-    saveRow: {
+    iconContainer: {
       flexDirection: 'row',
-      justifyContent: 'flex-end',
-      marginTop: 20,
+      alignItems: 'center',
       gap: 10,
     },
-    actionButton: {
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      borderRadius: 8,
-    },
-    saveButton: {
-      backgroundColor: colors.primaryBlue,
-    },
-    cancelButton: {
-      backgroundColor: colors.textSecondary,
-    },
-    actionButtonText: {
-      color: colors.primaryWhite,
-      fontWeight: 'bold',
-      fontFamily: 'Afacad-Bold',
-    },
-    cancelButtonText: {
-      color: colors.primaryWhite,
-    },
-    pickerContainer: {
-      borderWidth: 1,
-      borderColor: colors.borderColor,
-      borderRadius: 8,
+    iconCircle: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: '#FFF5EB', // Laranja bem claro
       justifyContent: 'center',
-      backgroundColor: colors.cardBackground,
+      alignItems: 'center',
     },
-    pickerWrapper: {
-      borderWidth: 1,
-      borderColor: colors.borderColor,
-      borderRadius: 8,
-      overflow: 'hidden',
+    iconCirclePrimary: {
+      backgroundColor: colors.primaryOrange,
     },
-    picker: {
-      backgroundColor: colors.cardBackground,
-      borderRadius: 8,
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      fontSize: 16,
-      borderWidth: 1,
-      borderColor: colors.borderColor,
-      fontFamily: 'Afacad-Regular',
+    cardTitle: {
+      fontSize: 14,
+      fontFamily: 'Afacad-SemiBold',
+      color: colors.primaryOrange,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    deleteButton: {
+      padding: 4,
+    },
+
+    // Corpo
+    body: {
+      marginBottom: 16,
+    },
+    streetText: {
+      fontSize: 18,
+      fontFamily: 'Afacad-Bold',
       color: colors.primaryBlack,
+      marginBottom: 4,
     },
-    iconButton: {
-      padding: 8,
-      borderRadius: 20,
+    complementText: {
+      fontSize: 14,
+      fontFamily: 'Afacad-Regular',
+      color: colors.textSecondary,
+      marginBottom: 4,
+      fontStyle: 'italic',
+    },
+    detailText: {
+      fontSize: 15,
+      fontFamily: 'Afacad-Regular',
+      color: '#555',
+      marginBottom: 2,
+    },
+    zipText: {
+      fontSize: 14,
+      fontFamily: 'Afacad-Regular',
+      color: colors.textTertiary,
+      marginTop: 4,
+    },
+
+    // Rodapé
+    footer: {
+      flexDirection: 'row',
+      borderTopWidth: 1,
+      borderTopColor: 'rgba(0,0,0,0.05)',
+      paddingTop: 12,
+      gap: 16,
+    },
+    actionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      paddingVertical: 4,
+      paddingRight: 12,
+    },
+    actionText: {
+      fontSize: 14,
+      fontFamily: 'Afacad-SemiBold',
+      color: colors.primaryBlue,
     },
   });
