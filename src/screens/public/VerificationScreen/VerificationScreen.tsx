@@ -20,10 +20,7 @@ import { useUserStore } from '@stores/User';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { Address } from '@stores/User/types';
 import { useColors } from '@theme/ThemeProvider';
-import {
-  checkForNewNotifications,
-  setupNotifications,
-} from '@utils/usePushNotifications';
+import { checkForNewNotifications } from '@utils/usePushNotifications';
 
 function VerificationScreen() {
   const navigation = useNavigation();
