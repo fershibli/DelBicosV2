@@ -75,6 +75,30 @@ export const createStyles = (colors: any) =>
       fontFamily: 'Afacad-Bold',
       color: colors.primaryBlue,
     },
+    codeInputFilled: {
+      borderColor: colors.primaryOrange,
+      backgroundColor: '#FFF5EB',
+      borderWidth: 2,
+    },
+
+    resendButton: {
+      marginTop: 24,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 12,
+    },
+
+    resendText: {
+      color: colors.primaryOrange,
+      fontSize: 16,
+      fontFamily: 'Afacad-Bold',
+      textDecorationLine: 'underline',
+    },
+
+    resendTextDisabled: {
+      color: colors.textTertiary || '#999999',
+      textDecorationLine: 'none',
+    },
     button: {
       height: 50,
       backgroundColor: colors.primaryBlue,
