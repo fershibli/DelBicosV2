@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Platform,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 import { Rating } from 'react-native-ratings';
 import { useColors } from '@theme/ThemeProvider';
@@ -45,20 +46,25 @@ export function RateServiceModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const ratingData: Record<number, { label: string; color: string }> = {
-    1: { label: 'Péssimo', color: '#D32F2F' },
-    2: { label: 'Ruim', color: colors.primaryOrange },
-    3: { label: 'Regular', color: '#FBC02D' },
-    4: { label: 'Muito Bom', color: colors.primaryBlue },
-    5: { label: 'Excelente!', color: colors.primaryGreen },
-  };
+  const ratingConfig = useMemo(
+    () => ({
+      1: { label: 'Péssimo', color: colors.errorText },
+      2: { label: 'Ruim', color: colors.primaryOrange },
+      3: { label: 'Regular', color: '#FBC02D' },
+      4: { label: 'Muito Bom', color: colors.primaryBlue },
+      5: { label: 'Excelente!', color: colors.successText },
+    }),
+    [colors],
+  );
 
-  const currentRatingInfo = rating > 0 ? ratingData[rating] : null;
+  const currentRatingInfo =
+    rating > 0 ? ratingConfig[rating as keyof typeof ratingConfig] : null;
 
   useEffect(() => {
     if (visible) {
       setRating(existingRating || 0);
       setReview(existingReview || '');
+      setShowSuccessModal(false);
     }
   }, [visible, existingRating, existingReview]);
 
@@ -71,10 +77,14 @@ export function RateServiceModal({
       if (success) {
         setShowSuccessModal(true);
       } else {
-        alert('Erro ao enviar avaliação.');
+        Alert.alert(
+          'Erro',
+          'Não foi possível enviar sua avaliação. Tente novamente.',
+        );
       }
     } catch (error) {
       console.error(error);
+      Alert.alert('Erro', 'Ocorreu um erro inesperado.');
     } finally {
       setIsSubmitting(false);
     }
@@ -96,19 +106,22 @@ export function RateServiceModal({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.overlay}>
         <View style={styles.modalContainer}>
+          {/* Header */}
           <View style={styles.header}>
             <Text style={styles.title}>Avaliar Serviço</Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <FontAwesome name="close" size={20} color={colors.textTertiary} />
+              <FontAwesome name="close" size={24} color={colors.textTertiary} />
             </TouchableOpacity>
           </View>
 
+          {/* Subtítulo dinâmico */}
           <Text style={styles.subtitle}>
             Como foi o serviço de{' '}
             <Text style={styles.highlightText}>{serviceTitle}</Text> com{' '}
             <Text style={styles.highlightText}>{professionalName}</Text>?
           </Text>
 
+          {/* Componente de Estrelas */}
           <View style={styles.ratingContainer}>
             <Rating
               type="custom"
@@ -117,8 +130,8 @@ export function RateServiceModal({
               startingValue={rating}
               onFinishRating={setRating}
               ratingColor="#FFC107"
-              ratingBackgroundColor="#d4d4d4"
-              tintColor={colors.primaryWhite}
+              ratingBackgroundColor={colors.textTertiary}
+              tintColor={colors.cardBackground}
               style={styles.ratingComponent}
             />
             <Text
@@ -130,6 +143,7 @@ export function RateServiceModal({
             </Text>
           </View>
 
+          {/* Área de Comentário */}
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.textInput}
@@ -140,11 +154,11 @@ export function RateServiceModal({
               value={review}
               onChangeText={setReview}
               maxLength={500}
-              textAlignVertical="top"
             />
             <Text style={styles.charCounter}>{review.length}/500</Text>
           </View>
 
+          {/* Botão de Envio */}
           <TouchableOpacity
             style={[
               styles.submitButton,
@@ -153,31 +167,36 @@ export function RateServiceModal({
             onPress={handleSubmit}
             disabled={isSubmitting || rating === 0}>
             {isSubmitting ? (
-              <ActivityIndicator color="white" />
+              <ActivityIndicator color={colors.primaryWhite} />
             ) : (
               <Text style={styles.submitButtonText}>Enviar Avaliação</Text>
             )}
           </TouchableOpacity>
-        </View>
 
-        {showSuccessModal && (
-          <View style={[styles.overlay, styles.successOverlay]}>
-            <View style={styles.successCard}>
-              <View style={styles.successIconContainer}>
-                <FontAwesome name="check" size={32} color="white" />
+          {/* Overlay de Sucesso (Interno ao Modal para manter contexto) */}
+          {showSuccessModal && (
+            <View style={styles.successOverlay}>
+              <View style={styles.successCard}>
+                <View style={styles.successIconContainer}>
+                  <FontAwesome
+                    name="check"
+                    size={32}
+                    color={colors.primaryWhite}
+                  />
+                </View>
+                <Text style={styles.successTitle}>Avaliação Enviada!</Text>
+                <Text style={styles.successMessage}>
+                  Obrigado por compartilhar sua experiência.
+                </Text>
+                <TouchableOpacity
+                  style={styles.successButton}
+                  onPress={handleSuccessClose}>
+                  <Text style={styles.successButtonText}>Fechar</Text>
+                </TouchableOpacity>
               </View>
-              <Text style={styles.successTitle}>Avaliação Enviada!</Text>
-              <Text style={styles.successMessage}>
-                Obrigado por compartilhar sua experiência.
-              </Text>
-              <TouchableOpacity
-                style={styles.successButton}
-                onPress={handleSuccessClose}>
-                <Text style={styles.successButtonText}>Fechar</Text>
-              </TouchableOpacity>
             </View>
-          </View>
-        )}
+          )}
+        </View>
       </KeyboardAvoidingView>
     </Modal>
   );

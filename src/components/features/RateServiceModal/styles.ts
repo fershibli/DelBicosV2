@@ -1,23 +1,34 @@
 import { Platform, StyleSheet } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     overlay: {
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      backgroundColor: colors.overlay,
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
     },
     modalContainer: {
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.cardBackground,
       borderRadius: 24,
       padding: 24,
       width: '100%',
       maxWidth: 450,
       ...Platform.select({
-        web: { boxShadow: '0px 10px 30px rgba(0,0,0,0.2)' },
-        default: { elevation: 10 },
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 4,
+        },
+        android: {
+          elevation: 10,
+        },
+        web: {
+          boxShadow: '0px 10px 30px rgba(0,0,0,0.2)',
+        },
       }),
     },
     header: {
@@ -27,7 +38,7 @@ export const createStyles = (colors: any) =>
       marginBottom: 16,
     },
     closeButton: {
-      padding: 4,
+      padding: 8,
     },
     title: {
       fontSize: 20,
@@ -64,14 +75,15 @@ export const createStyles = (colors: any) =>
     },
     textInput: {
       borderWidth: 1,
-      borderColor: '#E0E0E0',
+      borderColor: colors.borderColor,
       borderRadius: 12,
       padding: 16,
       fontSize: 16,
       fontFamily: 'Afacad-Regular',
       color: colors.primaryBlack,
       minHeight: 120,
-      backgroundColor: '#FAFAFA',
+      backgroundColor: colors.inputBackground,
+      textAlignVertical: 'top',
     },
     charCounter: {
       fontSize: 12,
@@ -88,34 +100,36 @@ export const createStyles = (colors: any) =>
       justifyContent: 'center',
     },
     submitButtonDisabled: {
-      backgroundColor: '#E0E0E0',
+      backgroundColor: colors.textTertiary,
+      opacity: 0.5,
     },
     submitButtonText: {
-      color: 'white',
+      color: colors.primaryWhite,
       fontSize: 16,
       fontFamily: 'Afacad-Bold',
     },
+
+    // --- Success Modal Interno ---
     successOverlay: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
+      ...StyleSheet.absoluteFillObject,
       zIndex: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.overlay,
+      borderRadius: 24,
     },
     successCard: {
-      backgroundColor: 'white',
+      backgroundColor: colors.cardBackground,
       padding: 32,
       borderRadius: 24,
       alignItems: 'center',
-      width: '85%',
-      maxWidth: 350,
+      width: '100%',
     },
     successIconContainer: {
       width: 64,
       height: 64,
       borderRadius: 32,
-      backgroundColor: colors.primaryGreen,
+      backgroundColor: colors.successText,
       justifyContent: 'center',
       alignItems: 'center',
       marginBottom: 16,
@@ -134,13 +148,13 @@ export const createStyles = (colors: any) =>
       fontFamily: 'Afacad-Regular',
     },
     successButton: {
-      backgroundColor: colors.primaryGreen,
+      backgroundColor: colors.successText,
       paddingVertical: 12,
       paddingHorizontal: 32,
       borderRadius: 30,
     },
     successButtonText: {
-      color: 'white',
+      color: colors.primaryWhite,
       fontSize: 16,
       fontFamily: 'Afacad-Bold',
     },
