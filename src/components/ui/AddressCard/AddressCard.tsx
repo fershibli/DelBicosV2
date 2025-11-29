@@ -25,7 +25,7 @@ export const AddressCard: React.FC<AddressCardProps> = ({
 
   return (
     <View style={[styles.card, isPrimary && styles.cardPrimary]}>
-      {/* --- Cabeçalho do Card: Ícone + Badge Principal --- */}
+      {/* --- Cabeçalho --- */}
       <View style={styles.header}>
         <View style={styles.iconContainer}>
           <View
@@ -43,12 +43,13 @@ export const AddressCard: React.FC<AddressCardProps> = ({
 
         <TouchableOpacity
           onPress={() => onDelete(addressData.id)}
-          style={styles.deleteButton}>
+          style={styles.deleteButton}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
           <FontAwesome name="trash-o" size={18} color={colors.textTertiary} />
         </TouchableOpacity>
       </View>
 
-      {/* --- Corpo: Informações do Endereço --- */}
+      {/* --- Corpo --- */}
       <View style={styles.body}>
         <Text style={styles.streetText} numberOfLines={1}>
           {addressData.street}, {addressData.number}
@@ -67,21 +68,22 @@ export const AddressCard: React.FC<AddressCardProps> = ({
         <Text style={styles.zipText}>CEP: {addressData.postal_code}</Text>
       </View>
 
-      {/* --- Rodapé: Ações --- */}
+      {/* --- Rodapé --- */}
       <View style={styles.footer}>
         {!isPrimary && (
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => onSetPrimary(addressData.id)}>
+            onPress={() => onSetPrimary(addressData.id)}
+            activeOpacity={0.7}>
             <FontAwesome name="star-o" size={14} color={colors.primaryBlue} />
             <Text style={styles.actionText}>Definir como Principal</Text>
           </TouchableOpacity>
         )}
 
-        {/* Botão Editar (Visual apenas, lógica dependerá do pai) */}
         <TouchableOpacity
-          style={[styles.actionButton, isPrimary && { marginLeft: 0 }]}
-          onPress={() => onEditPress && onEditPress(addressData)}>
+          style={styles.actionButton}
+          onPress={() => onEditPress && onEditPress(addressData)}
+          activeOpacity={0.7}>
           <MaterialIcons name="edit" size={16} color={colors.textSecondary} />
           <Text style={[styles.actionText, { color: colors.textSecondary }]}>
             Editar

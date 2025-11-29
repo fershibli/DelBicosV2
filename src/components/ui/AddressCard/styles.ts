@@ -4,22 +4,21 @@ import { ColorsType } from '@theme/types';
 export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     card: {
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.cardBackground,
       borderRadius: 16,
       padding: 20,
-      marginBottom: 8,
+      marginBottom: 12,
       borderWidth: 1,
-      borderColor: 'transparent', // Borda transparente por padrão
-      // Sombras suaves
+      borderColor: colors.borderColor,
       ...Platform.select({
         ios: {
-          shadowColor: '#000',
+          shadowColor: colors.primaryBlack,
           shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.08,
+          shadowOpacity: 0.05,
           shadowRadius: 6,
         },
         android: {
-          elevation: 3,
+          elevation: 2,
         },
         web: {
           boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)',
@@ -28,8 +27,8 @@ export const createStyles = (colors: ColorsType) =>
       }),
     },
     cardPrimary: {
-      borderColor: colors.primaryOrange, // Borda laranja sutil se for principal
-      backgroundColor: '#FFFBF5', // Fundo muito levemente laranja
+      borderColor: colors.primaryOrange,
+      backgroundColor: colors.backgroundElevated,
     },
 
     // Cabeçalho
@@ -48,7 +47,7 @@ export const createStyles = (colors: ColorsType) =>
       width: 32,
       height: 32,
       borderRadius: 16,
-      backgroundColor: '#FFF5EB', // Laranja bem claro
+      backgroundColor: colors.inputBackground,
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -63,7 +62,7 @@ export const createStyles = (colors: ColorsType) =>
       letterSpacing: 0.5,
     },
     deleteButton: {
-      padding: 4,
+      padding: 8,
     },
 
     // Corpo
@@ -86,7 +85,7 @@ export const createStyles = (colors: ColorsType) =>
     detailText: {
       fontSize: 15,
       fontFamily: 'Afacad-Regular',
-      color: '#555',
+      color: colors.textSecondary,
       marginBottom: 2,
     },
     zipText: {
@@ -100,7 +99,7 @@ export const createStyles = (colors: ColorsType) =>
     footer: {
       flexDirection: 'row',
       borderTopWidth: 1,
-      borderTopColor: 'rgba(0,0,0,0.05)',
+      borderTopColor: colors.divider,
       paddingTop: 12,
       gap: 16,
     },
@@ -108,7 +107,7 @@ export const createStyles = (colors: ColorsType) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: 6,
-      paddingVertical: 4,
+      paddingVertical: 6,
       paddingRight: 12,
     },
     actionText: {
