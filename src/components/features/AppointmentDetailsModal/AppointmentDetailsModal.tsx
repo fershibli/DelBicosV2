@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useColors } from '@theme/ThemeProvider';
 import { Appointment } from '@stores/Appointment/types';
-import { styles } from '@components/features/AppointmentDetailsModal/styles';
+import { createStyles } from './styles';
 
 interface AppointmentDetailsModalProps {
   visible: boolean;
@@ -26,6 +26,7 @@ export function AppointmentDetailsModal({
   onCancel,
 }: AppointmentDetailsModalProps) {
   const colors = useColors();
+  const styles = createStyles(colors);
 
   if (!appointment) return null;
 
@@ -83,15 +84,15 @@ export function AppointmentDetailsModal({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return '#f59e0b';
+        return colors.warningText;
       case 'confirmed':
-        return '#10b981';
+        return colors.successText;
       case 'completed':
-        return '#3b82f6';
+        return colors.primaryBlue;
       case 'canceled':
-        return '#ef4444';
+        return colors.errorText;
       default:
-        return '#6b7280';
+        return colors.textSecondary;
     }
   };
 
