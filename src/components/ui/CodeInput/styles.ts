@@ -1,22 +1,34 @@
 import { StyleSheet } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     codeContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      width: '60%',
-      marginBottom: 20,
+      width: '80%',
+      maxWidth: 300,
+      alignSelf: 'center',
+      marginBottom: 24,
     },
     codeInput: {
-      width: 50,
-      height: 50,
+      width: 56,
+      height: 56,
       borderWidth: 1,
-      borderColor: colors.primaryBlue,
-      borderRadius: 8,
+      borderColor: colors.borderColor,
+      borderRadius: 12,
       textAlign: 'center',
-      fontSize: 20,
-      backgroundColor: colors.cardBackground,
+      fontSize: 24,
+      fontFamily: 'Afacad-Bold',
+      backgroundColor: colors.inputBackground,
       color: colors.primaryBlack,
+    },
+    codeInputFocused: {
+      borderColor: colors.primaryOrange,
+      borderWidth: 2,
+      backgroundColor: colors.cardBackground,
+    },
+    codeInputFilled: {
+      borderColor: colors.primaryBlue,
     },
   });
