@@ -1,60 +1,66 @@
 import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
+    container: {
+      flex: 1,
+      width: '100%',
+    },
     loadingContainer: {
       width: '100%',
-      minHeight: 146,
+      minHeight: 150,
       justifyContent: 'center',
       alignItems: 'center',
     },
+    emptyContainer: {
+      width: '100%',
+      minHeight: 150,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    emptyText: {
+      fontFamily: 'Afacad-Regular',
+      fontSize: 16,
+      color: colors.textSecondary,
+      textAlign: 'center',
+    },
     listContainer: {
       paddingBottom: 20,
+      paddingHorizontal: 8,
     },
     categoryCard: {
       flex: 1,
       margin: 8,
       padding: 16,
-      borderRadius: 12,
-      height: 140,
+      borderRadius: 16,
+      minHeight: 140,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colors.cardBackground,
       borderWidth: 1,
-      borderColor: colors.borderColor,
       ...Platform.select({
         ios: {
           shadowColor: colors.primaryBlack,
           shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
+          shadowOpacity: 0.08,
           shadowRadius: 4,
         },
         android: {
-          elevation: 4,
+          elevation: 3,
         },
         web: {
-          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-          transition: 'all 0.2s ease-in-out',
-        },
-      }),
-    },
-    categoryCardHovered: {
-      ...Platform.select({
-        web: {
-          backgroundColor: colors.primaryBlue,
-          borderColor: colors.primaryBlue,
-          transform: [{ scale: 1.05 }],
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.08)',
+          cursor: 'pointer',
+          transitionDuration: '0.2s',
         },
       }),
     },
     categoryTitle: {
-      fontSize: 18,
+      fontSize: 16,
       fontFamily: 'Afacad-Bold',
-      color: colors.primaryOrange,
       textAlign: 'center',
-      marginTop: 10,
-    },
-    categoryTitleHovered: {
-      color: '#E2E8F0',
+      marginTop: 12,
+      lineHeight: 20,
     },
   });

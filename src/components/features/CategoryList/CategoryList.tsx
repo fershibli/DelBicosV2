@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { useCategoryStore } from '@stores/Category/Category';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   ActivityIndicator,
   FlatList,
   Text,
   View,
   Pressable,
-  Platform,
+  useWindowDimensions,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useCategoryStore } from '@stores/Category/Category';
 import { Category } from '@stores/Category/types';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
-import { useThemeStore, ThemeMode } from '@stores/Theme';
 
-// Imports dos seus SVGs
+// Imports dos SVGs
 // @ts-ignore
 import beautySVG from '@assets/categories/beauty.svg';
 // @ts-ignore
@@ -49,70 +49,87 @@ interface CategoryCardProps {
 function CategoryCard({ category, onPress }: CategoryCardProps) {
   const info = getCategoryInfo(category.id);
   const [isHovered, setIsHovered] = useState(false);
+
   const { theme } = useThemeStore();
-  const isDark = theme === ThemeMode.DARK;
-  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
   const colors = useColors();
   const styles = createStyles(colors);
 
-  const cardStyle = [
-    styles.categoryCard,
-    {
-      backgroundColor: colors.cardBackground,
-      borderColor: isDark ? colors.cardBackground : colors.borderColor,
-    },
-    isHighContrast && {
-      backgroundColor: colors.primaryWhite,
-      borderWidth: 2,
-      borderColor: colors.borderColor,
-    },
-    isHovered &&
-      isDark && {
-        backgroundColor: colors.primaryOrange,
-        borderColor: colors.primaryOrange,
-      },
-    isHovered &&
-      isHighContrast && {
-        backgroundColor: colors.primaryBlue,
-        borderColor: colors.primaryBlue,
-      },
-    isHovered && !isDark && !isHighContrast && styles.categoryCardHovered,
-  ];
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
 
-  const titleStyle = [
-    styles.categoryTitle,
-    { color: isDark ? colors.primaryBlack : undefined },
-    isHighContrast && {
-      color: colors.primaryOrange,
-      fontWeight: 'bold' as const,
-    },
-    isHovered && isDark && { color: '#E2E8F0' },
-    isHovered && isHighContrast && { color: colors.primaryWhite },
-    isHovered && !isDark && !isHighContrast && styles.categoryTitleHovered,
-  ];
+  const colorProps = useMemo(() => {
+    const active = isHovered;
 
-  const iconColor = isDark
-    ? '#E2E8F0'
-    : isHighContrast
-      ? isHovered
-        ? colors.primaryWhite
-        : colors.primaryOrange
-      : isHovered
-        ? '#E2E8F0'
-        : colors.primaryOrange;
+    let bgColor = colors.cardBackground;
+    let borderColor = colors.borderColor;
+    let titleColor = colors.primaryOrange;
+    let iconColor = colors.primaryOrange;
+
+    if (isDark) {
+      borderColor = colors.cardBackground;
+      titleColor = colors.primaryWhite;
+      iconColor = colors.primaryWhite;
+    }
+
+    if (isHighContrast) {
+      bgColor = colors.primaryWhite;
+      borderColor = colors.primaryBlack;
+      titleColor = colors.primaryBlack;
+      iconColor = colors.primaryBlack;
+    }
+
+    if (active) {
+      if (isHighContrast) {
+        bgColor = colors.primaryBlue;
+        titleColor = colors.primaryWhite;
+        iconColor = colors.primaryWhite;
+        borderColor = colors.primaryBlue;
+      } else if (isDark) {
+        bgColor = colors.primaryOrange;
+        titleColor = colors.primaryWhite;
+        iconColor = colors.primaryWhite;
+        borderColor = colors.primaryOrange;
+      } else {
+        bgColor = colors.primaryBlue;
+        titleColor = colors.primaryWhite;
+        iconColor = colors.primaryWhite;
+        borderColor = colors.primaryBlue;
+      }
+    }
+
+    return { bgColor, borderColor, titleColor, iconColor };
+  }, [isHovered, isDark, isHighContrast, colors]);
 
   return (
     <Pressable
-      style={cardStyle}
+      style={({ pressed }) => [
+        styles.categoryCard,
+        {
+          backgroundColor: colorProps.bgColor,
+          borderColor: colorProps.borderColor,
+          transform: [{ scale: pressed || isHovered ? 1.02 : 1 }],
+        },
+        isHighContrast && { borderWidth: 2 },
+      ]}
       onPress={() => onPress(category)}
       onHoverIn={() => setIsHovered(true)}
-      onHoverOut={() => setIsHovered(false)}>
+      onHoverOut={() => setIsHovered(false)}
+      accessibilityRole="button"
+      accessibilityLabel={`Categoria ${category.title}`}>
       <info.IconComponent
         width={info.width * 0.8}
         height={info.height * 0.8}
-        color={iconColor}
+        color={colorProps.iconColor}
       />
-      <Text style={titleStyle}>{category.title}</Text>
+      <Text
+        style={[
+          styles.categoryTitle,
+          { color: colorProps.titleColor },
+          isHighContrast && { fontWeight: 'bold' },
+        ]}
+        numberOfLines={2}>
+        {category.title}
+      </Text>
     </Pressable>
   );
 }
@@ -124,10 +141,13 @@ function CategoryList() {
   const colors = useColors();
   const styles = createStyles(colors);
 
+  const { width } = useWindowDimensions();
+  const numColumns = width > 1000 ? 4 : width > 600 ? 3 : 2;
+
   useEffect(() => {
     if (!categories?.length) {
       setIsLoading(true);
-      fetchCategories().then(() => setIsLoading(false));
+      fetchCategories().finally(() => setIsLoading(false));
     } else {
       setIsLoading(false);
     }
@@ -151,23 +171,28 @@ function CategoryList() {
 
   if (!categories || categories.length === 0) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text>Nenhuma categoria disponível</Text>
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>Nenhuma categoria disponível</Text>
       </View>
     );
   }
 
   return (
-    <FlatList
-      contentContainerStyle={styles.listContainer}
-      data={categories}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <CategoryCard category={item} onPress={handleCategoryPress} />
-      )}
-      numColumns={Platform.OS === 'web' ? 3 : 2}
-      showsVerticalScrollIndicator={false}
-    />
+    <View style={styles.container}>
+      <FlatList
+        key={numColumns}
+        contentContainerStyle={styles.listContainer}
+        data={categories}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={{ flex: 1 / numColumns }}>
+            <CategoryCard category={item} onPress={handleCategoryPress} />
+          </View>
+        )}
+        numColumns={numColumns}
+        showsVerticalScrollIndicator={false}
+      />
+    </View>
   );
 }
 
