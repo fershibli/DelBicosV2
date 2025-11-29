@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   View,
   Text,
   ActivityIndicator,
   ScrollView,
-  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
-import { styles } from './styles';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 
 type StatsResponse = {
   year: number;
@@ -57,12 +58,14 @@ function fillMonthlyArray<T extends { month: number }>(
   return out;
 }
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
 const AdminAnalytics: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<StatsResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const { width } = useWindowDimensions();
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -87,25 +90,50 @@ const AdminAnalytics: React.FC = () => {
     fetchStats();
   }, []);
 
-  const usersData = fillMonthlyArray(data?.usersByMonth, (v) => v?.count || 0);
-
-  const prosData = fillMonthlyArray(
-    data?.professionalsByMonth,
-    (v) => v?.count || 0,
+  const usersData = useMemo(
+    () => fillMonthlyArray(data?.usersByMonth, (v) => v?.count || 0),
+    [data],
   );
-
-  const appointments = fillMonthlyArray(
-    data?.appointmentsByMonth,
-    (v) => v?.totalRequested || 0,
+  const prosData = useMemo(
+    () => fillMonthlyArray(data?.professionalsByMonth, (v) => v?.count || 0),
+    [data],
   );
-
+  const appointments = useMemo(
+    () =>
+      fillMonthlyArray(
+        data?.appointmentsByMonth,
+        (v) => v?.totalRequested || 0,
+      ),
+    [data],
+  );
   const summary = data?.servicesSummary || {};
+
+  const chartConfig = useMemo(
+    () => ({
+      backgroundGradientFrom: colors.cardBackground,
+      backgroundGradientTo: colors.cardBackground,
+      decimalPlaces: 0,
+      color: (opacity = 1) => colors.primaryBlue,
+      labelColor: (opacity = 1) => colors.textSecondary,
+      propsForDots: {
+        r: '4',
+        strokeWidth: '2',
+        stroke: colors.primaryOrange,
+      },
+      style: {
+        borderRadius: 16,
+      },
+    }),
+    [colors],
+  );
+
+  const chartWidth = Math.min(width - 48, 800);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Painel do Admin</Text>
+      <Text style={styles.title}>Painel Analytics</Text>
 
-      {loading && <ActivityIndicator size="large" />}
+      {loading && <ActivityIndicator size="large" color={colors.primaryBlue} />}
 
       {!!error && (
         <View style={styles.errorBox}>
@@ -113,98 +141,128 @@ const AdminAnalytics: React.FC = () => {
         </View>
       )}
 
-      {!loading && !data && !error && <Text>Nenhum dado disponível.</Text>}
+      {!loading && !data && !error && (
+        <Text style={{ color: colors.textSecondary }}>
+          Nenhum dado disponível.
+        </Text>
+      )}
 
       {!loading && data && (
         <>
           {/* KPI Cards */}
           <View style={styles.kpiRow}>
-            <View style={styles.kpiCard}>
-              <Text style={styles.kpiLabel}>Earnings</Text>
-              <Text style={styles.kpiValue}>${summary.total || 0}</Text>
-            </View>
-            <View style={styles.kpiCard}>
-              <Text style={styles.kpiLabel}>Share</Text>
-              <Text style={styles.kpiValue}>{summary.confirmed || 0}</Text>
-            </View>
-            <View style={styles.kpiCard}>
-              <Text style={styles.kpiLabel}>Likes</Text>
-              <Text style={styles.kpiValue}>{summary.pending || 0}</Text>
-            </View>
-            <View style={styles.kpiCard}>
-              <Text style={styles.kpiLabel}>Rating</Text>
-              <Text style={styles.kpiValue}>8.5</Text>
-            </View>
+            <KpiCard
+              label="Faturamento Total"
+              value={`R$ ${summary.total || 0}`}
+              styles={styles}
+            />
+            <KpiCard
+              label="Serviços Realizados"
+              value={summary.confirmed || 0}
+              styles={styles}
+            />
+            <KpiCard
+              label="Novos Usuários"
+              value={summary.pending || 0}
+              styles={styles}
+            />
+            <KpiCard label="Avaliação Média" value="4.8" styles={styles} />
           </View>
 
           {/* Main charts area */}
           <View style={styles.chartsRow}>
             <View style={styles.mainChart}>
-              <Text style={styles.sectionTitle}>Usuários por mês</Text>
-              <BarChart
-                data={{ labels: MONTH_LABELS, datasets: [{ data: usersData }] }}
-                width={Math.min(SCREEN_WIDTH - 40, 900)}
-                height={220}
-                yAxisLabel=""
-                yAxisSuffix=""
-                chartConfig={chartConfig}
-                verticalLabelRotation={-20}
-                fromZero
-              />
+              <View style={styles.chartCard}>
+                <Text style={styles.sectionTitle}>
+                  Usuários Cadastrados (Ano Atual)
+                </Text>
+                <BarChart
+                  data={{
+                    labels: MONTH_LABELS,
+                    datasets: [{ data: usersData }],
+                  }}
+                  width={chartWidth}
+                  height={220}
+                  yAxisLabel=""
+                  yAxisSuffix=""
+                  chartConfig={chartConfig}
+                  verticalLabelRotation={0}
+                  fromZero
+                  showBarTops={false}
+                  withInnerLines={true}
+                />
+              </View>
 
-              <Text style={[styles.sectionTitle, { marginTop: 12 }]}>
-                Prestadores por mês
-              </Text>
-              <LineChart
-                data={{ labels: MONTH_LABELS, datasets: [{ data: prosData }] }}
-                width={Math.min(SCREEN_WIDTH - 40, 900)}
-                height={180}
-                chartConfig={chartConfig}
-                bezier
-                fromZero
-              />
+              <View style={styles.chartCard}>
+                <Text style={styles.sectionTitle}>Novos Prestadores</Text>
+                <LineChart
+                  data={{
+                    labels: MONTH_LABELS,
+                    datasets: [{ data: prosData }],
+                  }}
+                  width={chartWidth}
+                  height={220}
+                  chartConfig={{
+                    ...chartConfig,
+                    color: (opacity = 1) => colors.primaryOrange,
+                  }}
+                  bezier
+                  fromZero
+                  withDots
+                  withInnerLines={true}
+                />
+              </View>
 
-              <Text style={[styles.sectionTitle, { marginTop: 12 }]}>
-                Serviços solicitados
-              </Text>
-              <BarChart
-                data={{
-                  labels: MONTH_LABELS,
-                  datasets: [{ data: appointments }],
-                }}
-                width={Math.min(SCREEN_WIDTH - 40, 900)}
-                height={180}
-                yAxisLabel=""
-                yAxisSuffix=""
-                chartConfig={chartConfig}
-                fromZero
-              />
+              <View style={styles.chartCard}>
+                <Text style={styles.sectionTitle}>Volume de Serviços</Text>
+                <BarChart
+                  data={{
+                    labels: MONTH_LABELS,
+                    datasets: [{ data: appointments }],
+                  }}
+                  width={chartWidth}
+                  height={220}
+                  yAxisLabel=""
+                  yAxisSuffix=""
+                  chartConfig={{
+                    ...chartConfig,
+                    color: (opacity = 1) => colors.successText,
+                  }}
+                  fromZero
+                  showBarTops={false}
+                />
+              </View>
             </View>
 
             <View style={styles.sideColumn}>
-              <Text style={styles.sectionTitle}>Status dos serviços</Text>
-              <PieChart
-                data={Object.keys(summary).map((k, i) => ({
-                  name: k,
-                  population: Number(summary[k]) || 0,
-                  color: pieColors[i % pieColors.length],
-                  legendFontColor: '#333',
-                  legendFontSize: 12,
-                }))}
-                width={Math.min(300, SCREEN_WIDTH * 0.35)}
-                height={180}
-                chartConfig={chartConfig}
-                accessor="population"
-                backgroundColor="transparent"
-                paddingLeft="15"
-              />
+              <View style={styles.chartCard}>
+                <Text style={styles.sectionTitle}>Distribuição de Status</Text>
+                <PieChart
+                  data={Object.keys(summary).map((k, i) => ({
+                    name: k,
+                    population: Number(summary[k]) || 0,
+                    color: getPieColor(i),
+                    legendFontColor: colors.textSecondary,
+                    legendFontSize: 12,
+                  }))}
+                  width={width > 600 ? 280 : width - 64}
+                  height={200}
+                  chartConfig={chartConfig}
+                  accessor="population"
+                  backgroundColor="transparent"
+                  paddingLeft="15"
+                  absolute
+                />
+              </View>
 
-              <View style={{ marginTop: 12 }}>
-                <Text style={styles.sectionTitle}>Resumo</Text>
+              <View style={styles.chartCard}>
+                <Text style={styles.sectionTitle}>Resumo Executivo</Text>
                 {['pending', 'confirmed', 'completed', 'canceled', 'total'].map(
                   (k) => (
                     <View key={k} style={styles.summaryRow}>
-                      <Text style={styles.summaryKey}>{k}</Text>
+                      <Text style={styles.summaryKey}>
+                        {translateStatus(k)}
+                      </Text>
                       <Text style={styles.summaryVal}>{summary[k] ?? 0}</Text>
                     </View>
                   ),
@@ -218,17 +276,27 @@ const AdminAnalytics: React.FC = () => {
   );
 };
 
-const pieColors = ['#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f'];
+const KpiCard = ({ label, value, styles }: any) => (
+  <View style={styles.kpiCard}>
+    <Text style={styles.kpiLabel}>{label}</Text>
+    <Text style={styles.kpiValue}>{value}</Text>
+  </View>
+);
 
-const chartConfig = {
-  backgroundGradientFrom: '#ffffff',
-  backgroundGradientTo: '#ffffff',
-  decimalPlaces: 0,
-  color: (opacity = 1) => `rgba(6, 82, 221, ${opacity})`,
-  labelColor: (opacity = 1) => `rgba(0,0,0, ${opacity})`,
-  style: {
-    borderRadius: 8,
-  },
+const getPieColor = (index: number) => {
+  const colors = ['#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f'];
+  return colors[index % colors.length];
+};
+
+const translateStatus = (status: string) => {
+  const map: Record<string, string> = {
+    pending: 'Pendente',
+    confirmed: 'Confirmado',
+    completed: 'Concluído',
+    canceled: 'Cancelado',
+    total: 'Total Geral',
+  };
+  return map[status] || status;
 };
 
 export default AdminAnalytics;
