@@ -4,8 +4,9 @@ import {
   ButtonColorVariantsKeys,
   ButtonSizeVariantsKeys,
   ButtonFontVariantsKeys,
-} from '@components/ui/Button/types';
+} from './types';
 import { TextStyle, ViewStyle, StyleSheet } from 'react-native';
+import { ColorsType } from '@theme/types';
 
 import {
   createButtonColorVariants,
@@ -15,17 +16,17 @@ import {
 
 export const baseStyles = StyleSheet.create({
   loadingContainer: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loadingText: {
     marginLeft: 8,
   },
   contentContainer: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'center' as const,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
@@ -42,10 +43,12 @@ export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
 
   const isOutlined = variant === 'outlined';
 
-  const backgroundColor = defaultColors.backgroundColor;
-  const color = defaultColors.color;
-
-  const shouldHaveBorder = isOutlined || backgroundColor === 'transparent';
+  const backgroundColor = isOutlined
+    ? 'transparent'
+    : defaultColors.backgroundColor;
+  const color = isOutlined
+    ? defaultColors.backgroundColor
+    : defaultColors.color;
 
   const containerStyle: ViewStyle = {
     backgroundColor: backgroundColor,
@@ -55,7 +58,7 @@ export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    ...(shouldHaveBorder && {
+    ...(isOutlined && {
       borderWidth: 1.5,
       borderColor: color,
     }),
@@ -66,24 +69,17 @@ export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
     fontFamily: defaultFont.fontFamily,
     color: color,
     textAlign: 'center',
-    ...(noWrap && {
-      flexShrink: 1,
-    }),
+    ...(noWrap && { flexShrink: 1 }),
   };
 
-  const startIconStyle: ViewStyle = {
-    marginRight: 8,
-  };
-
-  const endIconStyle: ViewStyle = {
-    marginLeft: 8,
-  };
+  const startIconStyle: ViewStyle = { marginRight: 8 };
+  const endIconStyle: ViewStyle = { marginLeft: 8 };
 
   const stateStyles = {
     hover: {
       container: {
         backgroundColor: hoverColors?.backgroundColor || backgroundColor,
-        ...(shouldHaveBorder &&
+        ...(isOutlined &&
           hoverColors?.color && {
             borderColor: hoverColors.color,
           }),
@@ -94,13 +90,11 @@ export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
     },
     disabled: {
       container: {
-        backgroundColor: disabledColors?.backgroundColor || backgroundColor,
-        ...(shouldHaveBorder && {
-          borderColor: disabledColors?.color || color,
-        }),
+        backgroundColor: disabledColors?.backgroundColor || '#E0E0E0',
+        borderColor: disabledColors?.backgroundColor || '#E0E0E0',
       } as ViewStyle,
       text: {
-        color: disabledColors?.color || color,
+        color: disabledColors?.color || '#999',
       } as TextStyle,
     },
   };
@@ -115,7 +109,7 @@ export const createStyledButton = (props: ButtonStyleProps): ButtonStyles => {
 };
 
 export const getStyledButtonFromVariants = (
-  colors: any,
+  colors: ColorsType,
   colorVariant: ButtonColorVariantsKeys = 'primary',
   sizeVariant: ButtonSizeVariantsKeys = 'medium',
   fontVariant: ButtonFontVariantsKeys = 'AfacadRegular20',
@@ -124,9 +118,13 @@ export const getStyledButtonFromVariants = (
   noWrap: boolean = false,
 ): ButtonStyles => {
   const buttonColorVariants = createButtonColorVariants(colors);
-  const buttonColor = buttonColorVariants[colorVariant];
-  const buttonSize = buttonSizeVariants[sizeVariant];
-  const buttonFont = buttonFontVariants[fontVariant];
+
+  const buttonColor =
+    buttonColorVariants[colorVariant] || buttonColorVariants.primary;
+  const buttonSize =
+    buttonSizeVariants[sizeVariant] || buttonSizeVariants.medium;
+  const buttonFont =
+    buttonFontVariants[fontVariant] || buttonFontVariants.AfacadRegular20;
 
   const styleProps: ButtonStyleProps = {
     defaultColors: {
