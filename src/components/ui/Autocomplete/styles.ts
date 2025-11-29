@@ -1,15 +1,18 @@
 import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       marginBottom: 16,
-      zIndex: 10,
+      zIndex: 100,
       position: 'relative',
+      ...Platform.select({
+        web: { overflow: 'visible' } as any,
+      }),
     },
     inputContainer: {
       position: 'relative',
-      zIndex: 1,
       width: '100%',
     },
     dropdown: {
@@ -18,22 +21,20 @@ export const createStyles = (colors: any) =>
       left: 0,
       right: 0,
       marginTop: 4,
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.cardBackground,
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: '#E0E0E0',
-      maxHeight: 200,
+      borderColor: colors.borderColor,
+      maxHeight: 220,
       zIndex: 9999,
+      elevation: 9999,
 
       ...Platform.select({
         ios: {
-          shadowColor: '#000',
+          shadowColor: colors.primaryBlack,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.15,
           shadowRadius: 8,
-        },
-        android: {
-          elevation: 8,
         },
         web: {
           boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
@@ -44,7 +45,7 @@ export const createStyles = (colors: any) =>
       paddingVertical: 12,
       paddingHorizontal: 16,
       borderBottomWidth: 1,
-      borderBottomColor: '#F5F5F5',
+      borderBottomColor: colors.divider,
       ...Platform.select({
         web: { cursor: 'pointer' } as any,
       }),
@@ -57,8 +58,18 @@ export const createStyles = (colors: any) =>
     emptyText: {
       padding: 16,
       textAlign: 'center',
-      color: '#999',
+      color: colors.textTertiary,
       fontSize: 14,
       fontFamily: 'Afacad-Regular',
     },
+    webOverlay: {
+      position: 'fixed' as any,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 9998,
+      cursor: 'default',
+      backgroundColor: 'transparent',
+    } as any,
   });

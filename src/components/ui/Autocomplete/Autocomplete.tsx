@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -43,10 +43,6 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
   const [query, setQuery] = useState(value || '');
   const [showList, setShowList] = useState(false);
 
-  useEffect(() => {
-    setQuery(value);
-  }, [value]);
-
   const filteredData = useMemo(() => {
     if (!query) return data;
     const lowerQuery = query.toLowerCase();
@@ -66,7 +62,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
 
   const handleChangeText = (text: string) => {
     setQuery(text);
-    onChange(text);
+    onChange('');
     setShowList(true);
   };
 
@@ -78,12 +74,20 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
           value={query}
           onChangeText={handleChangeText}
           onFocus={handleFocus}
-          containerStyle={{ marginBottom: 0 }}
           placeholder={placeholder}
           error={error}
           editable={!disabled}
         />
       </View>
+
+      {/* Overlay invisível para fechar ao clicar fora (Web) */}
+      {showList && Platform.OS === 'web' && (
+        <TouchableOpacity
+          style={styles.webOverlay}
+          onPress={() => setShowList(false)}
+          activeOpacity={1}
+        />
+      )}
 
       {showList && !disabled && (
         <View style={styles.dropdown}>
@@ -98,7 +102,8 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.item}
-                  onPress={() => handleSelect(item)}>
+                  onPress={() => handleSelect(item)}
+                  activeOpacity={0.7}>
                   <Text style={styles.itemText}>{item.label}</Text>
                 </TouchableOpacity>
               )}
@@ -108,24 +113,6 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
             <Text style={styles.emptyText}>Nenhuma opção encontrada</Text>
           )}
         </View>
-      )}
-
-      {showList && Platform.OS === 'web' && (
-        <TouchableOpacity
-          style={
-            {
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: -1,
-              cursor: 'default',
-            } as any
-          }
-          onPress={() => setShowList(false)}
-          activeOpacity={1}
-        />
       )}
     </View>
   );
