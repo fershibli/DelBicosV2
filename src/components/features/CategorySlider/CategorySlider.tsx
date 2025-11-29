@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useCategoryStore } from '@stores/Category/Category';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -7,11 +6,12 @@ import {
   View,
   Pressable,
 } from 'react-native';
-import { Category } from '@stores/Category/types';
 import { useNavigation } from '@react-navigation/native';
-import colors from '@theme/colors';
-import { styles } from './styles';
+import { useCategoryStore } from '@stores/Category/Category';
+import { Category } from '@stores/Category/types';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 
 // @ts-ignore
 import beautySVG from '@assets/categories/beauty.svg';
@@ -26,7 +26,6 @@ import petsSVG from '@assets/categories/pets.svg';
 // @ts-ignore
 import repairSVG from '@assets/categories/repair.svg';
 
-// {IconComponent, width, height}
 const categoryImagesById: Record<number, any> = {
   1: { IconComponent: healthSVG, width: 72, height: 70 },
   2: { IconComponent: beautySVG, width: 63, height: 87 },
@@ -36,7 +35,7 @@ const categoryImagesById: Record<number, any> = {
   6: { IconComponent: petsSVG, width: 74, height: 74 },
 };
 
-function getCategoryImagesById(id: number) {
+function getCategoryInfo(id: number) {
   return categoryImagesById[id] || categoryImagesById[4];
 }
 
@@ -46,94 +45,100 @@ interface CategoryCardProps {
 }
 
 function CategoryCard({ category, onPress }: CategoryCardProps) {
-  const image = getCategoryImagesById(category.id);
+  const image = getCategoryInfo(category.id);
+  const [isHovered, setIsHovered] = useState(false);
+
   const { theme } = useThemeStore();
+  const colors = useColors();
+  const styles = createStyles(colors);
+
   const isDark = theme === ThemeMode.DARK;
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
 
-  // 6. ADICIONE o estado de hover
-  const [isHovered, setIsHovered] = useState(false);
+  const colorProps = useMemo(() => {
+    let bgColor = colors.cardBackground;
+    let borderColor = colors.borderColor;
+    let titleColor = colors.primaryOrange;
+    let iconColor = colors.primaryOrange;
 
-  // 7. Estilos dinâmicos para o card, texto e ícone
-  const cardStyle = [
-    styles.categoryCard,
-    {
-      backgroundColor: colors.cardBackground,
-      borderColor: isDark ? colors.cardBackground : colors.borderColor,
-    },
-    isHighContrast && {
-      backgroundColor: colors.primaryWhite,
-      borderWidth: 2,
-      borderColor: colors.borderColor,
-    },
-    isHovered &&
-      isDark && {
-        backgroundColor: colors.primaryOrange,
-        borderColor: colors.primaryOrange,
-      },
-    isHovered &&
-      isHighContrast && {
-        backgroundColor: colors.primaryBlue,
-        borderColor: colors.primaryBlue,
-      },
-    isHovered && !isDark && !isHighContrast && styles.categoryCardHovered,
-  ];
+    if (isDark) {
+      borderColor = colors.cardBackground;
+      titleColor = colors.primaryWhite;
+      iconColor = colors.primaryWhite;
+    }
 
-  const titleStyle = [
-    styles.categoryTitle,
-    { color: isDark ? colors.primaryBlack : undefined },
-    isHighContrast && {
-      color: colors.primaryOrange,
-      fontWeight: 'bold' as const,
-    },
-    isHovered && isDark && { color: '#E2E8F0' },
-    isHovered && isHighContrast && { color: colors.primaryWhite },
-    isHovered && !isDark && !isHighContrast && styles.categoryTitleHovered,
-  ];
+    if (isHighContrast) {
+      bgColor = colors.primaryWhite;
+      borderColor = colors.primaryBlack;
+      titleColor = colors.primaryBlack;
+      iconColor = colors.primaryBlack;
+    }
 
-  const iconColor = isDark
-    ? '#E2E8F0'
-    : isHighContrast
-      ? isHovered
-        ? colors.primaryWhite
-        : colors.primaryOrange
-      : isHovered
-        ? '#E2E8F0'
-        : colors.primaryOrange;
+    // Estado Hover (Ativo)
+    if (isHovered) {
+      if (isHighContrast) {
+        bgColor = colors.primaryBlue;
+        borderColor = colors.primaryBlue;
+        titleColor = colors.primaryWhite;
+        iconColor = colors.primaryWhite;
+      } else if (isDark) {
+        bgColor = colors.primaryOrange;
+        borderColor = colors.primaryOrange;
+        titleColor = colors.primaryWhite;
+        iconColor = colors.primaryWhite;
+      } else {
+        // Light Mode Hover
+        bgColor = colors.primaryBlue;
+        borderColor = colors.primaryBlue;
+        titleColor = colors.primaryWhite;
+        iconColor = colors.primaryWhite;
+      }
+    }
+
+    return { bgColor, borderColor, titleColor, iconColor };
+  }, [isHovered, isDark, isHighContrast, colors]);
 
   return (
-    // 8. Mude para Pressable e adicione eventos de hover
     <Pressable
-      style={cardStyle}
+      style={({ pressed }) => [
+        styles.categoryCard,
+        {
+          backgroundColor: colorProps.bgColor,
+          borderColor: colorProps.borderColor,
+          transform: [{ scale: pressed || isHovered ? 1.02 : 1 }],
+        },
+        isHighContrast && { borderWidth: 2 },
+      ]}
       onPress={() => onPress(category)}
       onHoverIn={() => setIsHovered(true)}
-      onHoverOut={() => setIsHovered(false)}>
+      onHoverOut={() => setIsHovered(false)}
+      accessibilityRole="button"
+      accessibilityLabel={`Categoria ${category.title}`}>
       <image.IconComponent
-        style={{
-          width: image.width * 0.7, // Ícones um pouco menores
-          height: image.height * 0.7,
-          resizeMode: 'contain',
-        }}
-        color={iconColor} // Cor do ícone agora é dinâmica
+        width={image.width * 0.6}
+        height={image.height * 0.6}
+        color={colorProps.iconColor}
       />
-      <Text style={titleStyle}>{category.title}</Text>
+      <Text
+        style={[styles.categoryTitle, { color: colorProps.titleColor }]}
+        numberOfLines={2}>
+        {category.title}
+      </Text>
     </Pressable>
   );
 }
 
 function CategorySlider() {
   const [isLoading, setIsLoading] = useState(true);
-
   const { categories, fetchCategories } = useCategoryStore();
-
   const navigation = useNavigation();
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   useEffect(() => {
     if (!categories?.length) {
       setIsLoading(true);
-      fetchCategories().then(() => {
-        setIsLoading(false);
-      });
+      fetchCategories().finally(() => setIsLoading(false));
     } else {
       setIsLoading(false);
     }
@@ -149,7 +154,7 @@ function CategorySlider() {
 
   if (isLoading) {
     return (
-      <View style={styles.externalContainer}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primaryBlue} />
       </View>
     );
@@ -157,8 +162,10 @@ function CategorySlider() {
 
   if (!categories || categories.length === 0) {
     return (
-      <View style={styles.externalContainer}>
-        <Text>No categories available</Text>
+      <View style={styles.loadingContainer}>
+        <Text style={{ color: colors.textSecondary }}>
+          Nenhuma categoria disponível
+        </Text>
       </View>
     );
   }
@@ -170,10 +177,7 @@ function CategorySlider() {
         data={categories}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <CategoryCard
-            category={item}
-            onPress={handleCategoryPress} // Passa a função de navegação
-          />
+          <CategoryCard category={item} onPress={handleCategoryPress} />
         )}
         horizontal
         showsHorizontalScrollIndicator={false}
