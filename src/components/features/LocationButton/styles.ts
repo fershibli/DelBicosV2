@@ -1,9 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     button: {
-      backgroundColor: '#3b82f6',
+      backgroundColor: colors.primaryBlue,
       paddingVertical: 12,
       paddingHorizontal: 16,
       borderRadius: 8,
@@ -16,32 +17,60 @@ export const createStyles = (colors: any) =>
     buttonText: {
       color: colors.primaryWhite,
       fontSize: 16,
-      fontWeight: '600',
+      fontFamily: 'Afacad-SemiBold',
       textAlign: 'center',
+      marginLeft: 8,
     },
     modalContainer: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backgroundColor: colors.overlay,
     },
     modalContent: {
-      backgroundColor: colors.primaryWhite,
-      borderRadius: 12,
-      padding: 16,
+      backgroundColor: colors.cardBackground,
+      borderRadius: 16,
+      padding: 20,
       width: '90%',
       maxWidth: 400,
-      height: 400,
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 4,
+        },
+        android: {
+          elevation: 5,
+        },
+      }),
+    },
+    headerRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    title: {
+      fontSize: 18,
+      fontFamily: 'Afacad-Bold',
+      color: colors.primaryBlack,
+      textAlign: 'left',
+    },
+    closeButton: {
+      padding: 4,
     },
     mapContainer: {
       height: 300,
       width: '100%',
-      borderRadius: 8,
+      borderRadius: 12,
       overflow: 'hidden',
       marginBottom: 16,
+      borderWidth: 1,
+      borderColor: colors.borderColor,
     },
     confirmButton: {
-      backgroundColor: '#3b82f6',
+      backgroundColor: colors.primaryBlue,
       paddingVertical: 12,
       borderRadius: 8,
       alignItems: 'center',
@@ -49,12 +78,6 @@ export const createStyles = (colors: any) =>
     confirmButtonText: {
       color: colors.primaryWhite,
       fontSize: 16,
-      fontWeight: '600',
-    },
-    title: {
-      fontSize: 18,
-      fontWeight: '600',
-      marginBottom: 12,
-      textAlign: 'center',
+      fontFamily: 'Afacad-Bold',
     },
   });

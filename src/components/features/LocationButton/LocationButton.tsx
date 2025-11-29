@@ -5,14 +5,13 @@ import {
   ActivityIndicator,
   View,
   Modal,
-  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import { MapComponent } from '../../ui/MapComponent/MapComponent';
 import { Region } from '@lib/hooks/types';
 import { useColors } from '@theme/ThemeProvider';
-import { createStyles } from '@components/features/LocationButton/styles';
-
-const window = Dimensions.get('window');
+import { createStyles } from './styles';
 
 interface LocationButtonProps {
   onPress: () => Promise<{ latitude: number; longitude: number } | null>;
@@ -29,6 +28,8 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
 }) => {
   const colors = useColors();
   const styles = createStyles(colors);
+  const { width, height } = useWindowDimensions();
+
   const [open, setOpen] = useState(false);
   const [currentRegion, setCurrentRegion] = useState<Region | null>(null);
   const [markerCoords, setMarkerCoords] = useState<{
@@ -36,6 +37,11 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
     longitude: number;
   } | null>(null);
   const [mapLoading, setMapLoading] = useState(false);
+
+  const getDeltas = () => ({
+    latitudeDelta: 0.01,
+    longitudeDelta: (0.01 * width) / height,
+  });
 
   const handleOpen = async () => {
     setMapLoading(true);
@@ -45,8 +51,7 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
         setCurrentRegion({
           latitude: coords.latitude,
           longitude: coords.longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: (0.01 * window.width) / window.height,
+          ...getDeltas(),
         });
         setMarkerCoords(coords);
         setOpen(true);
@@ -68,8 +73,7 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
     setCurrentRegion({
       latitude,
       longitude,
-      latitudeDelta: 0.01,
-      longitudeDelta: (0.01 * window.width) / window.height,
+      ...getDeltas(),
     });
   };
 
@@ -80,19 +84,30 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
     handleClose();
   };
 
+  const isLoading = loading || mapLoading;
+  const isDisabled = disabled || isLoading;
+
   return (
     <View>
       <TouchableOpacity
         style={[
           styles.button,
-          (loading || disabled || mapLoading) && { opacity: 0.6 },
+          isDisabled && { opacity: 0.6, backgroundColor: colors.textTertiary },
         ]}
         onPress={handleOpen}
-        disabled={loading || disabled || mapLoading}>
-        {loading || mapLoading ? (
-          <ActivityIndicator size="small" color="white" />
+        disabled={isDisabled}
+        activeOpacity={0.8}>
+        {isLoading ? (
+          <ActivityIndicator size="small" color={colors.primaryWhite} />
         ) : (
-          <Text style={styles.buttonText}>📍Obter Localização Atual</Text>
+          <>
+            <FontAwesome
+              name="map-marker"
+              size={18}
+              color={colors.primaryWhite}
+            />
+            <Text style={styles.buttonText}>Obter Localização Atual</Text>
+          </>
         )}
       </TouchableOpacity>
 
@@ -103,7 +118,21 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
         onRequestClose={handleClose}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.title}>Sua Localização Atual</Text>
+            {/* Header com Título e Botão Fechar */}
+            <View style={styles.headerRow}>
+              <Text style={styles.title}>Sua Localização</Text>
+              <TouchableOpacity
+                onPress={handleClose}
+                style={styles.closeButton}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                <FontAwesome
+                  name="close"
+                  size={20}
+                  color={colors.textSecondary}
+                />
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.mapContainer}>
               <MapComponent
                 region={currentRegion}
@@ -111,9 +140,11 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
                 onMapPress={handleMapPress}
               />
             </View>
+
             <TouchableOpacity
               style={styles.confirmButton}
-              onPress={handleConfirm}>
+              onPress={handleConfirm}
+              activeOpacity={0.8}>
               <Text style={styles.confirmButtonText}>
                 Confirmar Localização
               </Text>
