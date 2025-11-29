@@ -22,9 +22,7 @@
       "@screens/*": ["src/screens/*"],
       "@stores/*": ["src/stores/*"],
       "@theme/*": ["src/theme/*"],
-      "@utils/*": ["src/utils/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@services/*": ["src/services/*"]
+      "@utils/*": ["src/utils/*"]
     },
     "lib": ["dom", "es6", "es2017", "esnext.asynciterable"]
   }
