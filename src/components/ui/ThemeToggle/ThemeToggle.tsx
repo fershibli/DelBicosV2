@@ -1,67 +1,66 @@
-import React from 'react';
-import { View, TouchableOpacity, Platform } from 'react-native';
+import React, { useMemo } from 'react';
+import { View, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { useThemeStore, ThemeMode } from '@stores/Theme';
-import { styles } from './styles';
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 
 export const ThemeToggle: React.FC = () => {
   const { theme, setTheme } = useThemeStore();
+  const colors = useColors();
+  const styles = createStyles(colors);
+
   const currentTheme = theme || ThemeMode.LIGHT;
 
   const handleThemeChange = (newTheme: ThemeMode) => {
     setTheme(newTheme);
-    if (Platform.OS === 'web') {
-      window.location.href = window.location.href;
-    }
   };
+
+  const themeOptions = useMemo(
+    () => [
+      {
+        mode: ThemeMode.LIGHT,
+        icon: 'sun-o',
+        label: 'Tema Claro',
+      },
+      {
+        mode: ThemeMode.DARK,
+        icon: 'moon-o',
+        label: 'Tema Escuro',
+      },
+      {
+        mode: ThemeMode.LIGHT_HI_CONTRAST,
+        icon: 'adjust',
+        label: 'Alto Contraste',
+      },
+    ],
+    [],
+  );
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={[
-          styles.button,
-          currentTheme === ThemeMode.LIGHT && styles.buttonActive,
-        ]}
-        onPress={() => handleThemeChange(ThemeMode.LIGHT)}
-        accessible={true}
-        accessibilityLabel="Tema claro"
-        testID="theme-light-button">
-        <FontAwesome
-          name="sun-o"
-          size={20}
-          color={currentTheme === ThemeMode.LIGHT ? '#FC8200' : '#666'}
-        />
-      </TouchableOpacity>
+      {themeOptions.map((option) => {
+        const isActive = currentTheme === option.mode;
 
-      <TouchableOpacity
-        style={[
-          styles.button,
-          currentTheme === ThemeMode.DARK && styles.buttonActive,
-        ]}
-        onPress={() => handleThemeChange(ThemeMode.DARK)}
-        testID="theme-dark-button">
-        <FontAwesome
-          name="moon-o"
-          size={20}
-          color={currentTheme === ThemeMode.DARK ? '#FC8200' : '#666'}
-        />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[
-          styles.button,
-          currentTheme === ThemeMode.LIGHT_HI_CONTRAST && styles.buttonActive,
-        ]}
-        onPress={() => handleThemeChange(ThemeMode.LIGHT_HI_CONTRAST)}
-        testID="theme-contrast-button">
-        <FontAwesome
-          name="adjust"
-          size={20}
-          color={
-            currentTheme === ThemeMode.LIGHT_HI_CONTRAST ? '#FC8200' : '#666'
-          }
-        />
-      </TouchableOpacity>
+        return (
+          <TouchableOpacity
+            key={option.mode}
+            style={[styles.button, isActive && styles.buttonActive]}
+            onPress={() => handleThemeChange(option.mode)}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel={option.label}
+            accessibilityState={{ selected: isActive }}
+            testID={`theme-${option.mode}-button`}>
+            <FontAwesome
+              name={option.icon as any}
+              size={18}
+              color={isActive ? colors.primaryOrange : colors.textTertiary}
+            />
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 };
