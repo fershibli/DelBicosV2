@@ -168,7 +168,7 @@ export const createStyles = (colors: any) =>
     menuItemHovered: {
       ...Platform.select({
         web: {
-          backgroundColor: '#FB923C',
+          backgroundColor: colors.primaryOrange,
         },
       }),
     },
