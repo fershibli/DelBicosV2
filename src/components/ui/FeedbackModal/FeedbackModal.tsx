@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, Modal, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { styles } from './styles';
+import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 
-type FeedbackType = 'success' | 'error' | 'info';
+type FeedbackType = 'success' | 'error' | 'info' | 'warning';
 
 interface FeedbackModalProps {
   visible: boolean;
@@ -24,34 +24,42 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   onClose,
 }) => {
   const colors = useColors();
+  const styles = createStyles(colors);
 
-  const getConfig = () => {
+  const config = useMemo(() => {
     switch (type) {
       case 'success':
         return {
           icon: 'check-circle',
-          color: colors.primaryGreen || '#2E7D32',
+          color: colors.successText || '#2E7D32',
         };
       case 'error':
         return {
           icon: 'times-circle',
-          color: colors.notification?.unreadBorder || '#D32F2F',
+          color: colors.errorText || '#D32F2F',
+        };
+      case 'warning':
+        return {
+          icon: 'exclamation-circle',
+          color: colors.warningText || '#F57C00',
         };
       default:
-        return { icon: 'info-circle', color: colors.primaryBlue };
+        return {
+          icon: 'info-circle',
+          color: colors.primaryBlue,
+        };
     }
-  };
-
-  const config = getConfig();
+  }, [type, colors]);
 
   return (
     <Modal
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={onClose}>
+      onRequestClose={onClose}
+      statusBarTranslucent>
       <View style={styles.modalOverlay}>
-        <View style={styles.modalContainer}>
+        <View style={styles.modalContainer} accessibilityViewIsModal>
           {/* Ícone no topo */}
           <View style={styles.iconContainer}>
             <FontAwesome
@@ -61,12 +69,18 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
             />
           </View>
 
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title} accessibilityRole="header">
+            {title}
+          </Text>
+
           <Text style={styles.message}>{message}</Text>
 
           <TouchableOpacity
             style={[styles.button, { backgroundColor: config.color }]}
-            onPress={onClose}>
+            onPress={onClose}
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel={buttonText}>
             <Text style={styles.buttonText}>{buttonText}</Text>
           </TouchableOpacity>
         </View>
