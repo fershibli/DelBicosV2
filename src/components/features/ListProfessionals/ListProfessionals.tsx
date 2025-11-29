@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import ProfessionalCard from '@components/ui/ProfessionalCard';
 import { useProfessionalStore } from '@stores/Professional';
-import { usePagination } from '@hooks/usePagination';
+import { usePagination } from '@lib/hooks/usePagination';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
 import { useLocation } from '@lib/hooks/LocationContext';
