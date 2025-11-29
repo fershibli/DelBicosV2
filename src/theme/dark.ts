@@ -1,43 +1,46 @@
 import { ColorsType } from './types';
 
 const darkColors: ColorsType = {
-  // Tonalidade principal (azul) para elementos interativos
-  primaryBlue: '#545454', // Azul mais vibrante
+  primaryBlue: '#64B5F6',
+  primaryOrange: '#FFB74D',
+  primaryBlack: '#FFFFFF',
+  primaryGreen: '#81C784',
+  primaryWhite: '#1E1E1E',
+  primaryRed: '#EF5350',
+  secondaryGray: '#121212',
+  secondaryBeige: '#333333',
+  primaryWhiteHover: '#2C2C2C',
+  primaryOrangeHover: '#FFA726',
 
-  // Laranja mantido para consistência com tema claro
-  primaryOrange: '#FB923C', // Laranja vibrante
+  cardBackground: '#1E1E1E',
+  borderColor: '#333333',
+  textSecondary: '#B0BEC5',
+  textTertiary: '#78909C',
+  backgroundElevated: '#2C2C2C',
 
-  // Texto principal no tema escuro deve ser claro
-  primaryBlack: '#E2E8F0', // Texto principal (cinza bem claro)
+  successBackground: '#1B5E20',
+  successText: '#E8F5E9',
+  errorBackground: '#B71C1C',
+  errorText: '#FFEBEE',
+  warningBackground: '#F57F17',
+  warningText: '#FFF3E0',
 
-  // Verde de destaque
-  primaryGreen: '#34D399', // Verde esmeralda claro
+  inputBackground: '#2C2C2C',
+  placeholder: '#607D8B',
+  divider: '#333333',
+  overlay: 'rgba(0,0,0,0.5)',
 
-  // Fundo principal do app no modo escuro
-  primaryWhite: '#323232', // Fundo principal (cinza escuro)
+  badgeBackground: '#1565C0',
+  badgeText: '#E3F2FD',
 
-  // Tons secundários para header/cards
-  secondaryGray: '#323232', // Fundo header/navbar/cards (cinza escuro - navbar)
-  secondaryBeige: '#334155', // Elementos terciários
-
-  // Hovers / estados
-  primaryWhiteHover: '#1E293B', // Hover
-  primaryOrangeHover: '#FB923C', // Hover laranja
-
-  // Novas cores para hierarquia
-  cardBackground: '#545454', // Cards destacados (usar mesmo tom do header/navbar)
-  borderColor: '#334155', // Bordas sutis
-  textSecondary: '#94A3B8', // Texto secundário
-  textTertiary: '#64748B', // Texto terciário/placeholders
-  backgroundElevated: '#334155',
   notification: {
-    unreadBorder: '#FB923C',
-    unreadTitle: '#FB923C',
-    unreadMessage: '#E2E8F0',
-    readTitle: '#94A3B8',
-    readMessage: '#94A3B8',
-    cardBackground: '#545454',
-    modalBackground: '#545454',
+    unreadBorder: '#FFB74D',
+    unreadTitle: '#FFB74D',
+    unreadMessage: '#FFFFFF',
+    readTitle: '#B0BEC5',
+    readMessage: '#B0BEC5',
+    cardBackground: '#1E1E1E',
+    modalBackground: '#1E1E1E',
   },
 };
 
