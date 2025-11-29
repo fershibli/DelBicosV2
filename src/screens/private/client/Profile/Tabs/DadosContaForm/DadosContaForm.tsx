@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -19,7 +19,7 @@ import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
-import { UserProfileProps } from '../types';
+import { UserProfileProps } from '../../types';
 import { FontAwesome } from '@expo/vector-icons';
 import PhoneInput from '@components/ui/PhoneInput';
 import { useUserStore } from '@stores/User';
@@ -51,7 +51,7 @@ const StatusModal = ({ visible, status, message, onClose }: any) => {
       animationType="fade"
       onRequestClose={onClose}
       transparent>
-      <View style={styles.modalOverlay}>
+      <View style={[styles.modalOverlay, { justifyContent: 'center' }]}>
         <View style={styles.statusModalContainer}>
           <Text style={styles.statusModalIcon}>{getIcon()}</Text>
           <Text style={styles.statusModalTitle}>{getTitle()}</Text>
@@ -86,7 +86,7 @@ const AvatarOptionsModal = ({
   return (
     <Modal
       visible={visible}
-      animationType="fade"
+      animationType="slide"
       onRequestClose={onClose}
       transparent>
       <TouchableOpacity
@@ -148,52 +148,45 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
   const [statusMessage, setStatusMessage] = useState('');
   const [tempAvatarBase64, setTempAvatarBase64] = useState<string | null>(null);
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
-  const { updateUserProfile, uploadAvatar, removeAvatar } = useUserStore();
 
+  const { updateUserProfile, uploadAvatar, removeAvatar } = useUserStore();
   const { theme } = useThemeStore();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
 
-  const isDark = theme === ThemeMode.DARK;
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+
   const colors = useColors();
   const styles = createStyles(colors);
 
-  const responsiveStyles = StyleSheet.create({
-    contentWrapper: {
-      flexDirection: isMobile ? 'column' : 'row',
-      alignItems: isMobile ? 'center' : 'flex-start',
-    },
-    avatarContainer: {
-      marginRight: isMobile ? 0 : 24,
-      marginBottom: isMobile ? 24 : 0,
-    },
-    formGrid: {
-      flex: 1,
-      width: '100%',
-    },
-    formRowResponsive: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 16,
-      marginBottom: 16,
-    },
-    inputWrapper: {
-      flexGrow: 1,
-      flexBasis: 200,
-    },
-    disabledInput: {
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      borderRadius: 8,
-      borderWidth: 1,
-      fontSize: 16,
-      fontFamily: 'Afacad-Regular',
-      backgroundColor: isDark ? '#444' : '#F5F5F5',
-      color: isDark ? '#AAA' : '#888',
-      borderColor: isDark ? '#555' : '#E0E0E0',
-    },
-  });
+  const responsiveStyles = useMemo(
+    () =>
+      StyleSheet.create({
+        contentWrapper: {
+          flexDirection: isMobile ? 'column' : 'row',
+          alignItems: isMobile ? 'center' : 'flex-start',
+        },
+        avatarContainer: {
+          marginRight: isMobile ? 0 : 32,
+          marginBottom: isMobile ? 32 : 0,
+        },
+        formGrid: {
+          flex: 1,
+          width: '100%',
+        },
+        formRow: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: 16,
+          marginBottom: 16,
+        },
+        inputWrapper: {
+          flexGrow: 1,
+          flexBasis: 200,
+        },
+      }),
+    [isMobile],
+  );
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
@@ -226,6 +219,7 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
       useNativeDriver: true,
     }).start();
   };
+
   const handleHoverOut = () => {
     Animated.timing(overlayOpacity, {
       toValue: 0,
@@ -237,7 +231,6 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
   const handleImageSelection = async (asset: ImagePicker.ImagePickerAsset) => {
     if (!asset.base64) return;
     const dataUri = `data:image/jpeg;base64,${asset.base64}`;
-
     setTempAvatarBase64(dataUri);
     setIsAvatarRemoved(false);
     setShowOptions(false);
@@ -321,15 +314,14 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
       <View
         style={[
           styles.card,
-          isDark && { backgroundColor: '#323232' },
           isHighContrast && {
-            borderWidth: 3,
+            borderWidth: 2,
             borderColor: colors.primaryBlack,
           },
         ]}>
-        <View style={[styles.contentWrapper, responsiveStyles.contentWrapper]}>
-          <View
-            style={[styles.avatarContainer, responsiveStyles.avatarContainer]}>
+        <View style={responsiveStyles.contentWrapper}>
+          {/* Avatar Section */}
+          <View style={responsiveStyles.avatarContainer}>
             <TouchableOpacity
               style={styles.avatarTouchable}
               onPress={() => setShowOptions(true)}
@@ -349,6 +341,7 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
                   <Image
                     source={require('@assets/logo.png')}
                     style={styles.avatarImage}
+                    resizeMode="contain"
                   />
                 )}
 
@@ -370,8 +363,9 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
             </TouchableOpacity>
           </View>
 
+          {/* Form Section */}
           <View style={responsiveStyles.formGrid}>
-            <View style={responsiveStyles.formRowResponsive}>
+            <View style={responsiveStyles.formRow}>
               <View style={responsiveStyles.inputWrapper}>
                 <CustomTextInput
                   label="Nome"
@@ -388,13 +382,16 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
               </View>
             </View>
 
-            <View style={responsiveStyles.formRowResponsive}>
+            <View style={responsiveStyles.formRow}>
               <View style={responsiveStyles.inputWrapper}>
                 <CustomTextInput
                   label="CPF"
                   value={cpf}
                   editable={false}
-                  style={responsiveStyles.disabledInput}
+                  style={{
+                    opacity: 0.6,
+                    backgroundColor: colors.secondaryGray,
+                  }}
                 />
               </View>
               <View style={responsiveStyles.inputWrapper}>
@@ -407,11 +404,11 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
               </View>
             </View>
 
-            <View style={responsiveStyles.formRowResponsive}>
+            <View style={responsiveStyles.formRow}>
               <View style={responsiveStyles.inputWrapper}>
-                <CustomTextInput label="Telefone">
+                <View>
                   <PhoneInput value={telefone} onChangeText={setTelefone} />
-                </CustomTextInput>
+                </View>
               </View>
             </View>
 
@@ -443,13 +440,6 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
         status={status}
         message={statusMessage}
         onClose={handleCloseStatusModal}
-      />
-
-      <StatusModal
-        visible={showStatusModal}
-        status={status}
-        message={statusMessage}
-        onClose={() => setShowStatusModal(false)}
       />
     </ScrollView>
   );
