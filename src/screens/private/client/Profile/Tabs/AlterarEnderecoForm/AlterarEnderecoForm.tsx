@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Text,
-  StyleSheet,
   TouchableOpacity,
   ScrollView,
   Alert,
@@ -9,7 +8,6 @@ import {
   View,
   Modal,
   useWindowDimensions,
-  Platform,
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { AddressCard } from '@components/ui/AddressCard';
@@ -18,15 +16,25 @@ import { useColors } from '@theme/ThemeProvider';
 import { Address, useAddressStore } from '@stores/Address';
 import { useUserStore } from '@stores/User';
 import { FontAwesome } from '@expo/vector-icons';
-import { AddressForm } from '@components/features/AddressForm';
+import { AddressForm } from '@components/features/AddressForm/AddressForm';
+import { createStyles } from './styles';
 
-const AddressModal = ({
+// Interface para as props do Modal
+interface AddressModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onSave: (data: any) => void;
+  isLoading: boolean;
+  initialData?: Address | null;
+}
+
+const AddressModal: React.FC<AddressModalProps> = ({
   visible,
   onClose,
   onSave,
   isLoading,
   initialData,
-}: any) => {
+}) => {
   const colors = useColors();
   const styles = createStyles(colors);
 
@@ -73,14 +81,10 @@ const AddressModal = ({
     }
   }, [visible, initialData, setValue, reset]);
 
-  const onSubmit = (data: any) => {
-    onSave(data);
-  };
-
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType="fade"
       transparent
       onRequestClose={onClose}>
       <View style={styles.modalOverlay}>
@@ -89,7 +93,7 @@ const AddressModal = ({
             <Text style={styles.modalTitle}>
               {initialData ? 'Editar Endereço' : 'Novo Endereço'}
             </Text>
-            <TouchableOpacity onPress={onClose}>
+            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
               <FontAwesome
                 name="close"
                 size={24}
@@ -105,17 +109,14 @@ const AddressModal = ({
               setValue={setValue}
             />
 
-            <View
-              style={[
-                styles.modalActions,
-                { zIndex: -1, elevation: -1, position: 'relative' },
-              ]}>
+            <View style={styles.modalActions}>
               <TouchableOpacity
                 style={styles.saveModalButton}
-                onPress={handleSubmit(onSubmit)}
-                disabled={isLoading}>
+                onPress={handleSubmit(onSave)}
+                disabled={isLoading}
+                activeOpacity={0.8}>
                 {isLoading ? (
-                  <ActivityIndicator color="white" />
+                  <ActivityIndicator color={colors.primaryWhite} />
                 ) : (
                   <Text style={styles.saveModalButtonText}>
                     {initialData ? 'Atualizar Endereço' : 'Salvar Endereço'}
@@ -165,6 +166,7 @@ export default function AlterarEnderecoForm() {
 
   const sortedAddresses = useMemo(() => {
     return [...addresses].sort((a, b) => {
+      // Endereço principal primeiro
       if (a.isPrimary === b.isPrimary) return 0;
       return a.isPrimary ? -1 : 1;
     });
@@ -247,9 +249,11 @@ export default function AlterarEnderecoForm() {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.pageTitle}>Meus Endereços</Text>
-        {/* Botão Adicionar (Topo) */}
-        <TouchableOpacity style={styles.addButton} onPress={handleOpenCreate}>
-          <FontAwesome name="plus" size={14} color="white" />
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={handleOpenCreate}
+          activeOpacity={0.8}>
+          <FontAwesome name="plus" size={14} color={colors.primaryWhite} />
           <Text style={styles.addButtonText}>Novo Endereço</Text>
         </TouchableOpacity>
       </View>
@@ -273,7 +277,7 @@ export default function AlterarEnderecoForm() {
           <View style={styles.centerContainer}>
             <FontAwesome
               name="map-marker"
-              size={40}
+              size={48}
               color={colors.textTertiary}
               style={{ marginBottom: 16 }}
             />
@@ -306,17 +310,15 @@ export default function AlterarEnderecoForm() {
       </ScrollView>
 
       {/* Modal de Confirmação de Exclusão */}
-      {addressToDelete && (
-        <ConfirmationModal
-          visible={isDeleteModalVisible}
-          title="Excluir Endereço"
-          message={`Tem certeza que deseja excluir "${addressToDelete.street}, ${addressToDelete.number}"?`}
-          cancelText="Cancelar"
-          confirmText="Excluir"
-          onCancel={() => setDeleteModalVisible(false)}
-          onConfirm={confirmDelete}
-        />
-      )}
+      <ConfirmationModal
+        visible={isDeleteModalVisible}
+        title="Excluir Endereço"
+        message={`Tem certeza que deseja excluir "${addressToDelete?.street}, ${addressToDelete?.number}"?`}
+        cancelText="Cancelar"
+        confirmText="Excluir"
+        onCancel={() => setDeleteModalVisible(false)}
+        onConfirm={confirmDelete}
+      />
 
       {/* Modal de Formulário (Criação/Edição) */}
       <AddressModal
@@ -329,141 +331,3 @@ export default function AlterarEnderecoForm() {
     </View>
   );
 }
-
-const createStyles = (colors: any) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    contentContainer: {
-      paddingBottom: 40,
-    },
-    headerRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 24,
-      paddingHorizontal: 4,
-    },
-    pageTitle: {
-      fontSize: 28,
-      fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlack,
-    },
-    addButton: {
-      backgroundColor: colors.primaryOrange,
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-      paddingVertical: 10,
-      paddingHorizontal: 16,
-      borderRadius: 8,
-    },
-    addButtonText: {
-      color: 'white',
-      fontFamily: 'Afacad-Bold',
-      fontSize: 14,
-    },
-    gridContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 16,
-    },
-    cardWrapper: {
-      width: '100%',
-      marginBottom: 16,
-    },
-    centerContainer: {
-      padding: 40,
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: 300,
-    },
-    loadingText: {
-      marginTop: 16,
-      fontSize: 16,
-      color: colors.textSecondary,
-      fontFamily: 'Afacad-Regular',
-    },
-    errorText: {
-      fontSize: 16,
-      color: '#D32F2F',
-      textAlign: 'center',
-      marginBottom: 20,
-      fontFamily: 'Afacad-Regular',
-    },
-    retryButton: {
-      backgroundColor: colors.primaryBlue,
-      paddingVertical: 12,
-      paddingHorizontal: 24,
-      borderRadius: 8,
-    },
-    retryButtonText: {
-      color: 'white',
-      fontFamily: 'Afacad-Bold',
-      fontSize: 14,
-    },
-    emptyText: {
-      fontSize: 18,
-      color: colors.textTertiary,
-      textAlign: 'center',
-      fontFamily: 'Afacad-Regular',
-    },
-    modalOverlay: {
-      flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 20,
-      ...Platform.select({
-        web: {
-          position: 'fixed' as any,
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 9999,
-        },
-      }),
-    },
-    modalContent: {
-      backgroundColor: 'white',
-      width: '100%',
-      maxWidth: 500,
-      borderRadius: 16,
-      padding: 24,
-      maxHeight: '90%',
-      ...Platform.select({
-        web: { boxShadow: '0px 4px 20px rgba(0,0,0,0.2)' },
-        default: { elevation: 10 },
-      }),
-    },
-    modalHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: '#F0F0F0',
-      paddingBottom: 12,
-    },
-    modalTitle: {
-      fontSize: 20,
-      fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlack,
-    },
-    modalActions: {
-      marginTop: 24,
-    },
-    saveModalButton: {
-      backgroundColor: colors.primaryBlue,
-      paddingVertical: 14,
-      borderRadius: 8,
-      alignItems: 'center',
-    },
-    saveModalButtonText: {
-      color: 'white',
-      fontSize: 16,
-      fontFamily: 'Afacad-Bold',
-    },
-  });
