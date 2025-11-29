@@ -1,9 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
-      marginBottom: 0,
+      marginBottom: 16,
     },
     label: {
       fontSize: 16,
@@ -13,45 +14,58 @@ export const createStyles = (colors: any) =>
     },
     selectButton: {
       borderWidth: 1,
-      borderColor: '#E0E0E0',
-      borderRadius: 8,
+      borderColor: colors.borderColor,
+      borderRadius: 12,
       paddingHorizontal: 16,
       paddingVertical: 14,
-      backgroundColor: '#FAFAFA',
-      justifyContent: 'center',
+      backgroundColor: colors.inputBackground,
+      justifyContent: 'space-between',
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     selectButtonText: {
       fontFamily: 'Afacad-Regular',
       fontSize: 16,
       color: colors.primaryBlack,
-      lineHeight: 20,
+      flex: 1,
     },
     placeholderText: {
-      color: colors.textTertiary || '#9CA3AF',
+      color: colors.textTertiary,
     },
     errorBorder: {
-      borderColor: '#D32F2F',
+      borderColor: colors.errorText,
     },
     errorText: {
-      color: '#D32F2F',
+      color: colors.errorText,
       fontSize: 12,
       marginTop: 4,
       fontFamily: 'Afacad-Regular',
     },
     modalOverlay: {
       flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.5)',
+      backgroundColor: colors.overlay,
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
     },
     modalContent: {
-      backgroundColor: 'white',
+      backgroundColor: colors.cardBackground,
       width: '100%',
       maxWidth: 400,
-      borderRadius: 12,
-      padding: 20,
+      borderRadius: 16,
+      padding: 24,
       maxHeight: '80%',
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 4,
+        },
+        android: {
+          elevation: 5,
+        },
+      }),
     },
     modalTitle: {
       fontSize: 18,
@@ -61,9 +75,9 @@ export const createStyles = (colors: any) =>
       textAlign: 'center',
     },
     optionItem: {
-      paddingVertical: 14,
+      paddingVertical: 16,
       borderBottomWidth: 1,
-      borderBottomColor: '#F0F0F0',
+      borderBottomColor: colors.divider,
     },
     optionText: {
       fontSize: 16,
@@ -74,8 +88,10 @@ export const createStyles = (colors: any) =>
       marginTop: 16,
       alignItems: 'center',
       padding: 12,
-      backgroundColor: colors.secondaryGray,
+      backgroundColor: colors.inputBackground,
       borderRadius: 8,
+      borderWidth: 1,
+      borderColor: colors.borderColor,
     },
     closeButtonText: {
       fontFamily: 'Afacad-Bold',
@@ -86,6 +102,9 @@ export const createStyles = (colors: any) =>
       opacity: 0,
       width: '100%',
       height: '100%',
-      cursor: 'pointer',
-    } as any,
+      zIndex: 2,
+      ...Platform.select({
+        web: { cursor: 'pointer' } as any,
+      }),
+    },
   });

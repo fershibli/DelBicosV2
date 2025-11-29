@@ -11,6 +11,7 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
 
@@ -20,7 +21,7 @@ export interface Option {
 }
 
 interface CustomSelectProps {
-  label: string;
+  label?: string;
   value: string;
   options: Option[];
   onChange: (value: string) => void;
@@ -29,12 +30,10 @@ interface CustomSelectProps {
   loading?: boolean;
   disabled?: boolean;
 
-  // --- NOVAS PROPS DE ESTILO ---
-  containerStyle?: StyleProp<ViewStyle>; // Estilo do container externo
-  buttonStyle?: StyleProp<ViewStyle>; // Estilo do botão (caixa do select)
-  textStyle?: StyleProp<TextStyle>; // Estilo do texto selecionado
-  placeholderStyle?: StyleProp<TextStyle>; // Estilo do placeholder
-  dropdownStyle?: StyleProp<ViewStyle>; // Estilo do modal/lista (opcional)
+  containerStyle?: StyleProp<ViewStyle>;
+  buttonStyle?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
+  placeholderStyle?: StyleProp<TextStyle>;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -55,16 +54,18 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const styles = createStyles(colors);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const selectedLabel = options.find((opt) => opt.value === value)?.label;
+  const selectedOption = options.find((opt) => opt.value === value);
+  const displayLabel = selectedOption ? selectedOption.label : placeholder;
+  const isPlaceholder = !selectedOption;
 
-  // --- Renderização Web Nativa ---
   const renderWebSelect = () => {
     if (Platform.OS !== 'web') return null;
+
     return (
       <select
-        style={styles.webSelect} // O estilo webSelect continua escondido por cima
+        style={styles.webSelect as any}
         value={value}
-        disabled={disabled}
+        disabled={disabled || loading}
         onChange={(e) => onChange(e.target.value)}>
         <option value="" disabled>
           {placeholder}
@@ -80,14 +81,14 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <Text style={styles.label}>{label}</Text>
+      {label && <Text style={styles.label}>{label}</Text>}
 
       <TouchableOpacity
         style={[
           styles.selectButton,
           !!error && styles.errorBorder,
-          disabled && { opacity: 0.6 },
-          buttonStyle, // <-- Aplica estilo customizado do botão
+          disabled && { opacity: 0.6, backgroundColor: colors.secondaryBeige },
+          buttonStyle,
         ]}
         onPress={() => !disabled && !loading && setModalVisible(true)}
         activeOpacity={0.7}
@@ -95,26 +96,38 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         {loading ? (
           <ActivityIndicator size="small" color={colors.primaryOrange} />
         ) : (
-          <Text
-            style={[
-              styles.selectButtonText,
-              textStyle, // <-- Aplica estilo customizado do texto
-              !selectedLabel && [styles.placeholderText, placeholderStyle], // <-- Aplica estilo do placeholder
-            ]}>
-            {selectedLabel || placeholder}
-          </Text>
+          <>
+            <Text
+              style={[
+                styles.selectButtonText,
+                textStyle,
+                isPlaceholder && [styles.placeholderText, placeholderStyle],
+              ]}
+              numberOfLines={1}>
+              {displayLabel}
+            </Text>
+
+            <FontAwesome
+              name="chevron-down"
+              size={12}
+              color={isPlaceholder ? colors.textTertiary : colors.primaryBlack}
+            />
+          </>
         )}
 
         {renderWebSelect()}
       </TouchableOpacity>
 
+      {/* Exibição de Erro */}
       {!!error && (
         <Text style={styles.errorText}>
-          {error.message || 'Campo inválido'}
+          {typeof error === 'string'
+            ? error
+            : error.message || 'Campo inválido'}
         </Text>
       )}
 
-      {/* Modal para Mobile (iOS/Android) */}
+      {/* Modal Nativo (iOS/Android) */}
       <Modal
         visible={modalVisible}
         transparent
@@ -122,7 +135,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{label}</Text>
+            <Text style={styles.modalTitle}>{label || placeholder}</Text>
 
             <FlatList
               data={options}
@@ -135,7 +148,16 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
                     onChange(item.value);
                     setModalVisible(false);
                   }}>
-                  <Text style={styles.optionText}>{item.label}</Text>
+                  <Text
+                    style={[
+                      styles.optionText,
+                      item.value === value && {
+                        fontFamily: 'Afacad-Bold',
+                        color: colors.primaryOrange,
+                      },
+                    ]}>
+                    {item.label}
+                  </Text>
                 </TouchableOpacity>
               )}
             />
