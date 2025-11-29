@@ -9,7 +9,6 @@ import {
   UpdateUserData,
 } from './types';
 import { AxiosError } from 'axios';
-import { AuthService } from '@services/AuthService';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 
 export const useUserStore = create<UserStore>()(
@@ -28,6 +27,10 @@ export const useUserStore = create<UserStore>()(
         set({ lastCodeSentAt: Date.now() });
       },
 
+      resendCode: async (email: string) => {
+        await backendHttpClient.post('/auth/resend', { email });
+      },
+
       setLoggedInUser: (data: {
         token: string;
         user: User;
@@ -42,8 +45,7 @@ export const useUserStore = create<UserStore>()(
 
       fetchCurrentUser: async () => {
         try {
-          const data = await AuthService.me();
-          const { user } = data;
+          const { user } = (await backendHttpClient.get('/api/user/me')).data;
 
           const userData: User = {
             id: user.id,
@@ -68,9 +70,12 @@ export const useUserStore = create<UserStore>()(
 
       signInPassword: async (email: string, password: string) => {
         try {
-          const response = await AuthService.login(email, password);
+          const { data } = await backendHttpClient.post('/api/user/login', {
+            email,
+            password,
+          });
 
-          const { token, user } = response.data;
+          const { token, user } = data;
 
           if (!token) {
             console.error('No token received from the server');
@@ -154,7 +159,10 @@ export const useUserStore = create<UserStore>()(
 
       signInAdmin: async (email: string, password: string) => {
         try {
-          const data = await AuthService.loginAdmin(email, password);
+          const { data } = await backendHttpClient.post('/api/admin/login', {
+            email,
+            password,
+          });
           const { token, user } = data;
 
           if (!token) {
@@ -198,9 +206,12 @@ export const useUserStore = create<UserStore>()(
 
       changePassword: async (currentPassword: string, newPassword: string) => {
         try {
-          const response = await AuthService.changePassword(
-            currentPassword,
-            newPassword,
+          const response = await backendHttpClient.post(
+            '/api/user/change-password',
+            {
+              current_password: currentPassword,
+              new_password: newPassword,
+            },
           );
 
           if (response.status < 200 || response.status >= 300) {
@@ -256,7 +267,12 @@ export const useUserStore = create<UserStore>()(
 
       uploadAvatar: async (base64Image: string) => {
         try {
-          const data = await AuthService.uploadAvatar(base64Image);
+          const { data } = await backendHttpClient.post(
+            `/api/user/imgbb/avatar`,
+            {
+              base64Image: base64Image,
+            },
+          );
 
           const currentUser = get().user;
 
@@ -293,7 +309,7 @@ export const useUserStore = create<UserStore>()(
 
       removeAvatar: async (): Promise<ErrorResponse> => {
         try {
-          await AuthService.removeAvatar();
+          await backendHttpClient.delete(`/api/user/avatar`);
 
           const currentUser = get().user;
           if (currentUser) {
@@ -329,7 +345,10 @@ export const useUserStore = create<UserStore>()(
       },
 
       registerUser: async (formData) => {
-        const data = await AuthService.register(formData);
+        const { data } = await backendHttpClient.post(
+          '/auth/register',
+          formData,
+        );
 
         if (!data || data.error) {
           throw new Error(data.error || 'Ocorreu um problema.');

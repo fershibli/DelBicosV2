@@ -21,7 +21,6 @@ import { Address } from '@stores/User/types';
 import { useColors } from '@theme/ThemeProvider';
 import { checkForNewNotifications } from '@utils/usePushNotifications';
 import { FeedbackModal } from '@components/ui/FeedbackModal/FeedbackModal';
-import { AuthService } from '@services/AuthService';
 
 function VerificationScreen() {
   const navigation = useNavigation();
@@ -31,6 +30,7 @@ function VerificationScreen() {
     setLoggedInUser,
     lastCodeSentAt,
     recordCodeSent,
+    resendCode,
   } = useUserStore();
 
   const colors = useColors();
@@ -148,7 +148,7 @@ function VerificationScreen() {
     setIsResending(true);
 
     try {
-      await AuthService.resendCode(email);
+      await resendCode(email);
 
       recordCodeSent();
       setTimer(60);

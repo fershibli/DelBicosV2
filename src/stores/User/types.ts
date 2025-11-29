@@ -63,6 +63,7 @@ export type UserStore = {
   fetchCurrentUser: () => Promise<void>;
   setVerificationEmail: (email: string | null) => void;
   recordCodeSent: () => void;
+  resendCode: (email: string) => Promise<void>;
   setLoggedInUser: (data: {
     token: string;
     user: User;
