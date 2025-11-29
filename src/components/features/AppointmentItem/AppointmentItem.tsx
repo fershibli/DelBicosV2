@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,33 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Rating } from 'react-native-ratings';
 import { Appointment } from '@stores/Appointment/types';
 import { useAppointmentStore } from '@stores/Appointment';
-import { styles, getStatusStyle } from './styles';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
+
+const formatDateTime = (dateString?: string) => {
+  if (!dateString) return '';
+  const dateObj = new Date(dateString);
+  const day = dateObj.getDate().toString().padStart(2, '0');
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+  const year = dateObj.getFullYear().toString().slice(-2);
+  const hours = dateObj.getHours().toString().padStart(2, '0');
+  const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+
+  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const weekDay = weekDays[dateObj.getDay()];
+
+  return `${weekDay}, ${day}/${month}/${year} - ${hours}:${minutes}`;
+};
+
+const getPlaceholderImage = (id: number) => {
+  const images = [
+    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=600&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=600&fit=crop',
+  ];
+  return images[id % images.length];
+};
 
 const ReviewAppointment = ({
   appointment,
@@ -26,6 +52,8 @@ const ReviewAppointment = ({
   const [rating, setRating] = useState(appointment.rating ?? 0);
   const [review, setReview] = useState(appointment.review ?? '');
   const { reviewAppointment } = useAppointmentStore();
+  const colors = useColors();
+  const styles = createStyles(colors);
 
   const handleSubmit = async () => {
     if (rating === 0) {
@@ -42,17 +70,14 @@ const ReviewAppointment = ({
         ? 'Sua avaliação foi modificada com sucesso!'
         : 'Sua avaliação foi enviada!';
       Alert.alert('Sucesso', message);
+      onSuccess?.();
       onClose();
-      if (onSuccess) onSuccess();
     } else {
       Alert.alert('Erro', 'Não foi possível enviar sua avaliação.');
     }
   };
 
-  const isModifying =
-    appointment.rating !== undefined &&
-    appointment.rating !== null &&
-    appointment.rating > 0;
+  const isModifying = !!(appointment.rating && appointment.rating > 0);
 
   return (
     <View style={styles.modalOverlay}>
@@ -62,23 +87,28 @@ const ReviewAppointment = ({
         </Text>
         <Rating
           startingValue={rating}
-          onFinishRating={(value: number) => setRating(value)}
+          onFinishRating={setRating}
           style={styles.ratingComponent}
           imageSize={30}
+          tintColor={colors.cardBackground}
+          type="star"
         />
         <TextInput
           style={styles.modalInput}
           placeholder="Deixe um comentário..."
+          placeholderTextColor={colors.textTertiary}
           multiline
           numberOfLines={4}
           value={review}
-          onChangeText={(text: string) => setReview(text)}
+          onChangeText={setReview}
         />
         <View style={styles.modalActions}>
           <TouchableOpacity style={styles.modalCancelButton} onPress={onClose}>
             <Text style={styles.modalCancelText}>Cancelar</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.modalButton} onPress={handleSubmit}>
+          <TouchableOpacity
+            style={styles.modalConfirmButton}
+            onPress={handleSubmit}>
             <Text style={styles.buttonText}>
               {isModifying ? 'Modificar' : 'Enviar'}
             </Text>
@@ -93,28 +123,31 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
   appointment,
 }) => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const colors = useColors();
+  const styles = createStyles(colors);
+
   const {
     Professional: professional,
     Service: service,
     status,
     start_time,
+    id,
   } = appointment;
-  const statusInfo = getStatusStyle(status);
 
-  const formatDateTime = () => {
-    if (!start_time) return '';
-    const dateObj = new Date(start_time);
-    const day = dateObj.getDate().toString().padStart(2, '0');
-    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-    const year = dateObj.getFullYear().toString().slice(-2);
-    const hours = dateObj.getHours().toString().padStart(2, '0');
-    const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-
-    const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    const weekDay = weekDays[dateObj.getDay()];
-
-    return `${weekDay}, ${day}/${month}/${year} - ${hours}:${minutes}`;
-  };
+  const statusConfig = useMemo(() => {
+    switch (status) {
+      case 'pending':
+        return { text: '⏱ Pendente', color: colors.primaryOrange };
+      case 'confirmed':
+        return { text: '✓ Confirmado', color: colors.successText };
+      case 'completed':
+        return { text: '✓ Concluído', color: colors.primaryBlue };
+      case 'canceled':
+        return { text: '✕ Cancelado', color: colors.errorText };
+      default:
+        return { text: 'Desconhecido', color: colors.textSecondary };
+    }
+  }, [status, colors]);
 
   const handleCancel = () => {
     Alert.alert(
@@ -136,20 +169,10 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
     );
   };
 
-  // Apenas 4 imagens que se revezam
-  const getPlaceholderImage = () => {
-    const images = [
-      'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&h=600&fit=crop', // Eletricista
-      'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&h=600&fit=crop', // Manicure
-      'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=600&h=600&fit=crop', // Limpeza/Diarista
-      'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=600&fit=crop', // Evento/Grupo
-    ];
-
-    const index = appointment.id % images.length;
-    return images[index];
-  };
-
-  const imageUrl = service.banner_uri || getPlaceholderImage();
+  const imageUrl = useMemo(
+    () => service.banner_uri || getPlaceholderImage(id),
+    [service.banner_uri, id],
+  );
 
   return (
     <>
@@ -175,19 +198,19 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
                 {professional.User.name}
               </Text>
               <Text style={styles.serviceInfo}>
-                {service.Subcategory?.name} ★★★★★ (4.8)
+                {service.Subcategory?.name} • 5.0 (20)
               </Text>
               <Text style={styles.serviceName}>{service.title}</Text>
-              <Text style={styles.dateTime}>{formatDateTime()}</Text>
+              <Text style={styles.dateTime}>{formatDateTime(start_time)}</Text>
             </View>
 
             {/* Status Badge */}
             <View
               style={[
                 styles.statusBadge,
-                { backgroundColor: statusInfo.backgroundColor },
+                { backgroundColor: statusConfig.color },
               ]}>
-              <Text style={styles.statusText}>{statusInfo.text}</Text>
+              <Text style={styles.statusText}>{statusConfig.text}</Text>
             </View>
 
             {/* Mostrar avaliação se já foi avaliado */}
@@ -206,7 +229,7 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
                         color={
                           star <= (appointment.rating || 0)
                             ? '#FFC107'
-                            : '#D1D1D1'
+                            : colors.textTertiary
                         }
                         style={{ marginRight: 2 }}
                       />
@@ -230,7 +253,7 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
                   <TouchableOpacity
                     style={[styles.button, styles.cancelButton]}
                     onPress={handleCancel}>
-                    <Text style={styles.buttonText}>Cancelar</Text>
+                    <Text style={styles.cancelButtonText}>Cancelar</Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -258,7 +281,9 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
                   <TouchableOpacity
                     style={[styles.button, styles.rateButton]}
                     onPress={() => setIsReviewModalOpen(true)}>
-                    <Text style={styles.buttonText}>Avaliar</Text>
+                    <Text style={styles.buttonText}>
+                      {appointment.rating ? 'Editar Avaliação' : 'Avaliar'}
+                    </Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -268,11 +293,6 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
                   <TouchableOpacity
                     style={[styles.button, styles.detailsButton]}>
                     <Text style={styles.buttonText}>Detalhes</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.button, styles.cancelButton]}
-                    disabled={true}>
-                    <Text style={styles.buttonText}>Cancelado</Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -289,9 +309,7 @@ const AppointmentItem: React.FC<{ appointment: Appointment }> = ({
         <ReviewAppointment
           appointment={appointment}
           onClose={() => setIsReviewModalOpen(false)}
-          onSuccess={() => {
-            setIsReviewModalOpen(false);
-          }}
+          onSuccess={() => setIsReviewModalOpen(false)}
         />
       </Modal>
     </>

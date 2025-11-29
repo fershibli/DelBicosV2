@@ -1,349 +1,276 @@
-import { StyleSheet } from 'react-native';
-import colors from '@theme/colors';
+import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const styles = StyleSheet.create({
-  // ===== CARD PRINCIPAL =====
-  card: {
-    backgroundColor: colors.cardBackground,
-    borderRadius: 8,
-    padding: 0,
-    marginVertical: 0,
-    marginHorizontal: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: colors.borderColor,
-    overflow: 'hidden',
-    height: 400,
-    maxHeight: 400,
-  },
+export const createStyles = (colors: ColorsType) =>
+  StyleSheet.create({
+    // ===== CARD PRINCIPAL =====
+    card: {
+      backgroundColor: colors.cardBackground,
+      borderRadius: 12,
+      marginVertical: 8,
+      marginHorizontal: 16,
+      borderWidth: 1,
+      borderColor: colors.borderColor,
+      overflow: 'hidden',
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 3,
+        },
+        android: {
+          elevation: 3,
+        },
+      }),
+    },
 
-  content: {
-    flexDirection: 'column',
-    height: 400,
-    maxHeight: 400,
-  },
+    content: {
+      flexDirection: 'column',
+    },
 
-  // ===== LADO ESQUERDO (TEXTOS) =====
-  leftSection: {
-    flex: 1,
-    justifyContent: 'space-between',
-    padding: 12,
-    height: 240,
-    maxHeight: 240,
-  },
+    // ===== LADO DIREITO (IMAGEM - Agora no Topo) =====
+    rightSection: {
+      position: 'relative',
+      width: '100%',
+      height: 150,
+    },
 
-  topInfo: {
-    marginBottom: 6,
-  },
+    serviceImage: {
+      width: '100%',
+      height: '100%',
+      backgroundColor: colors.inputBackground,
+    },
 
-  // ===== TEXTOS =====
-  professionalName: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#FC8200',
-    marginBottom: 3,
-    lineHeight: 17,
-  },
+    imageOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    },
 
-  serviceInfo: {
-    fontSize: 10,
-    color: colors.primaryBlack,
-    marginBottom: 2,
-    lineHeight: 13,
-  },
+    viewProfileBadge: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: 'rgba(0, 90, 147, 0.9)',
+      paddingVertical: 6,
+      alignItems: 'center',
+    },
 
-  serviceName: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: colors.primaryBlack,
-    marginBottom: 3,
-    lineHeight: 15,
-  },
+    viewProfileText: {
+      color: colors.primaryWhite,
+      fontSize: 12,
+      fontFamily: 'Afacad-Bold',
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
 
-  dateTime: {
-    fontSize: 10,
-    color: '#FC8200',
-    fontWeight: '700',
-    marginBottom: 0,
-    lineHeight: 13,
-  },
+    // ===== LADO ESQUERDO (CONTEÚDO) =====
+    leftSection: {
+      padding: 16,
+    },
 
-  // ===== ESTRELAS =====
-  ratingContainer: {
-    flexDirection: 'row',
-    marginBottom: 6,
-  },
+    topInfo: {
+      marginBottom: 12,
+    },
 
-  starIcon: {
-    marginRight: 2,
-  },
+    professionalName: {
+      fontSize: 16,
+      fontFamily: 'Afacad-Bold',
+      color: colors.primaryOrange,
+      marginBottom: 4,
+    },
 
-  // ===== STATUS BADGE =====
-  statusBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 4,
-    marginBottom: 8,
-  },
+    serviceInfo: {
+      fontSize: 12,
+      color: colors.textSecondary,
+      fontFamily: 'Afacad-Regular',
+      marginBottom: 2,
+    },
 
-  statusText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    letterSpacing: 0.3,
-  },
+    serviceName: {
+      fontSize: 14,
+      fontFamily: 'Afacad-SemiBold',
+      color: colors.primaryBlack,
+      marginBottom: 4,
+    },
 
-  // ===== BOTÕES =====
-  buttonsContainer: {
-    flexDirection: 'row',
-    gap: 6,
-    marginTop: 6,
-  },
+    dateTime: {
+      fontSize: 12,
+      color: colors.primaryBlue,
+      fontFamily: 'Afacad-Bold',
+    },
 
-  button: {
-    flex: 1,
-    paddingVertical: 7,
-    paddingHorizontal: 8,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 30,
-  },
+    // ===== STATUS BADGE =====
+    statusBadge: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 4,
+      marginBottom: 12,
+    },
 
-  detailsButton: {
-    backgroundColor: '#005A93', // Azul do projeto
-  },
+    statusText: {
+      fontSize: 11,
+      fontFamily: 'Afacad-Bold',
+      color: colors.primaryWhite,
+      textTransform: 'uppercase',
+    },
 
-  cancelButton: {
-    backgroundColor: '#DC2626', // Vermelho
-  },
+    // ===== AVALIAÇÃO EXIBIDA =====
+    reviewSection: {
+      marginTop: 8,
+      padding: 12,
+      backgroundColor: colors.inputBackground,
+      borderRadius: 8,
+      borderLeftWidth: 3,
+      borderLeftColor: '#FFC107',
+      marginBottom: 12,
+    },
 
-  modifyButton: {
-    backgroundColor: '#FC8200', // Laranja do projeto
-  },
+    reviewHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 6,
+    },
 
-  receiptButton: {
-    backgroundColor: '#005A93',
-  },
+    reviewLabel: {
+      fontSize: 12,
+      fontFamily: 'Afacad-Bold',
+      color: colors.textSecondary,
+      marginRight: 8,
+    },
 
-  rateButton: {
-    backgroundColor: '#22843B', // Verde do projeto
-  },
+    reviewStarsContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
 
-  buttonText: {
-    color: '#FFF',
-    fontWeight: '700',
-    fontSize: 11,
-    letterSpacing: 0.3,
-  },
+    reviewComment: {
+      fontSize: 13,
+      color: colors.primaryBlack,
+      fontFamily: 'Afacad-Regular',
+      fontStyle: 'italic',
+    },
 
-  // ===== LADO DIREITO (IMAGEM) =====
-  rightSection: {
-    position: 'relative',
-    width: '100%',
-    height: 160,
-    maxHeight: 160,
-    flexShrink: 0,
-    borderRadius: 0,
-    overflow: 'hidden',
-  },
+    // ===== BOTÕES =====
+    buttonsContainer: {
+      flexDirection: 'row',
+      gap: 8,
+      marginTop: 4,
+    },
 
-  serviceImage: {
-    width: '100%',
-    height: 160,
-    backgroundColor: '#E0E0E0',
-  },
+    button: {
+      flex: 1,
+      paddingVertical: 10,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
 
-  imageOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-  },
+    detailsButton: {
+      backgroundColor: colors.primaryBlue,
+    },
 
-  viewProfileBadge: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0, 90, 147, 0.95)',
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    alignItems: 'center',
-  },
+    cancelButton: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: colors.errorText,
+    },
 
-  viewProfileText: {
-    color: colors.primaryWhite,
-    fontSize: 11,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
+    cancelButtonText: {
+      color: colors.errorText,
+      fontFamily: 'Afacad-Bold',
+      fontSize: 13,
+    },
 
-  imagePlaceholder: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 6,
-    backgroundColor: '#DDE6F0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+    modifyButton: {
+      backgroundColor: colors.primaryOrange,
+    },
 
-  imagePlaceholderText: {
-    color: '#005A93',
-    fontSize: 11,
-    fontWeight: '600',
-  },
+    rateButton: {
+      backgroundColor: colors.successText,
+    },
 
-  // ===== MODAL =====
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+    buttonText: {
+      color: colors.primaryWhite,
+      fontFamily: 'Afacad-Bold',
+      fontSize: 13,
+    },
 
-  modalContent: {
-    backgroundColor: colors.primaryWhite,
-    borderRadius: 16,
-    width: '85%',
-    maxWidth: 400,
-    padding: 24,
-    elevation: 5,
-  },
+    // ===== MODAL =====
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: colors.overlay,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
 
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#000000',
-  },
+    modalContent: {
+      backgroundColor: colors.cardBackground,
+      borderRadius: 16,
+      width: '85%',
+      padding: 24,
+      ...Platform.select({
+        default: { elevation: 5 },
+      }),
+    },
 
-  ratingComponent: {
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
+    modalTitle: {
+      fontSize: 18,
+      fontFamily: 'Afacad-Bold',
+      marginBottom: 20,
+      textAlign: 'center',
+      color: colors.primaryBlack,
+    },
 
-  modalInput: {
-    borderWidth: 1,
-    borderColor: '#DDE6F0',
-    borderRadius: 8,
-    padding: 12,
-    textAlignVertical: 'top',
-    marginBottom: 20,
-    fontSize: 14,
-    color: '#000000',
-    backgroundColor: '#FAFAFA',
-    minHeight: 100,
-  },
+    ratingComponent: {
+      alignSelf: 'center',
+      marginBottom: 20,
+      backgroundColor: 'transparent',
+    },
 
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
+    modalInput: {
+      borderWidth: 1,
+      borderColor: colors.borderColor,
+      borderRadius: 8,
+      padding: 12,
+      textAlignVertical: 'top',
+      marginBottom: 20,
+      fontSize: 14,
+      color: colors.primaryBlack,
+      backgroundColor: colors.inputBackground,
+      minHeight: 100,
+      fontFamily: 'Afacad-Regular',
+    },
 
-  modalCancelButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    backgroundColor: '#E0E0E0',
-  },
+    modalActions: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      gap: 12,
+    },
 
-  modalCancelText: {
-    color: '#666666',
-    fontWeight: '600',
-    fontSize: 14,
-  },
+    modalCancelButton: {
+      flex: 1,
+      paddingVertical: 12,
+      borderRadius: 8,
+      alignItems: 'center',
+      backgroundColor: colors.inputBackground,
+      borderWidth: 1,
+      borderColor: colors.borderColor,
+    },
 
-  modalButton: {
-    flex: 1,
-    backgroundColor: '#005A93',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
+    modalCancelText: {
+      color: colors.textSecondary,
+      fontFamily: 'Afacad-SemiBold',
+      fontSize: 14,
+    },
 
-  // ===== AVALIAÇÃO EXIBIDA =====
-  reviewSection: {
-    marginTop: 8,
-    padding: 10,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 6,
-    borderLeftWidth: 3,
-    borderLeftColor: '#FFC107',
-  },
-
-  reviewHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-
-  reviewLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#666666',
-    marginRight: 8,
-  },
-
-  reviewStarsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  reviewComment: {
-    fontSize: 12,
-    color: '#333333',
-    lineHeight: 16,
-    fontStyle: 'italic',
-  },
-});
-
-export const getStatusStyle = (
-  status: 'pending' | 'confirmed' | 'completed' | 'canceled',
-) => {
-  switch (status) {
-    case 'pending':
-      return {
-        text: '⏱ Pendente',
-        color: '#FC8200',
-        backgroundColor: '#FC8200',
-      };
-    case 'confirmed':
-      return {
-        text: '✓ Confirmado',
-        color: '#22843B',
-        backgroundColor: '#22843B',
-      };
-    case 'completed':
-      return {
-        text: '✓ Concluído',
-        color: '#005A93',
-        backgroundColor: '#005A93',
-      };
-    case 'canceled':
-      return {
-        text: '✕ Cancelado',
-        color: '#DC2626',
-        backgroundColor: '#DC2626',
-      };
-    default:
-      return {
-        text: 'Desconhecido',
-        color: '#666666',
-        backgroundColor: '#666666',
-      };
-  }
-};
+    modalConfirmButton: {
+      flex: 1,
+      backgroundColor: colors.primaryBlue,
+      paddingVertical: 12,
+      borderRadius: 8,
+      alignItems: 'center',
+    },
+  });
