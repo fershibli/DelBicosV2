@@ -43,9 +43,9 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
   const colors = useColors();
   const styles = createStyles(colors);
-  // const isWebOrLargeScreen = Platform.OS === 'web' || width > 768;
+
   const isWebOrLargeScreen = width > 768;
-  const logo = theme === ThemeMode.DARK ? DelBicosLogoDark : DelBicosLogo;
+  const logo = isDark ? DelBicosLogoDark : DelBicosLogo;
   const headerIconColor = isDark ? colors.primaryBlack : colors.primaryBlue;
   const { user, signOut } = useUserStore();
   const { address: userAddress } = useUserStore();
@@ -348,10 +348,14 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                     <FontAwesome
                       name="sign-out"
                       size={18}
-                      color="#D32F2F"
+                      color={colors.primaryRed}
                       style={styles.menuIcon}
                     />
-                    <Text style={[styles.menuOptionText, { color: '#D32F2F' }]}>
+                    <Text
+                      style={[
+                        styles.menuOptionText,
+                        { color: colors.primaryRed },
+                      ]}>
                       Deslogar
                     </Text>
                   </View>
@@ -430,7 +434,11 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
               fontVariant="AfacadRegular15"
               onPress={openMapModal}
               endIcon={
-                <FontAwesome name="chevron-down" size={12} color="#FFFFFF" />
+                <FontAwesome
+                  name="chevron-down"
+                  size={12}
+                  color={colors.primaryWhite}
+                />
               }>
               {!!city && !!state ? `${city} - ${state}` : 'Localização'}
             </Button>
@@ -458,7 +466,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                         },
                       ]}>
                       <Image
-                        source={require('../../../assets/logo.png')}
+                        source={require('@assets/logo.png')}
                         style={styles.profileImage}
                       />
                     </View>
@@ -487,10 +495,14 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                     <FontAwesome
                       name="sign-out"
                       size={18}
-                      color="#D32F2F"
+                      color={colors.primaryRed}
                       style={styles.menuIcon}
                     />
-                    <Text style={[styles.menuOptionText, { color: '#D32F2F' }]}>
+                    <Text
+                      style={[
+                        styles.menuOptionText,
+                        { color: colors.primaryRed },
+                      ]}>
                       Deslogar
                     </Text>
                   </View>
@@ -536,11 +548,12 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
           <TextInput
             style={styles.searchInput}
             placeholder="Eletricista, Encanador, Diarista..."
+            placeholderTextColor={colors.textTertiary}
             value={search}
             onChangeText={setSearch}
           />
           <TouchableOpacity style={styles.searchButton}>
-            <FontAwesome name="search" size={16} color="#666" />
+            <FontAwesome name="search" size={16} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
       </View>
@@ -555,7 +568,11 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Selecione sua localização</Text>
               <TouchableOpacity onPress={() => setIsMapModalVisible(false)}>
-                <FontAwesome name="close" size={24} color="#666" />
+                <FontAwesome
+                  name="close"
+                  size={24}
+                  color={colors.textSecondary}
+                />
               </TouchableOpacity>
             </View>
 
@@ -567,7 +584,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}>
-                  <ActivityIndicator size="large" color="#003366" />
+                  <ActivityIndicator size="large" color={colors.primaryBlue} />
                 </View>
               ) : (
                 <MapComponent
@@ -587,7 +604,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
               onPress={handleConfirmLocation}
               disabled={isLocationLoading || !tempMarker}>
               {isLocationLoading ? (
-                <ActivityIndicator color="#FFFFFF" />
+                <ActivityIndicator color={colors.primaryWhite} />
               ) : (
                 <Text style={styles.modalButtonText}>
                   Confirmar Localização
