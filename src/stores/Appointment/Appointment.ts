@@ -13,17 +13,20 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
   loading: false,
 
   fetchAppointments: async () => {
-    set({ loading: true });
+    set({ loading: true, appointments: [] });
     try {
       const { user } = useUserStore.getState();
-      if (!user) {
-        throw new Error('Usuário não autenticado para buscar agendamentos.');
-      }
+      if (!user) throw new Error('Usuário não autenticado.');
 
       const endpoint = `api/appointments/user/${user.id}`;
       const response = await backendHttpClient.get(endpoint);
 
-      set({ appointments: response.data, loading: false });
+      const sortedData = response.data.sort(
+        (a: Appointment, b: Appointment) =>
+          new Date(b.start_time).getTime() - new Date(a.start_time).getTime(),
+      );
+
+      set({ appointments: sortedData, loading: false });
     } catch (error) {
       console.error('Failed to fetch appointments:', error);
       set({ appointments: [], loading: false });
