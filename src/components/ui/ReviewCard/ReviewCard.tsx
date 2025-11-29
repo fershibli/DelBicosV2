@@ -33,23 +33,29 @@ export function ReviewCard({
         <Rating
           type="star"
           ratingCount={5}
-          imageSize={20}
+          imageSize={16}
           readonly
           startingValue={rating}
-          tintColor="#fff"
+          tintColor={colors.cardBackground}
           style={styles.stars}
         />
       </View>
 
       {/* Title */}
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title} numberOfLines={1}>
+        {title}
+      </Text>
 
       {/* Service */}
-      <Text style={styles.service}>{serviceTitle}</Text>
+      <Text style={styles.service} numberOfLines={1}>
+        {serviceTitle}
+      </Text>
 
       {/* Review comment */}
       {review && review.trim() !== '' && (
-        <Text style={styles.reviewText}>{review}</Text>
+        <Text style={styles.reviewText} numberOfLines={4}>
+          {review}
+        </Text>
       )}
 
       {/* Client info */}
@@ -61,7 +67,9 @@ export function ReviewCard({
           style={styles.avatar}
         />
         <View style={styles.clientInfo}>
-          <Text style={styles.clientName}>{clientName}</Text>
+          <Text style={styles.clientName} numberOfLines={1}>
+            {clientName}
+          </Text>
           <Text style={styles.date}>{date}</Text>
         </View>
       </View>
