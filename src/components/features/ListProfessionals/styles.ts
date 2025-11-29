@@ -5,9 +5,11 @@ export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: colors.inputBackground,
     },
 
     loadingContainer: {
+      flex: 1,
       paddingVertical: 40,
       alignItems: 'center',
       justifyContent: 'center',
@@ -23,7 +25,7 @@ export const createStyles = (colors: ColorsType) =>
     },
 
     cardWrapper: {
-      padding: 6,
+      alignItems: 'stretch',
     },
 
     footerContainer: {
@@ -34,7 +36,7 @@ export const createStyles = (colors: ColorsType) =>
     },
     footerText: {
       fontSize: 14,
-      color: colors.textTertiary || '#6c757d',
+      color: colors.textTertiary,
       fontFamily: 'Afacad-Regular',
       textAlign: 'center',
     },
@@ -43,10 +45,18 @@ export const createStyles = (colors: ColorsType) =>
       padding: 32,
       alignItems: 'center',
       justifyContent: 'center',
+      minHeight: 200,
     },
     emptyText: {
       fontSize: 16,
-      color: colors.textTertiary || '#6c757d',
+      color: colors.textSecondary,
+      textAlign: 'center',
+      fontFamily: 'Afacad-Regular',
+      marginBottom: 8,
+    },
+    emptySubtext: {
+      fontSize: 14,
+      color: colors.textTertiary,
       textAlign: 'center',
       fontFamily: 'Afacad-Regular',
     },
