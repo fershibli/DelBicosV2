@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createInputBaseStyle = (colors: any) => ({
+export const createInputBaseStyle = (colors: ColorsType) => ({
   input: {
-    backgroundColor: colors.cardBackground,
-    borderRadius: 8,
+    backgroundColor: colors.inputBackground,
+    borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
@@ -13,13 +14,14 @@ export const createInputBaseStyle = (colors: any) => ({
     color: colors.primaryBlack,
   },
   inputError: {
-    borderColor: '#D32F2F',
+    borderColor: colors.errorText,
     borderWidth: 1.5,
   },
 });
 
-export const createStyles = (colors: any) => {
+export const createStyles = (colors: ColorsType) => {
   const inputBaseStyle = createInputBaseStyle(colors);
+
   return StyleSheet.create({
     container: {
       width: '100%',
@@ -38,9 +40,9 @@ export const createStyles = (colors: any) => {
       ...inputBaseStyle.inputError,
     },
     errorText: {
-      color: '#D32F2F',
+      color: colors.errorText,
       fontSize: 14,
-      marginTop: 4,
+      marginTop: 6,
       fontFamily: 'Afacad-Regular',
     },
   });
