@@ -12,18 +12,18 @@ import { initGAWeb } from './utils/ga-web';
 import { initClarityWeb } from './utils/clarity';
 import { GOOGLE_ANALYTICS_ID, CLARITY_ID } from './config/varEnvs';
 import VLibrasSetup from '@components/features/Accessibility/VLibrasSetup';
+import { registerTokenProvider } from '@lib/helpers/httpClient';
+import { useUserStore } from '@stores/User';
 
 Asset.loadAsync([...NavigationAssets]);
 
 SplashScreen.preventAutoHideAsync();
 
-// Componente auxiliar para gerenciar notificações
 function NotificationManager() {
-  // Polling desativado - notificações só aparecem ao clicar no botão recarregar
-  // useNotifications(user?.id?.toString() || '', 30000);
-
   return null;
 }
+
+registerTokenProvider(() => useUserStore.getState().token);
 
 export function App() {
   const [loaded, error] = useFonts({
