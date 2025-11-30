@@ -23,7 +23,6 @@ type SubCategoryRouteParams = {
   serviceId?: number;
 };
 
-// Configuração de Locale
 LocaleConfig.locales['pt-br'] = {
   monthNames: [
     'Janeiro',
@@ -67,7 +66,6 @@ LocaleConfig.locales['pt-br'] = {
 } as any;
 LocaleConfig.defaultLocale = 'pt-br';
 
-// Subcomponente Botão
 const SubCategoryButton: React.FC<{
   item: SubCategory;
   onPress: () => void;
@@ -79,25 +77,20 @@ const SubCategoryButton: React.FC<{
   const colors = useColors();
   const styles = createStyles(colors);
 
-  // Lógica de estilos memoizada
   const styleProps = useMemo(() => {
     let bg = colors.cardBackground;
     let border = colors.borderColor;
     let text = colors.primaryOrange;
 
-    // Active State
     if (isActive) {
       bg = colors.primaryBlue;
       border = colors.primaryBlue;
       text = colors.primaryWhite;
-    }
-    // Hover State (Web)
-    else if (isHovered) {
-      bg = colors.backgroundElevated; // Leve destaque
+    } else if (isHovered) {
+      bg = colors.backgroundElevated;
       border = colors.primaryOrange;
     }
 
-    // High Contrast Override
     if (isHighContrast) {
       border = colors.primaryBlack;
       if (isActive) {
@@ -123,8 +116,7 @@ const SubCategoryButton: React.FC<{
       onHoverIn={() => setIsHovered(true)}
       onHoverOut={() => setIsHovered(false)}
       accessibilityRole="button"
-      accessibilityState={{ selected: isActive }}
-      accessibilityLabel={`Serviço ${item.title}`}>
+      accessibilityState={{ selected: isActive }}>
       <Text style={[styles.subCategoryText, { color: styleProps.text }]}>
         {item.title}
       </Text>
@@ -138,6 +130,7 @@ function SubCategoryScreen() {
   const { categoryId, categoryTitle, serviceId } =
     route.params as SubCategoryRouteParams;
   const { width } = useWindowDimensions();
+  const { theme } = useThemeStore();
 
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSubCategory, setSelectedSubCategory] = useState<number | null>(
@@ -150,6 +143,7 @@ function SubCategoryScreen() {
     useSubCategoryStore();
   const colors = useColors();
   const styles = createStyles(colors);
+  const isDark = theme === ThemeMode.DARK;
 
   useEffect(() => {
     const loadSubCategories = async () => {
@@ -157,13 +151,7 @@ function SubCategoryScreen() {
       await fetchSubCategoriesByCategoryId(categoryId);
       setIsLoading(false);
     };
-
     loadSubCategories();
-
-    // Cleanup (opcional se store for persistente)
-    return () => {
-      // useSubCategoryStore.setState({ subCategories: [] });
-    };
   }, [categoryId, fetchSubCategoriesByCategoryId]);
 
   const handleContinue = () => {
@@ -178,20 +166,16 @@ function SubCategoryScreen() {
     });
   };
 
-  // Configuração de Datas Marcadas
   const markedDates = useMemo(
     () => ({
       [selectedDate || '']: {
         selected: true,
-        selectedColor: colors.primaryBlue,
         disableTouchEvent: true,
-        selectedTextColor: colors.primaryWhite,
       },
     }),
-    [selectedDate, colors],
+    [selectedDate],
   );
 
-  // Layout Responsivo
   const numColumns = width > 768 ? 2 : 1;
   const isButtonDisabled = !selectedSubCategory || !selectedDate;
 
@@ -201,7 +185,6 @@ function SubCategoryScreen() {
       contentContainerStyle={styles.scrollContainer}
       showsVerticalScrollIndicator={false}>
       <View style={styles.mainContent}>
-        {/* COLUNA DA ESQUERDA: SERVIÇOS */}
         <View style={styles.leftColumn}>
           <Text style={styles.pageTitle}>{categoryTitle || 'Serviços'}</Text>
 
@@ -212,8 +195,8 @@ function SubCategoryScreen() {
               data={subCategories}
               keyExtractor={(item) => item.id.toString()}
               numColumns={numColumns}
-              key={`grid-${numColumns}`} // Força re-render
-              scrollEnabled={false} // Rola junto com a ScrollView pai
+              key={`grid-${numColumns}`}
+              scrollEnabled={false}
               contentContainerStyle={styles.subCategoryListContainer}
               renderItem={({ item }) => (
                 <SubCategoryButton
@@ -226,25 +209,37 @@ function SubCategoryScreen() {
           )}
         </View>
 
-        {/* COLUNA DA DIREITA: DATA */}
         <View style={styles.rightColumn}>
           <Text style={styles.pageTitle}>Qual Data?</Text>
 
           <View style={styles.calendarContainer}>
             <Calendar
+              key={isDark ? 'dark-cal' : 'light-cal'}
               theme={{
+                // --- FUNDO ---
                 calendarBackground: 'transparent',
-                monthTextColor: colors.primaryWhite,
-                textMonthFontSize: 18,
+
+                // --- TEXTOS ---
+                textDayFontFamily: 'Afacad-Regular',
                 textMonthFontFamily: 'Afacad-Bold',
-                arrowColor: colors.primaryWhite,
-                textSectionTitleColor: 'rgba(255,255,255,0.8)',
-                textDayHeaderFontFamily: 'Afacad-Regular',
-                dayTextColor: colors.primaryWhite,
-                todayTextColor: colors.primaryBlue, // Destaque "hoje"
-                selectedDayBackgroundColor: colors.primaryBlue,
-                selectedDayTextColor: colors.primaryWhite,
-                textDisabledColor: 'rgba(255, 255, 255, 0.3)',
+                textDayHeaderFontFamily: 'Afacad-SemiBold',
+
+                monthTextColor: '#ffffff',
+                textSectionTitleColor: '#ffffff',
+                dayTextColor: '#ffffff',
+                textDisabledColor: 'rgba(255, 255, 255, 0.4)',
+
+                // --- SETAS ---
+                arrowColor: '#ffffff',
+                disabledArrowColor: 'rgba(255, 255, 255, 0.4)',
+
+                // --- HOJE ---
+                todayTextColor: '#ffffff',
+                todayDotColor: '#ffffff',
+
+                // --- SELEÇÃO ---
+                selectedDayBackgroundColor: '#ffffff',
+                selectedDayTextColor: colors.primaryOrange,
               }}
               onDayPress={(day) => setSelectedDate(day.dateString)}
               markedDates={markedDates}
@@ -257,7 +252,6 @@ function SubCategoryScreen() {
             style={[
               styles.continueButton,
               isButtonDisabled && styles.continueButtonDisabled,
-              // Efeito Hover
               isButtonHovered &&
                 !isButtonDisabled && {
                   backgroundColor: colors.primaryOrangeHover || '#CC6800',
@@ -266,9 +260,7 @@ function SubCategoryScreen() {
             onPress={handleContinue}
             disabled={isButtonDisabled}
             onHoverIn={() => setIsButtonHovered(true)}
-            onHoverOut={() => setIsButtonHovered(false)}
-            accessibilityRole="button"
-            accessibilityState={{ disabled: isButtonDisabled }}>
+            onHoverOut={() => setIsButtonHovered(false)}>
             <Text style={styles.continueButtonText}>Continuar</Text>
           </Pressable>
         </View>

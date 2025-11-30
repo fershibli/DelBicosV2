@@ -11,8 +11,6 @@ export const createStyles = (colors: ColorsType) =>
       flexGrow: 1,
       padding: 24,
     },
-
-    // Layout Responsivo
     mainContent: {
       flexDirection: Platform.OS === 'web' ? 'row' : 'column',
       width: '100%',
@@ -27,7 +25,6 @@ export const createStyles = (colors: ColorsType) =>
       minWidth: Platform.OS === 'web' ? 300 : '100%',
       marginTop: Platform.OS !== 'web' ? 24 : 0,
     },
-
     pageTitle: {
       fontSize: 24,
       fontFamily: 'Afacad-Bold',
@@ -37,8 +34,6 @@ export const createStyles = (colors: ColorsType) =>
     subCategoryListContainer: {
       paddingBottom: 16,
     },
-
-    // Botão de Subcategoria
     subCategoryButton: {
       flex: 1,
       minHeight: 60,
@@ -68,7 +63,6 @@ export const createStyles = (colors: ColorsType) =>
       textAlign: 'center',
     },
 
-    // Calendário
     calendarContainer: {
       backgroundColor: colors.primaryOrange,
       borderRadius: 16,
@@ -108,7 +102,6 @@ export const createStyles = (colors: ColorsType) =>
       fontFamily: 'Afacad-Bold',
       fontSize: 16,
     },
-
     footer: {
       padding: 20,
       textAlign: 'center',
