@@ -1,24 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import {
   ImageBackground,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
   ActivityIndicator,
-  Platform,
   StatusBar,
   Image,
 } from 'react-native';
+
+// Componentes de Conteúdo das Abas
 import { SobreContent } from './SobreContent';
 import { ServicosContent } from './ServicosContent';
 import { GaleriaContent } from './GaleriaContent';
 import { AvaliacoesContent } from './AvaliacoesContent';
+
 import { useProfessionalStore } from '@stores/Professional';
 import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 
 type TabType = 'sobre' | 'servicos' | 'galeria' | 'avaliacoes';
 
@@ -35,6 +37,7 @@ function PartnerProfileScreen() {
   const colors = useColors();
   const styles = createStyles(colors);
 
+  // 1. Effect para carregar dados
   useEffect(() => {
     const loadProfessional = async () => {
       setIsLoading(true);
@@ -44,6 +47,27 @@ function PartnerProfileScreen() {
     loadProfessional();
   }, [id, fetchProfessionalById]);
 
+  const parceiro = selectedProfessional;
+
+  // 2. useMemo declarado ANTES de qualquer retorno condicional
+  const galleryImages = useMemo(() => {
+    // Se não tiver parceiro carregado ainda, retorna vazio
+    if (!parceiro) return [];
+
+    // Acessando Gallery via cast 'as any' para evitar erro de tipagem se a interface estiver desatualizada
+    const galleryFromBackend = (parceiro as any).Gallery || [];
+
+    const imgs = [
+      parceiro.User.banner_uri,
+      parceiro.User.avatar_uri,
+      ...(parceiro.Services?.map((s) => s.banner_uri) || []),
+      ...galleryFromBackend.map((g: any) => g.uri),
+    ].filter(Boolean) as string[];
+
+    return imgs.map((url, index) => ({ id: String(index), url }));
+  }, [parceiro]);
+
+  // 3. Early Returns (Loading e Erro) agora podem acontecer seguramente
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -53,7 +77,7 @@ function PartnerProfileScreen() {
     );
   }
 
-  if (!selectedProfessional) {
+  if (!parceiro) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>Profissional não encontrado.</Text>
@@ -66,12 +90,12 @@ function PartnerProfileScreen() {
     );
   }
 
-  const parceiro = selectedProfessional;
+  // --- Variáveis de Renderização ---
 
   const coverImageUri =
     parceiro.User.banner_uri ||
     parceiro.User.avatar_uri ||
-    `https://picsum.photos/seed/${parceiro.id}/800/600`;
+    `https://via.placeholder.com/800x600`;
 
   const avatarUri = parceiro.User.avatar_uri;
 
@@ -90,19 +114,11 @@ function PartnerProfileScreen() {
           />
         );
       case 'servicos':
-        return <ServicosContent servicos={parceiro.Services} />;
+        return <ServicosContent servicos={parceiro.Services || []} />;
       case 'galeria':
-        const images = [
-          parceiro.User.banner_uri,
-          parceiro.User.avatar_uri,
-          ...parceiro.Services.map((s) => s.banner_uri),
-        ]
-          .filter(Boolean)
-          .map((url, index) => ({ id: String(index), url: url as string }));
-
-        return <GaleriaContent imagens={images} />;
+        return <GaleriaContent imagens={galleryImages} />;
       case 'avaliacoes':
-        return <AvaliacoesContent avaliacoes={parceiro.Appointments} />;
+        return <AvaliacoesContent avaliacoes={parceiro.Appointments || []} />;
       default:
         return null;
     }
@@ -123,12 +139,12 @@ function PartnerProfileScreen() {
           style={styles.headerImage}
           resizeMode="cover">
           <LinearGradient
-            colors={['rgba(0,0,0,0.5)', 'transparent', 'rgba(0,0,0,0.2)']}
+            colors={['rgba(0,0,0,0.6)', 'transparent', 'rgba(0,0,0,0.4)']}
             style={styles.gradientOverlay}>
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.goBack()}>
-              <MaterialIcons name="arrow-back" size={28} color="white" />
+              <MaterialIcons name="arrow-back" size={24} color="white" />
             </TouchableOpacity>
           </LinearGradient>
         </ImageBackground>
@@ -144,7 +160,7 @@ function PartnerProfileScreen() {
                 <View style={[styles.avatarImage, styles.avatarFallback]}>
                   <FontAwesome
                     name="user"
-                    size={36}
+                    size={32}
                     color={colors.textTertiary}
                   />
                 </View>
@@ -194,7 +210,10 @@ function PartnerProfileScreen() {
                 styles.tabItem,
                 activeTab === tab && styles.tabItemActive,
               ]}
-              onPress={() => setActiveTab(tab)}>
+              onPress={() => setActiveTab(tab)}
+              activeOpacity={0.7}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: activeTab === tab }}>
               <Text
                 style={[
                   styles.tabText,
@@ -212,210 +231,5 @@ function PartnerProfileScreen() {
     </View>
   );
 }
-
-const createStyles = (colors: any) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.secondaryGray,
-    },
-    loadingContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: colors.primaryWhite,
-    },
-    loadingText: {
-      marginTop: 12,
-      fontSize: 16,
-      fontFamily: 'Afacad-Regular',
-      color: colors.primaryBlack,
-    },
-    errorContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 20,
-    },
-    errorText: {
-      fontSize: 18,
-      fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlack,
-      marginBottom: 20,
-    },
-    backButtonError: {
-      backgroundColor: colors.primaryOrange,
-      paddingHorizontal: 24,
-      paddingVertical: 12,
-      borderRadius: 8,
-    },
-    backButtonTextError: {
-      color: colors.primaryWhite,
-      fontFamily: 'Afacad-Bold',
-    },
-
-    // Header Styles
-    headerWrapper: {
-      position: 'relative',
-      marginBottom: 70,
-    },
-    headerImage: {
-      width: '100%',
-      height: 220,
-    },
-    gradientOverlay: {
-      flex: 1,
-      paddingTop: Platform.OS === 'android' ? 45 : 25,
-      paddingHorizontal: 16,
-    },
-    backButton: {
-      width: 40,
-      height: 40,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 20,
-      backgroundColor: 'rgba(0,0,0,0.25)',
-    },
-
-    // Floating Card Styles
-    floatingInfoCard: {
-      position: 'absolute',
-      bottom: -50,
-      left: 16,
-      right: 16,
-      backgroundColor: colors.primaryWhite,
-      borderRadius: 16,
-      ...Platform.select({
-        ios: {
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.1,
-          shadowRadius: 8,
-        },
-        android: {
-          elevation: 6,
-        },
-        web: {
-          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-        },
-      }),
-    },
-    floatingCardContentRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: 16,
-    },
-
-    // Estilos do Avatar
-    avatarContainer: {
-      marginRight: 16,
-      ...Platform.select({
-        ios: {
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-        },
-        android: { elevation: 3 },
-      }),
-    },
-    avatarImage: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      borderWidth: 3,
-      borderColor: colors.primaryWhite,
-    },
-    avatarFallback: {
-      backgroundColor: colors.secondaryGray,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-
-    // Coluna de Informações (à direita do avatar)
-    infoColumn: {
-      flex: 1,
-      justifyContent: 'center',
-    },
-
-    cardHeaderRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-      marginBottom: 6,
-    },
-    profileName: {
-      fontSize: 20,
-      fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlack,
-      flex: 1,
-      marginRight: 8,
-      lineHeight: 24,
-    },
-    ratingBadge: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: '#FFF8E1',
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 8,
-      gap: 4,
-    },
-    ratingValue: {
-      fontSize: 14,
-      fontFamily: 'Afacad-Bold',
-      color: '#FFA000',
-    },
-    locationRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 6,
-    },
-    locationText: {
-      fontSize: 14,
-      fontFamily: 'Afacad-Regular',
-      color: colors.textSecondary,
-    },
-    reviewCount: {
-      fontSize: 14,
-      fontFamily: 'Afacad-Regular',
-      color: colors.textTertiary,
-    },
-
-    // Tabs Styles
-    tabsContainer: {
-      flexDirection: 'row',
-      backgroundColor: colors.primaryWhite,
-      borderBottomWidth: 1,
-      borderBottomColor: '#E0E0E0',
-      paddingHorizontal: 16,
-      paddingTop: 0,
-      marginTop: 0,
-    },
-    tabItem: {
-      flex: 1,
-      alignItems: 'center',
-      paddingVertical: 14,
-      borderBottomWidth: 3,
-      borderBottomColor: 'transparent',
-    },
-    tabItemActive: {
-      borderBottomColor: colors.primaryOrange,
-    },
-    tabText: {
-      fontSize: 15,
-      fontFamily: 'Afacad-Regular',
-      color: colors.textTertiary,
-    },
-    tabTextActive: {
-      fontFamily: 'Afacad-Bold',
-      color: colors.primaryOrange,
-    },
-
-    // Content Wrapper
-    contentWrapper: {
-      flex: 1,
-    },
-  });
 
 export default PartnerProfileScreen;
