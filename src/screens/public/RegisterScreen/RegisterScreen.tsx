@@ -1,38 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView,
   View,
   Text,
   TouchableOpacity,
-  Alert,
   Switch,
   ActivityIndicator,
-  TextInput,
   Image,
-  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
+
 import CustomTextInput from '@components/ui/CustomTextInput';
 import CpfInput from '@components/ui/CpfInput';
 import DateInput from '@components/ui/DateInput';
-import { createStyles } from './styles';
-import { createInputBaseStyle } from '@components/ui/CustomTextInput/styles';
-import { isValidCPF } from '../../../utils/validators';
-import LogoV3 from '@assets/LogoV3.png';
-import { useUserStore } from '@stores/User';
 import PhoneInput from '@components/ui/PhoneInput';
+import PasswordInput from '@components/ui/PasswordInput';
+import { FeedbackModal } from '@components/ui/FeedbackModal';
+
+import {
+  AddressForm,
+  AddressFormData,
+} from '@components/features/AddressForm/AddressForm';
+
+import { createStyles } from './styles';
+import { isValidCPF } from '@utils/validators';
+import { useUserStore } from '@stores/User';
 import { useColors } from '@theme/ThemeProvider';
-import { AddressForm, AddressFormData } from '@components/features/AddressForm';
 import { HTTP_DOMAIN } from '@config/varEnvs';
-import { FeedbackModal } from '@components/ui/FeedbackModal/FeedbackModal';
+import LogoV3 from '@assets/LogoV3.png';
 
 type RegisterFormData = {
   name: string;
   surname: string;
   birthDate: string;
   cpf: string;
-  location: string;
   email: string;
   phone: string;
   password: string;
@@ -41,11 +43,10 @@ type RegisterFormData = {
 
 function RegisterScreen() {
   const navigation = useNavigation();
-  const [isLocationLoading, setLocationLoading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isTimeoutError, setIsTimeoutError] = useState(false);
+
   const { setVerificationEmail } = useUserStore();
+
   const [feedbackVisible, setFeedbackVisible] = useState(false);
   const [feedbackData, setFeedbackData] = useState({
     type: 'info' as 'success' | 'error' | 'info',
@@ -55,7 +56,6 @@ function RegisterScreen() {
   });
 
   const colors = useColors();
-  const inputBaseStyle = createInputBaseStyle(colors);
   const styles = createStyles(colors);
 
   const {
@@ -70,7 +70,6 @@ function RegisterScreen() {
       surname: '',
       birthDate: '',
       cpf: '',
-      location: '',
       email: '',
       phone: '',
       password: '',
@@ -125,6 +124,7 @@ function RegisterScreen() {
           message: `Enviamos um código de verificação para ${formData.email}. Verifique sua caixa de entrada.`,
           onClose: () => {
             setFeedbackVisible(false);
+            // @ts-ignore
             navigation.navigate('VerificationScreen');
           },
         });
@@ -132,7 +132,6 @@ function RegisterScreen() {
       } else {
         const errorMessage =
           data.error || 'Ocorreu um problema ao realizar o cadastro.';
-
         setFeedbackData({
           type: 'error',
           title: 'Erro no Cadastro',
@@ -156,33 +155,14 @@ function RegisterScreen() {
     }
   };
 
-  useEffect(() => {
-    if (isTimeoutError && isLocationLoading) {
-      setLocationLoading(false);
-      Platform.select({
-        web: () => {
-          alert(
-            'Serviço de Localização Indisponível.\n Tente novamente mais tarde.',
-          );
-        },
-        default: () => {
-          Alert.alert(
-            'Serviço de Localização Indisponível',
-            'Tente novamente mais tarde.',
-          );
-        },
-      })();
-      setIsTimeoutError(false);
-    }
-  }, [isTimeoutError, isLocationLoading]);
-
   return (
     <View style={styles.container}>
       <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={styles.contentContainer}
-        keyboardShouldPersistTaps="handled">
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home' as never)}>
           <Image source={LogoV3} style={styles.logo} resizeMode="contain" />
         </TouchableOpacity>
 
@@ -192,13 +172,13 @@ function RegisterScreen() {
             Preencha os campos abaixo para começar.
           </Text>
 
-          {/* --- Campos Pessoais --- */}
+          {/* --- Campos Pessoais (Grid) --- */}
           <View style={styles.row}>
             <View style={styles.col}>
               <Controller
                 control={control}
                 name="name"
-                rules={{ required: 'O nome é obrigatório' }}
+                rules={{ required: 'Nome obrigatório' }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <CustomTextInput
                     label="Nome"
@@ -215,7 +195,7 @@ function RegisterScreen() {
               <Controller
                 control={control}
                 name="surname"
-                rules={{ required: 'O sobrenome é obrigatório' }}
+                rules={{ required: 'Sobrenome obrigatório' }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <CustomTextInput
                     label="Sobrenome"
@@ -234,15 +214,16 @@ function RegisterScreen() {
             control={control}
             name="birthDate"
             rules={{
-              required: 'Data de nascimento é obrigatória.',
+              required: 'Data de nascimento obrigatória',
               minLength: { value: 10, message: 'Data incompleta' },
             }}
             render={({ field: { onChange, value } }) => (
-              <CustomTextInput
+              <DateInput
                 label="Data de Nascimento"
-                error={errors.birthDate}>
-                <DateInput value={value} onChangeText={onChange} />
-              </CustomTextInput>
+                value={value}
+                onChangeText={onChange}
+                error={errors.birthDate?.message}
+              />
             )}
           />
 
@@ -250,17 +231,16 @@ function RegisterScreen() {
             control={control}
             name="cpf"
             rules={{
-              required: 'O CPF é obrigatório',
+              required: 'CPF obrigatório',
               validate: (value) => isValidCPF(value) || 'CPF inválido',
             }}
             render={({ field: { onChange, value } }) => (
-              <CustomTextInput label="CPF" error={errors.cpf}>
-                <CpfInput
-                  value={value}
-                  onChangeText={onChange}
-                  error={!!errors.cpf}
-                />
-              </CustomTextInput>
+              <CpfInput
+                label="CPF"
+                value={value}
+                onChangeText={onChange}
+                error={errors.cpf?.message}
+              />
             )}
           />
 
@@ -268,10 +248,10 @@ function RegisterScreen() {
             control={control}
             name="email"
             rules={{
-              required: 'O e-mail é obrigatório',
+              required: 'E-mail obrigatório',
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Digite um e-mail válido.',
+                message: 'E-mail inválido',
               },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
@@ -292,62 +272,49 @@ function RegisterScreen() {
             control={control}
             name="phone"
             rules={{
-              required: 'O telefone é obrigatório',
-              minLength: {
-                value: 10,
-                message: 'Telefone inválido',
-              },
+              required: 'Telefone obrigatório',
+              minLength: { value: 10, message: 'Telefone inválido' },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput label="Telefone" error={errors.phone}>
-                <PhoneInput
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={!!errors.phone}
-                />
-              </CustomTextInput>
+              <PhoneInput
+                label="Telefone"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.phone?.message}
+              />
             )}
           />
 
-          <AddressForm control={control} errors={errors} setValue={setValue} />
+          <View style={{ zIndex: 100, width: '100%' }}>
+            <AddressForm
+              control={control}
+              errors={errors}
+              setValue={setValue}
+            />
+          </View>
 
           <Controller
             control={control}
             name="password"
             rules={{
-              required: 'A senha é obrigatória',
+              required: 'Senha obrigatória',
               minLength: { value: 6, message: 'Mínimo 6 caracteres' },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <CustomTextInput label="Senha" error={errors.password}>
-                <View
-                  style={[
-                    styles.passwordContainer,
-                    errors.password && styles.passwordContainerError,
-                  ]}>
-                  <TextInput
-                    style={[inputBaseStyle.input, styles.passwordInput]}
-                    placeholder="Crie uma senha forte"
-                    placeholderTextColor={colors.textTertiary}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    secureTextEntry={!passwordVisible}
-                    onSubmitEditing={handleSubmit(handleRegister)}
-                  />
-                  <TouchableOpacity
-                    style={styles.eyeButton}
-                    onPress={() => setPasswordVisible(!passwordVisible)}>
-                    <Text style={styles.eyeIcon}>
-                      {passwordVisible ? '👁️' : '👁️‍🗨️'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                <PasswordInput
+                  placeholder="Crie uma senha forte"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  error={!!errors.password}
+                />
               </CustomTextInput>
             )}
           />
 
+          {/* --- Termos --- */}
           <Controller
             control={control}
             name="acceptTerms"
@@ -361,12 +328,16 @@ function RegisterScreen() {
                   <Switch
                     value={value}
                     onValueChange={onChange}
-                    trackColor={{ false: '#767577', true: '#ffbf00' }}
-                    thumbColor={value ? '#ff7f00' : '#f4f3f4'}
+                    trackColor={{
+                      false: '#767577',
+                      true: colors.primaryOrange,
+                    }}
+                    thumbColor={colors.primaryWhite}
                   />
                   <Text style={styles.termsText}>
-                    Aceito os <Text style={styles.linkText}>termos de uso</Text>{' '}
-                    e <Text style={styles.linkText}>condições</Text>
+                    Aceito os{' '}
+                    <Text style={styles.linkTextBold}>termos de uso</Text> e{' '}
+                    <Text style={styles.linkTextBold}>condições</Text>
                   </Text>
                 </View>
                 {errors.acceptTerms && (
@@ -388,7 +359,8 @@ function RegisterScreen() {
               (!isValid || isSubmitting) && styles.buttonDisabled,
             ]}
             onPress={handleSubmit(handleRegister)}
-            disabled={!isValid || isSubmitting}>
+            disabled={!isValid || isSubmitting}
+            activeOpacity={0.8}>
             {isSubmitting ? (
               <ActivityIndicator color={colors.primaryWhite} />
             ) : (
@@ -396,7 +368,8 @@ function RegisterScreen() {
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Login' as never)}>
             <Text style={styles.linkText}>
               Já tem uma conta?{' '}
               <Text style={styles.linkTextBold}>Faça login</Text>
@@ -414,7 +387,7 @@ function RegisterScreen() {
       />
 
       <Text style={styles.footer}>
-        © DelBicos - 2025 – Todos os direitos reservados.
+        © DelBicos - {new Date().getFullYear()} – Todos os direitos reservados.
       </Text>
     </View>
   );
