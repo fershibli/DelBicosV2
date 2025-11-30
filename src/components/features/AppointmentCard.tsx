@@ -10,11 +10,13 @@ import {
 import { Rating } from 'react-native-ratings';
 import { FontAwesome } from '@expo/vector-icons';
 import { useColors } from '@theme/ThemeProvider';
-import { Appointment } from '@stores/Appointment/types';
+import { Appointment, AppointmentStatus } from '@stores/Appointment/types';
 
 interface AppointmentCardProps {
+  statusLabel: string;
+  statusColor: string;
   appointment: Appointment;
-  statusVariant: 'upcoming' | 'completed';
+  statusVariant: AppointmentStatus;
   isFavorite: boolean;
   onToggleFavorite: (apt: Appointment) => void;
   onOpenDetails: (apt: Appointment) => void;
@@ -22,6 +24,8 @@ interface AppointmentCardProps {
 }
 
 export const AppointmentCard: React.FC<AppointmentCardProps> = ({
+  statusLabel,
+  statusColor,
   appointment,
   statusVariant,
   isFavorite,
@@ -59,20 +63,12 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
         />
 
         {/* Badge de Status */}
-        <View
-          style={[
-            styles.statusBadge,
-            statusVariant === 'completed'
-              ? styles.badgeCompleted
-              : styles.badgeUpcoming,
-          ]}>
-          <Text style={styles.statusText}>
-            {statusVariant === 'completed' ? 'REALIZADO' : 'CONFIRMADO'}
-          </Text>
+        <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
+          <Text style={styles.statusText}>{statusLabel.toUpperCase()}</Text>
         </View>
 
         {/* Botão Favorito (Apenas Completados) */}
-        {statusVariant === 'completed' && (
+        {statusVariant === AppointmentStatus.COMPLETED && (
           <TouchableOpacity
             style={styles.favoriteButton}
             onPress={() => onToggleFavorite(appointment)}>
@@ -134,7 +130,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
             <Text style={styles.btnTextPrimary}>Detalhes</Text>
           </TouchableOpacity>
 
-          {statusVariant === 'completed' && onOpenRate && (
+          {statusVariant === AppointmentStatus.COMPLETED && onOpenRate && (
             <TouchableOpacity
               style={styles.rateButton}
               onPress={() => onOpenRate(appointment)}>
@@ -177,8 +173,6 @@ const createStyles = (colors: any) =>
       paddingVertical: 4,
       borderRadius: 4,
     },
-    badgeCompleted: { backgroundColor: colors.primaryGreen },
-    badgeUpcoming: { backgroundColor: colors.primaryBlue },
     statusText: {
       color: 'white',
       fontSize: 10,

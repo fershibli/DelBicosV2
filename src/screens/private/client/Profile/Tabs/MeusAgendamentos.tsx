@@ -11,12 +11,57 @@ import { useFavoriteStore } from '@stores/Favorite';
 import { useColors } from '@theme/ThemeProvider';
 import { AppointmentDetailsModal } from '@components/features/AppointmentDetailsModal';
 import { RateServiceModal } from '@components/features/RateServiceModal';
-import { Appointment } from '@stores/Appointment/types';
+import { Appointment, AppointmentStatus } from '@stores/Appointment/types';
 import { AppointmentCard } from '@components/features/AppointmentCard';
 import { FontAwesome } from '@expo/vector-icons';
+import { ColorsType } from '@theme/types';
+
+const appointmentStatusRenderInfo = (
+  colors: ColorsType,
+): {
+  [key in AppointmentStatus]: {
+    label: string;
+    icon: keyof typeof FontAwesome.glyphMap;
+    color: string;
+    emptyText: string;
+  };
+} => ({
+  [AppointmentStatus.PENDING]: {
+    label: 'Pendente',
+    icon: 'clock-o',
+    color: colors.primaryOrange,
+    emptyText: 'Você não tem agendamentos a serem confirmados.',
+  },
+  [AppointmentStatus.CONFIRMED]: {
+    label: 'Confirmado',
+    icon: 'check-circle-o',
+    color: colors.primaryGreen,
+    emptyText: 'Você não tem agendamentos futuros confirmados.',
+  },
+  [AppointmentStatus.COMPLETED]: {
+    label: 'Histórico',
+    icon: 'check-circle-o',
+    color: colors.primaryBlue,
+    emptyText: 'Nenhum agendamento realizado ainda.',
+  },
+  [AppointmentStatus.CANCELED]: {
+    label: 'Cancelado',
+    icon: 'times-circle',
+    color: '#FF0000',
+    emptyText: 'Nenhum agendamento cancelado.',
+  },
+});
+
+const appointmentStatusRenderOrder: AppointmentStatus[] = [
+  AppointmentStatus.PENDING,
+  AppointmentStatus.CONFIRMED,
+  AppointmentStatus.COMPLETED,
+  AppointmentStatus.CANCELED,
+];
 
 function MeusAgendamentos() {
-  const { appointments, fetchAppointments } = useAppointmentStore();
+  const { appointments, appointmentsByStatus, fetchAppointments } =
+    useAppointmentStore();
   const { addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
   const colors = useColors();
   const styles = createStyles(colors);
@@ -88,85 +133,61 @@ function MeusAgendamentos() {
       contentContainerStyle={{ paddingBottom: 40 }}>
       <Text style={styles.pageTitle}>Meus Agendamentos</Text>
 
-      {/* Seção: Próximos */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <FontAwesome
-            name="clock-o"
-            size={18}
-            color="white"
-            style={{ marginRight: 8 }}
-          />
-          <Text style={styles.sectionTitle}>Próximos Agendamentos</Text>
-        </View>
+      {appointmentStatusRenderOrder.map((status) => {
+        const renderInfo = appointmentStatusRenderInfo(colors)[status];
+        const appointmentInfo = appointmentsByStatus[status] || [];
 
-        {proximosAgendamentos.length === 0 ? (
-          <EmptyState text="Você não tem agendamentos futuros." />
-        ) : (
-          <View style={styles.grid}>
-            {proximosAgendamentos.map((apt) => (
-              <View
-                key={apt.id}
-                style={[styles.gridItem, isDesktop && { width: '48%' }]}>
-                <AppointmentCard
-                  appointment={apt}
-                  statusVariant="upcoming"
-                  isFavorite={isFavorite(apt.Professional.id)}
-                  onToggleFavorite={handleToggleFavorite}
-                  onOpenDetails={() => {
-                    setSelectedAppointment(apt);
-                    setIsModalVisible(true);
-                  }}
-                />
+        return (
+          <View key={status} style={styles.section}>
+            <View
+              style={[
+                styles.sectionHeader,
+                { backgroundColor: renderInfo.color },
+              ]}>
+              <FontAwesome
+                name={renderInfo.icon}
+                size={18}
+                color="white"
+                style={{ marginRight: 8 }}
+              />
+              <Text style={styles.sectionTitle}>{renderInfo.label}</Text>
+            </View>
+
+            {appointmentInfo.length === 0 ? (
+              <EmptyState text={renderInfo.emptyText} />
+            ) : (
+              <View style={styles.grid}>
+                {appointmentInfo.map((apt) => (
+                  <View
+                    key={apt.id}
+                    style={[styles.gridItem, isDesktop && { width: '48%' }]}>
+                    <AppointmentCard
+                      statusLabel={renderInfo.label}
+                      statusColor={renderInfo.color}
+                      appointment={apt}
+                      statusVariant={status}
+                      isFavorite={isFavorite(apt.Professional.id)}
+                      onToggleFavorite={handleToggleFavorite}
+                      onOpenDetails={() => {
+                        setSelectedAppointment(apt);
+                        setIsModalVisible(true);
+                      }}
+                      onOpenRate={
+                        status === AppointmentStatus.COMPLETED
+                          ? () => {
+                              setAppointmentToRate(apt);
+                              setIsRateModalVisible(true);
+                            }
+                          : undefined
+                      }
+                    />
+                  </View>
+                ))}
               </View>
-            ))}
+            )}
           </View>
-        )}
-      </View>
-
-      {/* Seção: Histórico */}
-      <View style={styles.section}>
-        <View
-          style={[
-            styles.sectionHeader,
-            { backgroundColor: colors.primaryGreen },
-          ]}>
-          <FontAwesome
-            name="check-circle-o"
-            size={18}
-            color="white"
-            style={{ marginRight: 8 }}
-          />
-          <Text style={styles.sectionTitle}>Histórico</Text>
-        </View>
-
-        {agendamentosRealizados.length === 0 ? (
-          <EmptyState text="Nenhum agendamento realizado ainda." />
-        ) : (
-          <View style={styles.grid}>
-            {agendamentosRealizados.map((apt) => (
-              <View
-                key={apt.id}
-                style={[styles.gridItem, isDesktop && { width: '48%' }]}>
-                <AppointmentCard
-                  appointment={apt}
-                  statusVariant="completed"
-                  isFavorite={isFavorite(apt.Professional.id)}
-                  onToggleFavorite={handleToggleFavorite}
-                  onOpenDetails={() => {
-                    setSelectedAppointment(apt);
-                    setIsModalVisible(true);
-                  }}
-                  onOpenRate={() => {
-                    setAppointmentToRate(apt);
-                    setIsRateModalVisible(true);
-                  }}
-                />
-              </View>
-            ))}
-          </View>
-        )}
-      </View>
+        );
+      })}
 
       <AppointmentDetailsModal
         visible={isModalVisible}
