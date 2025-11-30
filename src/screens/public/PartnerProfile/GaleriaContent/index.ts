@@ -1,0 +1,1 @@
+export { GaleriaContent } from './GaleriaContent';

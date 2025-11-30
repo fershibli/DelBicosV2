@@ -1,19 +1,18 @@
 import React, { useState, useRef } from 'react';
 import {
   View,
-  StyleSheet,
   FlatList,
   TouchableOpacity,
   Image,
   Dimensions,
   Text,
   Modal,
-  Platform,
   StatusBar,
 } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useColors } from '@theme/ThemeProvider';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { createStyles } from './styles';
 
 type Imagem = {
   id: string;
@@ -103,7 +102,7 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
     <View style={styles.container}>
       {imagens.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <FontAwesome name="image" size={50} color={colors.secondaryBeige} />
+          <FontAwesome name="image" size={50} color={colors.textTertiary} />
           <Text style={styles.emptyText}>
             Nenhuma imagem disponível na galeria.
           </Text>
@@ -148,81 +147,3 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
     </View>
   );
 }
-
-const createStyles = (colors: any) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    galleryList: {
-      paddingBottom: 20,
-    },
-    // Estilo do container de cada miniatura
-    imageContainer: {
-      borderRadius: 12,
-      overflow: 'hidden',
-      backgroundColor: colors.secondaryGray,
-      ...Platform.select({
-        ios: {
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-        },
-        android: {
-          elevation: 3,
-          backgroundColor: colors.primaryWhite,
-        },
-      }),
-    },
-    imageThumbnail: {
-      width: '100%',
-      height: '100%',
-    },
-
-    // Estado Vazio
-    emptyContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 40,
-      minHeight: 200,
-    },
-    emptyText: {
-      marginTop: 16,
-      fontSize: 16,
-      fontFamily: 'Afacad-Regular',
-      color: colors.textTertiary,
-      textAlign: 'center',
-    },
-
-    // Estilos do Modal (Visualizador)
-    modalHeaderContainer: {
-      position: 'absolute',
-      top: Platform.OS === 'ios' ? 50 : 30,
-      right: 20,
-      zIndex: 10,
-    },
-    closeButton: {
-      backgroundColor: 'rgba(0,0,0,0.6)',
-      width: 44,
-      height: 44,
-      borderRadius: 22,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    indicatorContainer: {
-      position: 'absolute',
-      bottom: 40,
-      alignSelf: 'center',
-      backgroundColor: 'rgba(0,0,0,0.7)',
-      paddingHorizontal: 16,
-      paddingVertical: 8,
-      borderRadius: 20,
-    },
-    indicatorText: {
-      color: 'white',
-      fontSize: 16,
-      fontFamily: 'Afacad-Bold',
-    },
-  });
