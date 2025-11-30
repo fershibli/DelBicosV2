@@ -1,0 +1,1 @@
+export { SobreContent } from './SobreContent';
