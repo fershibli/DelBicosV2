@@ -3,7 +3,6 @@ import {
   View,
   Platform,
   Alert,
-  StyleSheet,
   Text,
   ScrollView,
   useWindowDimensions,
@@ -18,41 +17,40 @@ import {
 import { downloadFile, shareContent } from '@lib/helpers/shareHelperSimple';
 import { useColors } from '@theme/ThemeProvider';
 import { FontAwesome } from '@expo/vector-icons';
-import { ExportCard } from './ExportCard';
+import { createStyles } from './styles';
+import { ExportCard } from '@screens/private/client/Profile/Tabs/ExportCard';
 
-const HistoryRow = ({ date, service, price, status, colors }: any) => (
-  <View style={[styles.row, { borderBottomColor: '#F0F0F0' }]}>
-    <View style={styles.rowLeft}>
-      <View
-        style={[
-          styles.iconBox,
-          { backgroundColor: status === 'completed' ? '#E8F5E9' : '#FFF3E0' },
-        ]}>
-        <FontAwesome
-          name={status === 'completed' ? 'check' : 'clock-o'}
-          size={12}
-          color={status === 'completed' ? '#2E7D32' : '#E65100'}
-        />
+const HistoryRow = ({ date, service, price, status, colors, styles }: any) => {
+  const isCompleted = status === 'completed';
+  const bgColor = isCompleted
+    ? colors.successBackground
+    : colors.warningBackground;
+  const iconColor = isCompleted ? colors.successText : colors.warningText;
+  const iconName = isCompleted ? 'check' : 'clock-o';
+
+  return (
+    <View style={styles.row}>
+      <View style={styles.rowLeft}>
+        <View style={[styles.iconBox, { backgroundColor: bgColor }]}>
+          <FontAwesome name={iconName} size={12} color={iconColor} />
+        </View>
+        <View>
+          <Text style={styles.serviceText}>{service}</Text>
+          <Text style={styles.dateText}>{date}</Text>
+        </View>
       </View>
-      <View>
-        <Text style={[styles.serviceText, { color: colors.primaryBlack }]}>
-          {service}
-        </Text>
-        <Text style={[styles.dateText, { color: colors.textTertiary }]}>
-          {date}
-        </Text>
-      </View>
+      <Text style={styles.priceText}>
+        {price ? `R$ ${price.toFixed(2).replace('.', ',')}` : '-'}
+      </Text>
     </View>
-    <Text style={[styles.priceText, { color: colors.primaryBlack }]}>
-      {price ? `R$ ${price.toFixed(2)}` : '-'}
-    </Text>
-  </View>
-);
+  );
+};
 
 export default function HistoricoCompras() {
   const { fetchAppointmentsAsSheet, appointments, fetchAppointments } =
     useAppointmentStore();
   const colors = useColors();
+  const styles = createStyles(colors);
 
   const [isExporting, setIsExporting] = useState(false);
   const { width } = useWindowDimensions();
@@ -63,7 +61,7 @@ export default function HistoricoCompras() {
   }, [appointments, fetchAppointments]);
 
   const recentHistory = appointments
-    .filter((a) => a.status === 'completed')
+    .filter((a) => a.status === 'completed' || a.status === 'confirmed')
     .sort(
       (a, b) =>
         new Date(b.start_time).getTime() - new Date(a.start_time).getTime(),
@@ -114,29 +112,17 @@ export default function HistoricoCompras() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: 'transparent' }]}>
-      <Text style={[styles.pageTitle, { color: colors.primaryBlack }]}>
-        Histórico e Relatórios
-      </Text>
-      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+    <ScrollView style={styles.container}>
+      <Text style={styles.pageTitle}>Histórico e Relatórios</Text>
+      <Text style={styles.subtitle}>
         Visualize suas últimas transações e exporte o relatório completo.
       </Text>
 
       <View style={styles.contentWrapper}>
         {/* Seção de Prévia */}
-        <View
-          style={[
-            styles.section,
-            {
-              backgroundColor: colors.primaryWhite,
-              borderWidth: 1,
-              borderColor: '#F0F0F0',
-              shadowOpacity: 0,
-            },
-          ]}>
-          <Text style={[styles.sectionTitle, { color: colors.primaryBlack }]}>
-            Últimas Atividades
-          </Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Últimas Atividades</Text>
+
           {recentHistory.length > 0 ? (
             recentHistory.map((item) => (
               <HistoryRow
@@ -146,6 +132,7 @@ export default function HistoricoCompras() {
                 price={parseFloat(item.Service.price)}
                 status={item.status}
                 colors={colors}
+                styles={styles}
               />
             ))
           ) : (
@@ -159,13 +146,10 @@ export default function HistoricoCompras() {
 
         {/* Seção de Exportação */}
         <View style={styles.exportSection}>
-          <Text
-            style={[
-              styles.sectionTitle,
-              { color: colors.primaryBlack, marginBottom: 16 },
-            ]}>
+          <Text style={[styles.sectionTitle, { marginBottom: 16 }]}>
             Exportar Relatório
           </Text>
+
           <View style={[styles.grid, isDesktop && { flexDirection: 'row' }]}>
             <View style={[styles.gridItem, isDesktop && { width: '48%' }]}>
               <ExportCard
@@ -191,81 +175,3 @@ export default function HistoricoCompras() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  pageTitle: {
-    fontSize: 28,
-    fontFamily: 'Afacad-Bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontFamily: 'Afacad-Regular',
-    marginBottom: 24,
-  },
-  contentWrapper: {
-    gap: 24,
-    paddingBottom: 40,
-  },
-  section: {
-    borderRadius: 16,
-    padding: 20,
-    ...Platform.select({
-      web: { boxShadow: '0px 4px 12px rgba(0,0,0,0.03)' },
-      default: { elevation: 2 },
-    }),
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontFamily: 'Afacad-Bold',
-    marginBottom: 16,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-  },
-  rowLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  iconBox: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  serviceText: {
-    fontSize: 15,
-    fontFamily: 'Afacad-SemiBold',
-  },
-  dateText: {
-    fontSize: 12,
-    fontFamily: 'Afacad-Regular',
-  },
-  priceText: {
-    fontSize: 15,
-    fontFamily: 'Afacad-Bold',
-  },
-  emptyState: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  exportSection: {
-    marginTop: 8,
-  },
-  grid: {
-    gap: 16,
-  },
-  gridItem: {
-    width: '100%',
-  },
-});

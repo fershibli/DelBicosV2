@@ -1,15 +1,10 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-} from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ClientProfileSubRoutes } from '@screens/types';
 import { useColors } from '@theme/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
+import { createStyles } from './styles';
 
 const menuOptions = [
   {
@@ -42,12 +37,6 @@ const menuOptions = [
     icon: 'notifications-none',
     activeIcon: 'notifications',
   },
-  // {
-  //   id: ClientProfileSubRoutes.Conversas,
-  //   label: 'Conversas',
-  //   icon: 'chat-bubble-outline',
-  //   activeIcon: 'chat-bubble',
-  // },
   {
     id: ClientProfileSubRoutes.Favoritos,
     label: 'Favoritos',
@@ -72,8 +61,8 @@ const MenuNavegacao = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const colors = useColors();
+  const styles = createStyles(colors);
 
-  // Determina a rota ativa. Se não houver, assume DadosConta
   const currentSubroute =
     (route.params as any)?.subroute || ClientProfileSubRoutes.DadosConta;
 
@@ -82,13 +71,10 @@ const MenuNavegacao = () => {
     navigation.setParams({ subroute });
   };
 
-  const styles = createStyles(colors);
-
   return (
-    <View style={styles.container}>
+    <View style={styles.menuContainer}>
       {menuOptions.map((item) => {
         const isActive = currentSubroute === item.id;
-        // Nome do ícone baseado no estado ativo/inativo
         const iconName = isActive ? item.activeIcon : item.icon;
 
         return (
@@ -96,28 +82,30 @@ const MenuNavegacao = () => {
             key={item.id}
             style={[styles.menuItem, isActive && styles.activeMenuItem]}
             onPress={() => handlePress(item.id)}
-            activeOpacity={0.7}>
-            {/* Indicador lateral (barra laranja) */}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isActive }}
+            accessibilityLabel={`Ir para ${item.label}`}>
             {isActive && <View style={styles.activeIndicator} />}
 
-            <View style={styles.iconContainer}>
+            <View style={styles.menuIconContainer}>
               <MaterialIcons
                 name={iconName as any}
                 size={22}
                 color={isActive ? colors.primaryOrange : colors.textTertiary}
               />
             </View>
+
             <Text style={[styles.menuText, isActive && styles.activeMenuText]}>
               {item.label}
             </Text>
 
-            {/* Ícone de chevron (seta) sutil na direita para itens inativos */}
             {!isActive && (
               <MaterialIcons
                 name="chevron-right"
                 size={20}
                 color={colors.borderColor}
-                style={{ marginLeft: 'auto' }}
+                style={styles.chevronIcon}
               />
             )}
           </TouchableOpacity>
@@ -126,52 +114,5 @@ const MenuNavegacao = () => {
     </View>
   );
 };
-
-const createStyles = (colors: any) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      gap: 8, // Espaçamento entre os itens
-    },
-    menuItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: 12,
-      paddingHorizontal: 16,
-      borderRadius: 12, // Cantos arredondados modernos
-      backgroundColor: 'transparent', // Fundo transparente por padrão
-      // Transição suave na web
-      ...Platform.select({
-        web: { transition: 'all 0.2s ease-in-out' },
-      }),
-    },
-    activeMenuItem: {
-      // Fundo laranja bem clarinho (tint) quando ativo
-      backgroundColor: '#FFF5EB',
-    },
-    activeIndicator: {
-      position: 'absolute',
-      left: 0,
-      height: 24, // Altura da barrinha lateral
-      width: 4,
-      backgroundColor: colors.primaryOrange,
-      borderRadius: 2,
-    },
-    iconContainer: {
-      width: 32,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginRight: 12,
-    },
-    menuText: {
-      fontSize: 16,
-      fontFamily: 'Afacad-SemiBold',
-      color: colors.textSecondary, // Cinza escuro
-    },
-    activeMenuText: {
-      fontFamily: 'Afacad-Bold',
-      color: colors.primaryOrange, // Laranja quando ativo
-    },
-  });
 
 export default MenuNavegacao;
