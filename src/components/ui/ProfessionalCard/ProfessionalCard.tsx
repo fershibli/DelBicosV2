@@ -32,10 +32,12 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
     let locationColor = colors.primaryBlue;
 
     if (isDark) {
+      bgColor = colors.cardBackground;
+      borderColor = '#444444';
       nameColor = colors.primaryOrange;
-      textColor = colors.primaryWhite;
-      subTextColor = colors.textTertiary;
-      locationColor = colors.primaryBlue;
+      textColor = '#FFFFFF';
+      subTextColor = '#CCCCCC';
+      locationColor = '#60A5FA';
     }
 
     if (isHighContrast) {
@@ -55,7 +57,8 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
         subTextColor = colors.primaryWhite;
         locationColor = colors.primaryWhite;
       } else if (isDark) {
-        bgColor = colors.backgroundElevated;
+        bgColor = '#3A3A3A';
+        borderColor = colors.primaryOrange;
       } else {
         borderColor = colors.primaryBlue;
       }
@@ -95,7 +98,7 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
       onHoverIn={() => setIsHovered(true)}
       onHoverOut={() => setIsHovered(false)}
       accessibilityRole="button"
-      accessibilityLabel={`Profissional ${professional.name}, ${servicesText}, nota ${professional.rating}`}>
+      accessibilityLabel={`Profissional ${professional.name}`}>
       <Image
         source={{
           uri: professional.imageUrl || 'https://via.placeholder.com/100',
