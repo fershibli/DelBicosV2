@@ -4,14 +4,14 @@ import { ColorsType } from '@theme/types';
 export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     headerContainer: {
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.cardBackground,
       zIndex: 100,
     },
 
     // --- MOBILE HEADER ---
     mobileHeader: {
       height: 60,
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.cardBackground,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -27,6 +27,8 @@ export const createStyles = (colors: ColorsType) =>
     },
     mobileMenuTrigger: {
       padding: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
 
     // --- DESKTOP HEADER (Top Bar) ---
@@ -37,8 +39,8 @@ export const createStyles = (colors: ColorsType) =>
       height: 80,
       paddingHorizontal: 32,
       borderBottomWidth: 1,
-      borderColor: colors.primaryBlue,
-      backgroundColor: colors.primaryWhite,
+      borderColor: colors.borderColor,
+      backgroundColor: colors.cardBackground,
     },
     logoImage: {
       width: 180,
@@ -60,7 +62,7 @@ export const createStyles = (colors: ColorsType) =>
       paddingHorizontal: 12,
       borderRadius: 6,
       ...Platform.select({
-        web: { transition: 'background-color 0.2s ease' },
+        web: { transition: 'background-color 0.2s ease' } as any,
       }),
     },
     menuItemHovered: {
@@ -75,7 +77,7 @@ export const createStyles = (colors: ColorsType) =>
       color: colors.primaryWhite,
     },
 
-    // --- SEÇÃO DIREITA (Localização, Tema, User) ---
+    // --- SEÇÃO DIREITA ---
     rightSection: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -111,7 +113,7 @@ export const createStyles = (colors: ColorsType) =>
       gap: 12,
     },
 
-    // --- SEARCH BAR (Barra Azul) ---
+    // --- SEARCH BAR ---
     searchBar: {
       backgroundColor: colors.primaryBlue,
       flexDirection: 'row',
@@ -122,14 +124,14 @@ export const createStyles = (colors: ColorsType) =>
       gap: 20,
     },
     searchText: {
-      color: colors.primaryWhite,
+      color: '#FFFFFF',
       fontSize: 16,
       fontFamily: 'Afacad-SemiBold',
     },
     searchContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: '#FFFFFF',
       borderRadius: 8,
       overflow: 'hidden',
       width: 400,
@@ -141,33 +143,37 @@ export const createStyles = (colors: ColorsType) =>
       fontSize: 14,
       fontFamily: 'Afacad-Regular',
       height: '100%',
-      color: colors.primaryBlack,
-      outlineStyle: 'none',
-    } as any,
+      color: '#000000',
+      ...Platform.select({
+        web: { outlineStyle: 'none' } as any,
+      }),
+    },
     searchButton: {
       paddingHorizontal: 16,
       height: '100%',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colors.secondaryGray,
+      backgroundColor: '#E0E0E0',
     },
 
-    // --- MENU POPUP (Mobile & Desktop Dropdown) ---
+    // --- MENU POPUP (DROPDOWN) ---
     menuOptionsContainer: {
-      borderRadius: 8,
-      marginTop: 40,
-      width: 220,
+      borderRadius: 12,
+      marginTop: 45,
+      width: 240,
       backgroundColor: colors.cardBackground,
-      paddingVertical: 4,
+      paddingVertical: 8,
+      borderWidth: 1,
+      borderColor: colors.borderColor,
       ...Platform.select({
         ios: {
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.15,
+          shadowOpacity: 0.25,
           shadowRadius: 8,
         },
         android: { elevation: 8 },
-        web: { boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)' },
+        web: { boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.3)' },
       }),
     },
     menuOption: {
@@ -177,22 +183,22 @@ export const createStyles = (colors: ColorsType) =>
       paddingHorizontal: 16,
     },
     menuIcon: {
-      marginRight: 12,
-      width: 20,
+      marginRight: 16,
+      width: 24,
       textAlign: 'center',
     },
     menuOptionText: {
-      fontFamily: 'Afacad-Regular',
+      fontFamily: 'Afacad-SemiBold',
       fontSize: 15,
       color: colors.primaryBlack,
     },
     menuDivider: {
       height: 1,
       backgroundColor: colors.divider,
-      marginVertical: 4,
+      marginVertical: 8,
     },
 
-    // --- MODAL DE LOCALIZAÇÃO ---
+    // --- MODAL MAPA ---
     modalOverlay: {
       flex: 1,
       backgroundColor: colors.overlay,
@@ -206,9 +212,8 @@ export const createStyles = (colors: ColorsType) =>
       backgroundColor: colors.cardBackground,
       borderRadius: 16,
       padding: 24,
-      ...Platform.select({
-        default: { elevation: 10 },
-      }),
+      borderWidth: 1,
+      borderColor: colors.borderColor,
     },
     modalHeader: {
       flexDirection: 'row',
@@ -219,7 +224,7 @@ export const createStyles = (colors: ColorsType) =>
     modalTitle: {
       fontSize: 20,
       fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlue,
+      color: colors.primaryBlack,
     },
     mapWrapper: {
       width: '100%',
@@ -242,7 +247,7 @@ export const createStyles = (colors: ColorsType) =>
       opacity: 0.7,
     },
     modalButtonText: {
-      color: colors.primaryWhite,
+      color: '#FFFFFF',
       fontFamily: 'Afacad-Bold',
       fontSize: 16,
     },

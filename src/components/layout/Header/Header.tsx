@@ -44,10 +44,10 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
 
   const isWebOrLargeScreen = width > 768;
   const logo = isDark ? DelBicosLogoDark : DelBicosLogo;
-  const headerIconColor = isDark ? colors.primaryWhite : colors.primaryBlue;
+
+  const headerIconColor = isDark ? '#FFFFFF' : colors.primaryBlue;
 
   const { user, signOut, address: userAddress } = useUserStore();
-
   const {
     address: locationAddress,
     city,
@@ -59,21 +59,24 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
 
   const navigation = useNavigation();
   const [search, setSearch] = useState('');
-
   const [isMapModalVisible, setIsMapModalVisible] = useState(false);
+
   const [tempMarker, setTempMarker] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
   const [tempRegion, setTempRegion] = useState<Region | null>(null);
 
-  const navigateTo = (screen?: keyof NavigationParams) => {
-    if (!screen) return;
-    // @ts-ignore
-    navigation.navigate(screen);
-  };
+  const navigateTo = useCallback(
+    (screen?: keyof NavigationParams) => {
+      if (!screen) return;
+      // @ts-ignore
+      navigation.navigate(screen);
+    },
+    [navigation],
+  );
 
-  const handleSignOut = () => {
+  const handleSignOut = useCallback(() => {
     signOut();
     navigation.dispatch(
       CommonActions.reset({
@@ -81,12 +84,10 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         routes: [{ name: 'Home' }],
       }),
     );
-  };
+  }, [signOut, navigation]);
 
   const openMapModal = useCallback(async () => {
     setIsMapModalVisible(true);
-
-    // Tenta usar localização salva primeiro para evitar flash de "null"
     if (locationAddress?.lat && locationAddress?.lon) {
       const savedCoords = {
         latitude: parseFloat(locationAddress.lat),
@@ -98,7 +99,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         longitudeDelta: 0.01,
       });
       setTempMarker(savedCoords);
-      return; // Já temos localização inicial, não precisa buscar agora se não quiser
+      return;
     }
 
     try {
@@ -123,7 +124,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       });
       setTempMarker(currentCoords);
     } catch (error) {
-      console.warn('Usando fallback (SP):', error);
+      console.warn('Usando fallback:', error);
       setTempRegion({
         latitude: -23.5505,
         longitude: -46.6333,
@@ -157,29 +158,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       setLocation(userAddress.city, userAddress.state);
     }
   }, [user, userAddress, city, setLocation]);
-
-  const MenuItem: React.FC<{
-    screen?: keyof NavigationParams;
-    children: React.ReactNode;
-  }> = ({ screen, children }) => {
-    const [isHovered, setIsHovered] = useState(false);
-
-    return (
-      <Pressable
-        onPress={() => navigateTo(screen)}
-        onHoverIn={() => setIsHovered(true)}
-        onHoverOut={() => setIsHovered(false)}
-        style={[styles.menuItemPressable, isHovered && styles.menuItemHovered]}>
-        <Text
-          style={[
-            styles.menuItemText,
-            isHovered && styles.menuItemTextHovered,
-          ]}>
-          {children}
-        </Text>
-      </Pressable>
-    );
-  };
 
   const renderMapModal = useMemo(
     () => (
@@ -229,7 +207,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
               onPress={handleConfirmLocation}
               disabled={isLocationLoading || !tempMarker}>
               {isLocationLoading ? (
-                <ActivityIndicator color={colors.primaryWhite} />
+                <ActivityIndicator color="#FFFFFF" />
               ) : (
                 <Text style={styles.modalButtonText}>
                   Confirmar Localização
@@ -252,7 +230,30 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
     ],
   );
 
-  // --- RENDERIZAÇÃO MOBILE ---
+  const MenuItem: React.FC<{
+    screen?: keyof NavigationParams;
+    children: React.ReactNode;
+  }> = ({ screen, children }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+      <Pressable
+        onPress={() => navigateTo(screen)}
+        onHoverIn={() => setIsHovered(true)}
+        onHoverOut={() => setIsHovered(false)}
+        style={[styles.menuItemPressable, isHovered && styles.menuItemHovered]}>
+        <Text
+          style={[
+            styles.menuItemText,
+            isHovered && styles.menuItemTextHovered,
+          ]}>
+          {children}
+        </Text>
+      </Pressable>
+    );
+  };
+
+  // --- MOBILE ---
   if (!isWebOrLargeScreen) {
     return (
       <View style={styles.mobileHeader}>
@@ -278,21 +279,138 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                 <Text style={styles.menuOptionText}>Página Inicial</Text>
               </View>
             </MenuOption>
-            {/* ... Outras opções de menu ... */}
-            <MenuOption onSelect={handleSignOut}>
+            <MenuOption onSelect={() => navigateTo('Category')}>
               <View style={styles.menuOption}>
                 <FontAwesome
-                  name="sign-out"
+                  name="th-large"
                   size={18}
-                  color={colors.errorText}
+                  color={headerIconColor}
                   style={styles.menuIcon}
                 />
-                <Text
-                  style={[styles.menuOptionText, { color: colors.errorText }]}>
-                  Sair
-                </Text>
+                <Text style={styles.menuOptionText}>Categorias</Text>
               </View>
             </MenuOption>
+            <MenuOption onSelect={() => navigateTo('Help')}>
+              <View style={styles.menuOption}>
+                <FontAwesome
+                  name="question-circle-o"
+                  size={18}
+                  color={headerIconColor}
+                  style={styles.menuIcon}
+                />
+                <Text style={styles.menuOptionText}>FAQ</Text>
+              </View>
+            </MenuOption>
+
+            {!!user && (
+              <>
+                <MenuOption onSelect={() => navigateTo('MySchedules')}>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="calendar-check-o"
+                      size={18}
+                      color={headerIconColor}
+                      style={styles.menuIcon}
+                    />
+                    <Text style={styles.menuOptionText}>Meus Agendamentos</Text>
+                  </View>
+                </MenuOption>
+                <MenuOption
+                  onSelect={() => {
+                    /* Portal Parceiro */
+                  }}>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="briefcase"
+                      size={18}
+                      color={headerIconColor}
+                      style={styles.menuIcon}
+                    />
+                    <Text style={styles.menuOptionText}>
+                      Portal do Parceiro
+                    </Text>
+                  </View>
+                </MenuOption>
+                {user?.admin && (
+                  <MenuOption onSelect={() => navigateTo('AdminAnalytics')}>
+                    <View style={styles.menuOption}>
+                      <FontAwesome
+                        name="bar-chart"
+                        size={18}
+                        color={headerIconColor}
+                        style={styles.menuIcon}
+                      />
+                      <Text style={styles.menuOptionText}>Analytics</Text>
+                    </View>
+                  </MenuOption>
+                )}
+              </>
+            )}
+
+            <View style={styles.menuDivider} />
+
+            <View style={styles.menuOption}>
+              <FontAwesome
+                name="paint-brush"
+                size={18}
+                color={headerIconColor}
+                style={styles.menuIcon}
+              />
+              <Text style={[styles.menuOptionText, { marginRight: 10 }]}>
+                Tema:
+              </Text>
+              <ThemeToggle />
+            </View>
+
+            <View style={styles.menuDivider} />
+
+            {!!user ? (
+              <>
+                <MenuOption
+                  onSelect={() =>
+                    navigation.navigate('ClientProfile' as never)
+                  }>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="user-circle-o"
+                      size={18}
+                      color={headerIconColor}
+                      style={styles.menuIcon}
+                    />
+                    <Text style={styles.menuOptionText}>Meu Perfil</Text>
+                  </View>
+                </MenuOption>
+                <MenuOption onSelect={handleSignOut}>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="sign-out"
+                      size={18}
+                      color={colors.errorText}
+                      style={styles.menuIcon}
+                    />
+                    <Text
+                      style={[
+                        styles.menuOptionText,
+                        { color: colors.errorText },
+                      ]}>
+                      Sair
+                    </Text>
+                  </View>
+                </MenuOption>
+              </>
+            ) : (
+              <MenuOption onSelect={() => navigateTo('Login')}>
+                <View style={styles.menuOption}>
+                  <FontAwesome
+                    name="sign-in"
+                    size={18}
+                    color={headerIconColor}
+                    style={styles.menuIcon}
+                  />
+                  <Text style={styles.menuOptionText}>Entrar / Cadastrar</Text>
+                </View>
+              </MenuOption>
+            )}
           </MenuOptions>
         </Menu>
         {renderMapModal}
@@ -300,7 +418,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
     );
   }
 
-  // --- RENDERIZAÇÃO DESKTOP ---
+  // --- DESKTOP ---
   return (
     <View style={styles.headerContainer}>
       <View style={styles.topBar}>
@@ -324,7 +442,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
 
         <View style={styles.rightSection}>
           <ThemeToggle />
-
           <View style={styles.locationContainer}>
             <Text style={styles.locationLabel}>Estou em:</Text>
             <Button
@@ -342,7 +459,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
               {city && state ? `${city} - ${state}` : 'Definir Local'}
             </Button>
           </View>
-
           {!!user ? (
             <Menu>
               <MenuTrigger>
@@ -417,7 +533,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
           )}
         </View>
       </View>
-
       <View style={styles.searchBar}>
         {user && (
           <Text style={styles.searchText}>
@@ -428,16 +543,15 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
           <TextInput
             style={styles.searchInput}
             placeholder="O que você precisa?"
-            placeholderTextColor={colors.textTertiary}
+            placeholderTextColor="#9CA3AF"
             value={search}
             onChangeText={setSearch}
           />
           <TouchableOpacity style={styles.searchButton}>
-            <FontAwesome name="search" size={16} color={colors.textSecondary} />
+            <FontAwesome name="search" size={16} color="#666" />
           </TouchableOpacity>
         </View>
       </View>
-
       {renderMapModal}
     </View>
   );
