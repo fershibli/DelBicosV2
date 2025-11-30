@@ -31,7 +31,11 @@ export const createStyles = (colors: ColorsType) =>
         },
       }),
     },
-    contentWrapper: {},
+    contentWrapper: {
+      // Flex direction é controlado via lógica responsiva no componente
+    },
+
+    // --- Avatar ---
     avatarContainer: {
       alignItems: 'center',
       justifyContent: 'center',
@@ -42,6 +46,8 @@ export const createStyles = (colors: ColorsType) =>
       height: 120,
       borderRadius: 60,
       overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: colors.borderColor,
     },
     avatarAnimatedWrapper: {
       width: '100%',
@@ -64,6 +70,8 @@ export const createStyles = (colors: ColorsType) =>
       fontSize: 12,
       marginTop: 4,
     },
+
+    // --- Form ---
     saveButtonContainer: {
       marginTop: 24,
       alignItems: 'flex-end',
@@ -80,45 +88,65 @@ export const createStyles = (colors: ColorsType) =>
       fontSize: 16,
     },
 
-    // --- MODAL OPTIONS ---
+    // --- MODAL DE OPÇÕES (AVATAR) CENTRALIZADO ---
     modalOverlay: {
       flex: 1,
-      backgroundColor: colors.overlay,
-      justifyContent: 'flex-end',
+      backgroundColor: colors.overlay, // Ex: 'rgba(0,0,0,0.5)'
+      justifyContent: 'center', // Centraliza verticalmente
+      alignItems: 'center', // Centraliza horizontalmente
+      padding: 20,
     },
     optionsContainer: {
       backgroundColor: colors.cardBackground,
-      borderTopLeftRadius: 16,
-      borderTopRightRadius: 16,
+      borderRadius: 16, // Bordas arredondadas em todos os lados
       padding: 24,
-      paddingBottom: 40,
+      width: '100%',
+      maxWidth: 360, // Tamanho máximo para parecer um modal elegante
+      borderWidth: 1,
+      borderColor: colors.borderColor,
+      // Sombras para dar profundidade (pop-up)
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.25,
+          shadowRadius: 8,
+        },
+        android: {
+          elevation: 10,
+        },
+        web: {
+          boxShadow: '0px 4px 20px rgba(0,0,0,0.2)',
+        },
+      }),
     },
     optionButton: {
-      paddingVertical: 16,
+      paddingVertical: 14,
       borderBottomWidth: 1,
       borderBottomColor: colors.divider,
+      alignItems: 'center',
     },
     optionText: {
       fontSize: 16,
-      fontFamily: 'Afacad-Regular',
-      color: colors.primaryBlack,
+      fontFamily: 'Afacad-SemiBold',
+      color: colors.primaryBlue,
       textAlign: 'center',
     },
     removeOption: {
       borderBottomWidth: 0,
-      marginTop: 8,
+      marginTop: 4,
     },
     removeText: {
       color: colors.errorText,
-      fontFamily: 'Afacad-Bold',
     },
     cancelOption: {
       marginTop: 16,
       backgroundColor: colors.inputBackground,
-      borderRadius: 8,
+      borderRadius: 12,
       borderBottomWidth: 0,
     },
     cancelText: {
+      color: colors.textSecondary,
       fontFamily: 'Afacad-Bold',
     },
 
@@ -130,9 +158,8 @@ export const createStyles = (colors: ColorsType) =>
       borderRadius: 16,
       padding: 24,
       alignItems: 'center',
-      alignSelf: 'center',
-      marginTop: 'auto',
-      marginBottom: 'auto',
+      borderWidth: 1,
+      borderColor: colors.borderColor,
     },
     statusModalIcon: {
       fontSize: 40,

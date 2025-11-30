@@ -51,7 +51,7 @@ const StatusModal = ({ visible, status, message, onClose }: any) => {
       animationType="fade"
       onRequestClose={onClose}
       transparent>
-      <View style={[styles.modalOverlay, { justifyContent: 'center' }]}>
+      <View style={styles.modalOverlay}>
         <View style={styles.statusModalContainer}>
           <Text style={styles.statusModalIcon}>{getIcon()}</Text>
           <Text style={styles.statusModalTitle}>{getTitle()}</Text>
@@ -86,14 +86,24 @@ const AvatarOptionsModal = ({
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
       transparent>
       <TouchableOpacity
         style={styles.modalOverlay}
         activeOpacity={1}
         onPress={onClose}>
-        <View style={styles.optionsContainer}>
+        <View
+          style={styles.optionsContainer}
+          onStartShouldSetResponder={() => true}>
+          <Text
+            style={[
+              styles.statusModalTitle,
+              { textAlign: 'center', marginBottom: 16 },
+            ]}>
+            Alterar Foto
+          </Text>
+
           <TouchableOpacity
             style={styles.optionButton}
             onPress={onTakePhoto}
@@ -102,6 +112,7 @@ const AvatarOptionsModal = ({
               {uploading ? 'Processando...' : 'Tirar Foto'}
             </Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.optionButton}
             onPress={onPickFromGallery}
@@ -110,16 +121,18 @@ const AvatarOptionsModal = ({
               {uploading ? 'Processando...' : 'Escolher da Galeria'}
             </Text>
           </TouchableOpacity>
+
           {hasPhoto && (
             <TouchableOpacity
               style={[styles.optionButton, styles.removeOption]}
               onPress={onRemovePhoto}
               disabled={uploading}>
               <Text style={[styles.optionText, styles.removeText]}>
-                Remover Foto
+                Remover Foto Atual
               </Text>
             </TouchableOpacity>
           )}
+
           <TouchableOpacity
             style={[styles.optionButton, styles.cancelOption]}
             onPress={onClose}
@@ -257,6 +270,7 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
   };
 
   const handleTakePhoto = async () => {
+    // Implementar câmera se necessário
     setShowOptions(false);
   };
 
@@ -390,7 +404,7 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
                   editable={false}
                   style={{
                     opacity: 0.6,
-                    backgroundColor: colors.secondaryGray,
+                    backgroundColor: colors.inputBackground,
                   }}
                 />
               </View>
