@@ -111,8 +111,7 @@ const FeedScreen: React.FC = () => {
             onMomentumScrollEnd={onMomentumScrollEnd}
             scrollEventThrottle={16}
             decelerationRate="fast"
-            snapToInterval={width} // Garante snap correto no tamanho da tela
-          >
+            snapToInterval={width}>
             {HIGHLIGHT_DATA.map((item) => (
               <HighlightCard key={item.id} item={item} />
             ))}

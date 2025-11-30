@@ -25,6 +25,7 @@ export const createStyles = (colors: ColorsType) =>
     carouselContainer: {
       width: '100%',
       height: 220,
+      position: 'relative',
     },
     carouselListContainer: {
       paddingHorizontal: 0,
@@ -58,24 +59,28 @@ export const createStyles = (colors: ColorsType) =>
     },
     paginationContainer: {
       position: 'absolute',
-      bottom: 16,
+      bottom: 24,
       left: 0,
       right: 0,
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
+      zIndex: 20,
     },
     dot: {
       width: 8,
       height: 8,
       borderRadius: 4,
-      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+      backgroundColor: 'rgba(255, 255, 255, 0.4)',
       marginHorizontal: 4,
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,0.1)',
     },
     dotActive: {
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: '#FFFFFF',
       width: 10,
       height: 10,
+      borderColor: 'transparent',
     },
     categorySection: {
       marginBottom: 24,
