@@ -1,16 +1,10 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  Image,
-  Platform,
-} from 'react-native';
+import { View, Text, FlatList, Image } from 'react-native';
 import { Rating } from 'react-native-ratings';
 import { Review } from '@stores/Professional/types';
 import { useColors } from '@theme/ThemeProvider';
 import { FontAwesome } from '@expo/vector-icons';
+import { createStyles } from './styles';
 
 type AvaliacoesContentProps = {
   avaliacoes?: Review[];
@@ -70,8 +64,11 @@ export function AvaliacoesContent({ avaliacoes = [] }: AvaliacoesContentProps) {
                 readonly
                 startingValue={item.rating || 0}
                 fractions={1}
-                tintColor={colors.primaryWhite}
-                style={{ alignItems: 'flex-start' }}
+                tintColor={colors.cardBackground}
+                style={{
+                  alignItems: 'flex-start',
+                  backgroundColor: 'transparent',
+                }}
               />
             </View>
           </View>
@@ -91,7 +88,7 @@ export function AvaliacoesContent({ avaliacoes = [] }: AvaliacoesContentProps) {
     <View style={styles.container}>
       {avaliacoes.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <FontAwesome name="star-o" size={50} color={colors.secondaryBeige} />
+          <FontAwesome name="star-o" size={50} color={colors.textTertiary} />
           <Text style={styles.emptyText}>
             Este profissional ainda não possui avaliações.
           </Text>
@@ -120,141 +117,3 @@ export function AvaliacoesContent({ avaliacoes = [] }: AvaliacoesContentProps) {
     </View>
   );
 }
-
-const createStyles = (colors: any) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    listContent: {
-      padding: 16,
-      paddingBottom: 40,
-    },
-
-    // Cabeçalho da Lista (Resumo)
-    summaryContainer: {
-      paddingHorizontal: 16,
-      paddingTop: 16,
-      marginBottom: 8,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'baseline',
-    },
-    summaryTitle: {
-      fontSize: 18,
-      fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlack,
-    },
-    summaryCount: {
-      fontSize: 14,
-      fontFamily: 'Afacad-Regular',
-      color: colors.textTertiary,
-    },
-
-    // Card de Avaliação
-    reviewCard: {
-      backgroundColor: colors.primaryWhite,
-      borderRadius: 12,
-      padding: 16,
-      marginBottom: 12,
-      ...Platform.select({
-        ios: {
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.05,
-          shadowRadius: 4,
-        },
-        android: {
-          elevation: 2,
-        },
-        web: {
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.05)',
-        },
-      }),
-    },
-
-    // Header do Card
-    headerRow: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-    },
-    avatarContainer: {
-      marginRight: 12,
-    },
-    avatarImage: {
-      width: 48,
-      height: 48,
-      borderRadius: 24,
-      backgroundColor: colors.secondaryGray,
-    },
-    avatarFallback: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderWidth: 1,
-      borderColor: '#E0E0E0',
-    },
-
-    headerInfo: {
-      flex: 1,
-      justifyContent: 'center',
-      height: 48,
-    },
-    topLine: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 4,
-    },
-    userName: {
-      fontSize: 16,
-      fontFamily: 'Afacad-SemiBold',
-      color: '#333',
-      flex: 1,
-      marginRight: 8,
-    },
-    dateText: {
-      fontSize: 12,
-      fontFamily: 'Afacad-Regular',
-      color: '#999',
-    },
-    ratingWrapper: {
-      alignItems: 'flex-start',
-    },
-
-    // Comentário
-    commentContainer: {
-      marginTop: 12,
-      paddingTop: 12,
-      borderTopWidth: 1,
-      borderTopColor: '#F5F5F5',
-    },
-    commentText: {
-      fontSize: 15,
-      fontFamily: 'Afacad-Regular',
-      color: '#555',
-      lineHeight: 22,
-    },
-
-    // Estado Vazio
-    emptyContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 40,
-      marginTop: 40,
-    },
-    emptyText: {
-      fontSize: 18,
-      fontFamily: 'Afacad-Bold',
-      color: colors.textSecondary,
-      marginTop: 16,
-      textAlign: 'center',
-    },
-    emptySubText: {
-      fontSize: 14,
-      fontFamily: 'Afacad-Regular',
-      color: colors.textTertiary,
-      textAlign: 'center',
-      marginTop: 8,
-    },
-  });
