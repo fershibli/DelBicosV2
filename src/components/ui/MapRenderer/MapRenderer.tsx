@@ -26,6 +26,15 @@ const NativeMapRenderer: React.FC<NativeMapRendererProps> = ({
   };
 
   const handlePress = (event: any) => {
+    const { coordinate } = event.nativeEvent;
+
+    mapRef.current?.animateCamera(
+      {
+        center: coordinate,
+      },
+      { duration: 500 },
+    );
+
     if (onMapPress) {
       onMapPress(event);
     }
@@ -38,7 +47,6 @@ const NativeMapRenderer: React.FC<NativeMapRendererProps> = ({
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={region as Region}
-        region={region as Region}
         onPress={handlePress}
         onMapReady={handleMapReady}
         showsUserLocation={false}

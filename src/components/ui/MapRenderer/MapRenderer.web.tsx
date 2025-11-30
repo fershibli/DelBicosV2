@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { MapComponentProps } from '@lib/hooks/types';
@@ -32,20 +32,39 @@ const WebMapRenderer: React.FC<MapComponentProps & { style?: any }> = ({
   const [mapLoaded, setMapLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [mapCenter, setMapCenter] = useState(defaultCenter);
+
   const colors = useColors();
   const styles = createStyles(colors);
 
   const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
+  useEffect(() => {
+    if (region) {
+      const newCenter = { lat: region.latitude, lng: region.longitude };
+      setMapCenter(newCenter);
+      if (mapRef.current) {
+        mapRef.current.panTo(newCenter);
+      }
+    }
+  }, [region]);
+
   const handleMapClick = useCallback(
     (event: google.maps.MapMouseEvent) => {
-      if (event.latLng && onMapPress) {
+      if (event.latLng) {
         const lat = event.latLng.lat();
         const lng = event.latLng.lng();
+        const newPos = { lat, lng };
 
-        onMapPress({
-          nativeEvent: { coordinate: { latitude: lat, longitude: lng } },
-        });
+        setMapCenter(newPos);
+
+        mapRef.current?.panTo(newPos);
+
+        if (onMapPress) {
+          onMapPress({
+            nativeEvent: { coordinate: { latitude: lat, longitude: lng } },
+          });
+        }
       }
     },
     [onMapPress],
@@ -86,11 +105,7 @@ const WebMapRenderer: React.FC<MapComponentProps & { style?: any }> = ({
         }>
         <GoogleMap
           mapContainerStyle={containerStyle}
-          center={
-            region
-              ? { lat: region.latitude, lng: region.longitude }
-              : defaultCenter
-          }
+          center={mapCenter}
           zoom={region ? 15 : 12}
           onLoad={(map) => {
             mapRef.current = map;
