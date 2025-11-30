@@ -22,17 +22,17 @@ export const ThemeToggle: React.FC = () => {
       {
         mode: ThemeMode.LIGHT,
         icon: 'sun-o',
-        label: 'Tema Claro',
+        label: 'Claro',
       },
       {
         mode: ThemeMode.DARK,
         icon: 'moon-o',
-        label: 'Tema Escuro',
+        label: 'Escuro',
       },
       {
         mode: ThemeMode.LIGHT_HI_CONTRAST,
         icon: 'adjust',
-        label: 'Alto Contraste',
+        label: 'Contraste',
       },
     ],
     [],
@@ -49,9 +49,9 @@ export const ThemeToggle: React.FC = () => {
             style={[styles.button, isActive && styles.buttonActive]}
             onPress={() => handleThemeChange(option.mode)}
             activeOpacity={0.7}
-            accessibilityRole="button"
-            accessibilityLabel={option.label}
+            accessibilityRole="radio"
             accessibilityState={{ selected: isActive }}
+            accessibilityLabel={`Mudar para tema ${option.label}`}
             testID={`theme-${option.mode}-button`}>
             <FontAwesome
               name={option.icon as any}
