@@ -47,20 +47,30 @@ export type RegisterFormData = {
   acceptTerms: boolean;
 };
 
+export interface UpdateUserData {
+  name: string;
+  email: string;
+  phone: string;
+}
+
 export type UserStore = {
   user: User | null;
   address: Address | null;
   token: string | null;
   verificationEmail: string | null;
   avatarBase64: string | null;
+  lastCodeSentAt: number | null;
   fetchCurrentUser: () => Promise<void>;
   setVerificationEmail: (email: string | null) => void;
+  recordCodeSent: () => void;
+  resendCode: (email: string) => Promise<void>;
   setLoggedInUser: (data: {
     token: string;
     user: User;
     address: Address | null;
   }) => void;
   registerUser: (formData: RegisterFormData) => Promise<void>;
+  updateUserProfile: (data: UpdateUserData) => Promise<void>;
   signInPassword: (email: string, password: string) => Promise<void>;
   changePassword: (
     currentPassword: string,

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import {
   Appointment,
   AppointmentSheetRow,
+  AppointmentStatus,
   AppointmentStore,
   InvoiceData,
 } from './types';
@@ -10,20 +11,38 @@ import { backendHttpClient } from '@lib/helpers/httpClient';
 
 export const useAppointmentStore = create<AppointmentStore>()((set) => ({
   appointments: [],
+  appointmentsByStatus: {},
   loading: false,
 
   fetchAppointments: async () => {
-    set({ loading: true });
+    set({ loading: true, appointments: [] });
     try {
       const { user } = useUserStore.getState();
-      if (!user) {
-        throw new Error('Usuário não autenticado para buscar agendamentos.');
-      }
+      if (!user) throw new Error('Usuário não autenticado.');
 
       const endpoint = `api/appointments/user/${user.id}`;
       const response = await backendHttpClient.get(endpoint);
-      
-      set({ appointments: response.data, loading: false });
+
+      const sortedData = response.data.sort(
+        (a: Appointment, b: Appointment) =>
+          new Date(b.start_time).getTime() - new Date(a.start_time).getTime(),
+      );
+      const appointmentsByStatus = sortedData.reduce(
+        (
+          acc: { [key in AppointmentStatus]?: Appointment[] },
+          appointment: Appointment,
+        ) => {
+          const status = appointment.status;
+          if (!acc[status]) {
+            acc[status] = [];
+          }
+          acc[status].push(appointment);
+          return acc;
+        },
+        {} as { [key in AppointmentStatus]?: Appointment[] },
+      );
+
+      set({ appointments: sortedData, appointmentsByStatus, loading: false });
     } catch (error) {
       console.error('Failed to fetch appointments:', error);
       set({ appointments: [], loading: false });

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { styles } from './styles';
-import colors from '@theme/colors';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 
-type StatusType = 'Agendado' | 'Executado' | 'Cancelado';
+type StatusType = 'Agendado' | 'Executado' | 'Cancelado' | 'Pendente';
 
 interface StatusConfig {
   backgroundColor: string;
@@ -14,31 +14,47 @@ interface StatusConfig {
 
 interface BannerStatusProps {
   status: StatusType;
+  onReminderPress?: () => void;
 }
 
-const BannerStatus: React.FC<BannerStatusProps> = ({ status }) => {
-  const statusConfig: Record<StatusType, StatusConfig> = {
-    Agendado: {
-      backgroundColor: '#FFE092',
-      borderColor: colors.primaryOrange,
-      textColor: colors.primaryBlack,
-      message: 'Serviço Agendado',
-    },
-    Executado: {
-      backgroundColor: colors.primaryGreen,
-      borderColor: colors.primaryGreen,
-      textColor: colors.primaryWhite,
-      message: 'Serviço Executado',
-    },
-    Cancelado: {
-      backgroundColor: '#F8D7DA',
-      borderColor: '#DC3545',
-      textColor: '#721C24',
-      message: 'Serviço Cancelado',
-    },
-  };
+const BannerStatus: React.FC<BannerStatusProps> = ({
+  status,
+  onReminderPress,
+}) => {
+  const colors = useColors();
+  const styles = createStyles(colors);
 
-  const currentStatus = statusConfig[status];
+  const statusConfig = useMemo(
+    (): Record<string, StatusConfig> => ({
+      Agendado: {
+        backgroundColor: colors.warningBackground,
+        borderColor: colors.warningText,
+        textColor: colors.warningText,
+        message: 'Serviço Agendado',
+      },
+      Pendente: {
+        backgroundColor: colors.warningBackground,
+        borderColor: colors.primaryOrange,
+        textColor: colors.primaryOrange,
+        message: 'Aguardando Confirmação',
+      },
+      Executado: {
+        backgroundColor: colors.successBackground,
+        borderColor: colors.successText,
+        textColor: colors.successText,
+        message: 'Serviço Executado',
+      },
+      Cancelado: {
+        backgroundColor: colors.errorBackground,
+        borderColor: colors.errorText,
+        textColor: colors.errorText,
+        message: 'Serviço Cancelado',
+      },
+    }),
+    [colors],
+  );
+
+  const currentStatus = statusConfig[status] || statusConfig['Agendado'];
 
   return (
     <View style={styles.statusContainer}>
@@ -54,8 +70,12 @@ const BannerStatus: React.FC<BannerStatusProps> = ({ status }) => {
           {currentStatus.message}
         </Text>
       </View>
-      {status === 'Agendado' && (
-        <TouchableOpacity style={styles.reminderButton}>
+
+      {(status === 'Agendado' || status === 'Pendente') && (
+        <TouchableOpacity
+          style={styles.reminderButton}
+          onPress={onReminderPress}
+          activeOpacity={0.7}>
           <Text style={styles.reminderText}>Criar lembrete</Text>
         </TouchableOpacity>
       )}

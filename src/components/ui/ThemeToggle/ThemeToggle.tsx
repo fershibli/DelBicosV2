@@ -1,107 +1,66 @@
-import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import React, { useMemo } from 'react';
+import { View, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { useThemeStore, ThemeMode } from '@stores/Theme';
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 
 export const ThemeToggle: React.FC = () => {
   const { theme, setTheme } = useThemeStore();
+  const colors = useColors();
+  const styles = createStyles(colors);
+
   const currentTheme = theme || ThemeMode.LIGHT;
 
   const handleThemeChange = (newTheme: ThemeMode) => {
-    console.log('Mudando tema de', currentTheme, 'para', newTheme);
     setTheme(newTheme);
-    console.log('Tema salvo, recarregando página...');
-    // Força um reload das cores apenas na web
-    if (Platform.OS === 'web') {
-      window.location.href = window.location.href;
-    }
   };
+
+  const themeOptions = useMemo(
+    () => [
+      {
+        mode: ThemeMode.LIGHT,
+        icon: 'sun-o',
+        label: 'Claro',
+      },
+      {
+        mode: ThemeMode.DARK,
+        icon: 'moon-o',
+        label: 'Escuro',
+      },
+      {
+        mode: ThemeMode.LIGHT_HI_CONTRAST,
+        icon: 'adjust',
+        label: 'Contraste',
+      },
+    ],
+    [],
+  );
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={[
-          styles.button,
-          currentTheme === ThemeMode.LIGHT && styles.buttonActive,
-        ]}
-        onPress={() => handleThemeChange(ThemeMode.LIGHT)}
-        accessible={true}
-        accessibilityLabel="Tema claro"
-        testID="theme-light-button">
-        <FontAwesome
-          name="sun-o"
-          size={20}
-          color={currentTheme === ThemeMode.LIGHT ? '#FC8200' : '#666'}
-        />
-      </TouchableOpacity>
+      {themeOptions.map((option) => {
+        const isActive = currentTheme === option.mode;
 
-      <TouchableOpacity
-        style={[
-          styles.button,
-          currentTheme === ThemeMode.DARK && styles.buttonActive,
-        ]}
-        onPress={() => handleThemeChange(ThemeMode.DARK)}
-        testID="theme-dark-button">
-        <FontAwesome
-          name="moon-o"
-          size={20}
-          color={currentTheme === ThemeMode.DARK ? '#FC8200' : '#666'}
-        />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[
-          styles.button,
-          currentTheme === ThemeMode.LIGHT_HI_CONTRAST && styles.buttonActive,
-        ]}
-        onPress={() => handleThemeChange(ThemeMode.LIGHT_HI_CONTRAST)}
-        testID="theme-contrast-button">
-        <FontAwesome
-          name="adjust"
-          size={20}
-          color={
-            currentTheme === ThemeMode.LIGHT_HI_CONTRAST ? '#FC8200' : '#666'
-          }
-        />
-      </TouchableOpacity>
+        return (
+          <TouchableOpacity
+            key={option.mode}
+            style={[styles.button, isActive && styles.buttonActive]}
+            onPress={() => handleThemeChange(option.mode)}
+            activeOpacity={0.7}
+            accessibilityRole="radio"
+            accessibilityState={{ selected: isActive }}
+            accessibilityLabel={`Mudar para tema ${option.label}`}
+            testID={`theme-${option.mode}-button`}>
+            <FontAwesome
+              name={option.icon as any}
+              size={18}
+              color={isActive ? colors.primaryOrange : colors.textTertiary}
+            />
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    padding: 6,
-    borderRadius: 8,
-    ...Platform.select({
-      web: {
-        display: 'flex',
-      },
-    }),
-  },
-  button: {
-    padding: 10,
-    marginHorizontal: 3,
-    borderRadius: 6,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...Platform.select({
-      web: {
-        cursor: 'pointer',
-        transition: 'all 0.2s ease',
-      },
-    }),
-  },
-  buttonActive: {
-    backgroundColor: '#DDE6F0',
-    borderColor: '#005A93',
-    borderWidth: 2,
-  },
-});

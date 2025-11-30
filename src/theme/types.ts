@@ -4,17 +4,33 @@ export type ColorsType = {
   primaryBlack: string;
   primaryGreen: string;
   primaryWhite: string;
+  primaryRed: string;
   secondaryGray: string;
   secondaryBeige: string;
   primaryWhiteHover: string;
   primaryOrangeHover: string;
 
-  // Cores adicionais para melhor hierarquia
   cardBackground: string;
   borderColor: string;
   textSecondary: string;
   textTertiary: string;
   backgroundElevated: string;
+
+  successBackground: string;
+  successText: string;
+  errorBackground: string;
+  errorText: string;
+  warningBackground: string;
+  warningText: string;
+
+  inputBackground: string;
+  placeholder: string;
+  divider: string;
+  overlay: string;
+
+  badgeBackground: string;
+  badgeText: string;
+
   notification: {
     unreadBorder: string;
     unreadTitle: string;

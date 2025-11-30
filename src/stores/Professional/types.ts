@@ -9,6 +9,8 @@ export interface ListedProfessional {
   ratingsCount: number;
   imageUrl: string;
   location: string;
+  distance?: number;
+  offeredServices: string[];
 }
 
 export interface Address {
@@ -87,6 +89,8 @@ export interface ProfessionalStore {
     filter?: string,
     page?: number,
     limit?: number,
+    lat?: number,
+    lng?: number,
   ) => Promise<ListedProfessional[]>;
   fetchProfessionalById: (id: number) => Promise<Professional | null>;
   fetchProfessionalsByAvailability: (

@@ -5,17 +5,17 @@ const VLIBRAS_SCRIPT_URL = 'https://vlibras.gov.br/app/vlibras-plugin.js';
 const VLIBRAS_CONTAINER_ID = 'vlibras-container-manual';
 
 const VLibrasSetup: React.FC = () => {
-    useEffect(() => {
-        if (Platform.OS !== 'web') return;
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
 
-        const body = document.body;
-        
-        let containerDiv = document.getElementById(VLIBRAS_CONTAINER_ID);
+    const body = document.body;
 
-        if (!containerDiv) {
-            containerDiv = document.createElement('div');
-            containerDiv.id = VLIBRAS_CONTAINER_ID;
-            containerDiv.innerHTML = `
+    let containerDiv = document.getElementById(VLIBRAS_CONTAINER_ID);
+
+    if (!containerDiv) {
+      containerDiv = document.createElement('div');
+      containerDiv.id = VLIBRAS_CONTAINER_ID;
+      containerDiv.innerHTML = `
                 <style>
                     /* Oculta o ícone flutuante padrão que o VLibras injeta */
                     .accessible-icon-button { display: none !important; }
@@ -29,28 +29,28 @@ const VLibrasSetup: React.FC = () => {
                     </div>
                 </div>
             `;
-            body.appendChild(containerDiv);
+      body.appendChild(containerDiv);
 
-            const script = document.createElement('script');
-            script.src = VLIBRAS_SCRIPT_URL;
-            script.async = true;
+      const script = document.createElement('script');
+      script.src = VLIBRAS_SCRIPT_URL;
+      script.async = true;
 
-            script.onload = () => {
-                if ((window as any).VLibras) {
-                    new (window as any).VLibras.Widget('https://vlibras.gov.br/app');
+      script.onload = () => {
+        if ((window as any).VLibras) {
+          new (window as any).VLibras.Widget('https://vlibras.gov.br/app');
 
-                    const widget = (window as any).VLibras.widget;
-                    if (widget && widget.hide) {
-                        widget.hide();
-                    }
-                }
-            };
-            
-            body.appendChild(script);
+          const widget = (window as any).VLibras.widget;
+          if (widget && widget.hide) {
+            widget.hide();
+          }
         }
-    }, []);
+      };
 
-    return null;
+      body.appendChild(script);
+    }
+  }, []);
+
+  return null;
 };
 
 export default VLibrasSetup;

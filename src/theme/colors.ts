@@ -24,7 +24,7 @@ export const getColors = (): ColorsType => {
         const theme = parsed?.state?.theme as ThemeMode | undefined;
         if (theme && themes[theme]) return themes[theme];
       }
-    } catch (e) {
+    } catch {
       // Ignore parse errors and fallback to store
     }
   }

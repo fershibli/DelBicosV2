@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { TextInput } from 'react-native';
+import React, { useMemo } from 'react';
+import { View } from 'react-native';
+import CustomTextInput from '@components/ui/CustomTextInput';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 
@@ -7,24 +8,19 @@ interface DateInputProps {
   value: string;
   onChangeText: (text: string) => void;
   onBlur?: () => void;
-  error?: any;
+  error?: string | boolean;
+  label?: string;
+  placeholder?: string;
+  disabled?: boolean;
 }
 
-const cleanString = (text: string) => text.replace(/[^\d]/g, '').slice(0, 8);
-
-const formatDate = (text: string) => {
-  const cleanText = cleanString(text);
-  let formatted = cleanText;
-  if (cleanText.length > 2) {
-    formatted = `${cleanText.slice(0, 2)}/${cleanText.slice(2)}`;
-  }
-  if (cleanText.length > 4) {
-    formatted = `${cleanText.slice(0, 2)}/${cleanText.slice(
-      2,
-      4,
-    )}/${cleanText.slice(4, 8)}`;
-  }
-  return formatted;
+const maskDate = (value: string) => {
+  if (!value) return '';
+  return value
+    .replace(/\D/g, '')
+    .replace(/(\d{2})(\d)/, '$1/$2')
+    .replace(/(\d{2})(\d)/, '$1/$2')
+    .replace(/(\d{4})\d+?$/, '$1');
 };
 
 const DateInput: React.FC<DateInputProps> = ({
@@ -32,34 +28,34 @@ const DateInput: React.FC<DateInputProps> = ({
   onChangeText,
   onBlur,
   error,
+  label = 'Data',
+  placeholder = 'DD/MM/AAAA',
+  disabled = false,
 }) => {
   const colors = useColors();
   const styles = createStyles(colors);
-  const [formattedDate, setFormattedDate] = useState('');
 
   const handleChangeText = (text: string) => {
-    const formatted = formatDate(text);
-
-    setFormattedDate(formatted);
-
+    const formatted = maskDate(text);
     onChangeText(formatted);
   };
 
-  useEffect(() => {
-    setFormattedDate(formatDate(value || ''));
-  }, [value]);
+  const displayValue = useMemo(() => maskDate(value || ''), [value]);
 
   return (
-    <TextInput
-      style={[styles.input, error && styles.inputError]}
-      placeholder="DD/MM/AAAA"
-      placeholderTextColor={colors.textTertiary}
-      value={formattedDate}
-      onChangeText={handleChangeText}
-      onBlur={onBlur}
-      keyboardType="numeric"
-      maxLength={10}
-    />
+    <View style={styles.container}>
+      <CustomTextInput
+        label={label}
+        placeholder={placeholder}
+        value={displayValue}
+        onChangeText={handleChangeText}
+        onBlur={onBlur}
+        error={error as any}
+        keyboardType="number-pad"
+        maxLength={10}
+        editable={!disabled}
+      />
+    </View>
   );
 };
 

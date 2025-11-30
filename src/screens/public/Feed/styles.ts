@@ -1,67 +1,22 @@
 import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.secondaryGray,
+      backgroundColor: colors.inputBackground,
     },
     contentContainer: {
-      paddingBottom: 20,
-    },
-    themeToggleContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      paddingHorizontal: 24,
-      paddingTop: 16,
-      paddingBottom: 8,
-    },
-    themeToggleLabel: {
-      fontSize: 16,
-      fontFamily: 'Afacad-SemiBold',
-      color: colors.primaryBlue,
-      marginRight: 8,
+      paddingBottom: 40,
     },
     title: {
-      fontSize: 24,
+      fontSize: 22,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryBlack,
-      paddingHorizontal: 24,
+      paddingHorizontal: 20,
       marginTop: 24,
-      marginBottom: 10,
-    },
-    testButton: {
-      backgroundColor: '#4A90E2',
-      padding: 15,
-      borderRadius: 10,
-      margin: 10,
-      alignItems: 'center',
-      ...Platform.select({
-        ios: {
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.2,
-          shadowRadius: 4,
-        },
-        android: {
-          elevation: 2,
-        },
-        web: {
-          boxShadow: `0px 2px 4px rgba(0, 0, 0, 0.2)`,
-        },
-      }),
-    },
-    testButtonText: {
-      color: 'white',
-      fontWeight: 'bold',
-      fontSize: 16,
-    },
-    categorySection: {
-      marginBottom: 24,
-    },
-    listSection: {
-      marginBottom: 24,
+      marginBottom: 12,
     },
     carouselSection: {
       marginBottom: 24,
@@ -69,51 +24,69 @@ export const createStyles = (colors: any) =>
     },
     carouselContainer: {
       width: '100%',
+      height: 220,
+      position: 'relative',
     },
     carouselListContainer: {
       paddingHorizontal: 0,
     },
     scrollButton: {
       position: 'absolute',
-      top: 250 / 2 - 20,
-      transform: 'translateY(-20px)',
+      top: '50%',
+      marginTop: -20,
       zIndex: 10,
-      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      backgroundColor: colors.cardBackground,
       borderRadius: 20,
       width: 40,
       height: 40,
       justifyContent: 'center',
       alignItems: 'center',
-      elevation: 5,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.2,
-      shadowRadius: 2,
-      cursor: 'pointer',
+      ...Platform.select({
+        web: {
+          boxShadow: '0px 2px 8px rgba(0,0,0,0.2)',
+          cursor: 'pointer',
+        },
+        default: {
+          elevation: 5,
+        },
+      }),
     },
     scrollButtonLeft: {
-      left: 24,
+      left: 16,
     },
     scrollButtonRight: {
-      right: 24,
+      right: 16,
     },
     paginationContainer: {
       position: 'absolute',
-      bottom: 12,
+      bottom: 24,
       left: 0,
       right: 0,
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
+      zIndex: 20,
     },
     dot: {
       width: 8,
       height: 8,
       borderRadius: 4,
-      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+      backgroundColor: 'rgba(255, 255, 255, 0.4)',
       marginHorizontal: 4,
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,0.1)',
     },
     dotActive: {
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: '#FFFFFF',
+      width: 10,
+      height: 10,
+      borderColor: 'transparent',
+    },
+    categorySection: {
+      marginBottom: 24,
+    },
+    listSection: {
+      marginBottom: 24,
+      paddingHorizontal: 16,
     },
   });

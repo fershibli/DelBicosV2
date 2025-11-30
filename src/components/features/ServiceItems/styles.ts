@@ -1,64 +1,72 @@
 import { StyleSheet } from 'react-native';
-import colors from '@theme/colors';
+import { ColorsType } from '@theme/types';
 
-export const styles = StyleSheet.create({
-  itemsContainer: {
-    borderWidth: 0.3,
-    borderColor: colors.primaryBlack,
-    borderRadius: 3,
-    marginBottom: 10,
-    overflow: 'hidden',
-  },
-  itemsHeader: {
-    backgroundColor: colors.primaryOrange,
-    paddingVertical: 2,
-    paddingHorizontal: 10,
-  },
-  itemsHeaderText: {
-    fontWeight: '800',
-    fontSize: 9,
-    lineHeight: 11,
-    color: colors.primaryWhite,
-  },
-  itemDetails: {
-    backgroundColor: '#FFE092',
-    padding: 10,
-    marginBottom: 2,
-  },
-  itemRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 5,
-  },
-  itemName: {
-    fontWeight: '800',
-    fontSize: 9,
-    lineHeight: 11,
-    color: colors.primaryBlack,
-  },
-  itemDate: {
-    fontWeight: '400',
-    fontSize: 9,
-    lineHeight: 11,
-    color: colors.primaryBlack,
-  },
-  itemTime: {
-    fontWeight: '500',
-    fontSize: 9,
-    lineHeight: 11,
-    color: colors.primaryBlack,
-  },
-  itemPrice: {
-    fontWeight: '800',
-    fontSize: 9,
-    lineHeight: 11,
-    color: colors.primaryBlack,
-  },
-  professionalText: {
-    fontWeight: '500',
-    fontSize: 9,
-    lineHeight: 11,
-    color: colors.primaryBlack,
-    marginTop: 5,
-  },
-});
+export const createStyles = (colors: ColorsType) =>
+  StyleSheet.create({
+    container: {
+      borderWidth: 1,
+      borderColor: colors.borderColor,
+      borderRadius: 8,
+      marginBottom: 16,
+      overflow: 'hidden',
+      backgroundColor: colors.cardBackground,
+    },
+    header: {
+      backgroundColor: colors.primaryOrange,
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+    },
+    headerText: {
+      fontFamily: 'Afacad-Bold',
+      fontSize: 12,
+      color: colors.primaryWhite,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    itemDetails: {
+      backgroundColor: colors.inputBackground,
+      padding: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.divider,
+    },
+    lastItem: {
+      borderBottomWidth: 0,
+    },
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 6,
+    },
+    itemName: {
+      fontFamily: 'Afacad-Bold',
+      fontSize: 14,
+      color: colors.primaryBlack,
+      flex: 1,
+      marginRight: 8,
+    },
+    itemDate: {
+      fontFamily: 'Afacad-Regular',
+      fontSize: 12,
+      color: colors.textSecondary,
+    },
+    itemTime: {
+      fontFamily: 'Afacad-Regular',
+      fontSize: 12,
+      color: colors.textSecondary,
+    },
+    itemPrice: {
+      fontFamily: 'Afacad-Bold',
+      fontSize: 14,
+      color: colors.primaryBlack,
+    },
+    professionalText: {
+      fontFamily: 'Afacad-SemiBold',
+      fontSize: 12,
+      color: colors.primaryBlue,
+      marginTop: 4,
+    },
+    label: {
+      color: colors.textTertiary,
+      fontFamily: 'Afacad-Regular',
+    },
+  });

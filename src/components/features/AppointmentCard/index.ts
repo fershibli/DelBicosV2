@@ -1,0 +1,1 @@
+export { AppointmentCard } from './AppointmentCard';

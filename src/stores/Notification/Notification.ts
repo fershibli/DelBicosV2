@@ -12,15 +12,10 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
       set({ loading: true, error: null });
       const url = `/api/notifications/${userId}`;
 
-      if (showLogs) {
-        console.log('🔍 Buscando notificações:', url);
-      }
-
       const response = await backendHttpClient.get(url);
       const apiNotifications = response.data as Notification[];
 
       if (showLogs) {
-        console.log('✅ Recebidas:', apiNotifications.length, 'notificações');
         if (apiNotifications.length > 0) {
           console.table(
             apiNotifications.map((n) => ({
@@ -50,9 +45,6 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     );
 
     if (!isCurrentlyUnread) {
-      console.log(
-        `Notificação ${notificationId} já está lida. Ignorando chamada à API.`,
-      );
       return;
     }
 

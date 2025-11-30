@@ -10,17 +10,14 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
+import { FontAwesome } from '@expo/vector-icons';
 
 import { useUserStore } from '@stores/User';
 import CustomTextInput from '@components/ui/CustomTextInput';
+import PasswordInput from '@components/ui/PasswordInput';
 import { checkForNewNotifications } from '@utils/usePushNotifications';
 
-// @ts-ignore
-import IconPerson from '@assets/person.svg';
-// @ts-ignore
-// import IconPhone from '@assets/phone.svg';
 import LogoV3 from '@assets/LogoV3.png';
-
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 
@@ -35,6 +32,7 @@ export const LoginPassword = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const colors = useColors();
   const styles = createStyles(colors);
+
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
@@ -51,41 +49,41 @@ export const LoginPassword = () => {
   const onLoginPress = async (data: FormData) => {
     setIsSubmitting(true);
     setErrorModalVisible(false);
+
     try {
       if (isAdmin) {
-        // admin login
         // @ts-ignore
-        await (useUserStore.getState().signInAdmin || signInPassword)(
-          data.email,
-          data.password,
-        );
-        // After admin login, keep the user on the normal Home/Feed screen.
-        // The admin can access Analytics via the Header -> Analytics menu.
+        const signInAdminFn = useUserStore.getState().signInAdmin;
+
+        if (signInAdminFn) {
+          await signInAdminFn(data.email, data.password);
+        } else {
+          await signInPassword(data.email, data.password);
+        }
+
+        // @ts-ignore
         navigation.navigate('Feed');
       } else {
         await signInPassword(data.email, data.password);
 
-        // Verificar notificações após login (sem logs)
         const userId = useUserStore.getState().user?.id;
         if (userId) {
-          setTimeout(async () => {
-            try {
-              await checkForNewNotifications(
-                userId.toString(),
-                new Date(Date.now() - 60000), // Últimos 60 segundos
-                false, // Sem logs
-              );
-            } catch {
-              // Silencioso
-            }
+          setTimeout(() => {
+            checkForNewNotifications(
+              userId.toString(),
+              new Date(Date.now() - 60000),
+              false,
+            ).catch(() => {});
           }, 1000);
         }
 
+        // @ts-ignore
         navigation.navigate('Feed');
       }
     } catch (error: any) {
+      console.error('Erro no login:', error);
       setErrorMessage(
-        error.message || 'Ocorreu um erro ao tentar fazer login.',
+        error.message || 'Credenciais inválidas. Verifique e tente novamente.',
       );
       setErrorModalVisible(true);
     } finally {
@@ -97,16 +95,21 @@ export const LoginPassword = () => {
     <View style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.contentContainer}
-        keyboardShouldPersistTaps="handled">
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Home' as never)}
+          activeOpacity={0.8}>
           <Image source={LogoV3} style={styles.logo} />
         </TouchableOpacity>
 
         <View style={styles.formContainer}>
+          {/* Seletor de Tipo de Conta */}
           <View style={styles.roleToggle}>
             <TouchableOpacity
               onPress={() => setIsAdmin(false)}
-              style={[styles.roleButton, !isAdmin && styles.roleButtonActive]}>
+              style={[styles.roleButton, !isAdmin && styles.roleButtonActive]}
+              activeOpacity={0.8}>
               <Text
                 style={[styles.roleText, !isAdmin && styles.roleTextActive]}>
                 Usuário
@@ -114,58 +117,62 @@ export const LoginPassword = () => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setIsAdmin(true)}
-              style={[styles.roleButton, isAdmin && styles.roleButtonActive]}>
+              style={[styles.roleButton, isAdmin && styles.roleButtonActive]}
+              activeOpacity={0.8}>
               <Text style={[styles.roleText, isAdmin && styles.roleTextActive]}>
                 Administrador
               </Text>
             </TouchableOpacity>
           </View>
+
           <Text style={styles.title}>Bem-vindo!</Text>
           <Text style={styles.subtitle}>Acesse sua conta para continuar.</Text>
 
-          <Controller
-            control={control}
-            name="email"
-            rules={{
-              required: 'O e-mail é obrigatório.',
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Digite um e-mail válido.',
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput
-                label="E-mail"
-                placeholder="seu@email.com"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                error={errors.email}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            )}
-          />
+          <View style={styles.inputWrapper}>
+            <Controller
+              control={control}
+              name="email"
+              rules={{
+                required: 'O e-mail é obrigatório.',
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: 'Digite um e-mail válido.',
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <CustomTextInput
+                  label="E-mail"
+                  placeholder="seu@email.com"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  error={errors.email}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              )}
+            />
+          </View>
 
-          <Controller
-            control={control}
-            name="password"
-            rules={{
-              required: 'A senha é obrigatória.',
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput
-                label="Senha"
-                placeholder="Sua senha"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                error={errors.password}
-                secureTextEntry
-                onSubmitEditing={handleSubmit(onLoginPress)}
-              />
-            )}
-          />
+          <View style={styles.inputWrapper}>
+            <Controller
+              control={control}
+              name="password"
+              rules={{ required: 'A senha é obrigatória.' }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <CustomTextInput label="Senha" error={errors.password}>
+                  <PasswordInput
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder="Sua senha"
+                    onSubmitEditing={handleSubmit(onLoginPress)}
+                    error={!!errors.password}
+                  />
+                </CustomTextInput>
+              )}
+            />
+          </View>
 
           <TouchableOpacity
             style={[
@@ -173,50 +180,36 @@ export const LoginPassword = () => {
               (!isValid || isSubmitting) && styles.buttonDisabled,
             ]}
             onPress={handleSubmit(onLoginPress)}
-            disabled={!isValid || isSubmitting}>
+            disabled={!isValid || isSubmitting}
+            activeOpacity={0.8}>
             {isSubmitting ? (
               <ActivityIndicator color={colors.primaryWhite} />
             ) : (
               <View style={styles.buttonContent}>
-                <IconPerson
-                  width={18}
-                  height={18}
+                <FontAwesome
+                  name={isAdmin ? 'lock' : 'user'}
+                  size={18}
                   color={colors.primaryWhite}
                 />
-                <Text style={styles.buttonText}>Login</Text>
+                <Text style={styles.buttonText}>Entrar</Text>
               </View>
             )}
           </TouchableOpacity>
 
-          {/* <TouchableOpacity
-            style={[
-              styles.button,
-              styles.buttonSecondary,
-              styles.buttonDisabled,
-            ]}
-            onPress={() => {}}
-            disabled={true}>
-            <View style={styles.buttonContent}>
-              <IconPhone width={18} height={18} stroke={colors.primaryBlue} />
-              <Text style={[styles.buttonText, styles.buttonTextSecondary]}>
-                Login por Telefone
-              </Text>
-            </View>
-          </TouchableOpacity> */}
-
-          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-            <Text style={styles.linkText}>
-              Não tem uma conta?{' '}
-              <Text style={styles.linkTextBold}>Cadastre-se</Text>
-            </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Register' as never)}
+            style={styles.linkContainer}>
+            <Text style={styles.linkText}>Não tem uma conta?</Text>
+            <Text style={styles.linkTextBold}>Cadastre-se</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
 
       <Text style={styles.footer}>
-        © DelBicos - 2025 – Todos os direitos reservados.
+        © DelBicos - {new Date().getFullYear()} – Todos os direitos reservados.
       </Text>
 
+      {/* Modal de Erro */}
       <Modal
         animationType="fade"
         visible={errorModalVisible}
@@ -226,6 +219,7 @@ export const LoginPassword = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Erro no Login</Text>
             <Text style={styles.modalText}>{errorMessage}</Text>
+
             <TouchableOpacity
               style={[styles.button, styles.modalButton]}
               onPress={() => setErrorModalVisible(false)}>

@@ -1,73 +1,95 @@
 import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     card: {
       flex: 1,
       flexDirection: 'row',
-      backgroundColor: colors.primaryWhite,
-      borderRadius: 12,
+      backgroundColor: colors.cardBackground,
+      borderRadius: 16,
       margin: 8,
-      height: 100,
+      minHeight: 110,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: colors.borderColor,
       ...Platform.select({
         ios: {
           shadowColor: colors.primaryBlack,
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.15,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
           shadowRadius: 4,
         },
         android: {
           elevation: 3,
         },
         web: {
-          boxShadow: '0px 1px 4px rgba(0, 0, 0, 0.1)',
-          transition: 'transform 0.2s ease-in-out',
-        },
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+          cursor: 'pointer',
+        } as any,
       }),
     },
     image: {
-      width: 90,
+      width: 100,
       height: '100%',
-      borderTopLeftRadius: 12,
-      borderBottomLeftRadius: 12,
+      backgroundColor: colors.inputBackground,
     },
     content: {
       flex: 1,
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-      justifyContent: 'center',
+      padding: 12,
+      justifyContent: 'space-between',
     },
-    Name: {
-      fontSize: 18,
+    name: {
+      fontSize: 16,
       fontFamily: 'Afacad-Bold',
-      color: colors.primaryOrange,
+      marginBottom: 4,
     },
-    Category: {
-      fontSize: 14,
+    services: {
+      fontSize: 13,
       fontFamily: 'Afacad-Regular',
-      color: colors.primaryBlack,
+      marginBottom: 6,
+      lineHeight: 18,
     },
-    ratingRow: {
+    ratingContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginTop: 4,
+      marginBottom: 8,
     },
-    Rating: {
-      fontSize: 12,
-      fontFamily: 'Afacad-Regular',
-      color: colors.primaryBlack,
+    rating: {
+      fontSize: 13,
+      fontFamily: 'Afacad-Bold',
       marginLeft: 4,
-      marginRight: 2,
     },
-    RatingCount: {
+    ratingCount: {
+      fontSize: 13,
+      fontFamily: 'Afacad-Regular',
+      fontWeight: 'normal',
+    },
+    footer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: 'auto',
+    },
+    location: {
       fontSize: 12,
       fontFamily: 'Afacad-Regular',
-      color: '#6c757d',
+      flex: 1,
+      marginRight: 8,
     },
-    Location: {
-      fontSize: 12,
-      fontFamily: 'Afacad-Regular',
-      color: colors.primaryBlue,
-      marginTop: 4,
+    distanceBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.primaryBlue,
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      borderRadius: 6,
+    },
+    distanceText: {
+      color: colors.primaryWhite,
+      fontSize: 11,
+      fontFamily: 'Afacad-Bold',
+      marginLeft: 4,
     },
   });

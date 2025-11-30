@@ -1,0 +1,1 @@
+export { AvaliacoesContent } from './AvaliacoesContent';
