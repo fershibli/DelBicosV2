@@ -13,32 +13,19 @@ import { Category } from '@stores/Category/types';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
+import { FontAwesome5 } from '@expo/vector-icons';
 
-// Imports dos SVGs
-// @ts-ignore
-import beautySVG from '@assets/categories/beauty.svg';
-// @ts-ignore
-import healthSVG from '@assets/categories/health.svg';
-// @ts-ignore
-import homeSVG from '@assets/categories/home.svg';
-// @ts-ignore
-import miscSVG from '@assets/categories/miscellaneous.svg';
-// @ts-ignore
-import petsSVG from '@assets/categories/pets.svg';
-// @ts-ignore
-import repairSVG from '@assets/categories/repair.svg';
-
-const categoryInfoById: Record<number, any> = {
-  1: { IconComponent: healthSVG, width: 72, height: 70 },
-  2: { IconComponent: beautySVG, width: 63, height: 87 },
-  3: { IconComponent: repairSVG, width: 70, height: 75 },
-  4: { IconComponent: miscSVG, width: 51, height: 69 },
-  5: { IconComponent: homeSVG, width: 61, height: 50 },
-  6: { IconComponent: petsSVG, width: 74, height: 74 },
+const CATEGORY_ICONS: Record<number, string> = {
+  1: 'heartbeat',
+  2: 'cut',
+  3: 'tools',
+  4: 'lightbulb',
+  5: 'home',
+  6: 'paw',
 };
 
-function getCategoryInfo(id: number) {
-  return categoryInfoById[id] || categoryInfoById[4];
+function getCategoryIconName(id: number) {
+  return CATEGORY_ICONS[id] || 'shapes';
 }
 
 interface CategoryCardProps {
@@ -47,7 +34,7 @@ interface CategoryCardProps {
 }
 
 function CategoryCard({ category, onPress }: CategoryCardProps) {
-  const info = getCategoryInfo(category.id);
+  const iconName = getCategoryIconName(category.id);
   const [isHovered, setIsHovered] = useState(false);
 
   const { theme } = useThemeStore();
@@ -58,46 +45,29 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
 
   const colorProps = useMemo(() => {
-    const active = isHovered;
-
     let bgColor = colors.cardBackground;
     let borderColor = colors.borderColor;
-    let titleColor = colors.primaryOrange;
-    let iconColor = colors.primaryOrange;
+    let contentColor = colors.primaryOrange;
 
     if (isDark) {
-      borderColor = colors.cardBackground;
-      titleColor = colors.primaryWhite;
-      iconColor = colors.primaryWhite;
+      bgColor = '#2C2C2C';
+      borderColor = '#444';
+      contentColor = '#FFFFFF';
     }
 
     if (isHighContrast) {
       bgColor = colors.primaryWhite;
       borderColor = colors.primaryBlack;
-      titleColor = colors.primaryBlack;
-      iconColor = colors.primaryBlack;
+      contentColor = colors.primaryBlack;
     }
 
-    if (active) {
-      if (isHighContrast) {
-        bgColor = colors.primaryBlue;
-        titleColor = colors.primaryWhite;
-        iconColor = colors.primaryWhite;
-        borderColor = colors.primaryBlue;
-      } else if (isDark) {
-        bgColor = colors.primaryOrange;
-        titleColor = colors.primaryWhite;
-        iconColor = colors.primaryWhite;
-        borderColor = colors.primaryOrange;
-      } else {
-        bgColor = colors.primaryBlue;
-        titleColor = colors.primaryWhite;
-        iconColor = colors.primaryWhite;
-        borderColor = colors.primaryBlue;
-      }
+    if (isHovered) {
+      bgColor = isDark ? colors.primaryOrange : colors.primaryBlue;
+      contentColor = isDark ? colors.primaryWhite : colors.primaryOrange;
+      borderColor = bgColor;
     }
 
-    return { bgColor, borderColor, titleColor, iconColor };
+    return { bgColor, borderColor, contentColor };
   }, [isHovered, isDark, isHighContrast, colors]);
 
   return (
@@ -107,26 +77,22 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
         {
           backgroundColor: colorProps.bgColor,
           borderColor: colorProps.borderColor,
-          transform: [{ scale: pressed || isHovered ? 1.02 : 1 }],
+          transform: [{ scale: pressed || isHovered ? 1.03 : 1 }],
         },
-        isHighContrast && { borderWidth: 2 },
+        isHighContrast && { borderWidth: 3 },
       ]}
       onPress={() => onPress(category)}
       onHoverIn={() => setIsHovered(true)}
       onHoverOut={() => setIsHovered(false)}
-      accessibilityRole="button"
-      accessibilityLabel={`Categoria ${category.title}`}>
-      <info.IconComponent
-        width={info.width * 0.8}
-        height={info.height * 0.8}
-        color={colorProps.iconColor}
+      accessibilityRole="button">
+      <FontAwesome5
+        name={iconName}
+        size={48}
+        color={colorProps.contentColor}
+        style={{ marginBottom: 16 }}
       />
       <Text
-        style={[
-          styles.categoryTitle,
-          { color: colorProps.titleColor },
-          isHighContrast && { fontWeight: 'bold' },
-        ]}
+        style={[styles.categoryTitle, { color: colorProps.contentColor }]}
         numberOfLines={2}>
         {category.title}
       </Text>
@@ -142,7 +108,13 @@ function CategoryList() {
   const styles = createStyles(colors);
 
   const { width } = useWindowDimensions();
-  const numColumns = width > 1000 ? 4 : width > 600 ? 3 : 2;
+
+  // Ajuste de colunas para telas full-screen
+  let numColumns = 2;
+  if (width > 1600)
+    numColumns = 5; // Telas ultra-wide
+  else if (width > 1200) numColumns = 4;
+  else if (width > 768) numColumns = 3;
 
   useEffect(() => {
     if (!categories?.length) {
@@ -185,7 +157,8 @@ function CategoryList() {
         data={categories}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={{ flex: 1 / numColumns }}>
+          // Padding de 12px para dar espaçamento entre os cards
+          <View style={{ flex: 1 / numColumns, padding: 12 }}>
             <CategoryCard category={item} onPress={handleCategoryPress} />
           </View>
         )}
