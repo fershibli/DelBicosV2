@@ -23,8 +23,6 @@ export type NavigationParams = {
   LoginPassword: undefined;
   Feed: undefined;
   PartnerProfile: { id: string };
-  PhoneConfirmation: undefined;
-  ConfirmPhoneNumber: { code: string };
   Register: undefined;
   NotFound: undefined;
   VerificationScreen: { email: string };
