@@ -1,10 +1,15 @@
 import axios from 'axios';
 import { HTTP_DOMAIN } from '@config/varEnvs';
-import { useUserStore } from '@stores/User';
+
+let getToken: (() => string | null) | null = null;
+
+export const registerTokenProvider = (provider: () => string | null) => {
+  getToken = provider;
+};
 
 export const backendHttpClient = axios.create({
   baseURL: `${HTTP_DOMAIN}`,
-  timeout: 5000,
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
     accept: 'application/json',
@@ -13,9 +18,8 @@ export const backendHttpClient = axios.create({
 
 backendHttpClient.interceptors.request.use(
   (config) => {
-    const token = useUserStore.getState().token;
+    const token = getToken ? getToken() : null;
 
-    // Se o token existir, anexa ele no header de Autorização
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
