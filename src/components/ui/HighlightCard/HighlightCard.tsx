@@ -46,8 +46,8 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({ item }) => {
         imageStyle={styles.imageStyle}
         resizeMode="cover">
         <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.3)', 'rgba(0,0,0,0.85)']}
-          locations={[0, 0.5, 1]}
+          colors={['transparent', 'rgba(0,0,0,0.2)', 'rgba(0,0,0,0.9)']}
+          locations={[0, 0.6, 1]}
           style={styles.gradient}>
           <View style={styles.textContainer}>
             <Text style={styles.title} numberOfLines={1}>

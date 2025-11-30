@@ -5,7 +5,7 @@ export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     card: {
       height: 200,
-      backgroundColor: colors.secondaryGray,
+      backgroundColor: colors.inputBackground,
       overflow: 'hidden',
     },
     image: {
@@ -17,24 +17,26 @@ export const createStyles = (colors: ColorsType) =>
       height: '100%',
       justifyContent: 'flex-end',
       padding: 20,
+      paddingBottom: 40,
     },
     textContainer: {
       gap: 4,
+      maxWidth: '90%',
     },
     title: {
       fontFamily: 'Afacad-Bold',
       fontSize: 24,
-      color: colors.primaryWhite,
-      textShadowColor: 'rgba(0, 0, 0, 0.75)',
-      textShadowOffset: { width: -1, height: 1 },
-      textShadowRadius: 10,
+      color: '#FFFFFF',
+      textShadowColor: 'rgba(0, 0, 0, 0.9)',
+      textShadowOffset: { width: 1, height: 1 },
+      textShadowRadius: 4,
     },
     description: {
       fontFamily: 'Afacad-Regular',
       fontSize: 16,
-      color: '#E2E8F0',
-      textShadowColor: 'rgba(0, 0, 0, 0.75)',
-      textShadowOffset: { width: -1, height: 1 },
-      textShadowRadius: 5,
+      color: '#F0F0F0',
+      textShadowColor: 'rgba(0, 0, 0, 0.9)',
+      textShadowOffset: { width: 1, height: 1 },
+      textShadowRadius: 4,
     },
   });
