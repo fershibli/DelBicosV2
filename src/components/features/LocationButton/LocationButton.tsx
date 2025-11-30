@@ -48,6 +48,7 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
     try {
       const coords = await onPress();
       if (coords) {
+        // Define a região apenas ao ABRIR o modal
         setCurrentRegion({
           latitude: coords.latitude,
           longitude: coords.longitude,
@@ -69,12 +70,12 @@ export const LocationButton: React.FC<LocationButtonProps> = ({
 
   const handleMapPress = (event: any) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
+
+    // CORREÇÃO: Apenas movemos o marcador, NÃO movemos a câmera (region)
+    // Isso evita o "pulo" ou refresh visual
     setMarkerCoords({ latitude, longitude });
-    setCurrentRegion({
-      latitude,
-      longitude,
-      ...getDeltas(),
-    });
+
+    // setCurrentRegion(...) -> REMOVIDO
   };
 
   const handleConfirm = () => {
