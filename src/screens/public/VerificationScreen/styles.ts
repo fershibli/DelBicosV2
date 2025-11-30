@@ -1,6 +1,7 @@
 import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -10,33 +11,33 @@ export const createStyles = (colors: any) =>
       flexGrow: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 20,
+      padding: 24,
     },
     logo: {
-      width: 150,
-      height: 150,
+      width: 120,
+      height: 120,
       resizeMode: 'contain',
-      marginBottom: 40,
+      marginBottom: 32,
     },
     card: {
       width: '100%',
       maxWidth: 450,
-      backgroundColor: colors.primaryWhite,
-      borderRadius: 16,
-      padding: 24,
+      backgroundColor: colors.cardBackground,
+      borderRadius: 24,
+      padding: 32,
       alignItems: 'center',
       ...Platform.select({
         ios: {
           shadowColor: colors.primaryBlack,
           shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.2,
-          shadowRadius: 10,
+          shadowOpacity: 0.15,
+          shadowRadius: 12,
         },
         android: {
           elevation: 8,
         },
         web: {
-          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
         },
       }),
     },
@@ -44,12 +45,13 @@ export const createStyles = (colors: any) =>
       fontSize: 28,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryBlue,
-      marginBottom: 8,
+      marginBottom: 12,
+      textAlign: 'center',
     },
     subtitle: {
       fontSize: 16,
       fontFamily: 'Afacad-Regular',
-      color: '#6c757d',
+      color: colors.textSecondary,
       marginBottom: 32,
       textAlign: 'center',
       lineHeight: 24,
@@ -58,68 +60,53 @@ export const createStyles = (colors: any) =>
       fontFamily: 'Afacad-Bold',
       color: colors.primaryBlue,
     },
-    codeInputContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+
+    // Botões
+    button: {
+      height: 50,
+      backgroundColor: colors.primaryBlue,
+      borderRadius: 12,
       width: '100%',
-      marginBottom: 32,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 16,
     },
-    codeInput: {
-      width: 48,
-      height: 52,
-      borderWidth: 2,
-      borderColor: '#CED4DA',
-      borderRadius: 8,
-      textAlign: 'center',
-      fontSize: 22,
+    buttonDisabled: {
+      backgroundColor: colors.textTertiary,
+      opacity: 0.8,
+    },
+    buttonText: {
+      color: colors.primaryWhite,
       fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlue,
-    },
-    codeInputFilled: {
-      borderColor: colors.primaryOrange,
-      backgroundColor: '#FFF5EB',
-      borderWidth: 2,
+      fontSize: 16,
     },
 
+    // Reenviar
     resendButton: {
       marginTop: 24,
       alignItems: 'center',
       justifyContent: 'center',
       paddingVertical: 12,
     },
-
     resendText: {
       color: colors.primaryOrange,
       fontSize: 16,
       fontFamily: 'Afacad-Bold',
       textDecorationLine: 'underline',
     },
-
     resendTextDisabled: {
-      color: colors.textTertiary || '#999999',
+      color: colors.textTertiary,
       textDecorationLine: 'none',
+      fontFamily: 'Afacad-Regular',
     },
-    button: {
-      height: 50,
-      backgroundColor: colors.primaryBlue,
-      borderRadius: 8,
-      width: '100%',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    buttonDisabled: {
-      opacity: 0.7,
-    },
-    buttonText: {
-      color: colors.primaryWhite,
-      fontWeight: 'bold',
-      fontSize: 16,
-      fontFamily: 'Afacad-Bold',
-    },
+
+    // Footer
     footer: {
-      padding: 10,
+      padding: 16,
       textAlign: 'center',
       fontSize: 12,
+      fontFamily: 'Afacad-Regular',
       color: colors.primaryWhite,
+      opacity: 0.8,
     },
   });

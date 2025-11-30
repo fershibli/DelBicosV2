@@ -1,17 +1,14 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ActivityIndicator,
   Image,
   ScrollView,
-  Keyboard,
-  NativeSyntheticEvent,
-  TextInputKeyPressEventData,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+
 import LogoV3 from '@assets/LogoV3.png';
 import { createStyles } from './styles';
 import { HTTP_DOMAIN } from '@config/varEnvs';
@@ -20,7 +17,8 @@ import { backendHttpClient } from '@lib/helpers/httpClient';
 import { Address } from '@stores/User/types';
 import { useColors } from '@theme/ThemeProvider';
 import { checkForNewNotifications } from '@utils/usePushNotifications';
-import { FeedbackModal } from '@components/ui/FeedbackModal/FeedbackModal';
+import { FeedbackModal } from '@components/ui/FeedbackModal';
+import CodeInput from '@components/ui/CodeInput';
 
 function VerificationScreen() {
   const navigation = useNavigation();
@@ -36,7 +34,10 @@ function VerificationScreen() {
   const colors = useColors();
   const styles = createStyles(colors);
 
+  // Estado para CodeInput
   const [code, setCode] = useState<string[]>(Array(6).fill(''));
+  const [focusedIndex, setFocusedIndex] = useState(0);
+
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const COOLDOWN_SECONDS = 60;
@@ -59,9 +60,12 @@ function VerificationScreen() {
     onClose: () => setFeedbackVisible(false),
   });
 
-  const inputs = useRef<(TextInput | null)[]>([]);
-
   useEffect(() => {
+    if (!email) {
+      navigation.navigate('Register' as never);
+      return;
+    }
+
     if (timer <= 0) return;
 
     const interval = setInterval(() => {
@@ -71,51 +75,7 @@ function VerificationScreen() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [lastCodeSentAt, timer, calculateRemainingTime]);
-
-  const handleTextChange = (text: string, index: number) => {
-    if (text.length > 1) {
-      const pastedCode = text.slice(0, 6).split('');
-      const newCode = [...code];
-
-      pastedCode.forEach((char, i) => {
-        if (index + i < 6) {
-          newCode[index + i] = char;
-        }
-      });
-
-      setCode(newCode);
-
-      const nextIndex = Math.min(index + pastedCode.length, 5);
-      inputs.current[nextIndex]?.focus();
-
-      if (newCode.every((digit) => digit !== '')) {
-        Keyboard.dismiss();
-      }
-      return;
-    }
-
-    const newCode = [...code];
-    newCode[index] = text;
-    setCode(newCode);
-
-    if (text && index < 5) {
-      inputs.current[index + 1]?.focus();
-    }
-
-    if (newCode.every((digit) => digit !== '')) {
-      Keyboard.dismiss();
-    }
-  };
-
-  const handleKeyPress = (
-    e: NativeSyntheticEvent<TextInputKeyPressEventData>,
-    index: number,
-  ) => {
-    if (e.nativeEvent.key === 'Backspace' && !code[index] && index > 0) {
-      inputs.current[index - 1]?.focus();
-    }
-  };
+  }, [email, lastCodeSentAt, timer, calculateRemainingTime, navigation]);
 
   const showFeedback = (
     type: 'success' | 'error',
@@ -136,44 +96,34 @@ function VerificationScreen() {
   };
 
   const handleResendCode = async () => {
-    if (timer > 0) return;
-
-    if (!email) {
-      showFeedback('error', 'Erro', 'Sessão expirada.', () =>
-        navigation.navigate('Register'),
-      );
-      return;
-    }
+    if (timer > 0 || !email) return;
 
     setIsResending(true);
 
     try {
       await resendCode(email);
-
       recordCodeSent();
-      setTimer(60);
+      setTimer(COOLDOWN_SECONDS);
+
       showFeedback(
         'success',
         'Código Reenviado',
-        `Um novo código foi enviado para ${email}. Verifique sua caixa de entrada e spam.`,
+        `Um novo código foi enviado para ${email}.`,
       );
 
       setCode(Array(6).fill(''));
-      inputs.current[0]?.focus();
+      setFocusedIndex(0);
     } catch (error: any) {
       console.error('Erro no reenvio:', error);
-
       if (error.response?.status === 404) {
         showFeedback(
           'error',
           'Sessão Expirada',
-          'Seu cadastro temporário expirou. Por favor, preencha seus dados novamente.',
-          () => navigation.navigate('Register'),
+          'Seu cadastro temporário expirou.',
+          () => navigation.navigate('Register' as never),
         );
       } else {
-        const msg =
-          error.response?.data?.error || 'Não foi possível reenviar o código.';
-        showFeedback('error', 'Erro', msg);
+        showFeedback('error', 'Erro', 'Não foi possível reenviar o código.');
       }
     } finally {
       setIsResending(false);
@@ -186,7 +136,7 @@ function VerificationScreen() {
       showFeedback(
         'error',
         'Código Inválido',
-        'Por favor, insira o código de 6 dígitos.',
+        'Por favor, preencha os 6 dígitos.',
       );
       return;
     }
@@ -194,9 +144,8 @@ function VerificationScreen() {
     if (!email) {
       showFeedback(
         'error',
-        'Sessão Expirada',
-        'Por favor, inicie o cadastro novamente.',
-        () => navigation.navigate('Register'),
+        'Erro',
+        'E-mail não encontrado. Reinicie o cadastro.',
       );
       return;
     }
@@ -205,13 +154,16 @@ function VerificationScreen() {
     try {
       const response = await backendHttpClient.post(
         `${HTTP_DOMAIN}/auth/verify`,
-        { email, code: fullCode },
+        {
+          email,
+          code: fullCode,
+        },
       );
       const data = response.data;
 
       if (response.status === 200) {
         const { token, user } = data;
-        if (!token || !user) throw new Error('Resposta inválida do servidor.');
+        if (!token || !user) throw new Error('Resposta inválida.');
 
         const addressData: Address | null = user.address
           ? {
@@ -245,6 +197,7 @@ function VerificationScreen() {
 
         setVerificationEmail(null);
 
+        // Check notificações em background
         setTimeout(() => {
           checkForNewNotifications(
             user.id.toString(),
@@ -256,33 +209,28 @@ function VerificationScreen() {
         showFeedback(
           'success',
           'Sucesso!',
-          'Sua conta foi verificada com sucesso.',
-          () => navigation.navigate('Home'),
+          'Conta verificada com sucesso.',
+          () => navigation.navigate('Home' as never),
         );
       }
     } catch (error: any) {
       console.error('Erro ao verificar:', error);
       const msg =
-        error.response?.data?.error || 'Não foi possível verificar o código.';
+        error.response?.data?.error || 'Código incorreto ou expirado.';
       showFeedback('error', 'Erro na Verificação', msg);
     } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (!email) {
-      navigation.navigate('Register');
-    }
-  }, [email, navigation]);
-
   return (
     <View style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.contentContainer}
-        keyboardShouldPersistTaps="handled">
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <Image source={LogoV3} style={styles.logo} resizeMode="contain" />
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home' as never)}>
+          <Image source={LogoV3} style={styles.logo} />
         </TouchableOpacity>
 
         <View style={styles.card}>
@@ -292,31 +240,20 @@ function VerificationScreen() {
             <Text style={styles.emailText}>{email}</Text>.
           </Text>
 
-          <View style={styles.codeInputContainer}>
-            {code.map((digit, index) => (
-              <TextInput
-                key={index}
-                ref={(el) => {
-                  inputs.current[index] = el;
-                }}
-                style={[
-                  styles.codeInput,
-                  digit ? styles.codeInputFilled : null,
-                ]}
-                keyboardType="number-pad"
-                maxLength={index === 0 ? 6 : 1}
-                value={digit}
-                onChangeText={(text) => handleTextChange(text, index)}
-                onKeyPress={(e) => handleKeyPress(e, index)}
-                selectTextOnFocus
-              />
-            ))}
-          </View>
+          {/* CodeInput Reutilizável */}
+          <CodeInput
+            verificationCode={code}
+            setVerificationCode={setCode}
+            focusedIndex={focusedIndex}
+            setFocusedIndex={setFocusedIndex}
+            length={6}
+          />
 
           <TouchableOpacity
             style={[styles.button, isLoading && styles.buttonDisabled]}
             onPress={handleVerify}
-            disabled={isLoading}>
+            disabled={isLoading}
+            activeOpacity={0.8}>
             {isLoading ? (
               <ActivityIndicator color={colors.primaryWhite} />
             ) : (
@@ -327,7 +264,8 @@ function VerificationScreen() {
           <TouchableOpacity
             style={styles.resendButton}
             onPress={handleResendCode}
-            disabled={timer > 0 || isResending}>
+            disabled={timer > 0 || isResending}
+            activeOpacity={0.7}>
             <Text
               style={[
                 styles.resendText,
@@ -350,6 +288,10 @@ function VerificationScreen() {
         message={feedbackData.message}
         onClose={feedbackData.onClose}
       />
+
+      <Text style={styles.footer}>
+        © DelBicos - {new Date().getFullYear()} – Todos os direitos reservados.
+      </Text>
     </View>
   );
 }
