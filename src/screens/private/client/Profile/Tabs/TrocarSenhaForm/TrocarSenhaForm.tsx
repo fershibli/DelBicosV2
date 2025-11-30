@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -24,6 +24,7 @@ const TrocarSenhaForm: React.FC = () => {
     type: MessageType;
     text: string;
   } | null>(null);
+
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
 
@@ -45,23 +46,25 @@ const TrocarSenhaForm: React.FC = () => {
   const novaSenha = watch('novaSenha');
   const { changePassword } = useUserStore();
   const { theme } = useThemeStore();
-  const isDark = theme === ThemeMode.DARK;
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
   const colors = useColors();
   const styles = createStyles(colors);
 
-  // Estilos Responsivos
-  const responsiveStyles = StyleSheet.create({
-    formRow: {
-      flexDirection: isDesktop ? 'row' : 'column',
-      gap: 16,
-      marginBottom: 16,
-    },
-    inputHalf: {
-      flex: isDesktop ? 1 : undefined,
-      width: isDesktop ? undefined : '100%',
-    },
-  });
+  const responsiveStyles = useMemo(
+    () =>
+      StyleSheet.create({
+        formRow: {
+          flexDirection: isDesktop ? 'row' : 'column',
+          gap: 16,
+          marginBottom: 16,
+        },
+        inputHalf: {
+          flex: isDesktop ? 1 : undefined,
+          width: isDesktop ? undefined : '100%',
+        },
+      }),
+    [isDesktop],
+  );
 
   const handleSalvar = async (data: any) => {
     setMessage(null);
@@ -82,13 +85,14 @@ const TrocarSenhaForm: React.FC = () => {
     } catch (error: any) {
       setMessage({
         type: 'error',
-        text: error?.message || 'Erro ao alterar a senha. Tente novamente.',
+        text:
+          error?.message ||
+          'Erro ao alterar a senha. Verifique sua senha atual.',
       });
       setTimeout(() => setMessage(null), 7000);
     }
   };
 
-  // Componente de Feedback da Senha (Checklist)
   const PasswordRequirement = ({
     regex,
     text,
@@ -97,23 +101,17 @@ const TrocarSenhaForm: React.FC = () => {
     text: string;
   }) => {
     const isMet = regex.test(novaSenha || '');
+    const iconColor = isMet ? colors.successText : colors.textTertiary;
+    const textColor = isMet ? colors.textSecondary : colors.textTertiary;
+
     return (
-      <View
-        style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+      <View style={styles.reqItem}>
         <FontAwesome
           name={isMet ? 'check-circle' : 'circle-o'}
           size={14}
-          color={isMet ? colors.primaryGreen : colors.textTertiary}
-          style={{ marginRight: 8 }}
+          color={iconColor}
         />
-        <Text
-          style={{
-            fontSize: 13,
-            color: isMet ? colors.textSecondary : colors.textTertiary,
-            fontFamily: 'Afacad-Regular',
-          }}>
-          {text}
-        </Text>
+        <Text style={[styles.reqText, { color: textColor }]}>{text}</Text>
       </View>
     );
   };
@@ -122,7 +120,7 @@ const TrocarSenhaForm: React.FC = () => {
     <View style={styles.container}>
       <Text style={styles.pageTitle}>Segurança</Text>
 
-      {/* Banner de Mensagem Melhorado */}
+      {/* Banner de Mensagem */}
       {message && (
         <View
           style={[
@@ -136,7 +134,9 @@ const TrocarSenhaForm: React.FC = () => {
               message.type === 'success' ? 'check-circle' : 'exclamation-circle'
             }
             size={20}
-            color={message.type === 'success' ? '#155724' : '#721C24'}
+            color={
+              message.type === 'success' ? colors.successText : colors.errorText
+            }
             style={{ marginRight: 12 }}
           />
           <Text
@@ -154,14 +154,13 @@ const TrocarSenhaForm: React.FC = () => {
       <View
         style={[
           styles.card,
-          isDark && { backgroundColor: '#323232' },
           isHighContrast && {
-            borderWidth: 3,
+            borderWidth: 2,
             borderColor: colors.primaryBlack,
           },
         ]}>
         <View style={styles.formContainer}>
-          {/* Senha Atual (Largura total) */}
+          {/* Senha Atual */}
           <Controller
             control={control}
             name="senhaAtual"
@@ -173,6 +172,7 @@ const TrocarSenhaForm: React.FC = () => {
                   onChangeText={onChange}
                   value={value}
                   error={!!errors.senhaAtual}
+                  placeholder="Digite sua senha atual"
                 />
               </CustomTextInput>
             )}
@@ -200,6 +200,7 @@ const TrocarSenhaForm: React.FC = () => {
                       onChangeText={onChange}
                       value={value}
                       error={!!errors.novaSenha}
+                      placeholder="Crie uma nova senha"
                     />
                   </CustomTextInput>
                 )}
@@ -225,6 +226,7 @@ const TrocarSenhaForm: React.FC = () => {
                       onChangeText={onChange}
                       value={value}
                       error={!!errors.confirmarSenha}
+                      placeholder="Repita a nova senha"
                     />
                   </CustomTextInput>
                 )}
@@ -232,7 +234,7 @@ const TrocarSenhaForm: React.FC = () => {
             </View>
           </View>
 
-          {/* Checklist de Requisitos de Senha (Feedback Visual em Tempo Real) */}
+          {/* Checklist de Requisitos */}
           <View style={styles.requirementsContainer}>
             <Text style={styles.requirementsTitle}>Sua senha deve conter:</Text>
             <PasswordRequirement
@@ -257,7 +259,8 @@ const TrocarSenhaForm: React.FC = () => {
                 (!isValid || isSubmitting) && styles.buttonDisabled,
               ]}
               onPress={handleSubmit(handleSalvar)}
-              disabled={!isValid || isSubmitting}>
+              disabled={!isValid || isSubmitting}
+              activeOpacity={0.8}>
               {isSubmitting ? (
                 <ActivityIndicator color={colors.primaryWhite} />
               ) : (
