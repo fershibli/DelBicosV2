@@ -6,53 +6,51 @@ export const createStyles = (colors: ColorsType) =>
     externalContainer: {
       backgroundColor: 'transparent',
       width: '100%',
-      minHeight: 110,
+      minHeight: 140,
       paddingVertical: 10,
+      alignItems: 'center', // Centraliza o FlatList Wrapper
       justifyContent: 'center',
     },
     loadingContainer: {
-      minHeight: 110,
+      minHeight: 130,
       justifyContent: 'center',
       alignItems: 'center',
+      width: '100%',
     },
     flatList: {
-      paddingHorizontal: 16,
-      alignItems: 'center',
+      // Propriedades movidas para contentContainerStyle inline no componente para funcionar o flexGrow
     },
     categoryCard: {
       flexDirection: 'row',
-      width: 200,
-      height: 80,
-      marginRight: 12,
-      paddingHorizontal: 12,
-      borderRadius: 16,
-      backgroundColor: colors.cardBackground,
+      width: 260,
+      height: 100,
+      marginHorizontal: 8, // Margem em ambos os lados para centralização correta
+      paddingHorizontal: 20,
+      borderRadius: 20,
       borderWidth: 1,
-      borderColor: colors.borderColor,
       alignItems: 'center',
+      justifyContent: 'center', // Centraliza conteúdo interno
       ...Platform.select({
         ios: {
-          shadowColor: colors.primaryBlack,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.08,
-          shadowRadius: 3,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.1,
+          shadowRadius: 6,
         },
         android: {
-          elevation: 3,
+          elevation: 4,
         },
         web: {
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
           cursor: 'pointer',
           transitionDuration: '0.2s',
         },
       }),
     },
     categoryTitle: {
-      fontSize: 16,
-      fontFamily: 'Afacad-SemiBold',
-      color: colors.primaryOrange,
+      fontSize: 18,
+      fontFamily: 'Afacad-Bold',
       textAlign: 'left',
       flexShrink: 1,
-      marginLeft: 12,
     },
   });
