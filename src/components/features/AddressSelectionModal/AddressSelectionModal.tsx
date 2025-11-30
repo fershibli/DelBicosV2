@@ -8,6 +8,8 @@ import {
   ActivityIndicator,
   Alert,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
@@ -26,7 +28,8 @@ type AddressSelectionModalProps = {
 type ViewMode = 'list' | 'create';
 
 const formatAddress = (address: Address) => {
-  return `${address.street}, ${address.number} - ${address.neighborhood}`;
+  const comp = address.complement ? ` - ${address.complement}` : '';
+  return `${address.street}, ${address.number}${comp}`;
 };
 
 function AddressSelectionModal({
@@ -40,7 +43,7 @@ function AddressSelectionModal({
     isLoading: loading,
     error,
     fetchAddressesByUserId,
-    addAddress, // Precisamos da função de adicionar
+    addAddress,
   } = useAddressStore();
 
   const colors = useColors();
@@ -50,7 +53,6 @@ function AddressSelectionModal({
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Configuração do formulário de novo endereço
   const {
     control,
     handleSubmit,
@@ -73,22 +75,18 @@ function AddressSelectionModal({
   useEffect(() => {
     if (visible) {
       fetchAddressesByUserId(userId);
-      setViewMode('list'); // Reseta para lista ao abrir
+      setViewMode('list');
       reset();
+      setSelectedAddress(null);
     }
   }, [visible, userId, fetchAddressesByUserId, reset]);
-
-  const handleSelectAddress = (address: Address) => {
-    setSelectedAddress(address);
-  };
 
   const handleConfirmSelection = () => {
     if (selectedAddress) {
       onAddressSelect(selectedAddress);
       onClose();
-      setSelectedAddress(null);
     } else {
-      Alert.alert('Atenção', 'Por favor, selecione um endereço');
+      Alert.alert('Atenção', 'Selecione um endereço para continuar.');
     }
   };
 
@@ -112,165 +110,180 @@ function AddressSelectionModal({
       };
 
       await addAddress(payload);
+      await fetchAddressesByUserId(userId);
 
       setViewMode('list');
       reset();
     } catch (e) {
       console.error(e);
-      Alert.alert('Erro', 'Falha ao salvar o endereço.');
+      Alert.alert('Erro', 'Falha ao salvar endereço.');
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const renderAddressItem = ({ item }: { item: Address }) => {
+    const isSelected = selectedAddress?.id === item.id;
+
+    return (
+      <TouchableOpacity
+        style={[styles.addressItem, isSelected && styles.selectedAddressItem]}
+        onPress={() => setSelectedAddress(item)}
+        activeOpacity={0.7}>
+        <View style={styles.radioContainer}>
+          <View
+            style={[
+              styles.radioOuter,
+              isSelected && styles.radioOuterSelected,
+            ]}>
+            {isSelected && <View style={styles.radioInner} />}
+          </View>
+        </View>
+
+        <View style={styles.addressInfo}>
+          <Text style={styles.addressText} numberOfLines={1}>
+            {formatAddress(item)}
+          </Text>
+          <Text style={styles.addressSubtext} numberOfLines={1}>
+            {item.neighborhood} - {item.city}/{item.state}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
   };
 
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          {/* --- MODO LISTA --- */}
-          {viewMode === 'list' ? (
-            <>
-              <View style={styles.headerRow}>
-                <Text style={styles.modalTitle}>Selecione o Endereço</Text>
-                <TouchableOpacity onPress={onClose}>
-                  <FontAwesome
-                    name="close"
-                    size={20}
-                    color={colors.textSecondary}
-                  />
-                </TouchableOpacity>
-              </View>
+      <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={{ width: '100%', alignItems: 'center' }}>
+          <View style={styles.modalContent}>
+            {viewMode === 'list' ? (
+              <>
+                {/* Header */}
+                <View style={styles.headerRow}>
+                  <Text style={styles.modalTitle}>Selecione o Endereço</Text>
+                  <TouchableOpacity
+                    onPress={onClose}
+                    style={styles.closeButton}>
+                    <FontAwesome
+                      name="close"
+                      size={24}
+                      color={colors.textSecondary}
+                    />
+                  </TouchableOpacity>
+                </View>
 
-              {loading ? (
-                <View style={styles.loadingContainer}>
-                  <ActivityIndicator
-                    size="large"
-                    color={colors.primaryOrange}
-                  />
-                  <Text style={styles.loadingText}>
-                    Carregando endereços...
-                  </Text>
-                </View>
-              ) : error ? (
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>{error}</Text>
-                </View>
-              ) : (
-                <>
-                  {addresses.length === 0 ? (
-                    <View style={styles.emptyContainer}>
-                      <Text style={styles.emptyText}>
-                        Nenhum endereço encontrado.
-                      </Text>
-                    </View>
-                  ) : (
+                {loading ? (
+                  <View style={styles.centerState}>
+                    <ActivityIndicator
+                      size="large"
+                      color={colors.primaryOrange}
+                    />
+                    <Text style={styles.stateText}>
+                      Carregando endereços...
+                    </Text>
+                  </View>
+                ) : error ? (
+                  <View style={styles.centerState}>
+                    <Text style={styles.stateText}>{error}</Text>
+                  </View>
+                ) : (
+                  <View style={styles.listContainer}>
                     <FlatList
                       data={addresses}
                       keyExtractor={(item) => item.id.toString()}
-                      style={styles.addressesList}
-                      contentContainerStyle={styles.addressesListContent}
-                      renderItem={({ item }) => (
-                        <TouchableOpacity
-                          style={[
-                            styles.addressItem,
-                            selectedAddress?.id === item.id &&
-                              styles.selectedAddressItem,
-                          ]}
-                          onPress={() => handleSelectAddress(item)}>
-                          <View style={styles.addressRadio}>
-                            <View
-                              style={[
-                                styles.radioCircle,
-                                selectedAddress?.id === item.id &&
-                                  styles.radioCircleSelected,
-                              ]}
-                            />
-                          </View>
-                          <View style={styles.addressInfo}>
-                            <Text style={styles.addressText}>
-                              {formatAddress(item)}
-                            </Text>
-                            <Text style={styles.addressNeighborhood}>
-                              {item.city} - {item.state}
-                            </Text>
-                          </View>
-                        </TouchableOpacity>
-                      )}
+                      renderItem={renderAddressItem}
+                      showsVerticalScrollIndicator={true}
+                      ListEmptyComponent={
+                        <View style={styles.centerState}>
+                          <Text style={styles.stateText}>
+                            Nenhum endereço cadastrado.
+                          </Text>
+                        </View>
+                      }
                     />
-                  )}
+                  </View>
+                )}
 
+                <View>
                   <TouchableOpacity
                     style={styles.newAddressButton}
-                    onPress={() => setViewMode('create')}>
+                    onPress={() => setViewMode('create')}
+                    activeOpacity={0.7}>
+                    <FontAwesome
+                      name="plus"
+                      size={14}
+                      color={colors.primaryOrange}
+                    />
                     <Text style={styles.newAddressButtonText}>
-                      + Adicionar novo endereço
+                      Adicionar novo endereço
                     </Text>
                   </TouchableOpacity>
 
-                  <View style={styles.modalButtons}>
-                    <TouchableOpacity
-                      style={[
-                        styles.confirmButton,
-                        !selectedAddress && styles.disabledButton,
-                      ]}
-                      onPress={handleConfirmSelection}
-                      disabled={!selectedAddress}>
-                      <Text style={styles.confirmButtonText}>
-                        Confirmar Seleção
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </>
-              )}
-            </>
-          ) : (
-            /* --- MODO CRIAÇÃO (FORMULÁRIO) --- */
-            <>
-              <View style={styles.headerRow}>
-                <TouchableOpacity
-                  onPress={() => setViewMode('list')}
-                  style={styles.backButton}>
-                  <FontAwesome
-                    name="arrow-left"
-                    size={18}
-                    color={colors.primaryOrange}
-                  />
-                </TouchableOpacity>
-                <Text style={styles.modalTitle}>Novo Endereço</Text>
-                <View style={styles.headerSpacer} />
-              </View>
-
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                style={styles.formScrollView}>
-                <AddressForm
-                  control={control}
-                  errors={errors}
-                  setValue={setValue}
-                />
-
-                <View style={styles.modalButtons}>
                   <TouchableOpacity
-                    style={styles.confirmButton}
-                    onPress={handleSubmit(handleSaveNewAddress)}
-                    disabled={isSaving}>
-                    {isSaving ? (
-                      <ActivityIndicator color="white" />
-                    ) : (
-                      <Text style={styles.confirmButtonText}>
-                        Salvar Endereço
-                      </Text>
-                    )}
+                    style={[
+                      styles.confirmButton,
+                      !selectedAddress && !loading && styles.disabledButton,
+                    ]}
+                    onPress={handleConfirmSelection}
+                    disabled={!selectedAddress || loading}
+                    activeOpacity={0.8}>
+                    <Text style={styles.confirmButtonText}>Confirmar</Text>
                   </TouchableOpacity>
                 </View>
-              </ScrollView>
-            </>
-          )}
-        </View>
+              </>
+            ) : (
+              /* --- MODO CRIAÇÃO --- */
+              <>
+                <View style={styles.headerRow}>
+                  <TouchableOpacity
+                    onPress={() => setViewMode('list')}
+                    style={styles.closeButton}>
+                    <FontAwesome
+                      name="arrow-left"
+                      size={20}
+                      color={colors.primaryOrange}
+                    />
+                  </TouchableOpacity>
+                  <Text style={styles.modalTitle}>Novo Endereço</Text>
+                  <View style={styles.headerSpacer} />
+                </View>
+
+                <ScrollView
+                  style={styles.formScrollView}
+                  showsVerticalScrollIndicator={false}>
+                  <AddressForm
+                    control={control}
+                    errors={errors}
+                    setValue={setValue}
+                  />
+                </ScrollView>
+
+                <TouchableOpacity
+                  style={[
+                    styles.confirmButton,
+                    isSaving && styles.disabledButton,
+                  ]}
+                  onPress={handleSubmit(handleSaveNewAddress)}
+                  disabled={isSaving}>
+                  {isSaving ? (
+                    <ActivityIndicator color="white" />
+                  ) : (
+                    <Text style={styles.confirmButtonText}>
+                      Salvar Endereço
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </KeyboardAvoidingView>
       </View>
     </Modal>
   );

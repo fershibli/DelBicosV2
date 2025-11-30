@@ -1,180 +1,176 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform, Dimensions } from 'react-native';
 import { ColorsType } from '@theme/types';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
-    modalContainer: {
+    modalOverlay: {
       flex: 1,
+      backgroundColor: colors.overlay,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colors.overlay,
-      position: 'absolute',
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-      zIndex: 999,
+      padding: 16,
     },
     modalContent: {
       backgroundColor: colors.cardBackground,
-      width: '90%',
-      borderRadius: 12,
-      padding: 20,
-      maxHeight: '80%',
-      borderWidth: 1,
-      borderColor: colors.borderColor,
+      width: '100%',
+      maxWidth: 500,
+      borderRadius: 20,
+      padding: 24,
+      maxHeight: SCREEN_HEIGHT * 0.85,
       ...Platform.select({
-        web: {
-          boxShadow: '0px 4px 20px rgba(0,0,0,0.2)',
+        ios: {
+          shadowColor: colors.primaryBlack,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.15,
+          shadowRadius: 12,
         },
-        default: {
-          elevation: 10,
+        android: {
+          elevation: 8,
+        },
+        web: {
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.15)',
         },
       }),
     },
-    modalTitle: {
-      fontSize: 18,
-      fontFamily: 'Afacad-Bold',
+
+    // --- Header ---
+    headerRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       marginBottom: 20,
-      textAlign: 'center',
+      paddingBottom: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.divider,
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontFamily: 'Afacad-Bold',
       color: colors.primaryBlack,
     },
-    loadingContainer: {
-      padding: 40,
-      alignItems: 'center',
+    closeButton: {
+      padding: 4,
     },
-    loadingText: {
-      marginTop: 10,
-      color: colors.textSecondary,
-      fontFamily: 'Afacad-Regular',
+    headerSpacer: {
+      width: 24,
     },
-    emptyContainer: {
-      padding: 40,
-      alignItems: 'center',
-    },
-    emptyText: {
-      fontSize: 16,
-      color: colors.textSecondary,
-      textAlign: 'center',
-      marginBottom: 8,
-      fontFamily: 'Afacad-Regular',
-    },
-    emptySubtext: {
-      fontSize: 14,
-      color: colors.textTertiary,
-      textAlign: 'center',
-      fontFamily: 'Afacad-Regular',
-    },
-    addressesList: {
-      maxHeight: 400,
-    },
-    addressesListContent: {
-      paddingBottom: 10,
+
+    listContainer: {
+      flexShrink: 1,
+      marginBottom: 16,
     },
     addressItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      padding: 12,
+      padding: 16,
+      borderRadius: 12,
       borderWidth: 1,
       borderColor: colors.borderColor,
-      borderRadius: 8,
-      marginBottom: 8,
       backgroundColor: colors.inputBackground,
+      marginBottom: 12,
     },
     selectedAddressItem: {
       borderColor: colors.primaryOrange,
       backgroundColor: colors.backgroundElevated,
       borderWidth: 2,
     },
-    addressRadio: {
+
+    // Radio Button Customizado
+    radioContainer: {
       marginRight: 12,
     },
-    radioCircle: {
-      width: 20,
-      height: 20,
-      borderRadius: 10,
+    radioOuter: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
       borderWidth: 2,
       borderColor: colors.textTertiary,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
-    radioCircleSelected: {
+    radioOuterSelected: {
       borderColor: colors.primaryOrange,
+    },
+    radioInner: {
+      width: 12,
+      height: 12,
+      borderRadius: 6,
       backgroundColor: colors.primaryOrange,
     },
+
+    // Textos do Endereço
     addressInfo: {
       flex: 1,
     },
     addressText: {
-      fontSize: 14,
-      color: colors.primaryBlack,
-      fontWeight: '500',
-      marginBottom: 2,
+      fontSize: 16,
       fontFamily: 'Afacad-SemiBold',
+      color: colors.primaryBlack,
+      marginBottom: 2,
     },
-    addressNeighborhood: {
-      fontSize: 12,
-      color: colors.textSecondary,
+    addressSubtext: {
+      fontSize: 14,
       fontFamily: 'Afacad-Regular',
+      color: colors.textSecondary,
     },
-    modalButtons: {
-      marginTop: 10,
-      borderTopWidth: 1,
-      borderTopColor: colors.borderColor,
-      paddingTop: 16,
-      gap: 10,
+
+    // --- Botão "Adicionar Novo" ---
+    newAddressButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 14,
+      borderRadius: 12,
+      borderWidth: 1.5,
+      borderColor: colors.primaryOrange,
+      borderStyle: 'dashed',
+      backgroundColor: 'transparent',
+      marginBottom: 24,
+      gap: 8,
     },
+    newAddressButtonText: {
+      fontSize: 16,
+      fontFamily: 'Afacad-SemiBold',
+      color: colors.primaryOrange,
+    },
+
+    // --- Botão "Confirmar" (Fixo no fundo) ---
     confirmButton: {
       backgroundColor: colors.primaryOrange,
-      padding: 14,
-      borderRadius: 8,
+      paddingVertical: 16,
+      borderRadius: 12,
       alignItems: 'center',
+      justifyContent: 'center',
     },
     disabledButton: {
       backgroundColor: colors.textTertiary,
-      opacity: 0.5,
+      opacity: 0.7,
     },
     confirmButtonText: {
-      color: colors.primaryWhite,
+      fontSize: 18,
       fontFamily: 'Afacad-Bold',
-      fontSize: 16,
+      color: colors.primaryWhite,
     },
-    cancelButton: {
-      padding: 14,
-      borderRadius: 8,
+
+    // --- Estados de Loading/Empty ---
+    centerState: {
+      padding: 32,
       alignItems: 'center',
-      borderWidth: 1,
-      borderColor: colors.borderColor,
+      justifyContent: 'center',
     },
-    cancelButtonText: {
+    stateText: {
+      marginTop: 12,
+      fontSize: 16,
+      fontFamily: 'Afacad-Regular',
       color: colors.textSecondary,
-      fontFamily: 'Afacad-SemiBold',
+      textAlign: 'center',
     },
-    newAddressButton: {
-      padding: 14,
-      borderRadius: 8,
-      alignItems: 'center',
-      borderWidth: 1,
-      borderColor: colors.primaryOrange,
-      backgroundColor: 'transparent',
-      marginBottom: 10,
-    },
-    newAddressButtonText: {
-      color: colors.primaryOrange,
-      fontFamily: 'Afacad-SemiBold',
-      fontSize: 16,
-    },
-    headerRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 16,
-    },
-    backButton: {
-      padding: 4,
-    },
-    headerSpacer: {
-      width: 24,
-    },
+
+    // --- ScrollView do Formulário ---
     formScrollView: {
-      maxHeight: '85%',
+      flexShrink: 1,
+      marginBottom: 16,
     },
   });
