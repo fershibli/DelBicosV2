@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -42,6 +42,13 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
 
   const [query, setQuery] = useState(value || '');
   const [showList, setShowList] = useState(false);
+
+  useEffect(() => {
+    if (value !== query) {
+      setQuery(value || '');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   const filteredData = useMemo(() => {
     if (!query) return data;
