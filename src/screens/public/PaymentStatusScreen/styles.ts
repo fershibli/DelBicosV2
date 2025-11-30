@@ -1,24 +1,27 @@
 import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       flex: 1,
       padding: 24,
-      backgroundColor: '#F4F7FA',
+      backgroundColor: colors.inputBackground,
       justifyContent: 'center',
       alignItems: 'center',
     },
     card: {
       width: '100%',
       maxWidth: 500,
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.cardBackground,
       borderRadius: 16,
       padding: 32,
       alignItems: 'center',
+      borderWidth: 1,
+      borderColor: colors.borderColor,
       ...Platform.select({
         ios: {
-          shadowColor: '#000',
+          shadowColor: colors.primaryBlack,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 8,
@@ -36,38 +39,35 @@ export const createStyles = (colors: any) =>
       marginBottom: 24,
     },
     iconSuccess: {
-      backgroundColor: 'rgba(34, 139, 57, 0.1)', // Fundo verde claro
+      backgroundColor: colors.successBackground,
     },
     iconError: {
-      backgroundColor: 'rgba(211, 47, 47, 0.1)', // Fundo vermelho claro
+      backgroundColor: colors.errorBackground,
     },
     title: {
       fontSize: 24,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryBlue,
       marginBottom: 12,
+      textAlign: 'center',
     },
     message: {
       fontSize: 16,
       fontFamily: 'Afacad-Regular',
-      color: '#6c757d',
+      color: colors.textSecondary,
       textAlign: 'center',
-      marginBottom: 24,
+      marginBottom: 32,
       lineHeight: 24,
     },
-    receiptLink: {
-      fontSize: 14,
-      fontFamily: 'Afacad-Bold',
-      color: '#005A93',
-      textDecorationLine: 'underline',
-      marginVertical: 16,
-    },
     button: {
-      backgroundColor: '#005A93',
-      borderRadius: 8,
-      paddingVertical: 12,
+      width: '100%',
+      borderRadius: 12,
+      paddingVertical: 14,
       paddingHorizontal: 24,
       alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+      gap: 8,
     },
     buttonText: {
       color: colors.primaryWhite,
@@ -75,13 +75,17 @@ export const createStyles = (colors: any) =>
       fontSize: 16,
     },
     receiptButton: {
-      backgroundColor: colors.primaryOrange, // Laranja
-      marginBottom: 12, // Espaço entre os botões
+      backgroundColor: colors.primaryOrange,
+      marginBottom: 16,
     },
     homeButton: {
-      backgroundColor: '#005A93', // Azul
+      backgroundColor: colors.primaryBlue,
+    },
+    errorButton: {
+      backgroundColor: colors.primaryBlue,
     },
     buttonDisabled: {
       opacity: 0.7,
+      backgroundColor: colors.textTertiary,
     },
   });
