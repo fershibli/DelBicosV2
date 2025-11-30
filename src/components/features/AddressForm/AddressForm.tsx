@@ -50,11 +50,21 @@ export const AddressForm: React.FC<AddressFormProps> = ({
 
     if (cleanCep?.length === 8) {
       const data = await fetchCep(cleanCep);
+
       if (data && !data.erro) {
-        setValue('state', data.uf, { shouldValidate: true });
+        // Atualiza o estado. O CustomSelect deve reagir à mudança de value
+        setValue('state', data.uf, { shouldValidate: true, shouldDirty: true });
         setValue('street', data.logradouro || '', { shouldValidate: true });
         setValue('neighborhood', data.bairro || '', { shouldValidate: true });
-        setValue('city', data.localidade, { shouldValidate: true });
+
+        // Atualiza a cidade. O Autocomplete deve reagir à mudança da prop 'value'
+        setValue('city', data.localidade, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+
+        // Foco opcional no número (se desejar UX fluida)
+        // setFocus('number');
       }
     }
   };
@@ -194,7 +204,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({
                 value={value}
                 onChange={(val) => {
                   onChange(val);
-                  setValue('city', ''); // Reseta cidade ao mudar estado
+                  setValue('city', '');
                 }}
                 error={errors.state?.message as string}
                 loading={states.length === 0}

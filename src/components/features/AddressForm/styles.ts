@@ -6,6 +6,8 @@ export const createStyles = (colors: ColorsType) =>
     container: {
       marginTop: 16,
       marginBottom: 16,
+      zIndex: 100,
+      position: 'relative',
     },
     sectionTitle: {
       fontSize: 18,
@@ -22,16 +24,9 @@ export const createStyles = (colors: ColorsType) =>
     cityRow: {
       zIndex: 2000,
       elevation: 2000,
+      marginBottom: 0,
       ...Platform.select({
         web: { position: 'relative', zIndex: 2000 },
-      }),
-    },
-    footer: {
-      zIndex: 1,
-      elevation: 1,
-      marginTop: 8,
-      ...Platform.select({
-        web: { position: 'relative', zIndex: 1 },
       }),
     },
     col: {},
@@ -51,5 +46,10 @@ export const createStyles = (colors: ColorsType) =>
       position: 'absolute',
       right: 12,
       top: 42,
+    },
+    footer: {
+      zIndex: -1,
+      elevation: -1,
+      marginTop: 8,
     },
   });
