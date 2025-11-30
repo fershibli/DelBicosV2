@@ -3,19 +3,20 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Rating } from 'react-native-ratings';
 import { FontAwesome } from '@expo/vector-icons';
 import { useColors } from '@theme/ThemeProvider';
-import { Appointment } from '@stores/Appointment/types';
+import { Appointment, AppointmentStatus } from '@stores/Appointment/types';
 import { createStyles } from './styles';
 
 interface AppointmentCardProps {
+  statusLabel: string;
+  statusColor: string;
   appointment: Appointment;
-  statusVariant: 'upcoming' | 'completed';
+  statusVariant: AppointmentStatus;
   isFavorite: boolean;
   onToggleFavorite: (apt: Appointment) => void;
   onOpenDetails: (apt: Appointment) => void;
   onOpenRate?: (apt: Appointment) => void;
 }
 
-// Helper fora do componente
 const formatDateTime = (dateString: string) => {
   if (!dateString) return '';
   const date = new Date(dateString);
@@ -29,6 +30,8 @@ const formatDateTime = (dateString: string) => {
 };
 
 export const AppointmentCard: React.FC<AppointmentCardProps> = ({
+  statusLabel,
+  statusColor,
   appointment,
   statusVariant,
   isFavorite,
@@ -62,19 +65,11 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
           resizeMode="cover"
         />
 
-        <View
-          style={[
-            styles.statusBadge,
-            statusVariant === 'completed'
-              ? styles.badgeCompleted
-              : styles.badgeUpcoming,
-          ]}>
-          <Text style={styles.statusText}>
-            {statusVariant === 'completed' ? 'REALIZADO' : 'CONFIRMADO'}
-          </Text>
+        <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
+          <Text style={styles.statusText}>{statusLabel.toUpperCase()}</Text>
         </View>
 
-        {statusVariant === 'completed' && (
+        {statusVariant === AppointmentStatus.COMPLETED && (
           <TouchableOpacity
             style={styles.favoriteButton}
             onPress={() => onToggleFavorite(appointment)}
@@ -135,7 +130,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
             <Text style={styles.btnTextPrimary}>Detalhes</Text>
           </TouchableOpacity>
 
-          {statusVariant === 'completed' && onOpenRate && (
+          {statusVariant === AppointmentStatus.COMPLETED && onOpenRate && (
             <TouchableOpacity
               style={styles.rateButton}
               onPress={() => onOpenRate(appointment)}

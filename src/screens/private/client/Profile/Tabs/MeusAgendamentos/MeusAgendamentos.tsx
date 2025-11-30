@@ -8,6 +8,51 @@ import { RateServiceModal } from '@components/features/RateServiceModal';
 import { Appointment, AppointmentStatus } from '@stores/Appointment/types';
 import { AppointmentCard } from '@components/features/AppointmentCard';
 import { FontAwesome } from '@expo/vector-icons';
+import { ColorsType } from '@theme/types';
+
+const appointmentStatusRenderInfo = (
+  colors: ColorsType,
+): {
+  [key in AppointmentStatus]: {
+    label: string;
+    icon: keyof typeof FontAwesome.glyphMap;
+    color: string;
+    emptyText: string;
+  };
+} => ({
+  [AppointmentStatus.PENDING]: {
+    label: 'Pendente',
+    icon: 'clock-o',
+    color: colors.primaryOrange,
+    emptyText: 'Você não tem agendamentos a serem confirmados.',
+  },
+  [AppointmentStatus.CONFIRMED]: {
+    label: 'Confirmado',
+    icon: 'check-circle-o',
+    color: colors.primaryGreen,
+    emptyText: 'Você não tem agendamentos futuros confirmados.',
+  },
+  [AppointmentStatus.COMPLETED]: {
+    label: 'Histórico',
+    icon: 'check-circle-o',
+    color: colors.primaryBlue,
+    emptyText: 'Nenhum agendamento realizado ainda.',
+  },
+  [AppointmentStatus.CANCELED]: {
+    label: 'Cancelado',
+    icon: 'times-circle',
+    color: '#FF0000',
+    emptyText: 'Nenhum agendamento cancelado.',
+  },
+});
+
+const appointmentStatusRenderOrder: AppointmentStatus[] = [
+  AppointmentStatus.PENDING,
+  AppointmentStatus.CONFIRMED,
+  AppointmentStatus.COMPLETED,
+  AppointmentStatus.CANCELED,
+];
+import { createStyles } from './styles';
 
 function MeusAgendamentos() {
   const { appointments, appointmentsByStatus, fetchAppointments } =
