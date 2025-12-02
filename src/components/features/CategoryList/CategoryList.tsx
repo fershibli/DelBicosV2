@@ -63,7 +63,7 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
 
     if (isHovered) {
       bgColor = isDark ? colors.primaryOrange : colors.primaryBlue;
-      contentColor = isDark ? colors.primaryWhite : colors.primaryOrange;
+      contentColor = isDark ? colors.primaryWhite : colors.primaryWhite;
       borderColor = bgColor;
     }
 
