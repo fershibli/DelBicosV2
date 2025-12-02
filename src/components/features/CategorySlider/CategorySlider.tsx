@@ -5,6 +5,7 @@ import {
   Text,
   View,
   Pressable,
+  useWindowDimensions,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useCategoryStore } from '@stores/Category/Category';
@@ -62,7 +63,7 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
 
     if (isHovered) {
       bgColor = isDark ? colors.primaryOrange : colors.primaryBlue;
-      contentColor = isDark ? colors.primaryWhite : colors.primaryOrange;
+      contentColor = isDark ? colors.primaryWhite : colors.primaryWhite;
       borderColor = bgColor;
     }
 
@@ -72,27 +73,27 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
   return (
     <Pressable
       style={({ pressed }) => [
-        styles.categoryCard,
+        styles.card,
         {
           backgroundColor: colorProps.bgColor,
           borderColor: colorProps.borderColor,
-          transform: [{ scale: pressed || isHovered ? 1.03 : 1 }],
+          transform: [{ scale: pressed || isHovered ? 1.02 : 1 }],
         },
-        isHighContrast && { borderWidth: 3 },
+        isHighContrast && { borderWidth: 2 },
       ]}
       onPress={() => onPress(category)}
       onHoverIn={() => setIsHovered(true)}
       onHoverOut={() => setIsHovered(false)}
-      accessibilityRole="button"
-      accessibilityLabel={`Categoria ${category.title}`}>
+      accessibilityRole="button">
       <FontAwesome5
         name={iconName}
         size={32}
         color={colorProps.contentColor}
         style={{ marginRight: 16 }}
+        solid
       />
       <Text
-        style={[styles.categoryTitle, { color: colorProps.contentColor }]}
+        style={[styles.title, { color: colorProps.contentColor }]}
         numberOfLines={2}>
         {category.title}
       </Text>
@@ -106,6 +107,7 @@ function CategorySlider() {
   const navigation = useNavigation();
   const colors = useColors();
   const styles = createStyles(colors);
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
     if (!categories?.length) {
@@ -124,6 +126,10 @@ function CategorySlider() {
     });
   };
 
+  const ITEM_WIDTH = 280;
+  const contentWidth = categories.length * ITEM_WIDTH;
+  const shouldCenter = contentWidth < width;
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -135,16 +141,14 @@ function CategorySlider() {
   if (!categories || categories.length === 0) {
     return (
       <View style={styles.loadingContainer}>
-        <Text style={{ color: colors.textSecondary }}>
-          Nenhuma categoria disponível
-        </Text>
+        <Text style={styles.emptyText}>Nenhuma categoria disponível</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.externalContainer}>
-      <View style={{ maxWidth: 1400, width: '100%', alignItems: 'center' }}>
+    <View style={styles.container}>
+      <View style={styles.sliderWrapper}>
         <FlatList
           data={categories}
           keyExtractor={(item) => item.id.toString()}
@@ -153,12 +157,10 @@ function CategorySlider() {
           )}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'center',
-            paddingHorizontal: 16,
-          }}
-          style={{ width: '100%' }}
+          contentContainerStyle={[
+            styles.listContent,
+            { justifyContent: shouldCenter ? 'center' : 'flex-start' },
+          ]}
         />
       </View>
     </View>
