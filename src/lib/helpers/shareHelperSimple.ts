@@ -1,4 +1,4 @@
-import { deleteAsync, getInfoAsync } from 'expo-file-system/legacy';
+import { deleteAsync } from 'expo-file-system/legacy';
 import { isAvailableAsync, shareAsync } from 'expo-sharing';
 import { Alert, Platform } from 'react-native';
 

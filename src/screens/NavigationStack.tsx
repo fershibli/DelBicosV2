@@ -5,8 +5,6 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Feed from './public/Feed';
 import NotFound from './public/NotFound';
-import PhoneConfirmation from './public/PhoneConfirmation';
-import ConfirmPhoneNumber from './public/ConfirmPhoneNumber';
 import RegisterScreen from './public/RegisterScreen';
 import VerificationScreen from './public/VerificationScreen';
 import PartnerProfile from './public/PartnerProfile';
@@ -15,17 +13,17 @@ import Login from './public/Login';
 import Header from '@components/layout/Header';
 import { useUserStore } from '@stores/User';
 import { LoginPassword } from './public/LoginPassword';
-import ProfileScreen from './private/client/Profile';
 import CategoryScreen from './public/Category';
 import SubCategoryScreen from './public/SubCategoryScreen';
 import SearchResultScreen from './public/SearchResultScreen';
-import CheckoutScreen from './public/CheckoutScreen';
+import CheckoutScreen from './public/CheckoutScreen/CheckoutScreen';
 import PaymentStatusScreen from './public/PaymentStatusScreen';
 import MySchedulesScreen from './private/client/MySchedulesScreen';
 import HelpScreen from '@screens/public/HelpScreen';
 import AdminDashboard from './private/admin/AdminDashboard';
 import AdminAnalytics from './private/admin/AdminAnalytics';
 import ProviderDashboard from './private/ProviderDashboard';
+import ProfileScreen from '@screens/private/client/Profile/Tabs/ProfileScreen';
 
 // If logged in Home = Feed, otherwise Home = Login
 const Home = () => {
@@ -75,18 +73,6 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
         stringify: {
           id: (value) => value,
         },
-      },
-    },
-    PhoneConfirmation: {
-      screen: PhoneConfirmation,
-      options: {
-        headerShown: false,
-      },
-    },
-    ConfirmPhoneNumber: {
-      screen: ConfirmPhoneNumber,
-      options: {
-        headerShown: false,
       },
     },
     Register: {

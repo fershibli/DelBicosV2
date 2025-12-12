@@ -6,28 +6,24 @@ import { useFonts } from 'expo-font';
 import { Navigation } from '@screens/NavigationStack';
 import { LocationProvider } from '@lib/hooks/LocationContext';
 import { MenuProvider } from 'react-native-popup-menu';
-import ThemeProvider from '@theme/ThemeProvider';
+import { ThemeProvider } from '@theme/ThemeProvider';
 import { Platform } from 'react-native';
 import { initGAWeb } from './utils/ga-web';
 import { initClarityWeb } from './utils/clarity';
 import { GOOGLE_ANALYTICS_ID, CLARITY_ID } from './config/varEnvs';
 import VLibrasSetup from '@components/features/Accessibility/VLibrasSetup';
+import { registerTokenProvider } from '@lib/helpers/httpClient';
 import { useUserStore } from '@stores/User';
-import { useNotifications } from './hooks/useNotifications';
 
 Asset.loadAsync([...NavigationAssets]);
 
 SplashScreen.preventAutoHideAsync();
 
-// Componente auxiliar para gerenciar notificações
 function NotificationManager() {
-  const { user } = useUserStore();
-
-  // Polling desativado - notificações só aparecem ao clicar no botão recarregar
-  // useNotifications(user?.id?.toString() || '', 30000);
-
   return null;
 }
+
+registerTokenProvider(() => useUserStore.getState().token);
 
 export function App() {
   const [loaded, error] = useFonts({

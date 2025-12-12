@@ -35,25 +35,27 @@ function PaymentStatusLogic() {
   const [status, setStatus] = useState<StatusType>('loading');
   const [message, setMessage] = useState('Verificando seu pagamento...');
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-
   const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
 
   const colors = useColors();
   const styles = createStyles(colors);
 
   useEffect(() => {
-    if (!stripe || !user || Platform.OS !== 'web') {
-      return;
-    }
+    if (!stripe || !user) return;
 
     const verifyPayment = async () => {
       try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const clientSecret = urlParams.get('payment_intent_client_secret');
-        const paymentIntentId = urlParams.get('payment_intent');
+        let clientSecret: string | null = null;
+        let paymentIntentId: string | null = null;
+
+        if (Platform.OS === 'web') {
+          const urlParams = new URLSearchParams(window.location.search);
+          clientSecret = urlParams.get('payment_intent_client_secret');
+          paymentIntentId = urlParams.get('payment_intent');
+        }
 
         if (!clientSecret || !paymentIntentId) {
-          throw new Error('Identificador de pagamento não encontrado na URL.');
+          throw new Error('Informações de pagamento não encontradas.');
         }
 
         const { error, paymentIntent } =
@@ -63,6 +65,7 @@ function PaymentStatusLogic() {
 
         if (paymentIntent?.status === 'succeeded') {
           const { token } = useUserStore.getState();
+
           const confirmResponse = await fetch(
             `${HTTP_DOMAIN}/api/payments/confirm`,
             {
@@ -88,47 +91,32 @@ function PaymentStatusLogic() {
           }
 
           const newAppointment = confirmData.appointment as Appointment;
-
           const invoice = await fetchInvoice(newAppointment.id);
 
-          if (!invoice) {
-            console.warn(
-              'Agendamento criado, mas falha ao buscar dados da nota.',
-            );
-            setStatus('success');
-            setMessage(
-              'Pagamento concluído! (Recibo indisponível no momento).',
-            );
-          } else {
+          if (invoice) {
             setInvoiceData(invoice);
-            setStatus('success');
-            setMessage(
-              'Seu pagamento foi concluído e seu agendamento está confirmado!',
-            );
           }
+
+          setStatus('success');
+          setMessage('Seu pagamento foi concluído e o serviço confirmado!');
         } else {
           throw new Error(
             `Pagamento não concluído. Status: ${paymentIntent?.status}`,
           );
         }
       } catch (err: any) {
-        console.error(
-          '[PaymentStatus] Erro ao verificar pagamento:',
-          err.message,
-        );
+        console.error('[PaymentStatus] Erro:', err.message);
         setStatus('error');
-        setMessage(
-          err.message || 'Ocorreu um erro ao processar seu pagamento.',
-        );
+        setMessage(err.message || 'Ocorreu um erro ao processar o pagamento.');
       }
     };
 
     verifyPayment();
   }, [stripe, user, fetchInvoice]);
 
-  const handlePrintOrDownload = useCallback(() => {
+  const handlePrintOrDownload = useCallback(async () => {
     if (!invoiceData) {
-      Alert.alert('Erro', 'Dados do recibo não estão disponíveis.');
+      Alert.alert('Erro', 'Dados do recibo indisponíveis.');
       return;
     }
 
@@ -139,19 +127,15 @@ function PaymentStatusLogic() {
 
       if (Platform.OS === 'web') {
         generatePDF(htmlContent);
-        setIsGeneratingPDF(false);
       } else {
-        (async () => {
-          const uri = await generatePDF(htmlContent);
-          await downloadFile(uri, fileName);
-          setIsGeneratingPDF(false);
-        })();
+        const uri = await generatePDF(htmlContent);
+        await downloadFile(uri, fileName);
+        Alert.alert('Sucesso', 'Recibo salvo com sucesso.');
       }
     } catch (error: any) {
-      Alert.alert(
-        'Erro ao Gerar PDF',
-        error.message || 'Não foi possível gerar o PDF.',
-      );
+      console.error(error);
+      Alert.alert('Erro', 'Falha ao gerar o recibo.');
+    } finally {
       setIsGeneratingPDF(false);
     }
   }, [invoiceData]);
@@ -159,8 +143,10 @@ function PaymentStatusLogic() {
   if (status === 'loading') {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#003366" />
-        <Text style={[styles.title, { marginTop: 20 }]}>{message}</Text>
+        <ActivityIndicator size="large" color={colors.primaryBlue} />
+        <Text style={[styles.title, { marginTop: 24, fontSize: 20 }]}>
+          {message}
+        </Text>
       </View>
     );
   }
@@ -170,13 +156,14 @@ function PaymentStatusLogic() {
       <View style={styles.container}>
         <View style={styles.card}>
           <View style={[styles.iconContainer, styles.iconError]}>
-            <FontAwesome name="times" size={40} color="#D32F2F" />
+            <FontAwesome name="times" size={40} color={colors.errorText} />
           </View>
           <Text style={styles.title}>Pagamento Falhou</Text>
           <Text style={styles.message}>{message}</Text>
+
           <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Home')}>
+            style={[styles.button, styles.errorButton]}
+            onPress={() => navigation.navigate('Feed' as never)}>
             <Text style={styles.buttonText}>Voltar para o Início</Text>
           </TouchableOpacity>
         </View>
@@ -188,8 +175,9 @@ function PaymentStatusLogic() {
     <View style={styles.container}>
       <View style={styles.card}>
         <View style={[styles.iconContainer, styles.iconSuccess]}>
-          <FontAwesome name="check" size={40} color="#2E7D32" />
+          <FontAwesome name="check" size={40} color={colors.successText} />
         </View>
+
         <Text style={styles.title}>Pagamento Aprovado!</Text>
         <Text style={styles.message}>{message}</Text>
 
@@ -203,18 +191,25 @@ function PaymentStatusLogic() {
             onPress={handlePrintOrDownload}
             disabled={isGeneratingPDF}>
             {isGeneratingPDF ? (
-              <ActivityIndicator color="#FFFFFF" />
+              <ActivityIndicator color={colors.primaryWhite} />
             ) : (
-              <Text style={styles.buttonText}>
-                <FontAwesome name="print" size={16} />{' '}
-                {Platform.OS === 'web' ? 'Imprimir Recibo' : 'Salvar Recibo'}
-              </Text>
+              <>
+                <FontAwesome
+                  name="file-text-o"
+                  size={16}
+                  color={colors.primaryWhite}
+                />
+                <Text style={styles.buttonText}>
+                  {Platform.OS === 'web' ? 'Imprimir Recibo' : 'Salvar Recibo'}
+                </Text>
+              </>
             )}
           </TouchableOpacity>
         )}
 
         <TouchableOpacity
           style={[styles.button, styles.homeButton]}
+          // @ts-ignore
           onPress={() => navigation.navigate('MySchedules')}>
           <Text style={styles.buttonText}>Ir para Meus Agendamentos</Text>
         </TouchableOpacity>

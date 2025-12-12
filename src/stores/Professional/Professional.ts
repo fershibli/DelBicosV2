@@ -11,53 +11,64 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
   professionals: [],
   selectedProfessional: null,
 
-  fetchProfessionals: async (filter = '', page = 0, limit = 12) => {
+  fetchProfessionals: async (
+    filter = '',
+    page = 0,
+    limit = 12,
+    lat?: number,
+    lng?: number,
+  ) => {
     try {
       const response = await backendHttpClient.get('/api/professionals', {
-        params: {
-          termo: filter,
-          page: page,
-          limit: limit,
-        },
+        params: { termo: filter, page, limit, lat, lng },
       });
-      const data = response.data;
 
-      if (!data) {
-        console.error(`[ProfessionalStore] Backend error: No data received.`);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const rawData = Array.isArray(response.data)
+        ? response.data
+        : response.data.professionals || [];
 
-      // Espera-se que o backend retorne um array de profissionais
-      // ou um objeto com { professionals: [], total: number }
-      const professionals = Array.isArray(data)
-        ? data
-        : data.professionals || [];
+      const mappedProfessionals: ListedProfessional[] = rawData.map(
+        (prof: any) => {
+          const rawDist =
+            prof.distance_km ?? prof.dataValues?.distance_km ?? null;
 
-      // Mapeia para o formato ListedProfessional
-      const listedData: ListedProfessional[] = professionals.map(
-        (prof: any) => ({
-          id: prof.id,
-          name: prof.User?.name || prof.name || 'Nome não disponível',
-          category:
-            prof.Service?.Subcategory?.name || prof.category || 'Serviços',
-          rating: prof.rating ? Math.round(prof.rating * 10) / 10 : 0,
-          ratingsCount: prof.ratings_count || prof.ratingsCount || 0,
-          imageUrl:
-            prof.User?.avatar_uri ||
-            prof.Service?.banner_uri ||
-            prof.imageUrl ||
-            `https://picsum.photos/seed/${prof.id}/400/400`,
-          location: prof.location || 'São Paulo, SP',
-        }),
+          return {
+            id: prof.id,
+            name: prof.name || prof.User?.name || 'Profissional',
+            rating: Number(prof.rating || 0),
+            ratingsCount: Number(prof.ratings_count || 0),
+            imageUrl:
+              prof.avatar_uri ||
+              prof.User?.avatar_uri ||
+              'https://via.placeholder.com/150',
+
+            location:
+              prof.MainAddress && prof.MainAddress.city
+                ? `${prof.MainAddress.city}, ${prof.MainAddress.state || 'BR'}`
+                : 'Localização não informada',
+
+            distance:
+              rawDist !== null && rawDist !== undefined
+                ? parseFloat(String(rawDist)).toFixed(1)
+                : undefined,
+
+            offeredServices: prof.Services
+              ? prof.Services.map((s: any) =>
+                  typeof s === 'string' ? s : s.title,
+                )
+              : ['Serviços Gerais'],
+
+            category: prof.Services?.[0]?.title || 'Serviços Diversos',
+          };
+        },
       );
 
-      return listedData;
+      return mappedProfessionals;
     } catch (error) {
-      console.error('[ProfessionalStore] Error fetching professionals:', error);
+      console.error('[ProfessionalStore] Erro ao buscar profissionais:', error);
       return [];
     }
   },
-
   fetchProfessionalById: async (id: number): Promise<Professional | null> => {
     set({ selectedProfessional: null });
 
@@ -70,7 +81,6 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
 
       const professional: Professional = response.data;
 
-      // Calcula a média de avaliações
       const ratings = professional.Appointments?.filter((a) => a.rating) || [];
       const averageRating =
         ratings.length > 0
@@ -78,10 +88,8 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
             ratings.length
           : 0;
 
-      // Arredonda a média para 1 casa decimal
       const roundedRating = Math.round(averageRating * 10) / 10;
 
-      // Adiciona a média calculada ao objeto
       const professionalWithRating = {
         ...professional,
         rating: roundedRating,

@@ -1,33 +1,70 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
-    container: { flex: 1, padding: 16, backgroundColor: colors.primaryWhite },
-    content: { paddingBottom: 40 },
+    container: {
+      flex: 1,
+      backgroundColor: colors.inputBackground,
+    },
+    content: {
+      padding: 16,
+      paddingBottom: 40,
+    },
     title: {
-      fontSize: 22,
+      fontSize: 24,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryBlue,
-      marginBottom: 12,
+      marginBottom: 24,
     },
     sectionTitle: {
-      fontSize: 16,
+      fontSize: 18,
       fontFamily: 'Afacad-SemiBold',
-      color: '#333',
+      color: colors.primaryBlack,
+      marginTop: 24,
+      marginBottom: 12,
+    },
+    chartContainer: {
+      backgroundColor: colors.cardBackground,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 16,
+      borderWidth: 1,
+      borderColor: colors.borderColor,
+      ...Platform.select({
+        ios: {
+          shadowColor: colors.primaryBlack,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 4,
+        },
+        android: {
+          elevation: 2,
+        },
+        web: {
+          boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+        },
+      }),
+    },
+    legendContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
       marginTop: 12,
-      marginBottom: 8,
+      gap: 16,
     },
-    row: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-    month: { width: 48, fontFamily: 'Afacad-Regular' },
-    barBackground: {
-      flex: 1,
-      height: 12,
-      backgroundColor: '#eee',
-      borderRadius: 6,
-      marginHorizontal: 8,
-      overflow: 'hidden',
+    legendItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
     },
-    bar: { height: 12, backgroundColor: colors.primaryBlue, borderRadius: 6 },
-    value: { width: 40, textAlign: 'right', fontFamily: 'Afacad-Regular' },
-    smallText: { fontSize: 12, color: '#444', fontFamily: 'Afacad-Regular' },
+    legendDot: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+    },
+    legendText: {
+      fontSize: 12,
+      fontFamily: 'Afacad-Regular',
+      color: colors.textSecondary,
+    },
   });

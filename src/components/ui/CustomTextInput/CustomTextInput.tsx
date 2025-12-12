@@ -7,15 +7,15 @@ import {
   StyleProp,
   ViewStyle,
 } from 'react-native';
-import { createStyles } from './styles';
 import { FieldError } from 'react-hook-form';
+import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
 
 interface CustomTextInputProps extends TextInputProps {
-  label: string;
-  error?: FieldError;
+  label?: string;
+  error?: FieldError | string | undefined;
   children?: React.ReactNode;
   containerStyle?: StyleProp<ViewStyle>;
 }
@@ -25,6 +25,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   error,
   children,
   containerStyle,
+  style,
   ...rest
 }) => {
   const { theme } = useThemeStore();
@@ -32,11 +33,17 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   const colors = useColors();
   const styles = createStyles(colors);
 
+  const errorMessage = typeof error === 'string' ? error : error?.message;
+  const hasError = !!errorMessage;
+
   return (
     <View style={[styles.container, containerStyle]}>
-      <Text style={[styles.label, isHighContrast && { fontWeight: 'bold' }]}>
-        {label}
-      </Text>
+      {label && (
+        <Text style={[styles.label, isHighContrast && { fontWeight: 'bold' }]}>
+          {label}
+        </Text>
+      )}
+
       <View>
         {children ? (
           children
@@ -44,18 +51,22 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
           <TextInput
             style={[
               styles.input,
-              !!error && styles.inputError,
+              hasError && styles.inputError,
               isHighContrast && {
                 borderWidth: 2,
                 borderColor: colors.primaryBlack,
+                backgroundColor: colors.primaryWhite,
               },
+              style,
             ]}
             placeholderTextColor={colors.textTertiary}
+            accessibilityLabel={label}
             {...rest}
           />
         )}
       </View>
-      {error && <Text style={styles.errorText}>{error.message}</Text>}
+
+      {hasError && <Text style={styles.errorText}>{errorMessage}</Text>}
     </View>
   );
 };

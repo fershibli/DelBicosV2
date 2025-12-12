@@ -1,6 +1,7 @@
 import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -10,151 +11,181 @@ export const createStyles = (colors: any) =>
       flexGrow: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 20,
+      padding: 24,
     },
     logo: {
-      width: 150,
-      height: 150,
+      width: 120,
+      height: 120,
       resizeMode: 'contain',
-      marginBottom: 40,
+      marginBottom: 32,
     },
     formContainer: {
       width: '100%',
-      maxWidth: 400,
-      backgroundColor: colors.primaryWhite,
-      borderRadius: 16,
-      padding: 24,
+      maxWidth: 420,
+      backgroundColor: colors.cardBackground,
+      borderRadius: 24,
+      padding: 32,
       alignItems: 'center',
       ...Platform.select({
         ios: {
           shadowColor: colors.primaryBlack,
           shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.2,
-          shadowRadius: 10,
+          shadowOpacity: 0.15,
+          shadowRadius: 12,
         },
         android: {
           elevation: 8,
         },
         web: {
-          boxShadow: `0px 4px 10px rgba(0, 0, 0, 0.2)`,
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
         },
       }),
     },
-    title: {
-      fontSize: 28,
-      fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlue,
-      marginBottom: 8,
-    },
-    subtitle: {
-      fontSize: 16,
-      fontFamily: 'Afacad-Regular',
-      color: '#6c757d',
-      marginBottom: 24,
-      textAlign: 'center',
-    },
-    button: {
-      height: 50,
-      backgroundColor: colors.primaryBlue,
-      borderRadius: 8,
-      width: '100%',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 10,
-      flexDirection: 'row',
-    },
-    buttonDisabled: {
-      opacity: 0.6,
-    },
-    buttonText: {
-      color: colors.primaryWhite,
-      fontWeight: 'bold',
-      fontSize: 16,
-      fontFamily: 'Afacad-Bold',
-    },
-    buttonSecondary: {
-      backgroundColor: colors.primaryWhite,
-      borderWidth: 1.5,
-      borderColor: colors.primaryBlue,
-    },
-    buttonTextSecondary: {
-      color: colors.primaryBlue,
-    },
-    linkText: {
-      marginTop: 20,
-      color: colors.primaryBlue,
-      fontFamily: 'Afacad-Regular',
-      fontSize: 14,
-    },
-    linkTextBold: {
-      fontFamily: 'Afacad-Bold',
-      textDecorationLine: 'underline',
-    },
-    footer: {
-      padding: 10,
-      textAlign: 'center',
-      fontSize: 12,
-      color: colors.primaryWhite,
-    },
-    modalOverlay: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-      width: '80%',
-      backgroundColor: 'white',
-      borderRadius: 16,
-      padding: 24,
-      alignItems: 'center',
-    },
-    modalTitle: {
-      fontSize: 22,
-      fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlue,
-      marginBottom: 16,
-    },
-    modalText: {
-      fontSize: 16,
-      fontFamily: 'Afacad-Regular',
-      color: '#495057',
-      textAlign: 'center',
-      marginBottom: 24,
-    },
-    modalButton: {
-      width: '100%',
-      marginTop: 0,
-      backgroundColor: colors.primaryBlue,
-    },
-    buttonContent: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
+
+    // --- Role Switcher (User/Admin) ---
     roleToggle: {
       flexDirection: 'row',
       width: '100%',
-      marginBottom: 16,
-      justifyContent: 'center',
+      marginBottom: 24,
+      backgroundColor: colors.inputBackground,
+      borderRadius: 12,
+      padding: 4,
     },
     roleButton: {
       flex: 1,
       paddingVertical: 10,
       borderRadius: 8,
       alignItems: 'center',
-      marginHorizontal: 6,
-      backgroundColor: '#f0f0f0',
+      justifyContent: 'center',
     },
     roleButtonActive: {
       backgroundColor: colors.primaryBlue,
+      // Sombra sutil no botão ativo
+      ...Platform.select({
+        web: { boxShadow: '0 2px 4px rgba(0,0,0,0.1)' },
+        default: { elevation: 1 },
+      }),
     },
     roleText: {
       fontFamily: 'Afacad-Regular',
-      color: '#333',
+      fontSize: 14,
+      color: colors.textSecondary,
     },
     roleTextActive: {
       color: colors.primaryWhite,
       fontFamily: 'Afacad-Bold',
+    },
+
+    title: {
+      fontSize: 28,
+      fontFamily: 'Afacad-Bold',
+      color: colors.primaryBlue,
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    subtitle: {
+      fontSize: 16,
+      fontFamily: 'Afacad-Regular',
+      color: colors.textSecondary,
+      marginBottom: 32,
+      textAlign: 'center',
+    },
+
+    // --- Form Elements ---
+    inputWrapper: {
+      width: '100%',
+      marginBottom: 16,
+    },
+    button: {
+      height: 50,
+      backgroundColor: colors.primaryBlue,
+      borderRadius: 12,
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 24,
+      flexDirection: 'row',
+    },
+    buttonDisabled: {
+      backgroundColor: colors.textTertiary,
+      opacity: 0.8,
+    },
+    buttonContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+    },
+    buttonText: {
+      color: colors.primaryWhite,
+      fontFamily: 'Afacad-Bold',
+      fontSize: 16,
+    },
+
+    // --- Links ---
+    linkContainer: {
+      marginTop: 24,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    linkText: {
+      color: colors.textSecondary,
+      fontFamily: 'Afacad-Regular',
+      fontSize: 14,
+    },
+    linkTextBold: {
+      fontFamily: 'Afacad-Bold',
+      color: colors.primaryOrange,
+      textDecorationLine: 'underline',
+      marginLeft: 4,
+    },
+
+    // --- Footer ---
+    footer: {
+      padding: 20,
+      textAlign: 'center',
+      fontSize: 12,
+      fontFamily: 'Afacad-Regular',
+      color: colors.primaryWhite,
+      opacity: 0.8,
+    },
+
+    // --- Modal ---
+    modalOverlay: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.overlay,
+      padding: 24,
+    },
+    modalContent: {
+      width: '100%',
+      maxWidth: 400,
+      backgroundColor: colors.cardBackground,
+      borderRadius: 16,
+      padding: 24,
+      alignItems: 'center',
+      ...Platform.select({
+        default: { elevation: 10 },
+      }),
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontFamily: 'Afacad-Bold',
+      color: colors.errorText,
+      marginBottom: 12,
+    },
+    modalText: {
+      fontSize: 16,
+      fontFamily: 'Afacad-Regular',
+      color: colors.primaryBlack,
+      textAlign: 'center',
+      marginBottom: 24,
+      lineHeight: 22,
+    },
+    modalButton: {
+      width: '100%',
+      marginTop: 0,
+      backgroundColor: colors.primaryBlue,
     },
   });

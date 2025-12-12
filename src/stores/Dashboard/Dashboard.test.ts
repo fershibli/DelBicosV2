@@ -1,7 +1,8 @@
 // @ts-nocheck
 /// <reference types="jest" />
 
-import useDashboardStore from '@stores/Dashboard/Dashboard';
+import useDashboardStore from '@stores/Dashboard';
+import { backendHttpClient } from '@lib/helpers/httpClient';
 
 jest.mock('@lib/helpers/httpClient', () => ({
   backendHttpClient: {
@@ -11,7 +12,6 @@ jest.mock('@lib/helpers/httpClient', () => ({
 
 // use require here because jest.mock is hoisted; silence TS about require
 // @ts-ignore
-const { backendHttpClient } = require('@lib/helpers/httpClient');
 
 describe('dashboard store', () => {
   beforeEach(() => {

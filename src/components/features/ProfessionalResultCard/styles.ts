@@ -1,197 +1,200 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
-    // Card container (alias 'card' used by the component)
     card: {
-      backgroundColor: colors.primaryWhite,
+      flexDirection: 'row',
+      backgroundColor: colors.cardBackground,
       borderRadius: 12,
-      padding: 16,
-      marginBottom: 12,
+      marginBottom: 16,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: colors.borderColor,
+      minHeight: 180,
+      ...Platform.select({
+        ios: {
+          shadowColor: colors.primaryBlack,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+        },
+        android: {
+          elevation: 3,
+        },
+      }),
     },
-    container: {
-      backgroundColor: colors.primaryWhite,
-      borderRadius: 12,
-      padding: 16,
-      marginBottom: 12,
+
+    // --- COLUNA ESQUERDA (Detalhes) ---
+    detailsContainer: {
+      flex: 1,
+      padding: 12,
+      justifyContent: 'space-between',
     },
-    name: {
+
+    header: {
+      marginBottom: 8,
+    },
+
+    professionalName: {
       fontSize: 16,
+      fontFamily: 'Afacad-Bold',
+      color: colors.primaryOrange,
+      marginBottom: 2,
+    },
+
+    serviceName: {
+      fontSize: 14,
       fontFamily: 'Afacad-SemiBold',
       color: colors.primaryBlack,
     },
-    subtitle: {
-      fontSize: 14,
-      color: colors.textSecondary,
-    },
-    detailsRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
 
-    header: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-    },
-    headerInfo: {
-      flex: 1,
-    },
-    professionalName: {
-      fontSize: 20,
-      fontFamily: 'Afacad-Bold',
-      color: colors.primaryOrange,
-    },
-    serviceName: {
-      fontSize: 14,
-      fontFamily: 'Afacad-Regular',
-      color: '#333',
-    },
     ratingRow: {
       flexDirection: 'row',
       alignItems: 'center',
       marginTop: 4,
     },
-    starIcon: {
-      marginRight: 4,
-    },
+
     ratingText: {
       fontSize: 12,
-      fontFamily: 'Afacad-SemiBold',
-      color: '#333',
+      fontFamily: 'Afacad-Bold',
+      color: colors.primaryBlack,
+      marginLeft: 4,
     },
+
     ratingCount: {
       fontSize: 12,
       fontFamily: 'Afacad-Regular',
-      color: '#6c757d',
+      color: colors.textSecondary,
       marginLeft: 4,
     },
 
     // Horários
     timesContainer: {
-      marginTop: 12,
+      marginVertical: 8,
     },
+
     timesTitle: {
-      fontSize: 13,
+      fontSize: 12,
       fontFamily: 'Afacad-SemiBold',
-      color: colors.primaryBlue,
+      color: colors.textSecondary,
       marginBottom: 4,
     },
+
     timesRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: 6,
     },
+
     timeSlot: {
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.inputBackground,
       borderWidth: 1,
-      borderColor: colors.secondaryBeige,
-      borderRadius: 6,
+      borderColor: colors.borderColor,
+      borderRadius: 4,
       paddingVertical: 4,
       paddingHorizontal: 8,
     },
+
     timeSlotActive: {
       backgroundColor: colors.primaryBlue,
       borderColor: colors.primaryBlue,
     },
+
     timeText: {
-      fontSize: 12,
+      fontSize: 11,
       fontFamily: 'Afacad-Regular',
-      color: colors.primaryOrange,
+      color: colors.primaryBlack,
     },
+
     timeTextActive: {
       color: colors.primaryWhite,
+      fontFamily: 'Afacad-Bold',
     },
 
-    // Serviços Oferecidos
+    // Serviços (Resumo)
     servicesContainer: {
-      marginTop: 12,
-    },
-    servicesTitle: {
-      fontSize: 13,
-      fontFamily: 'Afacad-SemiBold',
-      color: '#6c757d',
-      marginBottom: 4,
-    },
-    servicesText: {
-      fontSize: 12,
-      fontFamily: 'Afacad-Regular',
-      color: '#333',
-      lineHeight: 16,
+      marginBottom: 8,
     },
 
-    // Rodapé do Card
+    servicesText: {
+      fontSize: 11,
+      fontFamily: 'Afacad-Regular',
+      color: colors.textSecondary,
+    },
+
+    // Rodapé (Local e Botão)
     cardFooter: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginTop: 12,
-      borderTopWidth: 1,
-      borderTopColor: '#F0F0F0',
+      marginTop: 'auto',
       paddingTop: 8,
+      borderTopWidth: 1,
+      borderTopColor: colors.divider,
     },
+
     locationText: {
-      fontSize: 12,
+      fontSize: 11,
       fontFamily: 'Afacad-Regular',
-      color: colors.primaryBlue,
-      flexShrink: 1,
+      color: colors.textTertiary,
+      flex: 1,
+      marginRight: 8,
     },
+
     profileButton: {
-      backgroundColor: colors.primaryOrange,
-      paddingVertical: 6,
-      paddingHorizontal: 16,
-      borderRadius: 20,
+      backgroundColor: 'transparent',
+      paddingVertical: 4,
     },
+
     profileButtonText: {
-      color: colors.primaryWhite,
+      color: colors.primaryOrange,
       fontFamily: 'Afacad-Bold',
       fontSize: 12,
+      textDecorationLine: 'underline',
     },
-    // --- Coluna Esquerda: Detalhes ---
-    detailsContainer: {
-      flex: 2.5, // Ocupa mais espaço
-      padding: 16,
-    },
-    // --- Coluna Direita: Imagem e Tags ---
+
+    // --- COLUNA DIREITA (Imagem e Preço) ---
     imageContainer: {
-      flex: 1.5, // Ocupa menos espaço
-      borderTopRightRadius: 12,
-      borderBottomRightRadius: 12,
-      overflow: 'hidden',
-      backgroundColor: '#000', // Fallback caso a imagem não carregue
-    },
-    image: {
-      width: '100%',
+      width: 120,
       height: '100%',
+      justifyContent: 'space-between',
+      padding: 8,
     },
+
+    imageOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0,0,0,0.1)',
+    },
+
     priceTag: {
-      position: 'absolute',
-      top: 12,
-      right: 12,
-      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      alignSelf: 'flex-end',
+      backgroundColor: colors.primaryBlue,
       paddingVertical: 4,
       paddingHorizontal: 8,
-      borderRadius: 6,
+      borderRadius: 4,
+      maxWidth: '100%',
     },
+
     priceText: {
       color: colors.primaryWhite,
-      fontSize: 14,
+      fontSize: 12,
       fontFamily: 'Afacad-Bold',
+      textAlign: 'center',
     },
-    tagRow: {
-      position: 'absolute',
-      bottom: 12,
-      left: 12,
-      right: 12,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+
+    distanceTag: {
+      alignSelf: 'flex-end',
+      backgroundColor: 'rgba(0,0,0,0.6)',
+      paddingVertical: 2,
+      paddingHorizontal: 6,
+      borderRadius: 4,
+      marginTop: 'auto',
     },
-    tag: {
-      backgroundColor: 'rgba(0, 0, 0, 0.6)',
-      paddingVertical: 4,
-      paddingHorizontal: 8,
-      borderRadius: 6,
-    },
-    tagText: {
+
+    distanceText: {
       color: colors.primaryWhite,
-      fontSize: 11,
+      fontSize: 10,
       fontFamily: 'Afacad-Regular',
     },
   });

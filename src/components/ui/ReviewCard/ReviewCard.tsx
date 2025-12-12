@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { Rating } from 'react-native-ratings';
 import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 
 interface ReviewCardProps {
   rating: number;
@@ -32,23 +33,29 @@ export function ReviewCard({
         <Rating
           type="star"
           ratingCount={5}
-          imageSize={20}
+          imageSize={16}
           readonly
           startingValue={rating}
-          tintColor="#fff"
+          tintColor={colors.cardBackground}
           style={styles.stars}
         />
       </View>
 
       {/* Title */}
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title} numberOfLines={1}>
+        {title}
+      </Text>
 
       {/* Service */}
-      <Text style={styles.service}>{serviceTitle}</Text>
+      <Text style={styles.service} numberOfLines={1}>
+        {serviceTitle}
+      </Text>
 
       {/* Review comment */}
       {review && review.trim() !== '' && (
-        <Text style={styles.reviewText}>{review}</Text>
+        <Text style={styles.reviewText} numberOfLines={4}>
+          {review}
+        </Text>
       )}
 
       {/* Client info */}
@@ -60,80 +67,12 @@ export function ReviewCard({
           style={styles.avatar}
         />
         <View style={styles.clientInfo}>
-          <Text style={styles.clientName}>{clientName}</Text>
+          <Text style={styles.clientName} numberOfLines={1}>
+            {clientName}
+          </Text>
           <Text style={styles.date}>{date}</Text>
         </View>
       </View>
     </View>
   );
 }
-
-const createStyles = (colors: any) =>
-  StyleSheet.create({
-    card: {
-      backgroundColor: '#fff',
-      borderRadius: 12,
-      padding: 16,
-      marginBottom: 12,
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
-      minWidth: 280,
-      maxWidth: 320,
-    },
-    ratingContainer: {
-      marginBottom: 8,
-    },
-    stars: {
-      alignSelf: 'flex-start',
-    },
-    title: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: colors.primaryBlack || '#000',
-      marginBottom: 4,
-    },
-    service: {
-      fontSize: 14,
-      color: colors.textGray || '#666',
-      marginBottom: 8,
-    },
-    reviewText: {
-      fontSize: 13,
-      color: colors.primaryBlack || '#000',
-      lineHeight: 20,
-      marginBottom: 12,
-      fontStyle: 'italic',
-    },
-    clientContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderTopWidth: 1,
-      borderTopColor: colors.secondaryBeige || '#f0f0f0',
-      paddingTop: 12,
-    },
-    avatar: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
-      marginRight: 8,
-    },
-    clientInfo: {
-      flex: 1,
-    },
-    clientName: {
-      fontSize: 13,
-      fontWeight: '500',
-      color: colors.primaryBlack || '#000',
-      marginBottom: 2,
-    },
-    date: {
-      fontSize: 11,
-      color: colors.textGray || '#999',
-    },
-  });

@@ -1,65 +1,63 @@
 import { StyleSheet, Platform } from 'react-native';
-import colors from '@theme/colors';
+import { ColorsType } from '@theme/types';
 
-export const styles = StyleSheet.create({
-  externalContainer: {
-    backgroundColor: 'transparent',
-    width: '100%',
-    minHeight: 120,
-    paddingVertical: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  flatList: {
-    paddingHorizontal: 16,
-  },
-  categoryCard: {
-    flexDirection: 'row',
-    width: 210,
-    height: 90,
-    marginHorizontal: 8,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: colors.cardBackground,
-    borderWidth: 1,
-    borderColor: colors.borderColor,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.primaryBlack,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-      web: {
-        boxShadow: `0px 2px 4px rgba(0, 0, 0, 0.1)`,
-        transition: 'all 0.2s ease-in-out',
-        cursor: 'pointer',
-      },
-    }),
-  },
-  categoryCardHovered: {
-    ...Platform.select({
-      web: {
-        backgroundColor: colors.primaryBlue,
-        borderColor: colors.primaryBlue,
-        transform: [{ scale: 1.03 }],
-      },
-    }),
-  },
-  categoryTitle: {
-    fontSize: 18,
-    fontFamily: 'Afacad-SemiBold',
-    color: colors.primaryOrange,
-    textAlign: 'left',
-    flexShrink: 1,
-    marginLeft: 12,
-  },
-  categoryTitleHovered: {
-    color: '#E2E8F0',
-  },
-});
+export const createStyles = (colors: ColorsType) =>
+  StyleSheet.create({
+    container: {
+      width: '100%',
+      alignItems: 'center',
+      marginVertical: 10,
+    },
+    sliderWrapper: {
+      width: '100%',
+    },
+    listContent: {
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+      flexGrow: 1,
+    },
+    card: {
+      flexDirection: 'row',
+      width: 260,
+      height: 100,
+      marginHorizontal: 8,
+      borderRadius: 20,
+      borderWidth: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.cardBackground,
+      borderColor: colors.borderColor,
+      ...Platform.select({
+        ios: {
+          shadowColor: colors.primaryBlack,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.1,
+          shadowRadius: 6,
+        },
+        android: {
+          elevation: 5,
+        },
+        web: {
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.08)',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+        } as any,
+      }),
+    },
+    title: {
+      fontSize: 18,
+      fontFamily: 'Afacad-Bold',
+      textAlign: 'left',
+      flexShrink: 1,
+    },
+    loadingContainer: {
+      height: 130,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+    },
+    emptyText: {
+      color: colors.textSecondary,
+      fontFamily: 'Afacad-Regular',
+    },
+  });

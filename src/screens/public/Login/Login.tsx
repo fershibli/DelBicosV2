@@ -26,59 +26,73 @@ function LoginScreen() {
   const colors = useColors();
   const styles = createStyles(colors);
 
-  // Função para buscar localização automática
   const handleUseLocation = async () => {
     setIsLoadingLocation(true);
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(
-        'Permissão negada',
-        'Não foi possível acessar sua localização.',
-      );
-      setIsLoadingLocation(false);
-      return;
-    }
-
     try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permissão negada',
+          'Não foi possível acessar sua localização.',
+        );
+        return;
+      }
+
       const locationData = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = locationData.coords;
+
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+        {
+          headers: {
+            'User-Agent': 'DelBicosApp/1.0',
+          },
+        },
       );
+
+      if (!response.ok) throw new Error('Falha na requisição');
+
       const data = await response.json();
 
       if (data && data.address) {
-        const { city, state, town, village } = data.address;
-        const cityName = city || town || village || 'Cidade não encontrada';
-        const stateName = state || 'Estado não encontrado';
+        const { city, state, town, village, county } = data.address;
+        const cityName = city || town || village || county || 'Localização';
+        const stateName = state || '';
+
         setLocation(cityName, stateName);
+        // @ts-ignore
         navigation.navigate('Feed');
       } else {
-        Alert.alert('Erro', 'Endereço não encontrado para esta localização.');
+        throw new Error('Endereço não encontrado');
       }
-    } catch {
+    } catch (error) {
+      console.error(error);
       Alert.alert('Erro', 'Ocorreu um problema ao buscar sua localização.');
     } finally {
       setIsLoadingLocation(false);
     }
   };
 
-  // Função para buscar localização via CEP
   const handleCepSearch = async () => {
-    setIsLoadingCep(true);
-    if (cep.replace(/\D/g, '').length !== 8) {
+    const cleanCep = cep.replace(/\D/g, '');
+
+    if (cleanCep.length !== 8) {
       Alert.alert('CEP Inválido', 'Por favor, digite um CEP com 8 dígitos.');
-      setIsLoadingCep(false);
       return;
     }
+
+    setIsLoadingCep(true);
     try {
-      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const response = await fetch(
+        `https://viacep.com.br/ws/${cleanCep}/json/`,
+      );
       const data = await response.json();
 
       if (data.erro) {
         Alert.alert('Erro', 'CEP não encontrado.');
       } else {
         setLocation(data.localidade, data.uf);
+        // @ts-ignore
         navigation.navigate('Feed');
       }
     } catch {
@@ -92,6 +106,7 @@ function LoginScreen() {
   };
 
   const onLoginPress = () => {
+    // @ts-ignore
     navigation.navigate('LoginPassword');
   };
 
@@ -99,10 +114,14 @@ function LoginScreen() {
     <View style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.contentContainer}
-        keyboardShouldPersistTaps="handled">
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Home' as never)}
+          activeOpacity={0.8}>
           <Image source={LogoV3} style={styles.logo} />
         </TouchableOpacity>
+
         <View style={styles.card}>
           <Text style={styles.title}>Onde você está?</Text>
           <Text style={styles.subtitle}>
@@ -113,7 +132,8 @@ function LoginScreen() {
           <TouchableOpacity
             style={styles.button}
             onPress={handleUseLocation}
-            disabled={isLoadingLocation}>
+            disabled={isLoadingLocation}
+            activeOpacity={0.8}>
             {isLoadingLocation ? (
               <ActivityIndicator color={colors.primaryWhite} />
             ) : (
@@ -123,10 +143,16 @@ function LoginScreen() {
 
           <View style={styles.inputContainer}>
             <CustomTextInput
-              label="Digite seu CEP"
+              label="Ou digite seu CEP"
               placeholder="00000-000"
               value={cep}
-              onChangeText={setCep}
+              onChangeText={(text) => {
+                const masked = text
+                  .replace(/\D/g, '')
+                  .replace(/^(\d{5})(\d)/, '$1-$2')
+                  .slice(0, 9);
+                setCep(masked);
+              }}
               keyboardType="numeric"
               maxLength={9}
             />
@@ -135,7 +161,8 @@ function LoginScreen() {
           <TouchableOpacity
             style={styles.button}
             onPress={handleCepSearch}
-            disabled={isLoadingCep}>
+            disabled={isLoadingCep}
+            activeOpacity={0.8}>
             {isLoadingCep ? (
               <ActivityIndicator color={colors.primaryWhite} />
             ) : (
@@ -145,21 +172,23 @@ function LoginScreen() {
 
           <View style={styles.dividerContainer}>
             <View style={styles.divider} />
-            <Text style={styles.dividerText}>ou</Text>
+            <Text style={styles.dividerText}>já tem conta?</Text>
             <View style={styles.divider} />
           </View>
 
           <TouchableOpacity
             style={[styles.button, styles.buttonSecondary]}
-            onPress={onLoginPress}>
+            onPress={onLoginPress}
+            activeOpacity={0.8}>
             <Text style={[styles.buttonText, styles.buttonTextSecondary]}>
               Fazer Login
             </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
       <Text style={styles.footer}>
-        © DelBicos - 2025 – Todos os direitos reservados.
+        © DelBicos - {new Date().getFullYear()} – Todos os direitos reservados.
       </Text>
     </View>
   );

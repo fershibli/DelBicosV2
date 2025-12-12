@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import styles from './styles';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 
 interface PaymentInfoProps {
   total: number;
   discount?: number;
   couponCode?: string;
-  paymentMethod: 'PIX' | 'Cartão de Crédito' | 'Dinheiro';
+  paymentMethod: 'PIX' | 'Cartão de Crédito' | 'Dinheiro' | string;
   installments?: number;
 }
 
@@ -17,6 +18,9 @@ const PaymentInfo: React.FC<PaymentInfoProps> = ({
   paymentMethod,
   installments = 1,
 }) => {
+  const colors = useColors();
+  const styles = createStyles(colors);
+
   const finalAmount = total - discount;
 
   const formatCurrency = (value: number) => {
@@ -24,49 +28,45 @@ const PaymentInfo: React.FC<PaymentInfoProps> = ({
   };
 
   return (
-    <View style={styles.paymentContainer}>
-      <Text style={styles.paymentTitle}>Pagamento</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Resumo do Pagamento</Text>
 
       <View style={styles.paymentSummary}>
-        <View style={styles.paymentRow}>
-          <Text style={styles.paymentLabel}>Subtotal:</Text>
-          <Text style={styles.paymentValue}>{formatCurrency(total)}</Text>
+        <View style={styles.row}>
+          <Text style={styles.label}>Subtotal:</Text>
+          <Text style={styles.value}>{formatCurrency(total)}</Text>
         </View>
 
         {discount > 0 && (
-          <View style={styles.paymentRow}>
-            <Text style={styles.paymentLabel}>Desconto:</Text>
-            <Text style={[styles.paymentValue, styles.discountText]}>
-              -{formatCurrency(discount)}{' '}
-              {couponCode && `(Cupom: ${couponCode})`}
+          <View style={styles.row}>
+            <Text style={styles.label}>Desconto:</Text>
+            <Text style={[styles.value, styles.discountText]}>
+              -{formatCurrency(discount)}
+              {couponCode ? ` (${couponCode})` : ''}
             </Text>
           </View>
         )}
 
-        <View style={[styles.paymentRow, styles.totalRow]}>
-          <Text style={[styles.paymentLabel, styles.totalLabel]}>Total:</Text>
-          <Text style={[styles.paymentValue, styles.totalValue]}>
-            {formatCurrency(finalAmount)}
-          </Text>
+        <View style={[styles.row, styles.totalRow]}>
+          <Text style={styles.totalLabel}>Total:</Text>
+          <Text style={styles.totalValue}>{formatCurrency(finalAmount)}</Text>
         </View>
       </View>
 
-      <View style={styles.paymentMethodContainer}>
-        <Text style={styles.paymentMethodTitle}>Método de pagamento:</Text>
-        <View style={styles.paymentMethod}>
-          <Text style={styles.paymentMethodText}>
-            {paymentMethod === 'Cartão de Crédito'
-              ? `- ${paymentMethod} (${installments}x de ${formatCurrency(finalAmount / installments)})`
-              : `- ${paymentMethod}`}
-          </Text>
-        </View>
-      </View>
-
-      {paymentMethod === 'PIX' && (
-        <Text style={styles.paymentNote}>
-          Pagamento aprovado instantaneamente
+      <View style={styles.methodContainer}>
+        <Text style={styles.methodTitle}>Forma de Pagamento:</Text>
+        <Text style={styles.methodValue}>
+          {paymentMethod === 'Cartão de Crédito' && installments > 1
+            ? `${paymentMethod} (${installments}x de ${formatCurrency(
+                finalAmount / installments,
+              )})`
+            : paymentMethod}
         </Text>
-      )}
+
+        {paymentMethod === 'PIX' && (
+          <Text style={styles.note}>Pagamento aprovado instantaneamente</Text>
+        )}
+      </View>
     </View>
   );
 };

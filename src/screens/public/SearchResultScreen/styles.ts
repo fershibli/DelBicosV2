@@ -1,10 +1,11 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#F4F7FA',
+      backgroundColor: colors.inputBackground,
       alignItems: 'center',
     },
     contentContainer: {
@@ -21,38 +22,51 @@ export const createStyles = (colors: any) =>
       color: colors.primaryBlue,
       marginBottom: 16,
     },
+
+    // Filtros
     filterBar: {
       width: '100%',
       flexDirection: 'row',
+      flexWrap: 'wrap',
       justifyContent: 'flex-end',
       alignItems: 'center',
       marginBottom: 20,
-      gap: 16,
+      gap: 12,
     },
     filterButton: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: colors.primaryWhite,
+      backgroundColor: colors.cardBackground,
       paddingVertical: 8,
       paddingHorizontal: 16,
       borderRadius: 20,
       borderWidth: 1,
-      borderColor: colors.secondaryBeige,
+      borderColor: colors.borderColor,
+      ...Platform.select({
+        web: { cursor: 'pointer' } as any,
+      }),
     },
     filterButtonText: {
       fontSize: 14,
       fontFamily: 'Afacad-Regular',
+      color: colors.textSecondary,
       marginRight: 8,
     },
+
+    // Grid Wrapper
+    columnWrapper: {
+      justifyContent: 'space-between',
+    },
     cardWrapper: {
-      width: '50%',
       padding: 8,
     },
+
+    // Footer / Empty
     footer: {
       padding: 20,
       textAlign: 'center',
       fontSize: 12,
-      color: '#6c757d',
+      color: colors.textTertiary,
       fontFamily: 'Afacad-Regular',
     },
     emptyContainer: {
@@ -64,7 +78,7 @@ export const createStyles = (colors: any) =>
     },
     emptyText: {
       fontSize: 16,
-      color: '#666',
+      color: colors.textSecondary,
       textAlign: 'center',
       fontFamily: 'Afacad-Regular',
       lineHeight: 24,

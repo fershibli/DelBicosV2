@@ -3,7 +3,6 @@ import {
   Modal,
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   Image,
   ScrollView,
@@ -11,6 +10,7 @@ import {
 } from 'react-native';
 import { useColors } from '@theme/ThemeProvider';
 import { Appointment } from '@stores/Appointment/types';
+import { createStyles } from './styles';
 
 interface AppointmentDetailsModalProps {
   visible: boolean;
@@ -26,6 +26,7 @@ export function AppointmentDetailsModal({
   onCancel,
 }: AppointmentDetailsModalProps) {
   const colors = useColors();
+  const styles = createStyles(colors);
 
   if (!appointment) return null;
 
@@ -36,7 +37,10 @@ export function AppointmentDetailsModal({
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   const handleCancelAppointment = () => {
@@ -58,7 +62,7 @@ export function AppointmentDetailsModal({
             onClose();
           },
         },
-      ]
+      ],
     );
   };
 
@@ -80,15 +84,15 @@ export function AppointmentDetailsModal({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return '#f59e0b';
+        return colors.warningText;
       case 'confirmed':
-        return '#10b981';
+        return colors.successText;
       case 'completed':
-        return '#3b82f6';
+        return colors.primaryBlue;
       case 'canceled':
-        return '#ef4444';
+        return colors.errorText;
       default:
-        return '#6b7280';
+        return colors.textSecondary;
     }
   };
 
@@ -97,10 +101,13 @@ export function AppointmentDetailsModal({
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={onClose}
-    >
+      onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <View style={[styles.modalContainer, { backgroundColor: colors.primaryWhite }]}>
+        <View
+          style={[
+            styles.modalContainer,
+            { backgroundColor: colors.primaryWhite },
+          ]}>
           <ScrollView showsVerticalScrollIndicator={false}>
             {/* Header com foto do profissional */}
             <View style={styles.header}>
@@ -171,8 +178,7 @@ export function AppointmentDetailsModal({
                   style={[
                     styles.statusText,
                     { color: getStatusColor(appointment.status) },
-                  ]}
-                >
+                  ]}>
                   {getStatusText(appointment.status)}
                 </Text>
               </View>
@@ -183,8 +189,7 @@ export function AppointmentDetailsModal({
               <TouchableOpacity
                 style={styles.okButton}
                 onPress={onClose}
-                activeOpacity={0.8}
-              >
+                activeOpacity={0.8}>
                 <Text style={styles.okButtonText}>Ok</Text>
               </TouchableOpacity>
 
@@ -193,8 +198,7 @@ export function AppointmentDetailsModal({
                   <TouchableOpacity
                     style={styles.cancelButton}
                     onPress={handleCancelAppointment}
-                    activeOpacity={0.8}
-                  >
+                    activeOpacity={0.8}>
                     <Text style={styles.cancelButtonText}>
                       Cancelar Agendamento
                     </Text>
@@ -207,110 +211,3 @@ export function AppointmentDetailsModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modalContainer: {
-    width: '100%',
-    maxWidth: 500,
-    borderRadius: 12,
-    padding: 24,
-    maxHeight: '90%',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 24,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  professionalImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginRight: 16,
-    backgroundColor: '#f3f4f6',
-  },
-  headerInfo: {
-    flex: 1,
-  },
-  professionalName: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1f2937',
-    marginBottom: 4,
-  },
-  superscript: {
-    fontSize: 14,
-    color: '#f97316',
-  },
-  dateText: {
-    fontSize: 14,
-    color: '#6b7280',
-    fontWeight: '500',
-  },
-  section: {
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#f97316',
-    marginBottom: 12,
-  },
-  infoContainer: {
-    marginBottom: 24,
-  },
-  infoRow: {
-    marginBottom: 16,
-  },
-  infoLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 4,
-  },
-  infoValue: {
-    fontSize: 14,
-    color: '#6b7280',
-    lineHeight: 20,
-  },
-  statusText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  buttonContainer: {
-    gap: 12,
-  },
-  okButton: {
-    backgroundColor: '#f97316',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  okButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  cancelButton: {
-    backgroundColor: '#fff',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ef4444',
-  },
-  cancelButtonText: {
-    color: '#ef4444',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-});

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { TextInput } from 'react-native';
+import React, { useMemo } from 'react';
+import { View } from 'react-native';
+import CustomTextInput from '@components/ui/CustomTextInput';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 
@@ -7,14 +8,21 @@ interface CpfInputProps {
   value: string;
   onChangeText: (text: string) => void;
   onBlur?: () => void;
-  error?: boolean;
+  error?: string | boolean;
+  label?: string;
+  placeholder?: string;
+  disabled?: boolean;
 }
 
-const formatCpf = (cleanText: string) => {
-  let formatted = cleanText.replace(/(\d{3})(\d)/, '$1.$2');
-  formatted = formatted.replace(/(\d{3})(\d)/, '$1.$2');
-  formatted = formatted.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-  return formatted;
+export const maskCpf = (value: string | undefined) => {
+  if (!value) return '';
+
+  return value
+    .replace(/\D/g, '')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+    .replace(/(-\d{2})\d+?$/, '$1');
 };
 
 const CpfInput: React.FC<CpfInputProps> = ({
@@ -22,33 +30,34 @@ const CpfInput: React.FC<CpfInputProps> = ({
   onChangeText,
   onBlur,
   error,
+  label = 'CPF',
+  placeholder = '000.000.000-00',
+  disabled = false,
 }) => {
   const colors = useColors();
   const styles = createStyles(colors);
-  const [formattedCpf, setFormattedCpf] = useState(value);
 
-  const handleChangeText = (text: string) => {
-    const cleanText = text.replace(/[^\d]/g, '').slice(0, 11);
-    const formatted = formatCpf(cleanText);
-    setFormattedCpf(formatted);
-    onChangeText(cleanText);
+  const displayValue = useMemo(() => maskCpf(value), [value]);
+
+  const handleChange = (text: string) => {
+    const cleanValue = text.replace(/\D/g, '');
+    onChangeText(cleanValue);
   };
 
-  useEffect(() => {
-    setFormattedCpf(formatCpf(value));
-  }, [value]);
-
   return (
-    <TextInput
-      style={[styles.input, error && styles.inputError]}
-      placeholder="000.000.000-00"
-      placeholderTextColor={colors.textTertiary}
-      value={formattedCpf}
-      onChangeText={handleChangeText}
-      onBlur={onBlur}
-      keyboardType="numeric"
-      maxLength={14}
-    />
+    <View style={styles.container}>
+      <CustomTextInput
+        label={label}
+        placeholder={placeholder}
+        value={displayValue}
+        onChangeText={handleChange}
+        onBlur={onBlur}
+        error={error as any}
+        keyboardType="numeric"
+        maxLength={14}
+        editable={!disabled}
+      />
+    </View>
   );
 };
 

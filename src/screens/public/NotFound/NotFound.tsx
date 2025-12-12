@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { FontAwesome } from '@expo/vector-icons';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 
@@ -11,13 +12,25 @@ const NotFoundScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.errorText}>Erro!</Text>
+      <FontAwesome
+        name="exclamation-triangle"
+        size={80}
+        color={colors.primaryWhite}
+        style={styles.icon}
+      />
+
+      <Text style={styles.errorText}>Ops!</Text>
+
       <Text style={styles.descriptionText}>
-        Essa página não está disponível
+        A página que você está procurando não está disponível ou não existe.
       </Text>
+
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Home' as any)}>
+        onPress={() => navigation.navigate('Home' as never)}
+        activeOpacity={0.8}
+        accessibilityRole="button"
+        accessibilityLabel="Voltar para o início">
         <Text style={styles.buttonText}>Voltar para o início</Text>
       </TouchableOpacity>
     </View>

@@ -1,18 +1,47 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'expo-zustand-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserStore, Address, ErrorResponse, User } from './types';
-import { backendHttpClient } from '@lib/helpers/httpClient';
+import {
+  UserStore,
+  Address,
+  ErrorResponse,
+  User,
+  UpdateUserData,
+} from './types';
 import { AxiosError } from 'axios';
+import { backendHttpClient } from '@lib/helpers/httpClient';
 
-export const useUserStore = create<UserStore>(
+export const useUserStore = create<UserStore>()(
   persist(
     (set, get) => ({
       user: null,
       address: null,
       token: null,
       verificationEmail: null,
+      lastCodeSentAt: null,
       avatarBase64: null,
+
+      setVerificationEmail: (email) => set({ verificationEmail: email }),
+
+      recordCodeSent: () => {
+        set({ lastCodeSentAt: Date.now() });
+      },
+
+      resendCode: async (email: string) => {
+        await backendHttpClient.post('/auth/resend', { email });
+      },
+
+      setLoggedInUser: (data: {
+        token: string;
+        user: User;
+        address: Address | null;
+      }) => {
+        set({
+          token: data.token,
+          user: data.user,
+          address: data.address,
+        });
+      },
 
       fetchCurrentUser: async () => {
         try {
@@ -39,35 +68,20 @@ export const useUserStore = create<UserStore>(
         }
       },
 
-      setVerificationEmail: (email) => set({ verificationEmail: email }),
-
-      setLoggedInUser: (data: {
-        token: string;
-        user: User;
-        address: Address | null;
-      }) => {
-        set({
-          token: data.token,
-          user: data.user,
-          address: data.address,
-        });
-      },
-
       signInPassword: async (email: string, password: string) => {
         try {
-          const response = await backendHttpClient.post('/api/user/login', {
+          const { data } = await backendHttpClient.post('/api/user/login', {
             email,
             password,
           });
 
-          if (!response.status.toString().startsWith('2')) {
-          }
+          const { token, user } = data;
 
-          const { token, user } = response.data;
           if (!token) {
             console.error('No token received from the server');
             return;
           }
+
           const userData = {
             id: user.id,
             client_id: user.client_id,
@@ -75,7 +89,10 @@ export const useUserStore = create<UserStore>(
             email: user.email,
             phone: user.phone,
             cpf: user.cpf,
+            avatar_uri: user.avatar_uri || null,
+            banner_uri: user.banner_uri || null,
           };
+
           const addressData: Address | null = user.address
             ? {
                 id: user.address.id,
@@ -91,6 +108,7 @@ export const useUserStore = create<UserStore>(
                 postal_code: user.address.postal_code,
               }
             : null;
+
           get().setLoggedInUser({
             token,
             user: {
@@ -104,7 +122,20 @@ export const useUserStore = create<UserStore>(
             },
             address: addressData,
           });
-          set({ user: userData, address: addressData, token });
+
+          set({
+            user: userData,
+            address: addressData,
+            token,
+            avatarBase64: userData.avatar_uri || null,
+          });
+
+          get().setLoggedInUser({
+            token,
+            user: userData,
+            address: addressData,
+          });
+
           return;
         } catch (error: any | AxiosError) {
           if (error instanceof AxiosError) {
@@ -125,14 +156,15 @@ export const useUserStore = create<UserStore>(
           throw new Error('Erro ao fazer login. Por favor, tente novamente.');
         }
       },
+
       signInAdmin: async (email: string, password: string) => {
         try {
-          const response = await backendHttpClient.post('/api/admin/login', {
+          const { data } = await backendHttpClient.post('/api/admin/login', {
             email,
             password,
           });
+          const { token, user } = data;
 
-          const { token, user } = response.data;
           if (!token) {
             throw new Error('No token received from the server');
           }
@@ -205,27 +237,54 @@ export const useUserStore = create<UserStore>(
           throw new Error('Erro ao alterar a senha. Tente novamente.');
         }
       },
+
+      updateUserProfile: async (data: UpdateUserData) => {
+        try {
+          const response = await backendHttpClient.put('/api/user/me', data);
+
+          if (response.status === 200) {
+            const currentUser = get().user;
+            if (currentUser) {
+              set({
+                user: {
+                  ...currentUser,
+                  name: data.name,
+                  email: data.email,
+                  phone: data.phone,
+                },
+              });
+            }
+          } else {
+            throw new Error('Falha ao atualizar perfil.');
+          }
+        } catch (error: any) {
+          console.error('Erro ao atualizar perfil:', error);
+          throw new Error(
+            error.response?.data?.error || 'Erro ao salvar alterações.',
+          );
+        }
+      },
+
       uploadAvatar: async (base64Image: string) => {
         try {
-          const response = await backendHttpClient.post(
+          const { data } = await backendHttpClient.post(
             `/api/user/imgbb/avatar`,
             {
               base64Image: base64Image,
             },
           );
 
-          const { data } = response;
-
           const currentUser = get().user;
-          if (data.user) {
-            set({ user: data.user });
-          } else if (currentUser) {
+
+          if (currentUser) {
             set({
-              user: { ...currentUser, avatar_uri: data.avatar_uri },
+              user: {
+                ...currentUser,
+                avatar_uri: data.avatar_uri || data.user?.avatar_uri,
+              },
+              avatarBase64: base64Image,
             });
           }
-
-          set({ avatarBase64: base64Image });
 
           return {
             erro: false,
@@ -285,15 +344,6 @@ export const useUserStore = create<UserStore>(
         }
       },
 
-      signOut: () => {
-        set({
-          user: null,
-          address: null,
-          token: null,
-          avatarBase64: null,
-          verificationEmail: null,
-        });
-      },
       registerUser: async (formData) => {
         const { data } = await backendHttpClient.post(
           '/auth/register',
@@ -306,6 +356,17 @@ export const useUserStore = create<UserStore>(
 
         return data;
       },
+
+      signOut: () => {
+        set({
+          user: null,
+          address: null,
+          token: null,
+          avatarBase64: null,
+          verificationEmail: null,
+          lastCodeSentAt: null,
+        });
+      },
     }),
     {
       name: 'user-storage',
@@ -316,6 +377,8 @@ export const useUserStore = create<UserStore>(
         address: state.address,
         token: state.token,
         avatarBase64: state.avatarBase64,
+        verificationEmail: state.verificationEmail,
+        lastCodeSentAt: state.lastCodeSentAt,
       }),
     },
   ),

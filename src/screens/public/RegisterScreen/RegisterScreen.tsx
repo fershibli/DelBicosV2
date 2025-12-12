@@ -1,54 +1,61 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView,
   View,
   Text,
   TouchableOpacity,
-  Alert,
   Switch,
   ActivityIndicator,
-  TextInput,
   Image,
-  Platform,
 } from 'react-native';
-import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
-import { useLocation } from '@lib/hooks/LocationContext';
+
 import CustomTextInput from '@components/ui/CustomTextInput';
 import CpfInput from '@components/ui/CpfInput';
 import DateInput from '@components/ui/DateInput';
-import { createStyles } from './styles';
-import { createInputBaseStyle } from '@components/ui/CustomTextInput/styles';
-import { isValidCPF } from '../../../utils/validators';
-import LogoV3 from '@assets/LogoV3.png';
-import { useUserStore } from '@stores/User';
 import PhoneInput from '@components/ui/PhoneInput';
-import { useColors } from '@theme/ThemeProvider';
+import PasswordInput from '@components/ui/PasswordInput';
+import { FeedbackModal } from '@components/ui/FeedbackModal';
 
-type FormData = {
+import {
+  AddressForm,
+  AddressFormData,
+} from '@components/features/AddressForm/AddressForm';
+
+import { createStyles } from './styles';
+import { isValidCPF } from '@utils/validators';
+import { useUserStore } from '@stores/User';
+import { useColors } from '@theme/ThemeProvider';
+import { HTTP_DOMAIN } from '@config/varEnvs';
+import LogoV3 from '@assets/LogoV3.png';
+
+type RegisterFormData = {
   name: string;
   surname: string;
   birthDate: string;
   cpf: string;
-  location: string;
   email: string;
   phone: string;
   password: string;
   acceptTerms: boolean;
-};
+} & AddressFormData;
 
 function RegisterScreen() {
   const navigation = useNavigation();
-  const { setLocation: updateLocationInContext } = useLocation();
-  const [isLocationLoading, setLocationLoading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isTimeoutError, setIsTimeoutError] = useState(false);
-  const { setVerificationEmail, registerUser } = useUserStore();
+
+  const { setVerificationEmail } = useUserStore();
+
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const [feedbackData, setFeedbackData] = useState({
+    type: 'info' as 'success' | 'error' | 'info',
+    title: '',
+    message: '',
+    onClose: () => setFeedbackVisible(false),
+  });
 
   const colors = useColors();
-  const inputBaseStyle = createInputBaseStyle(colors);
   const styles = createStyles(colors);
 
   const {
@@ -56,112 +63,106 @@ function RegisterScreen() {
     handleSubmit,
     setValue,
     formState: { errors, isValid },
-  } = useForm<FormData>({
-    mode: 'onTouched',
+  } = useForm<RegisterFormData>({
+    mode: 'onChange',
     defaultValues: {
       name: '',
       surname: '',
       birthDate: '',
       cpf: '',
-      location: '',
       email: '',
       phone: '',
       password: '',
       acceptTerms: false,
+      cep: '',
+      street: '',
+      number: '',
+      complement: '',
+      neighborhood: '',
+      city: '',
+      state: '',
     },
   });
 
-  const handleUseLocation = async () => {
-    setLocationLoading(true);
-    setTimeout(() => {
-      setIsTimeoutError(true);
-    }, 7000);
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(
-        'Permissão negada',
-        'Não foi possível acessar sua localização.',
-      );
-      setLocationLoading(false);
-      return;
-    }
-    try {
-      const locationData = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = locationData.coords;
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
-      );
-      const data = await response.json();
-      if (data && data.address) {
-        const { city, state, town, village, municipality } = data.address;
-        const cityName = city || town || village || municipality || '';
-        const stateName = state || '';
-        const newLocation = `${cityName}, ${stateName}`;
-        setValue('location', newLocation, { shouldValidate: true });
-        updateLocationInContext(cityName, stateName);
-      } else {
-        Alert.alert('Erro', 'Endereço não encontrado.');
-      }
-    } catch (error) {
-      console.error('Erro ao obter localização:', error);
-      Alert.alert('Erro', 'Ocorreu um problema ao buscar sua localização.');
-    } finally {
-      setLocationLoading(false);
-    }
-  };
-
-  const handleRegister = async (formData: FormData) => {
+  const handleRegister = async (formData: RegisterFormData) => {
     setIsSubmitting(true);
     try {
-      await registerUser(formData);
-      Alert.alert(
-        'Quase lá!',
-        'Enviamos um código de verificação para o seu e-mail.',
-      );
-      setVerificationEmail(formData.email);
-      navigation.navigate('VerificationScreen');
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert('Erro no Cadastro', error.message);
+      const payload = {
+        name: formData.name,
+        surname: formData.surname,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        cpf: formData.cpf,
+        birthDate: formData.birthDate,
+        address: {
+          postal_code: formData.cep,
+          street: formData.street,
+          number: formData.number,
+          complement: formData.complement,
+          neighborhood: formData.neighborhood,
+          city: formData.city,
+          state: formData.state,
+          country_iso: 'BR',
+        },
+      };
+
+      const response = await fetch(`${HTTP_DOMAIN}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setVerificationEmail(formData.email);
+
+        setFeedbackData({
+          type: 'success',
+          title: 'Quase lá!',
+          message: `Enviamos um código de verificação para ${formData.email}. Verifique sua caixa de entrada.`,
+          onClose: () => {
+            setFeedbackVisible(false);
+            // @ts-ignore
+            navigation.navigate('VerificationScreen');
+          },
+        });
+        setFeedbackVisible(true);
       } else {
-        console.error('Erro ao conectar com o servidor:', error);
-        Alert.alert(
-          'Erro de Conexão',
-          'Não foi possível se conectar ao servidor.',
-        );
+        const errorMessage =
+          data.error || 'Ocorreu um problema ao realizar o cadastro.';
+        setFeedbackData({
+          type: 'error',
+          title: 'Erro no Cadastro',
+          message: errorMessage,
+          onClose: () => setFeedbackVisible(false),
+        });
+        setFeedbackVisible(true);
       }
+    } catch (error) {
+      console.error('Erro de conexão:', error);
+      setFeedbackData({
+        type: 'error',
+        title: 'Erro de Conexão',
+        message:
+          'Não foi possível se conectar ao servidor. Verifique sua internet.',
+        onClose: () => setFeedbackVisible(false),
+      });
+      setFeedbackVisible(true);
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    if (isTimeoutError && isLocationLoading) {
-      setLocationLoading(false);
-      Platform.select({
-        web: () => {
-          alert(
-            'Serviço de Localização Indisponível.\n Tente novamente mais tarde.',
-          );
-        },
-        default: () => {
-          Alert.alert(
-            'Serviço de Localização Indisponível',
-            'Tente novamente mais tarde.',
-          );
-        },
-      })();
-      setIsTimeoutError(false);
-    }
-  }, [isTimeoutError, isLocationLoading]);
 
   return (
     <View style={styles.container}>
       <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={styles.contentContainer}
-        keyboardShouldPersistTaps="handled">
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home' as never)}>
           <Image source={LogoV3} style={styles.logo} resizeMode="contain" />
         </TouchableOpacity>
 
@@ -171,12 +172,13 @@ function RegisterScreen() {
             Preencha os campos abaixo para começar.
           </Text>
 
+          {/* --- Campos Pessoais (Grid) --- */}
           <View style={styles.row}>
             <View style={styles.col}>
               <Controller
                 control={control}
                 name="name"
-                rules={{ required: 'O nome é obrigatório' }}
+                rules={{ required: 'Nome obrigatório' }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <CustomTextInput
                     label="Nome"
@@ -193,7 +195,7 @@ function RegisterScreen() {
               <Controller
                 control={control}
                 name="surname"
-                rules={{ required: 'O sobrenome é obrigatório' }}
+                rules={{ required: 'Sobrenome obrigatório' }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <CustomTextInput
                     label="Sobrenome"
@@ -212,18 +214,16 @@ function RegisterScreen() {
             control={control}
             name="birthDate"
             rules={{
-              required: 'Data de nascimento é obrigatória.',
-              pattern: {
-                value: /^\d{2}\/\d{2}\/\d{4}$/,
-                message: 'Use o formato DD/MM/AAAA.',
-              },
+              required: 'Data de nascimento obrigatória',
+              minLength: { value: 10, message: 'Data incompleta' },
             }}
             render={({ field: { onChange, value } }) => (
-              <CustomTextInput
+              <DateInput
                 label="Data de Nascimento"
-                error={errors.birthDate}>
-                <DateInput value={value} onChangeText={onChange} />
-              </CustomTextInput>
+                value={value}
+                onChangeText={onChange}
+                error={errors.birthDate?.message}
+              />
             )}
           />
 
@@ -231,49 +231,16 @@ function RegisterScreen() {
             control={control}
             name="cpf"
             rules={{
-              required: 'O CPF é obrigatório',
+              required: 'CPF obrigatório',
               validate: (value) => isValidCPF(value) || 'CPF inválido',
             }}
             render={({ field: { onChange, value } }) => (
-              <CustomTextInput label="CPF" error={errors.cpf}>
-                <CpfInput
-                  value={value}
-                  onChangeText={onChange}
-                  error={!!errors.cpf}
-                />
-              </CustomTextInput>
-            )}
-          />
-
-          <Controller
-            control={control}
-            name="location"
-            render={({ field: { value } }) => (
-              <CustomTextInput label="Localização" error={errors.location}>
-                <View style={styles.locationContainer}>
-                  <TextInput
-                    style={[
-                      inputBaseStyle.input,
-                      styles.locationInput,
-                      errors.location && inputBaseStyle.inputError,
-                    ]}
-                    placeholder="Clique no ícone para buscar"
-                    placeholderTextColor={colors.textTertiary}
-                    value={value}
-                    editable={false}
-                  />
-                  <TouchableOpacity
-                    style={styles.locationButton}
-                    onPress={handleUseLocation}
-                    disabled={isLocationLoading}>
-                    {isLocationLoading ? (
-                      <ActivityIndicator />
-                    ) : (
-                      <Text style={styles.locationButtonText}>📍</Text>
-                    )}
-                  </TouchableOpacity>
-                </View>
-              </CustomTextInput>
+              <CpfInput
+                label="CPF"
+                value={value}
+                onChangeText={onChange}
+                error={errors.cpf?.message}
+              />
             )}
           />
 
@@ -281,10 +248,10 @@ function RegisterScreen() {
             control={control}
             name="email"
             rules={{
-              required: 'O e-mail é obrigatório',
+              required: 'E-mail obrigatório',
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Digite um e-mail válido.',
+                message: 'E-mail inválido',
               },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
@@ -305,63 +272,49 @@ function RegisterScreen() {
             control={control}
             name="phone"
             rules={{
-              required: 'O telefone é obrigatório',
-              minLength: {
-                value: 10,
-                message: 'Telefone inválido',
-              },
-              maxLength: {
-                value: 11,
-                message: 'Telefone inválido',
-              },
+              required: 'Telefone obrigatório',
+              minLength: { value: 10, message: 'Telefone inválido' },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <CustomTextInput label="Telefone" error={errors.phone}>
-                <PhoneInput
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  error={!!errors.phone}
-                />
-              </CustomTextInput>
+              <PhoneInput
+                label="Telefone"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.phone?.message}
+              />
             )}
           />
+
+          <View style={{ zIndex: 100, width: '100%' }}>
+            <AddressForm
+              control={control}
+              errors={errors}
+              setValue={setValue}
+            />
+          </View>
 
           <Controller
             control={control}
             name="password"
             rules={{
-              required: 'A senha é obrigatória',
+              required: 'Senha obrigatória',
+              minLength: { value: 6, message: 'Mínimo 6 caracteres' },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <CustomTextInput label="Senha" error={errors.password}>
-                <View
-                  style={[
-                    styles.passwordContainer,
-                    errors.password && styles.passwordContainerError,
-                  ]}>
-                  <TextInput
-                    style={[inputBaseStyle.input, styles.passwordInput]}
-                    placeholder="Crie uma senha forte"
-                    placeholderTextColor={colors.textTertiary}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    secureTextEntry={!passwordVisible}
-                    onSubmitEditing={handleSubmit(handleRegister)}
-                  />
-                  <TouchableOpacity
-                    style={styles.eyeButton}
-                    onPress={() => setPasswordVisible(!passwordVisible)}>
-                    <Text style={styles.eyeIcon}>
-                      {passwordVisible ? '👁️' : '👁️‍🗨️'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                <PasswordInput
+                  placeholder="Crie uma senha forte"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  error={!!errors.password}
+                />
               </CustomTextInput>
             )}
           />
 
+          {/* --- Termos --- */}
           <Controller
             control={control}
             name="acceptTerms"
@@ -375,12 +328,16 @@ function RegisterScreen() {
                   <Switch
                     value={value}
                     onValueChange={onChange}
-                    trackColor={{ false: '#767577', true: '#ffbf00' }}
-                    thumbColor={value ? '#ff7f00' : '#f4f3f4'}
+                    trackColor={{
+                      false: '#767577',
+                      true: colors.primaryOrange,
+                    }}
+                    thumbColor={colors.primaryWhite}
                   />
                   <Text style={styles.termsText}>
-                    Aceito os <Text style={styles.linkText}>termos de uso</Text>{' '}
-                    e <Text style={styles.linkText}>condições</Text>
+                    Aceito os{' '}
+                    <Text style={styles.linkTextBold}>termos de uso</Text> e{' '}
+                    <Text style={styles.linkTextBold}>condições</Text>
                   </Text>
                 </View>
                 {errors.acceptTerms && (
@@ -402,7 +359,8 @@ function RegisterScreen() {
               (!isValid || isSubmitting) && styles.buttonDisabled,
             ]}
             onPress={handleSubmit(handleRegister)}
-            disabled={!isValid || isSubmitting}>
+            disabled={!isValid || isSubmitting}
+            activeOpacity={0.8}>
             {isSubmitting ? (
               <ActivityIndicator color={colors.primaryWhite} />
             ) : (
@@ -410,7 +368,8 @@ function RegisterScreen() {
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Login' as never)}>
             <Text style={styles.linkText}>
               Já tem uma conta?{' '}
               <Text style={styles.linkTextBold}>Faça login</Text>
@@ -418,8 +377,17 @@ function RegisterScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <FeedbackModal
+        visible={feedbackVisible}
+        type={feedbackData.type}
+        title={feedbackData.title}
+        message={feedbackData.message}
+        onClose={feedbackData.onClose}
+      />
+
       <Text style={styles.footer}>
-        © DelBicos - 2025 – Todos os direitos reservados.
+        © DelBicos - {new Date().getFullYear()} – Todos os direitos reservados.
       </Text>
     </View>
   );

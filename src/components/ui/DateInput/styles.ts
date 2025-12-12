@@ -1,15 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { createInputBaseStyle } from '@components/ui/CustomTextInput/styles';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) => {
-  const inputBaseStyle = createInputBaseStyle(colors);
-  return StyleSheet.create({
-    input: {
-      ...inputBaseStyle.input,
+export const createStyles = (colors: ColorsType) =>
+  StyleSheet.create({
+    container: {
       width: '100%',
-    },
-    inputError: {
-      ...inputBaseStyle.inputError,
+      marginBottom: 16,
     },
   });
-};

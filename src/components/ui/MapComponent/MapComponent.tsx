@@ -1,8 +1,11 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import MapRenderer from '../MapRenderer';
 import { MapComponentProps } from '@lib/hooks/types';
-import { styles as globalStyles } from '@lib/utils/styles';
+import { useColors } from '@theme/ThemeProvider';
+import { ColorsType } from '@theme/types';
+// eslint-disable-next-line import/no-named-as-default
+import MapErrorBoundary from '@components/ui/MapComponent/MapErrorBoundary';
 
 export const MapComponent: React.FC<MapComponentProps> = ({
   region,
@@ -10,13 +13,41 @@ export const MapComponent: React.FC<MapComponentProps> = ({
   address,
   onMapPress,
 }) => {
+  const colors = useColors();
+  const styles = createStyles(colors);
+
   return (
-    <MapRenderer
-      region={region}
-      markerCoords={markerCoords}
-      address={address}
-      onMapPress={onMapPress}
-      style={Platform.OS === 'web' ? globalStyles.mapContainer : undefined}
-    />
+    <View style={styles.container}>
+      <MapErrorBoundary>
+        <MapRenderer
+          region={region}
+          markerCoords={markerCoords}
+          address={address}
+          onMapPress={onMapPress}
+          style={styles.mapRenderer}
+        />
+      </MapErrorBoundary>
+    </View>
   );
 };
+
+const createStyles = (colors: ColorsType) =>
+  StyleSheet.create({
+    container: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 12,
+      overflow: 'hidden',
+      backgroundColor: colors.inputBackground,
+    },
+    mapRenderer: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+      ...Platform.select({
+        web: {
+          minHeight: 300,
+        },
+      }),
+    },
+  });
