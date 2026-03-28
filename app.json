@@ -19,7 +19,8 @@
       "bundleIdentifier": "com.delbicos.app",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Este aplicativo precisa acessar sua localização para mostrar serviços disponíveis na sua região.",
-        "NSLocationAlwaysUsageDescription": "Este aplicativo precisa acessar sua localização para mostrar serviços disponíveis na sua região."
+        "NSLocationAlwaysUsageDescription": "Este aplicativo precisa acessar sua localização para mostrar serviços disponíveis na sua região.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
