@@ -230,10 +230,41 @@ This will start the development server.
 
 ### Running on Android Emulator
 
-To run the project on an Android emulator, ensure you have the Android SDK and an emulator set up. Then, use the following command:
+To run the project on an Android emulator, ensure you have the Android SDK and an emulator set up. Use the Android scripts below:
+
+Basic Android run (with Metro):
 
 ```
-npm run android
+pnpm android
+```
+
+Clean rebuild (when build cache is inconsistent):
+
+```
+pnpm android:clean
+```
+
+Install/open app without starting Metro:
+
+```
+pnpm android:no-bundler
+```
+
+Local release build:
+
+```
+pnpm android:release
+```
+
+If you prefer npm, replace `pnpm` with `npm run`.
+
+Current script mappings in package.json:
+
+```
+android -> expo run:android
+android:clean -> expo run:android --no-build-cache
+android:no-bundler -> expo run:android --no-bundler
+android:release -> expo run:android --variant release
 ```
 
 ### Running on iOS Simulator
