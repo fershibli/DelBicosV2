@@ -238,10 +238,41 @@ npm run android
 
 ### Running on iOS Simulator
 
-To run the project on an iOS simulator, ensure you have Xcode installed. Then, use the following command:
+To run the project on an iOS simulator, ensure you have Xcode installed. Use the iOS scripts below:
+
+Basic iOS run (with Metro):
 
 ```
-npm run ios
+pnpm ios
+```
+
+Clean rebuild (when build cache is inconsistent):
+
+```
+pnpm ios:clean
+```
+
+Install/open app without starting Metro:
+
+```
+pnpm ios:no-bundler
+```
+
+Local release build:
+
+```
+pnpm ios:release
+```
+
+If you prefer npm, replace `pnpm` with `npm run`.
+
+Current script mappings in package.json:
+
+```
+ios -> expo run:ios
+ios:clean -> expo run:ios --no-build-cache
+ios:no-bundler -> expo run:ios --no-bundler
+ios:release -> expo run:ios --configuration Release
 ```
 
 ### Running on Web
