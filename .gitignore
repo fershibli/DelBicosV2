@@ -46,3 +46,11 @@ tsconfig.json
 tsconfig.json
 .vercel
 .idea
+
+# iOS local/build artifacts
+ios/build/
+ios/Pods/
+ios/DerivedData/
+ios/.xcode.env.local
+ios/**/*.xcuserstate
+ios/**/xcuserdata/
