@@ -7,7 +7,6 @@ function runStep(label, command, args = []) {
   console.log(`\n=== ${label} ===`);
   const result = spawnSync(command, args, {
     stdio: 'inherit',
-    shell: process.platform === 'win32',
     env: process.env,
   });
 

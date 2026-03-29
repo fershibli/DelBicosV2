@@ -13,7 +13,8 @@ if (args.length === 0) {
 }
 
 const androidDir = resolve(process.cwd(), 'android');
-const wrapperName = process.platform === 'win32' ? 'gradlew.bat' : 'gradlew';
+const isWindows = process.platform === 'win32';
+const wrapperName = 'gradlew';
 const wrapperPath = resolve(androidDir, wrapperName);
 
 if (!existsSync(wrapperPath)) {
@@ -21,14 +22,32 @@ if (!existsSync(wrapperPath)) {
   process.exit(1);
 }
 
-const result = spawnSync(wrapperPath, args, {
-  cwd: androidDir,
-  stdio: 'inherit',
-  shell: process.platform === 'win32',
-  env: process.env,
-});
+const env = {
+  ...process.env,
+  LANG: process.env.LANG ?? 'en_US.UTF-8',
+  LC_ALL: process.env.LC_ALL ?? 'en_US.UTF-8',
+};
+
+const result = isWindows
+  ? spawnSync('bash', ['./gradlew', ...args], {
+      cwd: androidDir,
+      stdio: 'inherit',
+      env,
+      shell: false,
+    })
+  : spawnSync('./gradlew', args, {
+      cwd: androidDir,
+      stdio: 'inherit',
+      env,
+      shell: false,
+    });
 
 if (result.error) {
+  if (isWindows && result.error.code === 'ENOENT') {
+    console.error(
+      'Git Bash (bash) was not found in PATH. Open the project in Git Bash and retry.',
+    );
+  }
   console.error(result.error.message);
   process.exit(1);
 }
