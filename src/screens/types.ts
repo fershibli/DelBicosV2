@@ -38,7 +38,12 @@ export type NavigationParams = {
     professionalName?: string;
     serviceId: number;
   };
-  PaymentStatus: undefined;
+  PaymentStatus:
+    | {
+        appointmentId?: number;
+        paymentIntentId?: string;
+      }
+    | undefined;
   MySchedules: undefined;
   ProviderDashboard: undefined;
   Help: undefined;
