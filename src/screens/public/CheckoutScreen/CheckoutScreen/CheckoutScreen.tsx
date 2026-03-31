@@ -6,19 +6,19 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useColors } from '@theme/ThemeProvider';
 import { NavigationParams } from '@screens/types';
-
-import { stripePromise } from '@lib/stripe/stripe';
-import { Elements } from '@stripe/react-stripe-js';
-import { HTTP_DOMAIN } from '@config/varEnvs';
+import { StripeProvider, useStripe } from '@stripe/stripe-react-native';
+import { STRIPE_PUBLISHABLE_KEY, HTTP_DOMAIN } from '@config/varEnvs';
 
 import { useUserStore } from '@stores/User';
 import { Address } from '@stores/Address/types';
 import { useProfessionalStore } from '@stores/Professional';
+import { Appointment } from '@stores/Appointment';
 import AddressSelectionModal from '@components/features/AddressSelectionModal';
 import { createStyles } from './styles';
 import CheckoutForm from '@screens/public/CheckoutScreen/CheckoutForm';
@@ -70,16 +70,20 @@ async function fetchPaymentIntent(
   }
 }
 
-function CheckoutScreen() {
+function CheckoutScreenContent() {
   const navigation = useNavigation();
   const route =
     useRoute<RouteProp<{ params: CheckoutRouteParams }, 'params'>>();
   const { professionalId, selectedTime, imageUrl, serviceId } = route.params;
 
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loadingIntent, setLoadingIntent] = useState(false);
   const [errorIntent, setErrorIntent] = useState<string | null>(null);
   const [isLoadingProfessional, setIsLoadingProfessional] = useState(true);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [paymentMessage, setPaymentMessage] = useState<string | null>(null);
 
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
@@ -91,7 +95,6 @@ function CheckoutScreen() {
   const colors = useColors();
   const styles = createStyles(colors);
 
-  // Voltar com segurança
   const handleGoBack = () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
@@ -143,6 +146,17 @@ function CheckoutScreen() {
 
         if (secret) {
           setClientSecret(secret);
+
+          const { error } = await initPaymentSheet({
+            paymentIntentClientSecret: secret,
+            merchantDisplayName: 'DelBicos',
+            allowsDelayedPaymentMethods: false,
+          });
+
+          if (error) {
+            console.error('[CheckoutScreen] initPaymentSheet error:', error);
+            setErrorIntent('Falha ao inicializar pagamento.');
+          }
         } else {
           setErrorIntent('Falha ao iniciar pagamento.');
         }
@@ -150,16 +164,75 @@ function CheckoutScreen() {
       };
       initPayment();
     }
-  }, [service, selectedAddress, professionalId, selectedTime, token]);
+  }, [
+    service,
+    selectedAddress,
+    professionalId,
+    selectedTime,
+    token,
+    initPaymentSheet,
+  ]);
 
-  // Configuração do Stripe Elements
-  const stripeOptions = useMemo(
-    () => ({
-      clientSecret: clientSecret || '',
-      appearance: { theme: 'stripe', labels: 'floating' } as const,
-    }),
-    [clientSecret],
-  );
+  // 4. Apresenta PaymentSheet e confirma no servidor
+  const handlePay = async () => {
+    if (!clientSecret || !user || !token) return;
+
+    setIsProcessingPayment(true);
+    setPaymentMessage(null);
+
+    try {
+      const { error } = await presentPaymentSheet();
+
+      if (error) {
+        if (error.code === 'Canceled') {
+          setPaymentMessage(null);
+        } else {
+          setPaymentMessage(error.message || 'Ocorreu um erro no pagamento.');
+        }
+        setIsProcessingPayment(false);
+        return;
+      }
+
+      // Pagamento aprovado — confirma no servidor
+      const paymentIntentId = clientSecret.split('_secret_')[0];
+
+      const confirmResponse = await fetch(
+        `${HTTP_DOMAIN}/api/payments/confirm`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            paymentIntentId,
+            userId: user.id,
+          }),
+        },
+      );
+
+      const confirmData = await confirmResponse.json();
+
+      if (!confirmResponse.ok) {
+        throw new Error(
+          confirmData.error || 'Falha ao confirmar agendamento no servidor.',
+        );
+      }
+
+      const newAppointment = confirmData.appointment as Appointment;
+
+      // @ts-ignore
+      navigation.navigate('PaymentStatus', {
+        appointmentId: newAppointment.id,
+        paymentIntentId,
+      });
+    } catch (err: any) {
+      console.error('[CheckoutScreen] Erro:', err.message);
+      Alert.alert('Erro', err.message || 'Falha ao processar pagamento.');
+    } finally {
+      setIsProcessingPayment(false);
+    }
+  };
 
   // --- Renderização de Estados ---
 
@@ -300,9 +373,11 @@ function CheckoutScreen() {
               )}
 
               {clientSecret && selectedAddress && (
-                <Elements options={stripeOptions} stripe={stripePromise}>
-                  <CheckoutForm />
-                </Elements>
+                <CheckoutForm
+                  onPay={handlePay}
+                  isLoading={isProcessingPayment}
+                  message={paymentMessage}
+                />
               )}
             </View>
           </View>
@@ -321,6 +396,14 @@ function CheckoutScreen() {
         />
       )}
     </ScrollView>
+  );
+}
+
+function CheckoutScreen() {
+  return (
+    <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
+      <CheckoutScreenContent />
+    </StripeProvider>
   );
 }
 
