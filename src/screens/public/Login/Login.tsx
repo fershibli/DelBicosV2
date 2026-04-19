@@ -29,7 +29,33 @@ function LoginScreen() {
   const handleUseLocation = async () => {
     setIsLoadingLocation(true);
     try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      console.log('[Location] Solicitando permissão...');
+      // checa permissões sem disparar diálogo
+      // @ts-ignore
+      const currentPerm = await Location.getForegroundPermissionsAsync();
+      let status = currentPerm?.status;
+      console.log('[Location] Permissão atual:', status);
+
+      if (status !== 'granted') {
+        // tenta solicitar permissão, mas com timeout para evitar bloqueio
+        try {
+          // @ts-ignore
+          const reqPromise = Location.requestForegroundPermissionsAsync();
+          // 5s timeout
+          // @ts-ignore
+          const res = await Promise.race([
+            reqPromise,
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('perm-timeout')), 5000),
+            ),
+          ]);
+          status = res?.status;
+          console.log('[Location] Permissão após request:', status);
+        } catch (e) {
+          console.warn('[Location] Falha ao solicitar permissão:', e);
+        }
+      }
+
       if (status !== 'granted') {
         Alert.alert(
           'Permissão negada',
@@ -38,35 +64,179 @@ function LoginScreen() {
         return;
       }
 
-      const locationData = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = locationData.coords;
+      // 1) Tenta getLastKnownPositionAsync (instantâneo)
+      console.log('[Location] Tentando getLastKnownPositionAsync...');
+      let locationData = await Location.getLastKnownPositionAsync();
+      console.log('[Location] lastKnown:', locationData ? 'ok' : 'null');
 
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
-        {
-          headers: {
-            'User-Agent': 'DelBicosApp/1.0',
-          },
-        },
-      );
+      // 2) Se não tiver, usa watchPositionAsync que força o provider a iniciar
+      //    (resolve problema conhecido em emuladores onde getCurrentPositionAsync trava)
+      if (!locationData) {
+        console.log('[Location] Tentando watchPositionAsync (10s timeout)...');
+        try {
+          locationData = await new Promise<Location.LocationObject | null>(
+            (resolve, reject) => {
+              let resolved = false;
+              let sub: Location.LocationSubscription | null = null;
+              const timer = setTimeout(() => {
+                if (!resolved) {
+                  resolved = true;
+                  sub?.remove();
+                  console.warn('[Location] watchPosition timeout');
+                  resolve(null);
+                }
+              }, 10000);
 
-      if (!response.ok) throw new Error('Falha na requisição');
-
-      const data = await response.json();
-
-      if (data && data.address) {
-        const { city, state, town, village, county } = data.address;
-        const cityName = city || town || village || county || 'Localização';
-        const stateName = state || '';
-
-        setLocation(cityName, stateName);
-        // @ts-ignore
-        navigation.navigate('Feed');
-      } else {
-        throw new Error('Endereço não encontrado');
+              Location.watchPositionAsync(
+                {
+                  accuracy: Location.Accuracy.Balanced,
+                  distanceInterval: 0,
+                  timeInterval: 1000,
+                },
+                (loc) => {
+                  if (!resolved) {
+                    resolved = true;
+                    clearTimeout(timer);
+                    sub?.remove();
+                    console.log('[Location] watchPosition recebeu fix!');
+                    resolve(loc);
+                  }
+                },
+              )
+                .then((subscription) => {
+                  sub = subscription;
+                  if (resolved) sub.remove();
+                })
+                .catch((err) => {
+                  if (!resolved) {
+                    resolved = true;
+                    clearTimeout(timer);
+                    console.warn('[Location] watchPosition erro:', err);
+                    resolve(null);
+                  }
+                });
+            },
+          );
+        } catch (err) {
+          console.warn('[Location] watchPosition falhou:', err);
+        }
       }
+
+      // 3) Fallback: geolocalização por IP (útil quando GPS do emulador não funciona)
+      let latitude: number | undefined;
+      let longitude: number | undefined;
+
+      if (locationData?.coords) {
+        latitude = locationData.coords.latitude;
+        longitude = locationData.coords.longitude;
+        console.log('[Location] Coordenadas (GPS):', latitude, longitude);
+      } else {
+        console.log('[Location] GPS falhou, tentando geolocalização por IP...');
+        try {
+          const ipRes = await fetch('https://ipapi.co/json/', {
+            signal: AbortSignal.timeout(5000),
+          });
+          if (ipRes.ok) {
+            const ipData = await ipRes.json();
+            if (ipData?.latitude && ipData?.longitude) {
+              latitude = ipData.latitude;
+              longitude = ipData.longitude;
+              console.log('[Location] Coordenadas (IP):', latitude, longitude);
+            }
+          }
+        } catch (e) {
+          console.warn('[Location] IP geolocation falhou:', e);
+        }
+      }
+
+      if (latitude == null || longitude == null) {
+        Alert.alert(
+          'Localização indisponível',
+          'Não conseguimos obter sua localização. Verifique se o GPS está ativo ou use o CEP abaixo.',
+        );
+        return;
+      }
+
+      // Reverse geocoding via LocationIQ (mais confiável que Nominatim)
+      const LOCATIONIQ_KEY = process.env.EXPO_PUBLIC_LOCATIONIQ_API_KEY || '';
+      let cityName = '';
+      let stateName = '';
+
+      if (LOCATIONIQ_KEY) {
+        console.log('[Location] Reverse geocoding via LocationIQ...');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        try {
+          const response = await fetch(
+            `https://us1.locationiq.com/v1/reverse?key=${LOCATIONIQ_KEY}&lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`,
+            { signal: controller.signal },
+          );
+          clearTimeout(timeoutId);
+          if (response.ok) {
+            const data = await response.json();
+            if (data?.address) {
+              const addr = data.address;
+              cityName =
+                addr.city ||
+                addr.town ||
+                addr.village ||
+                addr.municipality ||
+                '';
+              stateName = addr.state || '';
+            }
+          }
+        } catch (e) {
+          clearTimeout(timeoutId);
+          console.warn('[Location] LocationIQ falhou, tentando Nominatim:', e);
+        }
+      }
+
+      // Fallback: Nominatim
+      if (!cityName) {
+        console.log('[Location] Reverse geocoding via Nominatim...');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+            {
+              headers: { 'User-Agent': 'DelBicosApp/1.0' },
+              signal: controller.signal,
+            },
+          );
+          clearTimeout(timeoutId);
+          if (response.ok) {
+            const data = await response.json();
+            if (data?.address) {
+              cityName =
+                data.address.city ||
+                data.address.town ||
+                data.address.village ||
+                data.address.county ||
+                '';
+              stateName = data.address.state || '';
+            }
+          }
+        } catch (e) {
+          clearTimeout(timeoutId);
+          console.warn('[Location] Nominatim falhou:', e);
+        }
+      }
+
+      if (!cityName) {
+        Alert.alert(
+          'Erro',
+          'Obtivemos sua localização mas não conseguimos identificar a cidade. Tente usar o CEP.',
+        );
+        return;
+      }
+
+      console.log('[Location] Cidade:', cityName, '| Estado:', stateName);
+      setLocation(cityName, stateName);
+      // @ts-ignore
+      navigation.navigate('Feed');
     } catch (error) {
-      console.error(error);
+      console.error('[Location] Erro geral:', error);
       Alert.alert('Erro', 'Ocorreu um problema ao buscar sua localização.');
     } finally {
       setIsLoadingLocation(false);
