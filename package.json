@@ -90,7 +90,7 @@
     "react-native-image-crop-picker": "^0.51.0",
     "react-native-image-viewing": "^0.2.2",
     "react-native-image-zoom-viewer": "^3.0.1",
-    "react-native-maps": "^1.26.18",
+    "react-native-maps": "1.20.1",
     "react-native-mask-text": "^0.14.2",
     "react-native-popup-menu": "^0.18.0",
     "react-native-ratings": "^8.1.0",
