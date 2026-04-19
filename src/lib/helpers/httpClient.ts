@@ -30,3 +30,26 @@ backendHttpClient.interceptors.request.use(
     return Promise.reject(error);
   },
 );
+
+// Response interceptor to log failing requests for easier debugging (temporary)
+backendHttpClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    try {
+      const cfg = error?.config || {};
+      const resp = error?.response || {};
+      console.error('[HTTP] Request failed', {
+        url: cfg.url,
+        method: cfg.method,
+        params: cfg.params,
+        data: cfg.data,
+        status: resp.status,
+        responseBody: resp.data,
+      });
+    } catch (e) {
+      console.error('[HTTP] Error logging failed request', e);
+    }
+
+    return Promise.reject(error);
+  },
+);
