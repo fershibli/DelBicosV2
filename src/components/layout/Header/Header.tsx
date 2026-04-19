@@ -102,29 +102,124 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       return;
     }
 
+    const fallback = {
+      latitude: -23.5505,
+      longitude: -46.6333,
+      latitudeDelta: 0.1,
+      longitudeDelta: 0.1,
+    };
+
     try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      console.log('[Header] Solicitando permissão de localização...');
+      // checa permissões sem disparar diálogo
+      // @ts-ignore
+      const currentPerm = await Location.getForegroundPermissionsAsync();
+      let status: Location.PermissionStatus | undefined = currentPerm?.status;
+      console.log('[Header] Permissão atual:', status);
+
+      if (status !== 'granted') {
+        try {
+          // @ts-ignore
+          const reqPromise = Location.requestForegroundPermissionsAsync();
+          // 5s timeout: resolve `undefined` on timeout so the union type
+          // doesn't include `Error` and we can safely read `status`.
+          const res = (await Promise.race([
+            reqPromise,
+            new Promise<Location.PermissionResponse | undefined>((resolve) =>
+              setTimeout(() => resolve(undefined), 5000),
+            ),
+          ])) as Location.PermissionResponse | undefined;
+          status = res?.status;
+          console.log('[Header] Permissão após request:', status);
+        } catch (e) {
+          console.warn('[Header] Falha ao solicitar permissão:', e);
+        }
+      }
+
       if (status !== 'granted') {
         Alert.alert('Permissão negada', 'Precisamos da sua localização.');
+        setTempRegion(fallback);
         return;
       }
 
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-      const currentCoords = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      };
+      // 1) Tenta getLastKnownPositionAsync (instantâneo)
+      console.log('[Header] Tentando getLastKnownPositionAsync...');
+      let location = await Location.getLastKnownPositionAsync();
+      console.log('[Header] lastKnown:', location ? 'ok' : 'null');
 
-      setTempRegion({
-        ...currentCoords,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
-      setTempMarker(currentCoords);
+      // 2) Se não tiver, usa watchPositionAsync que força o provider a iniciar
+      //    (resolve problema conhecido em emuladores onde getCurrentPositionAsync trava)
+      if (!location) {
+        console.log('[Header] Tentando watchPositionAsync (10s)...');
+        try {
+          location = await new Promise<Location.LocationObject | null>(
+            (resolve) => {
+              let resolved = false;
+              let sub: Location.LocationSubscription | null = null;
+              const timer = setTimeout(() => {
+                if (!resolved) {
+                  resolved = true;
+                  sub?.remove();
+                  console.warn('[Header] watchPosition timeout');
+                  resolve(null);
+                }
+              }, 10000);
+
+              Location.watchPositionAsync(
+                {
+                  accuracy: Location.Accuracy.Balanced,
+                  distanceInterval: 0,
+                  timeInterval: 1000,
+                },
+                (loc) => {
+                  if (!resolved) {
+                    resolved = true;
+                    clearTimeout(timer);
+                    sub?.remove();
+                    console.log('[Header] watchPosition recebeu fix!');
+                    resolve(loc);
+                  }
+                },
+              )
+                .then((subscription) => {
+                  sub = subscription;
+                  if (resolved) sub.remove();
+                })
+                .catch((err) => {
+                  if (!resolved) {
+                    resolved = true;
+                    clearTimeout(timer);
+                    console.warn('[Header] watchPosition erro:', err);
+                    resolve(null);
+                  }
+                });
+            },
+          );
+        } catch (err) {
+          console.warn('[Header] watchPosition falhou:', err);
+        }
+      }
+
+      const currentCoords = location?.coords
+        ? {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          }
+        : null;
+
+      if (currentCoords) {
+        setTempRegion({
+          ...currentCoords,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        });
+        setTempMarker(currentCoords);
+      } else {
+        console.log('[Header] Sem localização, usando fallback São Paulo');
+        setTempRegion(fallback);
+      }
     } catch (error) {
-      console.warn('Usando fallback:', error);
+      console.warn('[Header] Usando fallback:', error);
       setTempRegion({
         latitude: -23.5505,
         longitude: -46.6333,
