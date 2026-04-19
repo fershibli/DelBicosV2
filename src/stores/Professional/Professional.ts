@@ -18,7 +18,43 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
     lat?: number,
     lng?: number,
   ) => {
+    const mapResponse = (data: any[]): ListedProfessional[] =>
+      data.map((prof: any) => {
+        const rawDist =
+          prof.distance_km ?? prof.dataValues?.distance_km ?? null;
+
+        return {
+          id: prof.id,
+          name: prof.name || prof.User?.name || 'Profissional',
+          rating: Number(prof.rating || 0),
+          ratingsCount: Number(prof.ratings_count || 0),
+          imageUrl:
+            prof.avatar_uri ||
+            prof.User?.avatar_uri ||
+            'https://via.placeholder.com/150',
+
+          location:
+            prof.MainAddress && prof.MainAddress.city
+              ? `${prof.MainAddress.city}, ${prof.MainAddress.state || 'BR'}`
+              : 'Localização não informada',
+
+          distance:
+            rawDist !== null && rawDist !== undefined
+              ? parseFloat(String(rawDist)).toFixed(1)
+              : undefined,
+
+          offeredServices: prof.Services
+            ? prof.Services.map((s: any) =>
+                typeof s === 'string' ? s : s.title,
+              )
+            : ['Serviços Gerais'],
+
+          category: prof.Services?.[0]?.title || 'Serviços Diversos',
+        };
+      });
+
     try {
+      // Tenta com lat/lng para ordenar por distância
       const response = await backendHttpClient.get('/api/professionals', {
         params: { termo: filter, page, limit, lat, lng },
       });
@@ -27,44 +63,33 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
         ? response.data
         : response.data.professionals || [];
 
-      const mappedProfessionals: ListedProfessional[] = rawData.map(
-        (prof: any) => {
-          const rawDist =
-            prof.distance_km ?? prof.dataValues?.distance_km ?? null;
+      return mapResponse(rawData);
+    } catch (error: any) {
+      // Se o backend falhar com lat/lng (bug de SQL com MainAddress),
+      // retenta sem coordenadas para que a lista seja exibida mesmo assim
+      if (error?.response?.status === 500 && (lat != null || lng != null)) {
+        console.warn(
+          '[ProfessionalStore] Falha com lat/lng, retentando sem coordenadas...',
+        );
+        try {
+          const fallback = await backendHttpClient.get('/api/professionals', {
+            params: { termo: filter, page, limit },
+          });
 
-          return {
-            id: prof.id,
-            name: prof.name || prof.User?.name || 'Profissional',
-            rating: Number(prof.rating || 0),
-            ratingsCount: Number(prof.ratings_count || 0),
-            imageUrl:
-              prof.avatar_uri ||
-              prof.User?.avatar_uri ||
-              'https://via.placeholder.com/150',
+          const rawData = Array.isArray(fallback.data)
+            ? fallback.data
+            : fallback.data.professionals || [];
 
-            location:
-              prof.MainAddress && prof.MainAddress.city
-                ? `${prof.MainAddress.city}, ${prof.MainAddress.state || 'BR'}`
-                : 'Localização não informada',
+          return mapResponse(rawData);
+        } catch (fallbackError) {
+          console.error(
+            '[ProfessionalStore] Fallback também falhou:',
+            fallbackError,
+          );
+          return [];
+        }
+      }
 
-            distance:
-              rawDist !== null && rawDist !== undefined
-                ? parseFloat(String(rawDist)).toFixed(1)
-                : undefined,
-
-            offeredServices: prof.Services
-              ? prof.Services.map((s: any) =>
-                  typeof s === 'string' ? s : s.title,
-                )
-              : ['Serviços Gerais'],
-
-            category: prof.Services?.[0]?.title || 'Serviços Diversos',
-          };
-        },
-      );
-
-      return mappedProfessionals;
-    } catch (error) {
       console.error('[ProfessionalStore] Erro ao buscar profissionais:', error);
       return [];
     }
