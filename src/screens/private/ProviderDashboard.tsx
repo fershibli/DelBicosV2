@@ -1,40 +1,33 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { DashboardKpiCards } from '@components/features/DashboardKpiCards';
-import { EarningsChart } from '@components/features/EarningsChart';
-import { ServicesByCategoryList } from '@components/features/ServicesByCategoryList';
 import { useDashboardStore } from '@stores/Dashboard';
+import { useUserStore } from '@stores/User';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
+import { useNavigation } from '@react-navigation/native';
 
 const ProviderDashboard: React.FC = () => {
-  const {
-    kpis,
-    earnings,
-    categories,
-    loading,
-    error,
-    fetchKpis,
-    fetchEarnings,
-    fetchCategories,
-  } = useDashboardStore();
-
+  const { kpis, loading, error, fetchKpis, fetchEarnings, fetchCategories } = useDashboardStore();
+  const { user } = useUserStore();
+  const navigation = useNavigation<any>();
+  
   const colors = useColors();
   const styles = createStyles(colors);
 
+  const [isAvailable, setIsAvailable] = useState(false);
+  const [showBalance, setShowBalance] = useState(false);
+
   const loadAllData = useCallback(async () => {
     const to = new Date().toISOString().slice(0, 10);
-    const from = new Date(Date.now() - 1000 * 60 * 60 * 24 * 30)
-      .toISOString()
-      .slice(0, 10);
-
+    const from = new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString().slice(0, 10);
     try {
       await Promise.all([
         fetchKpis(),
@@ -50,42 +43,149 @@ const ProviderDashboard: React.FC = () => {
     loadAllData();
   }, [loadAllData]);
 
+  const toggleAvailability = () => {
+    setIsAvailable(!isAvailable);
+  };
+
+  const toggleBalance = () => {
+    setShowBalance(!showBalance);
+  };
+
+  const navigateToSchedules = () => {
+    navigation.navigate('MySchedules');
+  };
+
+  // Mock value for now, or use kpis.totalEarnings if backend provides it
+  const todayEarnings = kpis ? kpis.totalEarnings : 0;
+  const formattedEarnings = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(todayEarnings);
+
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Painel do Prestador</Text>
+      
+      {/* 1. Header do Prestador */}
+      <View style={styles.topHeader}>
+        <View style={styles.avatarContainer}>
+          <Image 
+            source={{ uri: user?.avatar_uri || 'https://ui-avatars.com/api/?name=' + (user?.name || 'P') }} 
+            style={styles.avatar} 
+          />
+        </View>
 
-        <TouchableOpacity
-          style={styles.refreshButton}
-          disabled={loading}
-          onPress={loadAllData}
-          activeOpacity={0.7}>
-          {loading ? (
-            <ActivityIndicator size="small" color={colors.primaryBlue} />
-          ) : (
-            <FontAwesome name="refresh" size={20} color={colors.primaryBlue} />
-          )}
+        <TouchableOpacity 
+          style={styles.togglePill} 
+          onPress={toggleAvailability}
+          activeOpacity={0.8}
+        >
+          <FontAwesome 
+            name={isAvailable ? "check-circle" : "ban"} 
+            size={16} 
+            color={isAvailable ? "#16a34a" : colors.textSecondary} 
+            style={styles.toggleIcon} 
+          />
+          <Text style={styles.toggleText}>
+            {isAvailable ? 'Disponível' : 'Indisponível'}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.notificationBtn}>
+          <FontAwesome name="bell-o" size={20} color={colors.primaryBlack} />
+          <View style={styles.notificationBadge} />
+        </TouchableOpacity>
+      </View>
+
+      {/* 2. Banner de Status */}
+      <View style={[styles.statusBanner, !isAvailable && styles.statusBannerOffline]}>
+        <FontAwesome 
+          name="lightbulb-o" 
+          size={20} 
+          color={isAvailable ? "#16a34a" : "#6b7280"} 
+          style={styles.statusIcon} 
+        />
+        <Text style={[styles.statusText, !isAvailable && styles.statusTextOffline]}>
+          {isAvailable 
+            ? 'Fique online para receber orçamentos' 
+            : 'Fique disponível para receber orçamentos'}
+        </Text>
+      </View>
+
+      {/* 3. Ações Rápidas */}
+      <View style={styles.quickActionsRow}>
+        <TouchableOpacity style={styles.quickActionBtn}>
+          <FontAwesome name="sliders" size={16} color={colors.primaryBlack} style={styles.quickActionIcon} />
+          <Text style={styles.quickActionText}>Área de Atendimento</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={[styles.quickActionBtn, styles.quickActionBtnSOS]}>
+          <FontAwesome name="warning" size={16} color="#ef4444" style={styles.quickActionIcon} />
+          <Text style={[styles.quickActionText, styles.quickActionTextSOS]}>Suporte</Text>
         </TouchableOpacity>
       </View>
 
       {error ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
-            {typeof error === 'string'
-              ? error
-              : 'Ocorreu um erro ao carregar os dados.'}
+            {typeof error === 'string' ? error : 'Ocorreu um erro ao carregar os dados.'}
           </Text>
         </View>
       ) : null}
 
-      <DashboardKpiCards kpis={kpis} loading={loading} />
+      {/* 4. Resumo Financeiro */}
+      <View style={styles.summaryCard}>
+        <View style={styles.summaryHeader}>
+          <FontAwesome name="money" size={16} color="#9CA3AF" />
+          <Text style={styles.summaryTitle}>Resumo de hoje</Text>
+        </View>
+        
+        <View style={styles.summaryValueRow}>
+          {loading ? (
+             <ActivityIndicator size="small" color="#FFF" />
+          ) : showBalance ? (
+            <Text style={styles.summaryValue}>{formattedEarnings}</Text>
+          ) : (
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+               <Text style={styles.summaryValuePrefix}>R$</Text>
+               <Text style={styles.summaryHidden}>••••</Text>
+            </View>
+          )}
 
-      <EarningsChart earnings={earnings} />
+          <TouchableOpacity onPress={toggleBalance} style={styles.summaryEyeBtn}>
+            <FontAwesome name={showBalance ? "eye-slash" : "eye"} size={20} color="#FFF" />
+          </TouchableOpacity>
+        </View>
+      </View>
 
-      <ServicesByCategoryList categories={categories} />
+      {/* 5. Banner Promocional */}
+      <View style={styles.promoBanner}>
+        <Text style={styles.promoTitle}>Complete 5 serviços nesta semana!</Text>
+        <Text style={styles.promoSubtitle}>Ganhe o selo de Super Parceiro e apareça no topo das buscas.</Text>
+        {/* Aqui poderia entrar uma imagem de background do banner */}
+      </View>
+
+      {/* 6. Agenda e Horários */}
+      <View style={styles.scheduleSection}>
+        <View style={styles.sectionTitleRow}>
+          <Text style={styles.sectionTitle}>Sua Agenda</Text>
+          <TouchableOpacity onPress={navigateToSchedules}>
+            <Text style={styles.sectionLink}>Ver agenda</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.sectionSubtitle}>Você não tem serviços marcados para hoje</Text>
+
+        <TouchableOpacity style={styles.scheduleCard} onPress={navigateToSchedules} activeOpacity={0.8}>
+          <View style={styles.scheduleIconContainer}>
+            <FontAwesome name="calendar-plus-o" size={20} color={colors.primaryBlack} />
+          </View>
+          <View style={styles.scheduleCardContent}>
+            <Text style={styles.scheduleCardTitle}>Ver todos os horários</Text>
+            <Text style={styles.scheduleCardSubtitle}>Acompanhe seus próximos compromissos</Text>
+          </View>
+          <FontAwesome name="chevron-right" size={14} color="#9ca3af" />
+        </TouchableOpacity>
+      </View>
+
     </ScrollView>
   );
 };
