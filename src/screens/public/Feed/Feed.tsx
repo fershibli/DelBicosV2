@@ -81,11 +81,8 @@ const FeedScreen: React.FC = () => {
     }
   };
 
-  return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}>
+  const renderHeader = () => (
+    <>
       {/* Seção Carrossel Destaques */}
       <View style={styles.carouselSection}>
         <View style={styles.carouselContainer}>
@@ -149,12 +146,14 @@ const FeedScreen: React.FC = () => {
         <CategorySlider />
       </View>
 
-      {/* Seção Profissionais */}
-      <View style={styles.listSection}>
-        <Text style={styles.title}>Profissionais próximos a você</Text>
-        <ListProfessionals />
-      </View>
-    </ScrollView>
+      <Text style={[styles.title, { paddingHorizontal: 20 }]}>Profissionais próximos a você</Text>
+    </>
+  );
+
+  return (
+    <View style={styles.container}>
+      <ListProfessionals ListHeaderComponent={renderHeader()} />
+    </View>
   );
 };
 
