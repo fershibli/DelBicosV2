@@ -315,22 +315,22 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                     <Text style={styles.menuOptionText}>Meus Agendamentos</Text>
                   </View>
                 </MenuOption>
-                <MenuOption
-                  onSelect={() => {
-                    /* Portal Parceiro */
-                  }}>
-                  <View style={styles.menuOption}>
-                    <FontAwesome
-                      name="briefcase"
-                      size={18}
-                      color={headerIconColor}
-                      style={styles.menuIcon}
-                    />
-                    <Text style={styles.menuOptionText}>
-                      Portal do Parceiro
-                    </Text>
-                  </View>
-                </MenuOption>
+                {user?.professional_id && (
+                  <MenuOption
+                    onSelect={() => navigateTo('ProviderDashboard')}>
+                    <View style={styles.menuOption}>
+                      <FontAwesome
+                        name="briefcase"
+                        size={18}
+                        color={headerIconColor}
+                        style={styles.menuIcon}
+                      />
+                      <Text style={styles.menuOptionText}>
+                        Portal do Parceiro
+                      </Text>
+                    </View>
+                  </MenuOption>
+                )}
                 {user?.admin && (
                   <MenuOption onSelect={() => navigateTo('AdminAnalytics')}>
                     <View style={styles.menuOption}>
