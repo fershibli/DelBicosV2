@@ -8,6 +8,7 @@ export type User = {
   avatar_uri?: string | null;
   banner_uri?: string | null;
   admin?: boolean;
+  professional_id?: number;
 };
 
 export type Address = {
@@ -79,4 +80,9 @@ export type UserStore = {
   signOut: () => void;
   uploadAvatar: (base64Image: string) => Promise<UploadAvatarResponse>;
   removeAvatar: () => Promise<ErrorResponse>;
+  becomeProfessional: (data: {
+    cpf: string;
+    cnpj?: string;
+    description: string;
+  }) => Promise<void>;
 };
