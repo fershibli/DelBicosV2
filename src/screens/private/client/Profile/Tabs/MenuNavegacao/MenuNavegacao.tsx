@@ -55,6 +55,12 @@ const menuOptions = [
     icon: 'history',
     activeIcon: 'history',
   },
+  {
+    id: ClientProfileSubRoutes.TornarParceiro,
+    label: 'Tornar-se Colaborador',
+    icon: 'card-travel',
+    activeIcon: 'work',
+  },
 ];
 
 const MenuNavegacao = () => {
