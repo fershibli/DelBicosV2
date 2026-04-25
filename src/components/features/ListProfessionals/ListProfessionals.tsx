@@ -28,7 +28,11 @@ const useResponsiveColumns = () => {
   return 1;
 };
 
-const ListProfessionals = () => {
+interface ListProfessionalsProps {
+  ListHeaderComponent?: React.ReactElement | null;
+}
+
+const ListProfessionals = ({ ListHeaderComponent }: ListProfessionalsProps = {}) => {
   const colors = useColors();
   const styles = createStyles(colors);
   const { fetchProfessionals } = useProfessionalStore();
@@ -117,6 +121,7 @@ const ListProfessionals = () => {
         renderItem={renderItem}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
+        ListHeaderComponent={ListHeaderComponent}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={renderEmpty}
         removeClippedSubviews={Platform.OS !== 'web'}
