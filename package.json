@@ -5,10 +5,24 @@
   "scripts": {
     "start": "expo start --dev-client",
     "web": "expo start --web",
-    "android": "expo run:android",
-    "android:clean": "expo run:android --no-build-cache",
+    "set:dev": "cp environments/.env.dev .env && echo 'Switched to DEV environment'",
+    "set:prod": "cp environments/.env.prod .env && echo 'Switched to PROD environment'",
+    "android": "npm run android:stable",
+    "android:expo": "expo run:android",
+    "android:stable": "npm run android:install && npm run start",
+    "android:assemble:debug": "node scripts/android/gradlew-runner.mjs app:assembleDebug -x lint -x test --build-cache -PreactNativeDevServerPort=8081",
+    "android:assemble:release": "node scripts/android/gradlew-runner.mjs app:assembleRelease -x lint -x test --build-cache -PreactNativeDevServerPort=8081",
+    "android:deploy:debug": "npm run set:dev && npm run android:assemble:debug && npm run cp:android:debug",
+    "android:deploy:release": "npm run set:prod && npm run android:assemble:release && npm run cp:android:release",
+    "cp:android:debug": "mkdir -p releases && cp android/app/build/outputs/apk/debug/app-debug.apk ./releases/delbicos-debug-$(date +%Y%m%d%H%M).apk && echo 'Debug APK copied to releases folder'",
+    "cp:android:release": "mkdir -p releases && cp android/app/build/outputs/apk/release/app-release.apk ./releases/delbicos-release-$(date +%Y%m%d%H%M).apk && echo 'Release APK copied to releases folder'",
+    "cp:android:bundle": "mkdir -p releases && cp android/app/build/outputs/bundle/release/app-release.aab ./releases/delbicos-android-$(date +%Y%m%d%H%M).aab && echo 'AAB copied to releases folder'",
+    "android:install": "node scripts/android/gradlew-runner.mjs app:installDebug -x lint -x test --build-cache -PreactNativeDevServerPort=8081",
+    "android:clean": "node scripts/android/clean.mjs",
+    "android:clean:cache": "expo run:android --no-build-cache",
     "android:no-bundler": "expo run:android --no-bundler",
     "android:release": "expo run:android --variant release",
+    "android:jvm": "node scripts/android/jvm-info.mjs",
     "ios": "expo run:ios",
     "ios:clean": "expo run:ios --no-build-cache",
     "ios:no-bundler": "expo run:ios --no-bundler",
@@ -45,6 +59,7 @@
     "@react-navigation/stack": "^7.3.3",
     "@stripe/react-stripe-js": "^5.2.0",
     "@stripe/stripe-js": "^8.1.0",
+    "@stripe/stripe-react-native": "0.50.3",
     "axios": "^1.9.0",
     "expo": "54.0.33",
     "expo-asset": "~12.0.9",
@@ -106,6 +121,5 @@
     "react-native-svg-transformer": "^1.5.1",
     "typescript": "^5.7.2"
   },
-  "private": true,
-  "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
+  "private": true
 }

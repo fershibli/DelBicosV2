@@ -37,6 +37,8 @@ yarn-error.*
 # local env files
 .env 
 .env*.local
+releases/*
+environments/*
 
 # typescript
 *.tsbuildinfo
@@ -54,3 +56,13 @@ ios/DerivedData/
 ios/.xcode.env.local
 ios/**/*.xcuserstate
 ios/**/xcuserdata/
+
+# Android local/build artifacts
+android/.gradle/
+android/.kotlin/
+android/build/
+android/app/build/
+android/app/.cxx/
+android/local.properties
+android/**/captures/
+android/build/reports/problems/

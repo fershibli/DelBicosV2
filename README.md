@@ -232,16 +232,40 @@ This will start the development server.
 
 To run the project on an Android emulator, ensure you have the Android SDK and an emulator set up. Use the Android scripts below:
 
-Basic Android run (with Metro):
+Basic Android run (with Metro, stable cross-platform):
 
 ```
 pnpm android
 ```
 
-Clean rebuild (when build cache is inconsistent):
+Stable cross-platform run (same flow as `pnpm android`):
+
+```
+pnpm android:stable
+```
+
+Assemble debug APK with Gradle wrapper (without Expo `--configure-on-demand`):
+
+```
+pnpm android:assemble
+```
+
+Install debug build on emulator/device with Gradle wrapper:
+
+```
+pnpm android:install
+```
+
+Deep clean (remove previous build folders + `gradlew clean`):
 
 ```
 pnpm android:clean
+```
+
+Clean rebuild using Expo cache flag:
+
+```
+pnpm android:clean:cache
 ```
 
 Install/open app without starting Metro:
@@ -256,16 +280,40 @@ Local release build:
 pnpm android:release
 ```
 
+JVM/Gradle diagnostics (useful for onboarding and troubleshooting):
+
+```
+pnpm android:jvm
+```
+
 If you prefer npm, replace `pnpm` with `npm run`.
+
+Expo direct Android flow (kept as fallback):
+
+```
+pnpm android:expo
+```
 
 Current script mappings in package.json:
 
 ```
-android -> expo run:android
-android:clean -> expo run:android --no-build-cache
+android -> pnpm android:stable
+android:expo -> expo run:android
+android:stable -> pnpm android:install && pnpm start
+android:assemble -> node scripts/android/gradlew-runner.mjs app:assembleDebug -x lint -x test --build-cache -PreactNativeDevServerPort=8081
+android:install -> node scripts/android/gradlew-runner.mjs app:installDebug -x lint -x test --build-cache -PreactNativeDevServerPort=8081
+android:clean -> node scripts/android/clean.mjs
+android:clean:cache -> expo run:android --no-build-cache
 android:no-bundler -> expo run:android --no-bundler
 android:release -> expo run:android --variant release
+android:jvm -> node scripts/android/jvm-info.mjs
 ```
+
+Android troubleshooting notes:
+
+- If you get `No matching variant ... No variants exist` on Windows, prefer `pnpm android:stable` or `pnpm android:install` instead of `pnpm android`.
+- Run `pnpm android:jvm` and confirm Java is available (recommended JDK 17).
+- Run `pnpm android:clean` before retrying a failed Android build.
 
 ### Running on iOS Simulator
 
