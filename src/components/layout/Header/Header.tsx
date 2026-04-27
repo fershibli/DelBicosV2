@@ -70,10 +70,19 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const navigateTo = useCallback(
     (screen?: keyof NavigationParams) => {
       if (!screen) return;
+      
+      if (!isWebOrLargeScreen) {
+        // Roteamento explícito para dentro do MainTabs registrado no RootStack
+        if (screen === 'Feed') return navigation.navigate('MainTabs' as never, { screen: 'FeedTab' } as never);
+        if (screen === 'Category') return navigation.navigate('MainTabs' as never, { screen: 'CategoryTab' } as never);
+        if (screen === 'MySchedules') return navigation.navigate('MainTabs' as never, { screen: 'SchedulesTab' } as never);
+        if (screen === 'ClientProfile') return navigation.navigate('MainTabs' as never, { screen: 'ProfileTab' } as never);
+      }
+
       // @ts-ignore
       navigation.navigate(screen);
     },
-    [navigation],
+    [navigation, isWebOrLargeScreen],
   );
 
   const handleSignOut = useCallback(() => {
@@ -363,9 +372,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
             {!!user ? (
               <>
                 <MenuOption
-                  onSelect={() =>
-                    navigation.navigate('ClientProfile' as never)
-                  }>
+                  onSelect={() => navigateTo('ClientProfile')}>
                   <View style={styles.menuOption}>
                     <FontAwesome
                       name="user-circle-o"
