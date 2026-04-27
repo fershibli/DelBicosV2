@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   Text,
   ScrollView,
@@ -8,7 +8,9 @@ import {
   useWindowDimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  TextInput,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 import CategorySlider from '@components/features/CategorySlider';
@@ -50,6 +52,8 @@ const HIGHLIGHT_DATA: HighlightItem[] = [
 const FeedScreen: React.FC = () => {
   const scrollRef = useRef<ScrollView | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [search, setSearch] = useState('');
+  const navigation = useNavigation();
 
   const colors = useColors();
   const styles = createStyles(colors);
@@ -81,11 +85,49 @@ const FeedScreen: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prevIndex) => {
+        const nextIndex = prevIndex === HIGHLIGHT_DATA.length - 1 ? 0 : prevIndex + 1;
+        scrollRef.current?.scrollTo({ x: nextIndex * width, animated: true });
+        return nextIndex;
+      });
+    }, 5000); // Roda a cada 5 segundos
+    return () => clearInterval(timer);
+  }, [width]);
+
+  const handleSearchSubmit = () => {
+    if (search.trim()) {
+      // @ts-ignore
+      navigation.navigate('SearchResult', { query: search.trim() });
+    }
+  };
+
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}>
+      
+      {/* Mobile Search Bar */}
+      {Platform.OS !== 'web' && (
+        <View style={styles.mobileSearchSection}>
+          <View style={styles.mobileSearchContainer}>
+            <TextInput
+              style={styles.mobileSearchInput}
+              placeholder="O que você está procurando?"
+              placeholderTextColor={colors.textTertiary}
+              value={search}
+              onChangeText={setSearch}
+              onSubmitEditing={handleSearchSubmit}
+            />
+            <TouchableOpacity style={styles.mobileSearchButton} onPress={handleSearchSubmit}>
+              <FontAwesome name="search" size={18} color={colors.textSecondary} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
       {/* Seção Carrossel Destaques */}
       <View style={styles.carouselSection}>
         <View style={styles.carouselContainer}>
@@ -145,7 +187,7 @@ const FeedScreen: React.FC = () => {
 
       {/* Seção Categorias */}
       <View style={styles.categorySection}>
-        <Text style={styles.title}>Selecione por Categorias</Text>
+        <Text style={styles.title}>Explore Categorias</Text>
         <CategorySlider />
       </View>
 

@@ -18,6 +18,48 @@ export const createStyles = (colors: ColorsType) =>
       marginTop: 24,
       marginBottom: 12,
     },
+    mobileSearchSection: {
+      paddingHorizontal: 20,
+      marginTop: 24,
+      marginBottom: 12,
+    },
+    mobileSearchContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.cardBackground,
+      borderRadius: 24,
+      height: 52,
+      paddingHorizontal: 16,
+      borderWidth: 1,
+      borderColor: colors.borderColor,
+      ...Platform.select({
+        ios: {
+          shadowColor: colors.primaryBlack,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 4,
+        },
+        android: {
+          elevation: 2,
+        },
+        web: {
+          boxShadow: '0px 2px 8px rgba(0,0,0,0.05)',
+        } as any,
+      }),
+    },
+    mobileSearchInput: {
+      flex: 1,
+      fontSize: 16,
+      fontFamily: 'Afacad-Regular',
+      color: colors.primaryBlack,
+      height: '100%',
+      ...Platform.select({
+        web: { outlineStyle: 'none' } as any,
+      }),
+    },
+    mobileSearchButton: {
+      padding: 8,
+    },
     carouselSection: {
       marginBottom: 24,
       position: 'relative',
