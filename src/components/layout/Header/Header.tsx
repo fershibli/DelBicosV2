@@ -257,10 +257,6 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
   if (!isWebOrLargeScreen) {
     return (
       <View style={styles.mobileHeader}>
-        <TouchableOpacity onPress={() => navigateTo('Feed')}>
-          <Image source={logo} style={styles.mobileLogo} />
-        </TouchableOpacity>
-
         <Menu>
           <MenuTrigger style={styles.mobileMenuTrigger}>
             <FontAwesome name="bars" size={24} color={headerIconColor} />
@@ -413,6 +409,26 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
             )}
           </MenuOptions>
         </Menu>
+
+        <TouchableOpacity onPress={() => navigateTo('Feed')} style={styles.mobileLogoContainer}>
+          <Image source={logo} style={styles.mobileLogo} />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => !!user ? navigateTo('ClientProfile') : navigateTo('Login')} style={styles.mobileProfileContainer}>
+          {!!user ? (
+             <Image
+                source={
+                  user.avatar_uri
+                    ? { uri: user.avatar_uri }
+                    : require('@assets/logo.png')
+                }
+                style={styles.mobileProfileImage}
+              />
+          ) : (
+            <FontAwesome name="user-circle" size={26} color={headerIconColor} />
+          )}
+        </TouchableOpacity>
+
         {renderMapModal}
       </View>
     );
