@@ -57,7 +57,25 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
 
   return (
     <View style={styles.card}>
-      {/* --- COLUNA ESQUERDA: DETALHES --- */}
+      {/* --- TOPO: IMAGEM --- */}
+      <ImageBackground
+        source={{ uri: professional.imageUrl }}
+        style={styles.imageContainer}
+        resizeMode="cover">
+        {/* Overlay para escurecer levemente e destacar o texto branco */}
+        <View style={styles.imageOverlay} />
+
+        <View style={styles.tagsRow}>
+           <View style={styles.distanceTag}>
+             <Text style={styles.distanceText}>{professional.distance}km</Text>
+           </View>
+           <View style={styles.priceTag}>
+             <Text style={styles.priceText}>R$ {professional.priceFrom}</Text>
+           </View>
+        </View>
+      </ImageBackground>
+
+      {/* --- BASE: DETALHES --- */}
       <View style={styles.detailsContainer}>
         <View style={styles.header}>
           <Text style={styles.professionalName} numberOfLines={1}>
@@ -73,7 +91,7 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
               {professional.rating.toFixed(1)}
             </Text>
             <Text style={styles.ratingCount}>
-              ({professional.ratingsCount})
+              ({professional.ratingsCount} avaliações)
             </Text>
           </View>
         </View>
@@ -100,7 +118,7 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
             ))}
             {professional.availableTimes.length > 4 && (
               <View style={styles.timeSlot}>
-                <Text style={styles.timeText}>...</Text>
+                <Text style={styles.timeText}>+{professional.availableTimes.length - 4}</Text>
               </View>
             )}
           </View>
@@ -111,7 +129,7 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
             style={styles.servicesText}
             numberOfLines={1}
             ellipsizeMode="tail">
-            {professional.offeredServices.join(', ')}
+            {professional.offeredServices.join(' • ')}
           </Text>
         </View>
 
@@ -126,23 +144,6 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* --- COLUNA DIREITA: IMAGEM --- */}
-      <ImageBackground
-        source={{ uri: professional.imageUrl }}
-        style={styles.imageContainer}
-        resizeMode="cover">
-        {/* Overlay para escurecer levemente e destacar o texto branco */}
-        <View style={styles.imageOverlay} />
-
-        <View style={styles.priceTag}>
-          <Text style={styles.priceText}>R$ {professional.priceFrom}</Text>
-        </View>
-
-        <View style={styles.distanceTag}>
-          <Text style={styles.distanceText}>{professional.distance}km</Text>
-        </View>
-      </ImageBackground>
     </View>
   );
 };
