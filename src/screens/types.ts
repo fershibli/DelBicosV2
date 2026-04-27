@@ -11,6 +11,7 @@ export enum ClientProfileSubRoutes {
   Historico = 'Historico',
   Pagamentos = 'Pagamentos',
   Ajuda = 'Ajuda',
+  TornarParceiro = 'TornarParceiro',
 }
 
 export type ClientProfileParams = {
