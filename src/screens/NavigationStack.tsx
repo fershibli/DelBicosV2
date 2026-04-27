@@ -5,7 +5,7 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome } from '@expo/vector-icons';
-import { Platform } from 'react-native';
+import { Platform, Image } from 'react-native';
 import Feed from './public/Feed';
 import NotFound from './public/NotFound';
 import RegisterScreen from './public/RegisterScreen';
@@ -31,6 +31,8 @@ import ProfileScreen from '@screens/private/client/Profile/Tabs/ProfileScreen';
 const Tab = createBottomTabNavigator();
 
 const MainTabs = () => {
+  const { user } = useUserStore();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -69,7 +71,18 @@ const MainTabs = () => {
       <Tab.Screen 
         name="ProfileTab" 
         component={ProfileScreen} 
-        options={{ title: 'Perfil', tabBarIcon: ({ color, size }) => <FontAwesome name="user-o" size={size} color={color} /> }} 
+        options={{ 
+          title: 'Perfil', 
+          tabBarIcon: ({ color, size }) => 
+            user?.avatar_uri ? (
+              <Image 
+                source={{ uri: user.avatar_uri }} 
+                style={{ width: size, height: size, borderRadius: size / 2, borderWidth: 1, borderColor: color }} 
+              />
+            ) : (
+              <FontAwesome name="user-o" size={size} color={color} />
+            ) 
+        }} 
       />
     </Tab.Navigator>
   );
