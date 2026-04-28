@@ -17,6 +17,9 @@ import CategorySlider from '@components/features/CategorySlider';
 import ListProfessionals from '@components/features/ListProfessionals';
 import { FontAwesome } from '@expo/vector-icons';
 import { HighlightCard, HighlightItem } from '@components/ui/HighlightCard';
+import { useServiceSearch } from '@lib/hooks/useServiceSearch';
+import { useCategoryStore } from '@stores/Category';
+import { SubCategory } from '@stores/SubCategory/types';
 
 const HIGHLIGHT_DATA: HighlightItem[] = [
   {
@@ -53,11 +56,24 @@ const FeedScreen: React.FC = () => {
   const scrollRef = useRef<ScrollView | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [search, setSearch] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
   const navigation = useNavigation();
 
   const colors = useColors();
   const styles = createStyles(colors);
   const { width } = useWindowDimensions();
+
+  const { results, search: fetchSearch } = useServiceSearch();
+  const { categories } = useCategoryStore();
+
+  useEffect(() => {
+    fetchSearch(search);
+    if (search.trim().length > 0) {
+      setShowDropdown(true);
+    } else {
+      setShowDropdown(false);
+    }
+  }, [search]);
 
   const handleScrollLeft = () => {
     const newIndex = Math.max(0, currentIndex - 1);
@@ -99,9 +115,22 @@ const FeedScreen: React.FC = () => {
 
   const handleSearchSubmit = () => {
     if (search.trim()) {
+      setShowDropdown(false);
       // @ts-ignore
       navigation.navigate('SearchResult', { query: search.trim() });
     }
+  };
+
+  const handleSelectService = (item: SubCategory) => {
+    setShowDropdown(false);
+    setSearch('');
+    const category = categories.find((c) => c.id === item.categoryId);
+    // @ts-ignore
+    navigation.navigate('SubCategoryScreen', {
+      categoryId: item.categoryId,
+      categoryTitle: category ? category.title : 'Serviços',
+      serviceId: item.id,
+    });
   };
 
   return (
@@ -112,15 +141,18 @@ const FeedScreen: React.FC = () => {
           <>
             {/* Mobile Search Bar */}
             {Platform.OS !== 'web' && (
-              <View style={styles.mobileSearchSection}>
+              <View style={[styles.mobileSearchSection, { zIndex: 100 }]}>
                 <View style={styles.mobileSearchContainer}>
                   <TextInput
                     style={styles.mobileSearchInput}
-                    placeholder="O que você está procurando?"
+                    placeholder="Busque por um serviço (ex: Chaveiro)"
                     placeholderTextColor={colors.textTertiary}
                     value={search}
                     onChangeText={setSearch}
                     onSubmitEditing={handleSearchSubmit}
+                    onFocus={() => {
+                      if (search.trim().length > 0) setShowDropdown(true);
+                    }}
                   />
                   <TouchableOpacity
                     style={styles.mobileSearchButton}
@@ -132,6 +164,34 @@ const FeedScreen: React.FC = () => {
                     />
                   </TouchableOpacity>
                 </View>
+
+                {/* Autocomplete Dropdown */}
+                {showDropdown && search.trim().length > 0 && (
+                  <View style={styles.dropdownContainer}>
+                    {results.length > 0 ? (
+                      results.map((item) => (
+                        <TouchableOpacity
+                          key={item.id}
+                          style={styles.dropdownItem}
+                          onPress={() => handleSelectService(item)}>
+                          <View style={styles.dropdownIcon}>
+                            <FontAwesome name="search" size={16} color={colors.primaryBlue} />
+                          </View>
+                          <View style={styles.dropdownTextContainer}>
+                            <Text style={styles.dropdownName} numberOfLines={1}>{item.title}</Text>
+                          </View>
+                          <FontAwesome name="angle-right" size={16} color={colors.textTertiary} />
+                        </TouchableOpacity>
+                      ))
+                    ) : (
+                      <View style={styles.dropdownEmpty}>
+                        <Text style={styles.dropdownEmptyText}>
+                          Nenhum serviço encontrado com "{search}".
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                )}
               </View>
             )}
             {/* Seção Carrossel Destaques */}
