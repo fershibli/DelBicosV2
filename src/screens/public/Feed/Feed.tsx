@@ -15,11 +15,13 @@ import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 import CategorySlider from '@components/features/CategorySlider';
 import ListProfessionals from '@components/features/ListProfessionals';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 import { HighlightCard, HighlightItem } from '@components/ui/HighlightCard';
 import { useServiceSearch } from '@lib/hooks/useServiceSearch';
 import { useCategoryStore } from '@stores/Category';
 import { SubCategory } from '@stores/SubCategory/types';
+
+import { getIconForSubCategory } from '@utils/icons';
 
 const HIGHLIGHT_DATA: HighlightItem[] = [
   {
@@ -175,7 +177,7 @@ const FeedScreen: React.FC = () => {
                           style={styles.dropdownItem}
                           onPress={() => handleSelectService(item)}>
                           <View style={styles.dropdownIcon}>
-                            <FontAwesome name="search" size={16} color={colors.primaryBlue} />
+                            <FontAwesome5 name={getIconForSubCategory(item.title)} size={16} color={colors.primaryBlue} />
                           </View>
                           <View style={styles.dropdownTextContainer}>
                             <Text style={styles.dropdownName} numberOfLines={1}>{item.title}</Text>
