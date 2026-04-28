@@ -131,4 +131,7 @@ export const createStyles = (colors: ColorsType) =>
       marginBottom: 24,
       paddingHorizontal: 16,
     },
+    list: {
+      flex: 1,
+    },
   });

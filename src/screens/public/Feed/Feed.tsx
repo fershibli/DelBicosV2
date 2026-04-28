@@ -88,7 +88,8 @@ const FeedScreen: React.FC = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => {
-        const nextIndex = prevIndex === HIGHLIGHT_DATA.length - 1 ? 0 : prevIndex + 1;
+        const nextIndex =
+          prevIndex === HIGHLIGHT_DATA.length - 1 ? 0 : prevIndex + 1;
         scrollRef.current?.scrollTo({ x: nextIndex * width, animated: true });
         return nextIndex;
       });
@@ -104,99 +105,107 @@ const FeedScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}>
-      
-      {/* Mobile Search Bar */}
-      {Platform.OS !== 'web' && (
-        <View style={styles.mobileSearchSection}>
-          <View style={styles.mobileSearchContainer}>
-            <TextInput
-              style={styles.mobileSearchInput}
-              placeholder="O que você está procurando?"
-              placeholderTextColor={colors.textTertiary}
-              value={search}
-              onChangeText={setSearch}
-              onSubmitEditing={handleSearchSubmit}
-            />
-            <TouchableOpacity style={styles.mobileSearchButton} onPress={handleSearchSubmit}>
-              <FontAwesome name="search" size={18} color={colors.textSecondary} />
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-
-      {/* Seção Carrossel Destaques */}
-      <View style={styles.carouselSection}>
-        <View style={styles.carouselContainer}>
-          {Platform.OS === 'web' && currentIndex > 0 && (
-            <TouchableOpacity
-              style={[styles.scrollButton, styles.scrollButtonLeft]}
-              onPress={handleScrollLeft}
-              activeOpacity={0.8}>
-              <FontAwesome
-                name="chevron-left"
-                size={16}
-                color={colors.primaryBlue}
-              />
-            </TouchableOpacity>
-          )}
-
-          <ScrollView
-            ref={scrollRef}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.carouselListContainer}
-            onMomentumScrollEnd={onMomentumScrollEnd}
-            scrollEventThrottle={16}
-            decelerationRate="fast"
-            snapToInterval={width}>
-            {HIGHLIGHT_DATA.map((item) => (
-              <HighlightCard key={item.id} item={item} />
-            ))}
-          </ScrollView>
-
-          {Platform.OS === 'web' &&
-            currentIndex < HIGHLIGHT_DATA.length - 1 && (
-              <TouchableOpacity
-                style={[styles.scrollButton, styles.scrollButtonRight]}
-                onPress={handleScrollRight}
-                activeOpacity={0.8}>
-                <FontAwesome
-                  name="chevron-right"
-                  size={16}
-                  color={colors.primaryBlue}
-                />
-              </TouchableOpacity>
+    <View style={styles.container}>
+      <ListProfessionals
+        style={styles.list}
+        listHeader={
+          <>
+            {/* Mobile Search Bar */}
+            {Platform.OS !== 'web' && (
+              <View style={styles.mobileSearchSection}>
+                <View style={styles.mobileSearchContainer}>
+                  <TextInput
+                    style={styles.mobileSearchInput}
+                    placeholder="O que você está procurando?"
+                    placeholderTextColor={colors.textTertiary}
+                    value={search}
+                    onChangeText={setSearch}
+                    onSubmitEditing={handleSearchSubmit}
+                  />
+                  <TouchableOpacity
+                    style={styles.mobileSearchButton}
+                    onPress={handleSearchSubmit}>
+                    <FontAwesome
+                      name="search"
+                      size={18}
+                      color={colors.textSecondary}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
             )}
+            {/* Seção Carrossel Destaques */}
+            <View style={styles.carouselSection}>
+              <View style={styles.carouselContainer}>
+                {Platform.OS === 'web' && currentIndex > 0 && (
+                  <TouchableOpacity
+                    style={[styles.scrollButton, styles.scrollButtonLeft]}
+                    onPress={handleScrollLeft}
+                    activeOpacity={0.8}>
+                    <FontAwesome
+                      name="chevron-left"
+                      size={16}
+                      color={colors.primaryBlue}
+                    />
+                  </TouchableOpacity>
+                )}
 
-          {/* Paginação (Dots) */}
-          <View style={styles.paginationContainer}>
-            {HIGHLIGHT_DATA.map((_, index) => (
-              <View
-                key={index}
-                style={[styles.dot, currentIndex === index && styles.dotActive]}
-              />
-            ))}
-          </View>
-        </View>
-      </View>
+                <ScrollView
+                  ref={scrollRef}
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.carouselListContainer}
+                  onMomentumScrollEnd={onMomentumScrollEnd}
+                  scrollEventThrottle={16}
+                  decelerationRate="fast"
+                  snapToInterval={width}>
+                  {HIGHLIGHT_DATA.map((item) => (
+                    <HighlightCard key={item.id} item={item} />
+                  ))}
+                </ScrollView>
 
-      {/* Seção Categorias */}
-      <View style={styles.categorySection}>
-        <Text style={styles.title}>Explore Categorias</Text>
-        <CategorySlider />
-      </View>
+                {Platform.OS === 'web' &&
+                  currentIndex < HIGHLIGHT_DATA.length - 1 && (
+                    <TouchableOpacity
+                      style={[styles.scrollButton, styles.scrollButtonRight]}
+                      onPress={handleScrollRight}
+                      activeOpacity={0.8}>
+                      <FontAwesome
+                        name="chevron-right"
+                        size={16}
+                        color={colors.primaryBlue}
+                      />
+                    </TouchableOpacity>
+                  )}
 
-      {/* Seção Profissionais */}
-      <View style={styles.listSection}>
-        <Text style={styles.title}>Profissionais próximos a você</Text>
-        <ListProfessionals />
-      </View>
-    </ScrollView>
+                {/* Paginação (Dots) */}
+                <View style={styles.paginationContainer}>
+                  {HIGHLIGHT_DATA.map((_, index) => (
+                    <View
+                      key={index}
+                      style={[
+                        styles.dot,
+                        currentIndex === index && styles.dotActive,
+                      ]}
+                    />
+                  ))}
+                </View>
+              </View>
+            </View>
+
+            {/* Seção Categorias */}
+            <View style={styles.categorySection}>
+              <Text style={styles.title}>Selecione por Categorias</Text>
+              <CategorySlider />
+            </View>
+
+            {/* Título da seção de profissionais */}
+            <Text style={styles.title}>Profissionais próximos a você</Text>
+          </>
+        }
+      />
+    </View>
   );
 };
 
