@@ -295,19 +295,26 @@ function SubCategoryScreen() {
                 disabledArrowColor: 'rgba(255, 255, 255, 0.4)',
 
                 // --- HOJE ---
-                todayTextColor: '#ffffff',
-                todayDotColor: '#ffffff',
+                // Como sempre exige 26h de antecedência, "hoje" sempre estará desabilitado.
+                todayTextColor: 'rgba(255, 255, 255, 0.4)',
+                todayDotColor: 'rgba(255, 255, 255, 0.4)',
 
-                // --- SELEÇÃO ---
-                selectedDayBackgroundColor: '#ffffff',
-                selectedDayTextColor: colors.primaryOrange,
-              }}
-              onDayPress={(day) => setSelectedDate(day.dateString)}
-              markedDates={markedDates}
-              minDate={new Date().toISOString().split('T')[0]}
-              enableSwipeMonths={true}
-            />
-          </View>
+              // --- SELEÇÃO ---
+              selectedDayBackgroundColor: '#ffffff',
+              selectedDayTextColor: colors.primaryOrange,
+            }}
+            onDayPress={(day) => setSelectedDate(day.dateString)}
+            markedDates={markedDates}
+            minDate={(() => {
+              const minTime = new Date(Date.now() + 26 * 60 * 60 * 1000);
+              const y = minTime.getFullYear();
+              const m = String(minTime.getMonth() + 1).padStart(2, '0');
+              const d = String(minTime.getDate()).padStart(2, '0');
+              return `${y}-${m}-${d}`;
+            })()}
+            enableSwipeMonths={true}
+          />
+        </View>
 
           <Pressable
             style={[

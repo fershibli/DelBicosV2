@@ -55,6 +55,14 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
     navigation.navigate('PartnerProfile', { id: professional.id });
   };
 
+  const validAvailableTimes = professional.availableTimes.filter((time) => {
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    const [hours, minutes] = time.split(':').map(Number);
+    const slotDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+    const minTime = Date.now() + 26 * 60 * 60 * 1000;
+    return slotDate.getTime() >= minTime;
+  });
+
   return (
     <View style={styles.card}>
       {/* --- TOPO: IMAGEM --- */}
@@ -98,30 +106,36 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
 
         <View style={styles.timesContainer}>
           <Text style={styles.timesTitle}>Horários disponíveis:</Text>
-          <View style={styles.timesRow}>
-            {professional.availableTimes.slice(0, 4).map((time) => (
-              <TouchableOpacity
-                key={time}
-                style={[
-                  styles.timeSlot,
-                  selectedTime === time && styles.timeSlotActive,
-                ]}
-                onPress={() => handleTimeSlotPress(time)}>
-                <Text
+          {validAvailableTimes.length > 0 ? (
+            <View style={styles.timesRow}>
+              {validAvailableTimes.slice(0, 4).map((time) => (
+                <TouchableOpacity
+                  key={time}
                   style={[
-                    styles.timeText,
-                    selectedTime === time && styles.timeTextActive,
-                  ]}>
-                  {time}
-                </Text>
-              </TouchableOpacity>
-            ))}
-            {professional.availableTimes.length > 4 && (
-              <View style={styles.timeSlot}>
-                <Text style={styles.timeText}>+{professional.availableTimes.length - 4}</Text>
-              </View>
-            )}
-          </View>
+                    styles.timeSlot,
+                    selectedTime === time && styles.timeSlotActive,
+                  ]}
+                  onPress={() => handleTimeSlotPress(time)}>
+                  <Text
+                    style={[
+                      styles.timeText,
+                      selectedTime === time && styles.timeTextActive,
+                    ]}>
+                    {time}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+              {validAvailableTimes.length > 4 && (
+                <View style={styles.timeSlot}>
+                  <Text style={styles.timeText}>+{validAvailableTimes.length - 4}</Text>
+                </View>
+              )}
+            </View>
+          ) : (
+            <Text style={[styles.timeText, { color: colors.textSecondary }]}>
+              Nenhum horário atende à regra de 26h.
+            </Text>
+          )}
         </View>
 
         <View style={styles.servicesContainer}>
