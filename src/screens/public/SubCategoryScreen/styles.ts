@@ -37,13 +37,15 @@ export const createStyles = (colors: ColorsType) =>
     subCategoryButton: {
       flex: 1,
       minHeight: 60,
+      flexDirection: 'row',
       backgroundColor: colors.cardBackground,
       borderWidth: 1,
       borderColor: colors.borderColor,
       borderRadius: 12,
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
       alignItems: 'center',
-      padding: 12,
+      paddingHorizontal: 20,
+      paddingVertical: 12,
       margin: 6,
       ...Platform.select({
         web: {
@@ -56,11 +58,16 @@ export const createStyles = (colors: ColorsType) =>
         },
       }),
     },
+    subCategoryIcon: {
+      marginRight: 16,
+      width: 24, // Ensures icons are aligned
+      textAlign: 'center',
+    },
     subCategoryText: {
       fontSize: 15,
       fontFamily: 'Afacad-SemiBold',
       color: colors.primaryOrange,
-      textAlign: 'center',
+      textAlign: 'left',
     },
 
     calendarContainer: {

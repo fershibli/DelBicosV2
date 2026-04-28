@@ -20,15 +20,31 @@ export const createStyles = (colors: ColorsType) =>
       paddingHorizontal: 16,
       zIndex: 100,
     },
+    mobileLogoContainer: {
+      flex: 1,
+      alignItems: 'center',
+    },
     mobileLogo: {
       width: 120,
-      height: 40,
+      height: 36,
       resizeMode: 'contain',
     },
     mobileMenuTrigger: {
-      padding: 8,
-      justifyContent: 'center',
-      alignItems: 'center',
+      padding: 4,
+      width: 36,
+      alignItems: 'flex-start',
+    },
+    mobileProfileContainer: {
+      width: 36,
+      alignItems: 'flex-end',
+    },
+    mobileProfileImage: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.borderColor,
+      backgroundColor: colors.inputBackground,
     },
 
     // --- DESKTOP HEADER (Top Bar) ---

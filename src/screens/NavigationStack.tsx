@@ -3,6 +3,9 @@ import {
   StaticParamList,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { FontAwesome } from '@expo/vector-icons';
+import { Platform, Image } from 'react-native';
 import Feed from './public/Feed';
 import NotFound from './public/NotFound';
 import RegisterScreen from './public/RegisterScreen';
@@ -25,10 +28,70 @@ import AdminAnalytics from './private/admin/AdminAnalytics';
 import ProviderDashboard from './private/ProviderDashboard';
 import ProfileScreen from '@screens/private/client/Profile/Tabs/ProfileScreen';
 
-// If logged in Home = Feed, otherwise Home = Login
+const Tab = createBottomTabNavigator();
+
+const MainTabs = () => {
+  const { user } = useUserStore();
+
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: Platform.OS === 'web' ? { display: 'none' } : {
+          backgroundColor: '#FFFFFF',
+          borderTopWidth: 1,
+          borderTopColor: '#EEEEEE',
+          height: 60,
+          paddingBottom: 8,
+          paddingTop: 8,
+        },
+        tabBarActiveTintColor: '#FF6F00', // primaryOrange
+        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarLabelStyle: {
+          fontFamily: 'Afacad-SemiBold',
+          fontSize: 12,
+        }
+      }}
+    >
+      <Tab.Screen 
+        name="FeedTab" 
+        component={Feed} 
+        options={{ title: 'Início', tabBarIcon: ({ color, size }) => <FontAwesome name="home" size={size} color={color} /> }} 
+      />
+      <Tab.Screen 
+        name="CategoryTab" 
+        component={CategoryScreen} 
+        options={{ title: 'Buscar', tabBarIcon: ({ color, size }) => <FontAwesome name="search" size={size} color={color} /> }} 
+      />
+      <Tab.Screen 
+        name="SchedulesTab" 
+        component={MySchedulesScreen} 
+        options={{ title: 'Agenda', tabBarIcon: ({ color, size }) => <FontAwesome name="calendar-o" size={size} color={color} /> }} 
+      />
+      <Tab.Screen 
+        name="ProfileTab" 
+        component={ProfileScreen} 
+        options={{ 
+          title: 'Perfil', 
+          tabBarIcon: ({ color, size }) => 
+            user?.avatar_uri ? (
+              <Image 
+                source={{ uri: user.avatar_uri }} 
+                style={{ width: size, height: size, borderRadius: size / 2, borderWidth: 1, borderColor: color }} 
+              />
+            ) : (
+              <FontAwesome name="user-o" size={size} color={color} />
+            ) 
+        }} 
+      />
+    </Tab.Navigator>
+  );
+};
+
+// If logged in Home = MainTabs (mobile) or Feed (web), otherwise Home = Login
 const Home = () => {
   const { user } = useUserStore();
-  return user ? <Feed /> : <Login />;
+  return user ? (Platform.OS === 'web' ? <Feed /> : <MainTabs />) : <Login />;
 };
 
 const RootStack = createNativeStackNavigator<NavigationParams>({
@@ -38,6 +101,9 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
   screens: {
     Home: {
       screen: Home,
+    },
+    MainTabs: {
+      screen: MainTabs,
     },
     Login: {
       screen: Login,

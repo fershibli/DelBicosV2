@@ -24,14 +24,16 @@ export const createStyles = (colors: ColorsType) =>
     },
 
     // Filtros
-    filterBar: {
+    filterBarContainer: {
       width: '100%',
+      marginBottom: 24,
+    },
+    filterBar: {
       flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'flex-end',
       alignItems: 'center',
-      marginBottom: 20,
       gap: 12,
+      paddingHorizontal: 4,
+      paddingBottom: 4,
     },
     filterButton: {
       flexDirection: 'row',
