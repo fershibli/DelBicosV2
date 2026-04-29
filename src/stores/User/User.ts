@@ -311,39 +311,23 @@ export const useUserStore = create<UserStore>()(
         }
       },
 
-      removeAvatar: async (): Promise<ErrorResponse> => {
+      removeAvatar: async () => {
         try {
           await backendHttpClient.delete(`/api/user/avatar`);
 
           const currentUser = get().user;
           if (currentUser) {
             set({
-              user: {
-                ...currentUser,
-                avatar_uri: null,
-              },
+              user: { ...currentUser, avatar_uri: null },
               avatarBase64: null,
             });
           }
 
-          return {
-            erro: false,
-            mensagem: 'Avatar removido com sucesso!',
-          };
+          return { erro: false, mensagem: 'Avatar removido com sucesso!' };
         } catch (error: any) {
-          console.error('Erro ao remover avatar:', error);
-
-          if (error instanceof AxiosError) {
-            const errorMessage = error.response?.data?.error || error.message;
-            return {
-              erro: true,
-              mensagem: errorMessage || 'Erro ao remover avatar',
-            };
-          }
-
           return {
             erro: true,
-            mensagem: 'Falha ao remover o avatar',
+            mensagem: error.response?.data?.error || 'Erro ao remover avatar.',
           };
         }
       },
