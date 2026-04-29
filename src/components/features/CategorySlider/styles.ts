@@ -17,6 +17,14 @@ export const createStyles = (colors: ColorsType) =>
       flexGrow: 1,
       gap: 16, // gap between items (supported in React Native 0.71+)
     },
+    // --- GRID STYLE (MOBILE) ---
+    gridContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+      paddingHorizontal: 16,
+      gap: 20, // gap for react native 0.71+
+    },
     // --- BUBBLE STYLE (MOBILE) ---
     bubbleCard: {
       alignItems: 'center',
