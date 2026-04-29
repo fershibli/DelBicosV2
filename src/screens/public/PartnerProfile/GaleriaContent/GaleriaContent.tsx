@@ -109,18 +109,13 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
         </View>
       ) : (
         <>
-          <FlatList
-            ref={flatListRef}
-            data={imagens}
-            renderItem={renderItem}
-            keyExtractor={(item: Imagem) => item.id}
-            numColumns={numColumns}
-            contentContainerStyle={[
-              styles.galleryList,
-              { padding: containerPadding },
-            ]}
-            showsVerticalScrollIndicator={false}
-          />
+          <View style={[styles.galleryList, { padding: containerPadding, flexDirection: 'row', flexWrap: 'wrap' }]}>
+            {imagens.map((item, index) => (
+              <React.Fragment key={item.id}>
+                {renderItem({ item, index })}
+              </React.Fragment>
+            ))}
+          </View>
 
           <Modal
             visible={visible}

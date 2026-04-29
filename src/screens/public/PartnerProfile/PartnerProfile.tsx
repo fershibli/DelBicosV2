@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   StatusBar,
   Image,
+  ScrollView,
 } from 'react-native';
 
 // Componentes de Conteúdo das Abas
@@ -125,7 +126,11 @@ function PartnerProfileScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
+      showsVerticalScrollIndicator={false}
+    >
       <StatusBar
         barStyle="light-content"
         translucent
@@ -228,7 +233,7 @@ function PartnerProfileScreen() {
 
       {/* Conteúdo da Aba */}
       <View style={styles.contentWrapper}>{renderContent()}</View>
-    </View>
+    </ScrollView>
   );
 }
 
