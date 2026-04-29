@@ -99,13 +99,13 @@ export function ServicosContent({ servicos }: ServicosContentProps) {
           </Text>
         </View>
       ) : (
-        <FlatList
-          data={servicosAtivos}
-          renderItem={renderItem}
-          keyExtractor={(item) => String(item.id)}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-        />
+        <View style={styles.listContainer}>
+          {servicosAtivos.map((item) => (
+            <React.Fragment key={String(item.id)}>
+              {renderItem({ item })}
+            </React.Fragment>
+          ))}
+        </View>
       )}
     </View>
   );
