@@ -303,12 +303,15 @@ export const useUserStore = create<UserStore>()(
           };
 
         } catch (error: any) {
-          console.error('Erro no fluxo S3:', error);
-          return {
-            erro: true,
-            mensagem: error.response?.data?.error || 'Erro ao processar upload para S3.',
-          };
-        }
+            if (error.response) {
+              console.log("DADOS DO ERRO 500:", JSON.stringify(error.response.data, null, 2));
+            }
+            
+            return {
+              erro: true,
+              mensagem: error.response?.data?.message || 'Erro interno no servidor.',
+            };
+          }
       },
 
       removeAvatar: async () => {
