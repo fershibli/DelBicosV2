@@ -265,44 +265,48 @@ export const useUserStore = create<UserStore>()(
         }
       },
 
-      uploadAvatar: async (base64Image: string) => {
+      uploadAvatar: async (imageUri: string) => {
         try {
-          const { data } = await backendHttpClient.post(
-            `/api/user/imgbb/avatar`,
-            {
-              base64Image: base64Image,
-            },
+          const fileName = `avatar_${Date.now()}.jpg`;
+          const { data: { uploadUrl, fileUrl } } = await backendHttpClient.post(
+            '/api/avatar/upload-url', 
+            { fileName, fileType: 'image/jpeg' }
           );
 
-          const currentUser = get().user;
+          const responseFetch = await fetch(imageUri);
+          const blob = await responseFetch.blob();
 
+          const uploadResponse = await fetch(uploadUrl, {
+            method: 'PUT',
+            body: blob,
+            headers: { 'Content-Type': 'image/jpeg' },
+          });
+
+          if (!uploadResponse.ok) throw new Error('Falha no upload para o bucket S3');
+
+          await backendHttpClient.patch('/api/avatar/update-path', { 
+            avatar_uri: fileUrl 
+          });
+
+          const currentUser = get().user;
           if (currentUser) {
             set({
-              user: {
-                ...currentUser,
-                avatar_uri: data.avatar_uri || data.user?.avatar_uri,
-              },
-              avatarBase64: base64Image,
+              user: { ...currentUser, avatar_uri: fileUrl },
+              avatarBase64: null,
             });
           }
 
           return {
             erro: false,
             mensagem: 'Avatar atualizado com sucesso!',
-            avatar_uri: data.avatar_uri,
+            avatar_uri: fileUrl,
           };
-        } catch (error: any) {
-          if (error instanceof AxiosError) {
-            const errorMessage = error.response?.data?.error || error.message;
-            return {
-              erro: true,
-              mensagem: errorMessage || 'Erro ao fazer upload do avatar',
-            };
-          }
 
+        } catch (error: any) {
+          console.error('Erro no fluxo S3:', error);
           return {
             erro: true,
-            mensagem: error.message || 'Erro ao fazer upload do avatar',
+            mensagem: error.response?.data?.error || 'Erro ao processar upload para S3.',
           };
         }
       },
