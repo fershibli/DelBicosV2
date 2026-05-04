@@ -52,7 +52,7 @@ const ProviderDashboard: React.FC = () => {
   };
 
   const navigateToSchedules = () => {
-    navigation.navigate('MySchedules');
+    navigation.navigate('ProviderSchedulesTab');
   };
 
   // Mock value for now, or use kpis.totalEarnings if backend provides it
