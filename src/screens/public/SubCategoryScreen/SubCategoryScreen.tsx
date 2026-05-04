@@ -16,11 +16,13 @@ import { SubCategory } from '@stores/SubCategory/types';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 type SubCategoryRouteParams = {
   categoryId: number;
   categoryTitle: string;
   serviceId?: number;
+  singleSubCategory?: { id: number; title: string };
 };
 
 LocaleConfig.locales['pt-br'] = {
@@ -65,6 +67,8 @@ LocaleConfig.locales['pt-br'] = {
   today: 'Hoje',
 } as any;
 LocaleConfig.defaultLocale = 'pt-br';
+
+import { getIconForSubCategory } from '@utils/icons';
 
 const SubCategoryButton: React.FC<{
   item: SubCategory;
@@ -117,6 +121,12 @@ const SubCategoryButton: React.FC<{
       onHoverOut={() => setIsHovered(false)}
       accessibilityRole="button"
       accessibilityState={{ selected: isActive }}>
+      <FontAwesome5 
+        name={getIconForSubCategory(item.title)} 
+        size={20} 
+        color={styleProps.text} 
+        style={styles.subCategoryIcon as any}
+      />
       <Text style={[styles.subCategoryText, { color: styleProps.text }]}>
         {item.title}
       </Text>
@@ -127,14 +137,14 @@ const SubCategoryButton: React.FC<{
 function SubCategoryScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { categoryId, categoryTitle, serviceId } =
+  const { categoryId, categoryTitle, serviceId, singleSubCategory } =
     route.params as SubCategoryRouteParams;
   const { width } = useWindowDimensions();
   const { theme } = useThemeStore();
 
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSubCategory, setSelectedSubCategory] = useState<number | null>(
-    serviceId || null,
+    serviceId || (singleSubCategory ? singleSubCategory.id : null),
   );
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
@@ -146,13 +156,23 @@ function SubCategoryScreen() {
   const isDark = theme === ThemeMode.DARK;
 
   useEffect(() => {
+    if (singleSubCategory) {
+      setIsLoading(false);
+      return;
+    }
     const loadSubCategories = async () => {
       setIsLoading(true);
       await fetchSubCategoriesByCategoryId(categoryId);
       setIsLoading(false);
     };
-    loadSubCategories();
-  }, [categoryId, fetchSubCategoriesByCategoryId]);
+    if (categoryId !== -1) {
+      loadSubCategories();
+    }
+  }, [categoryId, fetchSubCategoriesByCategoryId, singleSubCategory]);
+
+  const subCategoriesToDisplay = singleSubCategory
+    ? [singleSubCategory]
+    : subCategories;
 
   const handleContinue = () => {
     if (!selectedSubCategory || !selectedDate) {
@@ -192,7 +212,7 @@ function SubCategoryScreen() {
             <ActivityIndicator size="large" color={colors.primaryBlue} />
           ) : (
             <FlatList
-              data={subCategories}
+              data={subCategoriesToDisplay}
               keyExtractor={(item) => item.id.toString()}
               numColumns={numColumns}
               key={`grid-${numColumns}`}
@@ -200,7 +220,7 @@ function SubCategoryScreen() {
               contentContainerStyle={styles.subCategoryListContainer}
               renderItem={({ item }) => (
                 <SubCategoryButton
-                  item={item}
+                  item={item as SubCategory}
                   isActive={selectedSubCategory === item.id}
                   onPress={() => setSelectedSubCategory(item.id)}
                 />
@@ -234,19 +254,26 @@ function SubCategoryScreen() {
                 disabledArrowColor: 'rgba(255, 255, 255, 0.4)',
 
                 // --- HOJE ---
-                todayTextColor: '#ffffff',
-                todayDotColor: '#ffffff',
+                // Como sempre exige 26h de antecedência, "hoje" sempre estará desabilitado.
+                todayTextColor: 'rgba(255, 255, 255, 0.4)',
+                todayDotColor: 'rgba(255, 255, 255, 0.4)',
 
-                // --- SELEÇÃO ---
-                selectedDayBackgroundColor: '#ffffff',
-                selectedDayTextColor: colors.primaryOrange,
-              }}
-              onDayPress={(day) => setSelectedDate(day.dateString)}
-              markedDates={markedDates}
-              minDate={new Date().toISOString().split('T')[0]}
-              enableSwipeMonths={true}
-            />
-          </View>
+              // --- SELEÇÃO ---
+              selectedDayBackgroundColor: '#ffffff',
+              selectedDayTextColor: colors.primaryOrange,
+            }}
+            onDayPress={(day) => setSelectedDate(day.dateString)}
+            markedDates={markedDates}
+            minDate={(() => {
+              const minTime = new Date(Date.now() + 26 * 60 * 60 * 1000);
+              const y = minTime.getFullYear();
+              const m = String(minTime.getMonth() + 1).padStart(2, '0');
+              const d = String(minTime.getDate()).padStart(2, '0');
+              return `${y}-${m}-${d}`;
+            })()}
+            enableSwipeMonths={true}
+          />
+        </View>
 
           <Pressable
             style={[

@@ -274,81 +274,72 @@ export const useUserStore = create<UserStore>()(
         }
       },
 
-      uploadAvatar: async (base64Image: string) => {
+      uploadAvatar: async (imageUri: string) => {
         try {
-          const { data } = await backendHttpClient.post(
-            `/api/user/imgbb/avatar`,
-            {
-              base64Image: base64Image,
-            },
+          const fileName = `avatar_${Date.now()}.jpg`;
+          const { data: { uploadUrl, fileUrl } } = await backendHttpClient.post(
+            '/api/avatar/upload-url', 
+            { fileName, fileType: 'image/jpeg' }
           );
 
-          const currentUser = get().user;
+          const responseFetch = await fetch(imageUri);
+          const blob = await responseFetch.blob();
 
-          if (currentUser) {
-            set({
-              user: {
-                ...currentUser,
-                avatar_uri: data.avatar_uri || data.user?.avatar_uri,
-              },
-              avatarBase64: base64Image,
-            });
-          }
+          const uploadResponse = await fetch(uploadUrl, {
+            method: 'PUT',
+            body: blob,
+            headers: { 'Content-Type': 'image/jpeg' },
+          });
 
-          return {
-            erro: false,
-            mensagem: 'Avatar atualizado com sucesso!',
-            avatar_uri: data.avatar_uri,
-          };
-        } catch (error: any) {
-          if (error instanceof AxiosError) {
-            const errorMessage = error.response?.data?.error || error.message;
-            return {
-              erro: true,
-              mensagem: errorMessage || 'Erro ao fazer upload do avatar',
-            };
-          }
+          if (!uploadResponse.ok) throw new Error('Falha no upload para o bucket S3');
 
-          return {
-            erro: true,
-            mensagem: error.message || 'Erro ao fazer upload do avatar',
-          };
-        }
-      },
-
-      removeAvatar: async (): Promise<ErrorResponse> => {
-        try {
-          await backendHttpClient.delete(`/api/user/avatar`);
+          await backendHttpClient.patch('/api/avatar/update-path', { 
+            avatar_uri: fileUrl 
+          });
 
           const currentUser = get().user;
           if (currentUser) {
             set({
-              user: {
-                ...currentUser,
-                avatar_uri: null,
-              },
+              user: { ...currentUser, avatar_uri: fileUrl },
               avatarBase64: null,
             });
           }
 
           return {
             erro: false,
-            mensagem: 'Avatar removido com sucesso!',
+            mensagem: 'Avatar atualizado com sucesso!',
+            avatar_uri: fileUrl,
           };
-        } catch (error: any) {
-          console.error('Erro ao remover avatar:', error);
 
-          if (error instanceof AxiosError) {
-            const errorMessage = error.response?.data?.error || error.message;
+        } catch (error: any) {
+            if (error.response) {
+              console.log("DADOS DO ERRO 500:", JSON.stringify(error.response.data, null, 2));
+            }
+            
             return {
               erro: true,
-              mensagem: errorMessage || 'Erro ao remover avatar',
+              mensagem: error.response?.data?.message || 'Erro interno no servidor.',
             };
           }
+      },
 
+      removeAvatar: async () => {
+        try {
+          await backendHttpClient.delete(`/api/user/avatar`);
+
+          const currentUser = get().user;
+          if (currentUser) {
+            set({
+              user: { ...currentUser, avatar_uri: null },
+              avatarBase64: null,
+            });
+          }
+
+          return { erro: false, mensagem: 'Avatar removido com sucesso!' };
+        } catch (error: any) {
           return {
             erro: true,
-            mensagem: 'Falha ao remover o avatar',
+            mensagem: error.response?.data?.error || 'Erro ao remover avatar.',
           };
         }
       },

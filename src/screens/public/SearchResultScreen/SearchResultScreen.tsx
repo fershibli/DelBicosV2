@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   useWindowDimensions,
+  ScrollView,
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { createStyles } from './styles';
@@ -62,7 +63,21 @@ function SearchResultScreen() {
   const styles = createStyles(colors);
 
   const renderFilterBar = () => (
-    <View style={styles.filterBar}>
+    <ScrollView 
+      horizontal 
+      showsHorizontalScrollIndicator={false}
+      style={styles.filterBarContainer}
+      contentContainerStyle={styles.filterBar}
+    >
+      <TouchableOpacity style={styles.filterButton}>
+        <FontAwesome
+          name="filter"
+          size={14}
+          color={colors.textSecondary}
+          style={{ marginRight: 8 }}
+        />
+        <Text style={styles.filterButtonText}>Filtros</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.filterButton}>
         <Text style={styles.filterButtonText}>Ordenar Por</Text>
         <FontAwesome
@@ -87,16 +102,7 @@ function SearchResultScreen() {
           color={colors.textSecondary}
         />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.filterButton}>
-        <FontAwesome
-          name="filter"
-          size={14}
-          color={colors.textSecondary}
-          style={{ marginRight: 8 }}
-        />
-        <Text style={styles.filterButtonText}>Filtros</Text>
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 
   return (

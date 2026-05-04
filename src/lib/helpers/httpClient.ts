@@ -6,7 +6,7 @@ let getToken: (() => string | null) | null = null;
 export const registerTokenProvider = (provider: () => string | null) => {
   getToken = provider;
 };
-
+console.log(HTTP_DOMAIN);
 export const backendHttpClient = axios.create({
   baseURL: `${HTTP_DOMAIN}`,
   timeout: 10000,

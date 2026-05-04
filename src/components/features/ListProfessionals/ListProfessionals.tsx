@@ -7,6 +7,8 @@ import {
   Text,
   useWindowDimensions,
   ListRenderItem,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import ProfessionalCard from '@components/ui/ProfessionalCard';
 import { useProfessionalStore } from '@stores/Professional';
@@ -29,10 +31,11 @@ const useResponsiveColumns = () => {
 };
 
 interface ListProfessionalsProps {
-  ListHeaderComponent?: React.ReactElement | null;
+  listHeader?: React.ReactElement;
+  style?: StyleProp<ViewStyle>;
 }
 
-const ListProfessionals = ({ ListHeaderComponent }: ListProfessionalsProps = {}) => {
+const ListProfessionals = ({ listHeader, style }: ListProfessionalsProps) => {
   const colors = useColors();
   const styles = createStyles(colors);
   const { fetchProfessionals } = useProfessionalStore();
@@ -109,9 +112,8 @@ const ListProfessionals = ({ ListHeaderComponent }: ListProfessionalsProps = {})
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <FlatList
-        // Passamos 'professionals' que agora é corretamente inferido como ListedProfessional[]
         data={professionals}
         keyExtractor={(item) => item.id.toString()}
         numColumns={numColumns}
@@ -121,7 +123,7 @@ const ListProfessionals = ({ ListHeaderComponent }: ListProfessionalsProps = {})
         renderItem={renderItem}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
-        ListHeaderComponent={ListHeaderComponent}
+        ListHeaderComponent={listHeader}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={renderEmpty}
         removeClippedSubviews={Platform.OS !== 'web'}

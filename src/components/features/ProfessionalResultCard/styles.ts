@@ -4,47 +4,93 @@ import { ColorsType } from '@theme/types';
 export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     card: {
-      flexDirection: 'row',
+      flexDirection: 'column',
       backgroundColor: colors.cardBackground,
-      borderRadius: 12,
-      marginBottom: 16,
+      borderRadius: 16,
+      marginBottom: 20,
       overflow: 'hidden',
       borderWidth: 1,
       borderColor: colors.borderColor,
-      minHeight: 180,
       ...Platform.select({
         ios: {
           shadowColor: colors.primaryBlack,
-          shadowOffset: { width: 0, height: 2 },
+          shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.1,
-          shadowRadius: 4,
+          shadowRadius: 8,
         },
         android: {
-          elevation: 3,
+          elevation: 4,
         },
+        web: {
+          boxShadow: '0px 4px 12px rgba(0,0,0,0.05)',
+        } as any,
       }),
     },
 
-    // --- COLUNA ESQUERDA (Detalhes) ---
-    detailsContainer: {
-      flex: 1,
+    // --- TOPO (Imagem e Preço) ---
+    imageContainer: {
+      width: '100%',
+      height: 160,
+      justifyContent: 'flex-end',
       padding: 12,
+    },
+
+    imageOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0,0,0,0.2)',
+    },
+
+    tagsRow: {
+      flexDirection: 'row',
       justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+
+    priceTag: {
+      backgroundColor: colors.primaryBlue,
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+      borderRadius: 8,
+    },
+
+    priceText: {
+      color: colors.primaryWhite,
+      fontSize: 14,
+      fontFamily: 'Afacad-Bold',
+    },
+
+    distanceTag: {
+      backgroundColor: 'rgba(0,0,0,0.6)',
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      borderRadius: 8,
+    },
+
+    distanceText: {
+      color: colors.primaryWhite,
+      fontSize: 12,
+      fontFamily: 'Afacad-SemiBold',
+    },
+
+    // --- BASE (Detalhes) ---
+    detailsContainer: {
+      padding: 16,
+      paddingBottom: 20,
     },
 
     header: {
-      marginBottom: 8,
+      marginBottom: 12,
     },
 
     professionalName: {
-      fontSize: 16,
+      fontSize: 18,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryOrange,
       marginBottom: 2,
     },
 
     serviceName: {
-      fontSize: 14,
+      fontSize: 15,
       fontFamily: 'Afacad-SemiBold',
       color: colors.primaryBlack,
     },
@@ -52,18 +98,18 @@ export const createStyles = (colors: ColorsType) =>
     ratingRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginTop: 4,
+      marginTop: 6,
     },
 
     ratingText: {
-      fontSize: 12,
+      fontSize: 14,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryBlack,
       marginLeft: 4,
     },
 
     ratingCount: {
-      fontSize: 12,
+      fontSize: 13,
       fontFamily: 'Afacad-Regular',
       color: colors.textSecondary,
       marginLeft: 4,
@@ -71,29 +117,30 @@ export const createStyles = (colors: ColorsType) =>
 
     // Horários
     timesContainer: {
-      marginVertical: 8,
+      marginVertical: 12,
     },
 
     timesTitle: {
-      fontSize: 12,
+      fontSize: 13,
       fontFamily: 'Afacad-SemiBold',
       color: colors.textSecondary,
-      marginBottom: 4,
+      marginBottom: 8,
     },
 
     timesRow: {
       flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 6,
+      gap: 8,
     },
 
     timeSlot: {
+      flex: 1,
       backgroundColor: colors.inputBackground,
       borderWidth: 1,
       borderColor: colors.borderColor,
-      borderRadius: 4,
-      paddingVertical: 4,
-      paddingHorizontal: 8,
+      borderRadius: 6,
+      paddingVertical: 6,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
 
     timeSlotActive: {
@@ -102,8 +149,8 @@ export const createStyles = (colors: ColorsType) =>
     },
 
     timeText: {
-      fontSize: 11,
-      fontFamily: 'Afacad-Regular',
+      fontSize: 13,
+      fontFamily: 'Afacad-SemiBold',
       color: colors.primaryBlack,
     },
 
@@ -114,11 +161,11 @@ export const createStyles = (colors: ColorsType) =>
 
     // Serviços (Resumo)
     servicesContainer: {
-      marginBottom: 8,
+      marginBottom: 12,
     },
 
     servicesText: {
-      fontSize: 11,
+      fontSize: 13,
       fontFamily: 'Afacad-Regular',
       color: colors.textSecondary,
     },
@@ -128,14 +175,13 @@ export const createStyles = (colors: ColorsType) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginTop: 'auto',
-      paddingTop: 8,
+      paddingTop: 12,
       borderTopWidth: 1,
       borderTopColor: colors.divider,
     },
 
     locationText: {
-      fontSize: 11,
+      fontSize: 13,
       fontFamily: 'Afacad-Regular',
       color: colors.textTertiary,
       flex: 1,
@@ -143,58 +189,15 @@ export const createStyles = (colors: ColorsType) =>
     },
 
     profileButton: {
-      backgroundColor: 'transparent',
-      paddingVertical: 4,
+      backgroundColor: colors.primaryOrange,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      borderRadius: 8,
     },
 
     profileButtonText: {
-      color: colors.primaryOrange,
+      color: '#FFFFFF',
       fontFamily: 'Afacad-Bold',
-      fontSize: 12,
-      textDecorationLine: 'underline',
-    },
-
-    // --- COLUNA DIREITA (Imagem e Preço) ---
-    imageContainer: {
-      width: 120,
-      height: '100%',
-      justifyContent: 'space-between',
-      padding: 8,
-    },
-
-    imageOverlay: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0,0,0,0.1)',
-    },
-
-    priceTag: {
-      alignSelf: 'flex-end',
-      backgroundColor: colors.primaryBlue,
-      paddingVertical: 4,
-      paddingHorizontal: 8,
-      borderRadius: 4,
-      maxWidth: '100%',
-    },
-
-    priceText: {
-      color: colors.primaryWhite,
-      fontSize: 12,
-      fontFamily: 'Afacad-Bold',
-      textAlign: 'center',
-    },
-
-    distanceTag: {
-      alignSelf: 'flex-end',
-      backgroundColor: 'rgba(0,0,0,0.6)',
-      paddingVertical: 2,
-      paddingHorizontal: 6,
-      borderRadius: 4,
-      marginTop: 'auto',
-    },
-
-    distanceText: {
-      color: colors.primaryWhite,
-      fontSize: 10,
-      fontFamily: 'Afacad-Regular',
+      fontSize: 14,
     },
   });

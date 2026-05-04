@@ -18,10 +18,8 @@ export function SobreContent({ nome, descricao, endereco }: SobreContentProps) {
   const hasContent = nome || descricao || endereco;
 
   return (
-    <ScrollView
-      style={styles.sobreContainer}
-      contentContainerStyle={styles.sobreContentContainer}
-      showsVerticalScrollIndicator={false}>
+    <View
+      style={[styles.sobreContainer, styles.sobreContentContainer]}>
       {!hasContent && (
         <View style={styles.emptyContainer}>
           <FontAwesome
@@ -77,6 +75,6 @@ export function SobreContent({ nome, descricao, endereco }: SobreContentProps) {
           </View>
         </View>
       )}
-    </ScrollView>
+    </View>
   );
 }

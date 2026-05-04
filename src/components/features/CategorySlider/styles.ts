@@ -15,41 +15,77 @@ export const createStyles = (colors: ColorsType) =>
       paddingHorizontal: 16,
       paddingVertical: 16,
       flexGrow: 1,
+      gap: 16, // gap between items (supported in React Native 0.71+)
     },
-    card: {
+    // --- GRID STYLE (MOBILE) ---
+    gridContainer: {
       flexDirection: 'row',
-      width: 260,
-      height: 100,
-      marginHorizontal: 8,
-      borderRadius: 20,
-      borderWidth: 1,
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+      paddingHorizontal: 16,
+      gap: 20, // gap for react native 0.71+
+    },
+    // --- BUBBLE STYLE (MOBILE) ---
+    bubbleCard: {
+      alignItems: 'center',
+      width: 80,
+    },
+    bubble: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
       alignItems: 'center',
       justifyContent: 'center',
+      marginBottom: 8,
+      // Usando a nova propriedade boxShadow do React Native (0.74+) que funciona no Android
+      // para criar sombras com direção (offset) real, ignorando a limitação do elevation.
+      boxShadow: '-4px 4px 10px rgba(204, 104, 0, 0.3)',
+    },
+    bubbleTitle: {
+      fontSize: 12,
+      fontFamily: 'Afacad-SemiBold',
+      textAlign: 'center',
+      color: colors.primaryBlack,
+      lineHeight: 14,
+    },
+    
+    // --- IMAGE CARD STYLE (WEB) ---
+    webCard: {
+      width: 220,
+      height: 140,
+      borderRadius: 16,
+      overflow: 'hidden',
       backgroundColor: colors.cardBackground,
-      borderColor: colors.borderColor,
       ...Platform.select({
-        ios: {
-          shadowColor: colors.primaryBlack,
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.1,
-          shadowRadius: 6,
-        },
-        android: {
-          elevation: 5,
-        },
         web: {
-          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.08)',
+          boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.12)',
           cursor: 'pointer',
-          transition: 'all 0.2s ease',
+          transition: 'transform 0.2s ease',
         } as any,
       }),
     },
-    title: {
+    webCardHovered: {
+      transform: [{ scale: 1.03 }],
+    },
+    webCardImage: {
+      width: '100%',
+      height: '100%',
+      justifyContent: 'flex-end',
+    },
+    webCardGradient: {
+      height: '50%',
+      justifyContent: 'flex-end',
+      padding: 16,
+    },
+    webCardTitle: {
       fontSize: 18,
       fontFamily: 'Afacad-Bold',
-      textAlign: 'left',
-      flexShrink: 1,
+      color: '#FFFFFF',
+      textShadowColor: 'rgba(0, 0, 0, 0.75)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 3,
     },
+
     loadingContainer: {
       height: 130,
       justifyContent: 'center',
