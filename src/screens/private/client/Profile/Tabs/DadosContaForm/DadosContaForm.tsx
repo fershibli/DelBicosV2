@@ -145,7 +145,7 @@ const AvatarOptionsModal = ({
   );
 };
 
-export default function DadosContaForm({ user }: DadosContaFormProps) {
+export default function DadosContaForm({ user: propUser }: DadosContaFormProps) {
   const [nome, setNome] = useState('');
   const [sobrenome, setSobrenome] = useState('');
   const [cpf, setCpf] = useState('');
@@ -155,20 +155,19 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
   const [showOptions, setShowOptions] = useState(false);
   const [overlayOpacity] = useState(new Animated.Value(0));
   const [showStatusModal, setShowStatusModal] = useState(false);
-  const [status, setStatus] = useState<'success' | 'error' | 'loading' | null>(
-    null,
-  );
+  const [status, setStatus] = useState<'success' | 'error' | 'loading' | null>(null);
   const [statusMessage, setStatusMessage] = useState('');
   const [tempAvatarBase64, setTempAvatarBase64] = useState<string | null>(null);
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
 
-  const { updateUserProfile, uploadAvatar, removeAvatar } = useUserStore();
+  const { user: storeUser, updateUserProfile, uploadAvatar, removeAvatar } = useUserStore();
   const { theme } = useThemeStore();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
 
-  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const currentUser = storeUser || propUser;
 
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
   const colors = useColors();
   const styles = createStyles(colors);
 
@@ -201,29 +200,35 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
     [isMobile],
   );
 
-  useEffect(() => {
+useEffect(() => {
     if (Platform.OS !== 'web') {
       (async () => {
-        const { status } =
-          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
-          Alert.alert(
-            'Permissão necessária',
-            'Precisamos de acesso à galeria para alterar a foto.',
-          );
+          Alert.alert('Permissão necessária', 'Acesso à galeria negado.');
         }
       })();
     }
 
-    if (user) {
-      const fullNameParts = user.userName.split(' ');
+    if (currentUser) {
+      const u = currentUser as any;
+      
+      console.log("Dados do usuário no Form:", u);
+
+      const fullName = u.userName || u.name || u.nome || u.full_name || '';
+      const emailValue = u.userEmail || u.email || '';
+      const phoneValue = u.userPhone || u.phone || u.telefone || '';
+      const cpfValue = u.userCpf || u.cpf || '';
+
+      const fullNameParts = fullName.split(' ');
+      
       setNome(fullNameParts[0] || '');
       setSobrenome(fullNameParts.slice(1).join(' ') || '');
-      setEmail(user.userEmail || '');
-      setTelefone(user.userPhone || '');
-      setCpf(formatCPF(user.userCpf));
+      setEmail(emailValue);
+      setTelefone(phoneValue);
+      setCpf(formatCPF(cpfValue));
     }
-  }, [user]);
+  }, [currentUser]);
 
   const handleHoverIn = () => {
     Animated.timing(overlayOpacity, {
@@ -242,15 +247,24 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
   };
 
   const handleImageSelection = async (asset: ImagePicker.ImagePickerAsset) => {
-    if (!asset.base64) return;
-    const dataUri = `data:image/jpeg;base64,${asset.base64}`;
-    setTempAvatarBase64(dataUri);
-    setIsAvatarRemoved(false);
     setShowOptions(false);
+    setStatus('loading');
+    setStatusMessage('Sincronizando com o servidor...');
+    setShowStatusModal(true);
+
+    const result = await uploadAvatar(asset.uri);
+
+    if (result.erro) {
+      setStatus('error');
+      setStatusMessage(result.mensagem);
+    } else {
+      setStatus('success');
+      setStatusMessage('Foto de perfil atualizada!');
+    }
   };
 
   const handlePickFromGallery = async () => {
-    if (user?.uploading) return;
+    if ((currentUser as any)?.uploading) return;
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -270,8 +284,27 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
   };
 
   const handleTakePhoto = async () => {
-    // Implementar câmera se necessário
-    setShowOptions(false);
+    try {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permissão necessária', 'Acesso à câmera negado.');
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        setShowOptions(false);
+        handleImageSelection(result.assets[0]); 
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível abrir a câmera.');
+    }
   };
 
   const handleRemovePhoto = () => {
@@ -294,13 +327,10 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
 
       if (isAvatarRemoved) {
         await removeAvatar();
-      } else if (tempAvatarBase64) {
-        await uploadAvatar(tempAvatarBase64);
       }
 
       setTempAvatarBase64(null);
       setIsAvatarRemoved(false);
-
       setStatus('success');
       setStatusMessage('Dados atualizados com sucesso!');
     } catch (error: any) {
@@ -314,42 +344,31 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
     setStatus(null);
   };
 
-  let avatarUriToDisplay = null;
-  if (!isAvatarRemoved) {
-    avatarUriToDisplay = tempAvatarBase64 || user?.avatarSource?.uri;
-  }
+  const avatarUriToDisplay = useMemo(() => {
+    if (isAvatarRemoved) return null;
+    const uri = tempAvatarBase64 || (currentUser as any)?.avatar_uri || (currentUser as any)?.avatarSource?.uri;
+    if (typeof uri !== 'string' || uri === '[object Object]') return null;
+    return uri;
+  }, [tempAvatarBase64, currentUser, isAvatarRemoved]);
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={{ paddingBottom: 40 }}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
       <Text style={styles.pageTitle}>Dados da Conta</Text>
 
-      <View
-        style={[
-          styles.card,
-          isHighContrast && {
-            borderWidth: 2,
-            borderColor: colors.primaryBlack,
-          },
-        ]}>
+      <View style={[styles.card, isHighContrast && { borderWidth: 2, borderColor: colors.primaryBlack }]}>
         <View style={responsiveStyles.contentWrapper}>
-          {/* Avatar Section */}
           <View style={responsiveStyles.avatarContainer}>
             <TouchableOpacity
               style={styles.avatarTouchable}
               onPress={() => setShowOptions(true)}
-              // @ts-ignore
-              onHoverIn={handleHoverIn}
-              onHoverOut={handleHoverOut}
-              activeOpacity={0.9}
-              disabled={user?.uploading}>
+              disabled={(currentUser as any)?.uploading}>
+              
               <Animated.View style={styles.avatarAnimatedWrapper}>
-                {avatarUriToDisplay &&
-                avatarUriToDisplay !== '[object Object]' ? (
+                {avatarUriToDisplay ? (
                   <Image
                     source={{ uri: avatarUriToDisplay }}
                     style={styles.avatarImage}
+                    key={avatarUriToDisplay}
                   />
                 ) : (
                   <Image
@@ -359,13 +378,9 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
                   />
                 )}
 
-                <Animated.View
-                  style={[styles.avatarOverlay, { opacity: overlayOpacity }]}>
-                  {user?.uploading ? (
-                    <ActivityIndicator
-                      size="small"
-                      color={colors.primaryWhite}
-                    />
+                <Animated.View style={[styles.avatarOverlay, { opacity: overlayOpacity }]}>
+                  {(currentUser as any)?.uploading ? (
+                    <ActivityIndicator size="small" color={colors.primaryWhite} />
                   ) : (
                     <View style={{ alignItems: 'center' }}>
                       <FontAwesome name="camera" size={20} color="white" />
@@ -377,22 +392,13 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
             </TouchableOpacity>
           </View>
 
-          {/* Form Section */}
           <View style={responsiveStyles.formGrid}>
             <View style={responsiveStyles.formRow}>
               <View style={responsiveStyles.inputWrapper}>
-                <CustomTextInput
-                  label="Nome"
-                  value={nome}
-                  onChangeText={setNome}
-                />
+                <CustomTextInput label="Nome" value={nome} onChangeText={setNome} />
               </View>
               <View style={responsiveStyles.inputWrapper}>
-                <CustomTextInput
-                  label="Sobrenome"
-                  value={sobrenome}
-                  onChangeText={setSobrenome}
-                />
+                <CustomTextInput label="Sobrenome" value={sobrenome} onChangeText={setSobrenome} />
               </View>
             </View>
 
@@ -402,10 +408,7 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
                   label="CPF"
                   value={cpf}
                   editable={false}
-                  style={{
-                    opacity: 0.6,
-                    backgroundColor: colors.inputBackground,
-                  }}
+                  style={{ opacity: 0.6, backgroundColor: colors.inputBackground }}
                 />
               </View>
               <View style={responsiveStyles.inputWrapper}>
@@ -420,16 +423,12 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
 
             <View style={responsiveStyles.formRow}>
               <View style={responsiveStyles.inputWrapper}>
-                <View>
-                  <PhoneInput value={telefone} onChangeText={setTelefone} />
-                </View>
+                <PhoneInput value={telefone} onChangeText={setTelefone} />
               </View>
             </View>
 
             <View style={styles.saveButtonContainer}>
-              <TouchableOpacity
-                style={styles.saveButton}
-                onPress={handleSaveChanges}>
+              <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
                 <Text style={styles.saveButtonText}>Salvar Alterações</Text>
               </TouchableOpacity>
             </View>
@@ -443,10 +442,8 @@ export default function DadosContaForm({ user }: DadosContaFormProps) {
         onTakePhoto={handleTakePhoto}
         onPickFromGallery={handlePickFromGallery}
         onRemovePhoto={handleRemovePhoto}
-        hasPhoto={
-          !!avatarUriToDisplay && avatarUriToDisplay !== '[object Object]'
-        }
-        uploading={user?.uploading}
+        hasPhoto={!!avatarUriToDisplay}
+        uploading={(currentUser as any)?.uploading}
       />
 
       <StatusModal
