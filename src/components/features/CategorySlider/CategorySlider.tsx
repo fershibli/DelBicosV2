@@ -171,19 +171,32 @@ function CategorySlider() {
   return (
     <View style={styles.container}>
       <View style={styles.sliderWrapper}>
-        <FlatList
-          data={categories}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <CategoryCard category={item} onPress={handleCategoryPress} isWebLayout={isWebLayout} />
-          )}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={[
-            styles.listContent,
-            { justifyContent: shouldCenter ? 'center' : 'flex-start' },
-          ]}
-        />
+        {isWebLayout ? (
+          <FlatList
+            data={categories}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <CategoryCard category={item} onPress={handleCategoryPress} isWebLayout={isWebLayout} />
+            )}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={[
+              styles.listContent,
+              { justifyContent: shouldCenter ? 'center' : 'flex-start' },
+            ]}
+          />
+        ) : (
+          <View style={styles.gridContainer}>
+            {categories.map((item) => (
+              <CategoryCard 
+                key={item.id.toString()} 
+                category={item} 
+                onPress={handleCategoryPress} 
+                isWebLayout={isWebLayout} 
+              />
+            ))}
+          </View>
+        )}
       </View>
     </View>
   );

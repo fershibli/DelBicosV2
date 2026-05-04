@@ -105,13 +105,13 @@ export function AvaliacoesContent({ avaliacoes = [] }: AvaliacoesContentProps) {
             </Text>
           </View>
 
-          <FlatList
-            data={avaliacoes}
-            renderItem={renderItem}
-            keyExtractor={(item) => String(item.id)}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-          />
+          <View style={styles.listContent}>
+            {avaliacoes.map((item) => (
+              <React.Fragment key={String(item.id)}>
+                {renderItem({ item })}
+              </React.Fragment>
+            ))}
+          </View>
         </>
       )}
     </View>
