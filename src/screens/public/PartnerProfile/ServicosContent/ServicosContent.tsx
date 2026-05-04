@@ -40,9 +40,10 @@ export function ServicosContent({ servicos }: ServicosContentProps) {
   const handleAgendar = (servico: Service) => {
     // @ts-ignore
     navigation.navigate('SubCategoryScreen', {
-      categoryId: servico.subcategory_id,
+      categoryId: -1, // Use -1 as dummy, SubCategoryScreen will bypass fetch if singleSubCategory is present
       categoryTitle: servico.title,
-      serviceId: servico.id,
+      serviceId: servico.subcategory_id,
+      singleSubCategory: { id: servico.subcategory_id, title: servico.title },
     });
   };
 

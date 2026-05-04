@@ -22,6 +22,7 @@ type SubCategoryRouteParams = {
   categoryId: number;
   categoryTitle: string;
   serviceId?: number;
+  singleSubCategory?: { id: number; title: string };
 };
 
 LocaleConfig.locales['pt-br'] = {
@@ -136,14 +137,14 @@ const SubCategoryButton: React.FC<{
 function SubCategoryScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { categoryId, categoryTitle, serviceId } =
+  const { categoryId, categoryTitle, serviceId, singleSubCategory } =
     route.params as SubCategoryRouteParams;
   const { width } = useWindowDimensions();
   const { theme } = useThemeStore();
 
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSubCategory, setSelectedSubCategory] = useState<number | null>(
-    serviceId || null,
+    serviceId || (singleSubCategory ? singleSubCategory.id : null),
   );
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
@@ -155,13 +156,23 @@ function SubCategoryScreen() {
   const isDark = theme === ThemeMode.DARK;
 
   useEffect(() => {
+    if (singleSubCategory) {
+      setIsLoading(false);
+      return;
+    }
     const loadSubCategories = async () => {
       setIsLoading(true);
       await fetchSubCategoriesByCategoryId(categoryId);
       setIsLoading(false);
     };
-    loadSubCategories();
-  }, [categoryId, fetchSubCategoriesByCategoryId]);
+    if (categoryId !== -1) {
+      loadSubCategories();
+    }
+  }, [categoryId, fetchSubCategoriesByCategoryId, singleSubCategory]);
+
+  const subCategoriesToDisplay = singleSubCategory
+    ? [singleSubCategory]
+    : subCategories;
 
   const handleContinue = () => {
     if (!selectedSubCategory || !selectedDate) {
@@ -201,7 +212,7 @@ function SubCategoryScreen() {
             <ActivityIndicator size="large" color={colors.primaryBlue} />
           ) : (
             <FlatList
-              data={subCategories}
+              data={subCategoriesToDisplay}
               keyExtractor={(item) => item.id.toString()}
               numColumns={numColumns}
               key={`grid-${numColumns}`}
@@ -209,7 +220,7 @@ function SubCategoryScreen() {
               contentContainerStyle={styles.subCategoryListContainer}
               renderItem={({ item }) => (
                 <SubCategoryButton
-                  item={item}
+                  item={item as SubCategory}
                   isActive={selectedSubCategory === item.id}
                   onPress={() => setSelectedSubCategory(item.id)}
                 />
