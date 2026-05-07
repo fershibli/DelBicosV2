@@ -107,6 +107,7 @@ export interface AppointmentSheetRow {
 
 export interface AppointmentStore {
   appointments: Appointment[];
+  appointmentsByStatus: { [key in AppointmentStatus]?: Appointment[] };
   loading: boolean;
 
   fetchAppointments: () => Promise<void>;

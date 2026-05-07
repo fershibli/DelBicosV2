@@ -1,40 +1,42 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-const { width } = Dimensions.get('window');
-const CARD_WIDTH = width;
-const CARD_HEIGHT = 250;
-
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     card: {
-      width: CARD_WIDTH,
-      height: CARD_HEIGHT,
-      borderRadius: 0,
-      marginHorizontal: 0,
-      backgroundColor: colors.secondaryBeige,
+      height: 200,
+      backgroundColor: colors.inputBackground,
+      overflow: 'hidden',
     },
     image: {
       flex: 1,
       justifyContent: 'flex-end',
     },
-    imageStyle: {
-      borderRadius: 0,
-    },
+    imageStyle: {},
     gradient: {
-      flex: 1,
+      height: '100%',
       justifyContent: 'flex-end',
-      padding: 24,
-      borderRadius: 0,
+      padding: 20,
+      paddingBottom: 40,
+    },
+    textContainer: {
+      gap: 4,
+      maxWidth: '90%',
     },
     title: {
       fontFamily: 'Afacad-Bold',
       fontSize: 24,
-      color: '#E2E8F0',
-      marginBottom: 4,
+      color: '#FFFFFF',
+      textShadowColor: 'rgba(0, 0, 0, 0.9)',
+      textShadowOffset: { width: 1, height: 1 },
+      textShadowRadius: 4,
     },
     description: {
       fontFamily: 'Afacad-Regular',
       fontSize: 16,
-      color: '#E2E8F0',
+      color: '#F0F0F0',
+      textShadowColor: 'rgba(0, 0, 0, 0.9)',
+      textShadowOffset: { width: 1, height: 1 },
+      textShadowRadius: 4,
     },
   });

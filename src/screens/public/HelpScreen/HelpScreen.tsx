@@ -7,12 +7,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { createStyles } from './styles';
-import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { useColors } from '@theme/ThemeProvider';
 import { FontAwesome } from '@expo/vector-icons';
 import AccordionItem from '@components/ui/AccordionItem';
 
-// Dados Mockados para o FAQ (Mova para um JSON/store se crescer)
 const FAQ_DATA = [
   {
     category: 'Conta e Perfil',
@@ -58,9 +56,6 @@ const FAQ_DATA = [
 
 function HelpScreen() {
   const [searchTerm, setSearchTerm] = useState('');
-  const { theme } = useThemeStore();
-  const isDark = theme === ThemeMode.DARK;
-  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
   const colors = useColors();
   const styles = createStyles(colors);
 
@@ -81,11 +76,7 @@ function HelpScreen() {
   }, [searchTerm]);
 
   return (
-    <ScrollView
-      style={[
-        styles.container,
-        isDark ? { backgroundColor: colors.primaryWhite } : null,
-      ]}>
+    <ScrollView style={styles.container}>
       <View style={styles.contentContainer}>
         <View style={styles.mainContent}>
           <Text style={styles.title}>Central de Ajuda</Text>
@@ -97,8 +88,14 @@ function HelpScreen() {
               placeholderTextColor={colors.textTertiary}
               value={searchTerm}
               onChangeText={setSearchTerm}
+              accessibilityLabel="Buscar ajuda"
             />
-            <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={() => {}}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel="Pesquisar">
               <FontAwesome
                 name="search"
                 size={20}
@@ -121,7 +118,7 @@ function HelpScreen() {
               ))
             ) : (
               <Text style={styles.notFoundText}>
-                Nenhum resultado encontrado para {searchTerm}
+                {`Nenhum resultado encontrado para "${searchTerm}"`}
               </Text>
             )}
           </View>

@@ -37,6 +37,8 @@ yarn-error.*
 # local env files
 .env 
 .env*.local
+releases/*
+environments/*
 
 # typescript
 *.tsbuildinfo
@@ -45,3 +47,23 @@ app-example
 tsconfig.json
 tsconfig.json
 .vercel
+.idea
+
+# iOS local/build artifacts
+ios/build/
+ios/Pods/
+ios/DerivedData/
+ios/.xcode.env.local
+ios/**/*.xcuserstate
+ios/**/xcuserdata/
+
+# Android local/build artifacts
+android/.gradle/
+android/.kotlin/
+android/build/
+android/app/build/
+android/app/.cxx/
+android/local.properties
+android/**/captures/
+android/build/reports/problems/
+android/hs_err_pid63855.log

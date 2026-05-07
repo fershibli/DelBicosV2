@@ -2,6 +2,7 @@ export enum ClientProfileSubRoutes {
   DadosConta = 'DadosConta',
   MeusEnderecos = 'MeusEnderecos',
   TrocarSenha = 'TrocarSenha',
+  Seguranca = 'Seguranca',
   MeusAgendamentos = 'MeusAgendamentos',
   Notificacoes = 'Notificacoes',
   Conversas = 'Conversas',
@@ -22,8 +23,6 @@ export type NavigationParams = {
   LoginPassword: undefined;
   Feed: undefined;
   PartnerProfile: { id: string };
-  PhoneConfirmation: undefined;
-  ConfirmPhoneNumber: { code: string };
   Register: undefined;
   NotFound: undefined;
   VerificationScreen: { email: string };
@@ -39,7 +38,12 @@ export type NavigationParams = {
     professionalName?: string;
     serviceId: number;
   };
-  PaymentStatus: undefined;
+  PaymentStatus:
+    | {
+        appointmentId?: number;
+        paymentIntentId?: string;
+      }
+    | undefined;
   MySchedules: undefined;
   ProviderDashboard: undefined;
   Help: undefined;

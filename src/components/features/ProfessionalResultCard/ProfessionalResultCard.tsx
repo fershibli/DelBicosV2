@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { createStyles } from './styles';
-import { useColors } from '@theme/ThemeProvider';
 import { useNavigation } from '@react-navigation/native';
-import { useThemeStore, ThemeMode } from '@stores/Theme';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
 
-// Esta é a interface mockada baseada na sua imagem.
-// Importe a sua interface real quando a tiver.
+// Interface movida para fora ou importada de um arquivo de types
 export interface ProfessionalResult {
   id: number;
   name: string;
@@ -34,8 +32,6 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
 }) => {
   const colors = useColors();
   const styles = createStyles(colors);
-  const { theme } = useThemeStore();
-  const isDark = theme === ThemeMode.DARK;
   const navigation = useNavigation();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
@@ -59,42 +55,60 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
     navigation.navigate('PartnerProfile', { id: professional.id });
   };
 
+  const validAvailableTimes = professional.availableTimes.filter((time) => {
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    const [hours, minutes] = time.split(':').map(Number);
+    const slotDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+    const minTime = Date.now() + 26 * 60 * 60 * 1000;
+    return slotDate.getTime() >= minTime;
+  });
+
   return (
-    <View
-      style={[
-        styles.card,
-        isDark ? { backgroundColor: colors.cardBackground } : null,
-      ]}>
-      {/* --- COLUNA ESQUERDA: DETALHES --- */}
+    <View style={styles.card}>
+      {/* --- TOPO: IMAGEM --- */}
+      <ImageBackground
+        source={{ uri: professional.imageUrl }}
+        style={styles.imageContainer}
+        resizeMode="cover">
+        {/* Overlay para escurecer levemente e destacar o texto branco */}
+        <View style={styles.imageOverlay} />
+
+        <View style={styles.tagsRow}>
+           <View style={styles.distanceTag}>
+             <Text style={styles.distanceText}>{professional.distance}km</Text>
+           </View>
+           <View style={styles.priceTag}>
+             <Text style={styles.priceText}>R$ {professional.priceFrom}</Text>
+           </View>
+        </View>
+      </ImageBackground>
+
+      {/* --- BASE: DETALHES --- */}
       <View style={styles.detailsContainer}>
         <View style={styles.header}>
-          <View style={styles.headerInfo}>
-            <Text style={styles.professionalName}>{professional.name}</Text>
-            <Text style={styles.serviceName}>{professional.serviceName}</Text>
-            <View style={styles.ratingRow}>
-              <FontAwesome
-                name="star"
-                color="#FFC107"
-                size={14}
-                style={styles.starIcon}
-              />
-              <Text style={styles.ratingText}>
-                {professional.rating.toFixed(1)}
-              </Text>
-              <Text style={styles.ratingCount}>
-                ({professional.ratingsCount} reviews)
-              </Text>
-            </View>
+          <Text style={styles.professionalName} numberOfLines={1}>
+            {professional.name}
+          </Text>
+          <Text style={styles.serviceName} numberOfLines={1}>
+            {professional.serviceName}
+          </Text>
+
+          <View style={styles.ratingRow}>
+            <FontAwesome name="star" color="#FFC107" size={14} />
+            <Text style={styles.ratingText}>
+              {professional.rating.toFixed(1)}
+            </Text>
+            <Text style={styles.ratingCount}>
+              ({professional.ratingsCount} avaliações)
+            </Text>
           </View>
         </View>
 
         <View style={styles.timesContainer}>
           <Text style={styles.timesTitle}>Horários disponíveis:</Text>
-          <View style={styles.timesRow}>
-            {professional.availableTimes.slice(0, 5).map(
-              (
-                time, // Limita a 5 para não quebrar
-              ) => (
+          {validAvailableTimes.length > 0 ? (
+            <View style={styles.timesRow}>
+              {validAvailableTimes.slice(0, 4).map((time) => (
                 <TouchableOpacity
                   key={time}
                   style={[
@@ -110,29 +124,32 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
                     {time}
                   </Text>
                 </TouchableOpacity>
-              ),
-            )}
-            {professional.availableTimes.length > 5 && (
-              <TouchableOpacity style={styles.timeSlot}>
-                <Text style={styles.timeText}>Ver +</Text>
-              </TouchableOpacity>
-            )}
-          </View>
+              ))}
+              {validAvailableTimes.length > 4 && (
+                <View style={styles.timeSlot}>
+                  <Text style={styles.timeText}>+{validAvailableTimes.length - 4}</Text>
+                </View>
+              )}
+            </View>
+          ) : (
+            <Text style={[styles.timeText, { color: colors.textSecondary }]}>
+              Nenhum horário atende à regra de 26h.
+            </Text>
+          )}
         </View>
 
         <View style={styles.servicesContainer}>
-          <Text style={styles.servicesTitle}>Serviços oferecidos:</Text>
           <Text
             style={styles.servicesText}
-            numberOfLines={2}
+            numberOfLines={1}
             ellipsizeMode="tail">
-            {professional.offeredServices.join(', ')}
+            {professional.offeredServices.join(' • ')}
           </Text>
         </View>
 
         <View style={styles.cardFooter}>
           <Text style={styles.locationText} numberOfLines={1}>
-            {professional.location}
+            📍 {professional.location}
           </Text>
           <TouchableOpacity
             style={styles.profileButton}
@@ -141,24 +158,6 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* --- COLUNA DIREITA: IMAGEM E TAGS --- */}
-      <ImageBackground
-        source={{ uri: professional.imageUrl }}
-        style={styles.imageContainer}>
-        <View style={styles.priceTag}>
-          <Text style={styles.priceText}>
-            A partir de R${professional.priceFrom}
-          </Text>
-        </View>
-        <View style={styles.tagRow}>
-          <View style={styles.tag}>
-            <Text style={styles.tagText}>
-              Há {professional.distance}km de distância
-            </Text>
-          </View>
-        </View>
-      </ImageBackground>
     </View>
   );
 };

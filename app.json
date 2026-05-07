@@ -19,11 +19,16 @@
       "bundleIdentifier": "com.delbicos.app",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Este aplicativo precisa acessar sua localização para mostrar serviços disponíveis na sua região.",
-        "NSLocationAlwaysUsageDescription": "Este aplicativo precisa acessar sua localização para mostrar serviços disponíveis na sua região."
+        "NSLocationAlwaysUsageDescription": "Este aplicativo precisa acessar sua localização para mostrar serviços disponíveis na sua região.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
       "package": "com.delbicos.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ff7f00"
+      },
       "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
     },
     "web": {
@@ -31,6 +36,10 @@
     },
     "description": "Aplicativo de delivery de serviços temporários (bicos).",
     "scheme": "delbicos",
-    "plugins": ["expo-font", "expo-asset"]
+    "plugins": [
+      "expo-font",
+      "expo-asset",
+      "@react-native-community/datetimepicker"
+    ]
   }
 }

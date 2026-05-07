@@ -1,12 +1,15 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+import { ColorsType } from '@theme/types';
+// Reutilizando o estilo base de input para consistência
 import { createInputBaseStyle } from '@components/ui/CustomTextInput/styles';
 
-export const createStyles = (colors: any) => {
+export const createStyles = (colors: ColorsType) => {
   const inputBaseStyle = createInputBaseStyle(colors);
+
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.secondaryGray,
+      backgroundColor: colors.inputBackground,
     },
     contentContainer: {
       alignItems: 'center',
@@ -20,46 +23,59 @@ export const createStyles = (colors: any) => {
     title: {
       fontSize: 28,
       fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlack,
+      color: colors.primaryBlue,
       marginBottom: 24,
+      textAlign: 'center',
     },
     searchBarContainer: {
       flexDirection: 'row',
       marginBottom: 32,
       gap: 12,
+      width: '100%',
+      maxWidth: 600,
+      alignSelf: 'center',
     },
     searchInput: {
       ...inputBaseStyle.input,
       flex: 1,
       height: 50,
+      backgroundColor: colors.cardBackground,
+      ...Platform.select({
+        web: { boxShadow: '0px 2px 8px rgba(0,0,0,0.05)' },
+        default: { elevation: 2 },
+      }),
     },
     searchButton: {
-      backgroundColor: colors.primaryBlue,
-      borderRadius: 8,
+      backgroundColor: colors.primaryOrange,
+      borderRadius: 12,
       width: 50,
       height: 50,
       justifyContent: 'center',
       alignItems: 'center',
+      ...Platform.select({
+        web: { cursor: 'pointer' } as any,
+      }),
     },
     faqSection: {
       width: '100%',
-      marginBottom: 24,
+      marginBottom: 32,
     },
     categoryTitle: {
       fontSize: 22,
-      fontFamily: 'Afacad-SemiBold',
-      color: colors.primaryOrange,
+      fontFamily: 'Afacad-Bold',
+      color: colors.primaryBlack,
       marginBottom: 16,
       borderBottomWidth: 2,
       borderColor: colors.primaryOrange,
       paddingBottom: 8,
+      alignSelf: 'flex-start',
     },
     notFoundText: {
       fontFamily: 'Afacad-Regular',
       fontSize: 16,
       color: colors.textSecondary,
       textAlign: 'center',
-      marginTop: 20,
+      marginTop: 40,
     },
   });
 };

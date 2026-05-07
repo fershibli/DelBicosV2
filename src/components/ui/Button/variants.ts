@@ -1,3 +1,5 @@
+import { ColorsType } from '@theme/types';
+
 export const buttonFontVariants = {
   AfacadRegular32: {
     fontFamily: 'Afacad-Regular',
@@ -24,18 +26,18 @@ export const buttonFontVariants = {
 export const buttonSizeVariants = {
   medium: {
     borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
   },
   large: {
     borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
   },
   xLarge: {
     borderRadius: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+    paddingVertical: 18,
+    paddingHorizontal: 24,
   },
   default: {
     borderRadius: 20,
@@ -44,13 +46,13 @@ export const buttonSizeVariants = {
   },
   smallPill: {
     borderRadius: 50,
-    paddingVertical: 3,
-    paddingHorizontal: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
   },
   largePill: {
     borderRadius: 50,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
   },
   modalButton: {
     borderRadius: 8,
@@ -59,17 +61,17 @@ export const buttonSizeVariants = {
   },
 };
 
-export const createButtonColorVariants = (colors: any) => ({
+export const createButtonColorVariants = (colors: ColorsType) => ({
   primary: {
     backgroundColor: colors.primaryBlue,
     color: colors.primaryWhite,
     hover: {
       backgroundColor: colors.primaryOrange,
-      color: colors.primaryWhiteHover,
+      color: colors.primaryWhite,
     },
     disabled: {
-      backgroundColor: '#D3D3D3',
-      color: '#A9A9A9',
+      backgroundColor: colors.inputBackground,
+      color: colors.textTertiary,
     },
   },
   primaryBlue: {
@@ -80,8 +82,8 @@ export const createButtonColorVariants = (colors: any) => ({
       color: colors.primaryBlue,
     },
     disabled: {
-      backgroundColor: '#D3D3D3',
-      color: '#A9A9A9',
+      backgroundColor: 'transparent',
+      color: colors.textTertiary,
     },
   },
   secondary: {
@@ -92,8 +94,8 @@ export const createButtonColorVariants = (colors: any) => ({
       color: colors.primaryWhite,
     },
     disabled: {
-      backgroundColor: '#D3D3D3',
-      color: '#A9A9A9',
+      backgroundColor: colors.inputBackground,
+      color: colors.textTertiary,
     },
   },
   primaryOrange: {
@@ -101,11 +103,11 @@ export const createButtonColorVariants = (colors: any) => ({
     color: colors.primaryWhite,
     hover: {
       backgroundColor: colors.primaryOrangeHover,
-      color: colors.primaryWhiteHover,
+      color: colors.primaryWhite,
     },
     disabled: {
-      backgroundColor: '#D3D3D3',
-      color: '#A9A9A9',
+      backgroundColor: colors.inputBackground,
+      color: colors.textTertiary,
     },
   },
   primaryWhite: {
@@ -116,33 +118,32 @@ export const createButtonColorVariants = (colors: any) => ({
       color: colors.primaryBlue,
     },
     disabled: {
-      backgroundColor: '#D3D3D3',
-      color: '#A9A9A9',
+      backgroundColor: 'transparent',
+      color: colors.textTertiary,
     },
   },
-
   primaryGreen: {
     backgroundColor: colors.primaryGreen,
     color: colors.primaryWhite,
     hover: {
-      backgroundColor: colors.primaryWhiteHover,
+      backgroundColor: colors.successBackground,
       color: colors.primaryGreen,
     },
     disabled: {
-      backgroundColor: '#D3D3D3',
-      color: '#A9A9A9',
+      backgroundColor: colors.inputBackground,
+      color: colors.textTertiary,
     },
   },
   modalPrimary: {
     backgroundColor: colors.primaryOrange,
     color: colors.primaryWhite,
     hover: {
-      backgroundColor: '#ca6f00ff',
+      backgroundColor: colors.primaryOrangeHover,
       color: colors.primaryWhite,
     },
     disabled: {
-      backgroundColor: '#CCCCCC',
-      color: '#A9A9A9',
+      backgroundColor: colors.inputBackground,
+      color: colors.textTertiary,
     },
   },
 });

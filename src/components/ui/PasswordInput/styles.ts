@@ -1,16 +1,18 @@
 import { StyleSheet } from 'react-native';
+import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: any) =>
+export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       flexDirection: 'row',
       alignItems: 'center',
       width: '100%',
-      backgroundColor: colors.cardBackground,
-      borderRadius: 8,
+      backgroundColor: colors.inputBackground,
+      borderRadius: 12,
       borderWidth: 1,
       borderColor: colors.borderColor,
-      height: 50,
+      height: 56,
+      overflow: 'hidden',
     },
     input: {
       flex: 1,
@@ -21,15 +23,13 @@ export const createStyles = (colors: any) =>
       color: colors.primaryBlack,
     },
     inputError: {
-      borderColor: colors.primaryOrange,
+      borderColor: colors.errorText,
       borderWidth: 1.5,
     },
     eyeButton: {
-      padding: 12,
-    },
-    eyeIcon: {
-      width: 24,
-      height: 24,
-      tintColor: colors.textSecondary,
+      paddingHorizontal: 16,
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });

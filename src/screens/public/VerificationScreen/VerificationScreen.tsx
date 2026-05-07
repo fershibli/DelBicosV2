@@ -1,18 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
-  Alert,
+  ActivityIndicator,
   Image,
   ScrollView,
-  Keyboard,
-  NativeSyntheticEvent,
-  TextInputKeyPressEventData,
-  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+
 import LogoV3 from '@assets/LogoV3.png';
 import { createStyles } from './styles';
 import { HTTP_DOMAIN } from '@config/varEnvs';
@@ -20,10 +16,9 @@ import { useUserStore } from '@stores/User';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { Address } from '@stores/User/types';
 import { useColors } from '@theme/ThemeProvider';
-import {
-  checkForNewNotifications,
-  setupNotifications,
-} from '@utils/usePushNotifications';
+import { checkForNewNotifications } from '@utils/usePushNotifications';
+import { FeedbackModal } from '@components/ui/FeedbackModal';
+import CodeInput from '@components/ui/CodeInput';
 
 function VerificationScreen() {
   const navigation = useNavigation();
@@ -31,50 +26,127 @@ function VerificationScreen() {
     verificationEmail: email,
     setVerificationEmail,
     setLoggedInUser,
+    lastCodeSentAt,
+    recordCodeSent,
+    resendCode,
   } = useUserStore();
 
   const colors = useColors();
   const styles = createStyles(colors);
+
+  // Estado para CodeInput
   const [code, setCode] = useState<string[]>(Array(6).fill(''));
+  const [focusedIndex, setFocusedIndex] = useState(0);
+
   const [isLoading, setIsLoading] = useState(false);
-  const inputs = useRef<(TextInput | null)[]>([]);
+  const [isResending, setIsResending] = useState(false);
+  const COOLDOWN_SECONDS = 60;
 
-  const handleTextChange = (text: string, index: number) => {
-    const newCode = [...code];
-    newCode[index] = text;
-    setCode(newCode);
+  const calculateRemainingTime = useCallback(() => {
+    if (!lastCodeSentAt) return 0;
+    const now = Date.now();
+    const diffSeconds = Math.floor((now - lastCodeSentAt) / 1000);
+    const remaining = COOLDOWN_SECONDS - diffSeconds;
+    return remaining > 0 ? remaining : 0;
+  }, [lastCodeSentAt]);
 
-    if (text && index < 5) {
-      inputs.current[index + 1]?.focus();
+  const [timer, setTimer] = useState(calculateRemainingTime());
+
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const [feedbackData, setFeedbackData] = useState({
+    type: 'info' as 'success' | 'error' | 'info',
+    title: '',
+    message: '',
+    onClose: () => setFeedbackVisible(false),
+  });
+
+  useEffect(() => {
+    if (!email) {
+      navigation.navigate('Register' as never);
+      return;
     }
 
-    if (newCode.every((digit) => digit !== '')) {
-      Keyboard.dismiss();
-    }
+    if (timer <= 0) return;
+
+    const interval = setInterval(() => {
+      const remaining = calculateRemainingTime();
+      setTimer(remaining);
+      if (remaining <= 0) clearInterval(interval);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [email, lastCodeSentAt, timer, calculateRemainingTime, navigation]);
+
+  const showFeedback = (
+    type: 'success' | 'error',
+    title: string,
+    message: string,
+    action?: () => void,
+  ) => {
+    setFeedbackData({
+      type,
+      title,
+      message,
+      onClose: () => {
+        setFeedbackVisible(false);
+        if (action) action();
+      },
+    });
+    setFeedbackVisible(true);
   };
 
-  const handleKeyPress = (
-    e: NativeSyntheticEvent<TextInputKeyPressEventData>,
-    index: number,
-  ) => {
-    if (e.nativeEvent.key === 'Backspace' && !code[index] && index > 0) {
-      inputs.current[index - 1]?.focus();
+  const handleResendCode = async () => {
+    if (timer > 0 || !email) return;
+
+    setIsResending(true);
+
+    try {
+      await resendCode(email);
+      recordCodeSent();
+      setTimer(COOLDOWN_SECONDS);
+
+      showFeedback(
+        'success',
+        'Código Reenviado',
+        `Um novo código foi enviado para ${email}.`,
+      );
+
+      setCode(Array(6).fill(''));
+      setFocusedIndex(0);
+    } catch (error: any) {
+      console.error('Erro no reenvio:', error);
+      if (error.response?.status === 404) {
+        showFeedback(
+          'error',
+          'Sessão Expirada',
+          'Seu cadastro temporário expirou.',
+          () => navigation.navigate('Register' as never),
+        );
+      } else {
+        showFeedback('error', 'Erro', 'Não foi possível reenviar o código.');
+      }
+    } finally {
+      setIsResending(false);
     }
   };
 
   const handleVerify = async () => {
     const fullCode = code.join('');
     if (fullCode.length !== 6) {
-      Alert.alert(
+      showFeedback(
+        'error',
         'Código Inválido',
-        'Por favor, insira o código de 6 dígitos.',
+        'Por favor, preencha os 6 dígitos.',
       );
       return;
     }
 
     if (!email) {
-      Alert.alert('Erro', 'Sessão inválida. Por favor, retorne ao cadastro.');
-      navigation.navigate('Register');
+      showFeedback(
+        'error',
+        'Erro',
+        'E-mail não encontrado. Reinicie o cadastro.',
+      );
       return;
     }
 
@@ -91,9 +163,7 @@ function VerificationScreen() {
 
       if (response.status === 200) {
         const { token, user } = data;
-        if (!token || !user) {
-          throw new Error('Resposta de verificação inválida do servidor.');
-        }
+        if (!token || !user) throw new Error('Resposta inválida.');
 
         const addressData: Address | null = user.address
           ? {
@@ -125,39 +195,29 @@ function VerificationScreen() {
           address: addressData,
         });
 
-        Alert.alert('Sucesso!', 'Sua conta foi verificada com sucesso.');
         setVerificationEmail(null);
 
-        // Verificar imediatamente por notificações de boas-vindas (sem logs)
-        setTimeout(async () => {
-          try {
-            await checkForNewNotifications(
-              user.id.toString(),
-              new Date(Date.now() - 60000), // Últimos 60 segundos
-              false, // Sem logs
-            );
-          } catch {
-            // Silencioso
-          }
+        // Check notificações em background
+        setTimeout(() => {
+          checkForNewNotifications(
+            user.id.toString(),
+            new Date(Date.now() - 60000),
+            false,
+          ).catch(() => {});
         }, 2000);
 
-        navigation.navigate('Home');
-      } else {
-        Alert.alert(
-          'Erro na Verificação',
-          data.error || 'Ocorreu um problema.',
+        showFeedback(
+          'success',
+          'Sucesso!',
+          'Conta verificada com sucesso.',
+          () => navigation.navigate('Home' as never),
         );
       }
     } catch (error: any) {
-      console.error('Erro ao verificar código:', error);
-      if (error.response) {
-        Alert.alert(
-          'Erro na Verificação',
-          error.response.data.error || 'Ocorreu um problema.',
-        );
-      } else {
-        Alert.alert('Erro de Conexão', 'Não foi possível verificar o código.');
-      }
+      console.error('Erro ao verificar:', error);
+      const msg =
+        error.response?.data?.error || 'Código incorreto ou expirado.';
+      showFeedback('error', 'Erro na Verificação', msg);
     } finally {
       setIsLoading(false);
     }
@@ -167,47 +227,71 @@ function VerificationScreen() {
     <View style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.contentContainer}
-        keyboardShouldPersistTaps="handled">
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home' as never)}>
           <Image source={LogoV3} style={styles.logo} />
         </TouchableOpacity>
 
         <View style={styles.card}>
           <Text style={styles.title}>Verifique seu E-mail</Text>
           <Text style={styles.subtitle}>
-            Enviamos um código de 6 dígitos para{' '}
+            Enviamos um código para{' '}
             <Text style={styles.emailText}>{email}</Text>.
           </Text>
 
-          <View style={styles.codeInputContainer}>
-            {code.map((digit, index) => (
-              <TextInput
-                key={index}
-                ref={(el) => {
-                  inputs.current[index] = el;
-                }}
-                style={styles.codeInput}
-                keyboardType="number-pad"
-                maxLength={1}
-                value={digit}
-                onChangeText={(text) => handleTextChange(text, index)}
-                onKeyPress={(e) => handleKeyPress(e, index)}
-              />
-            ))}
-          </View>
+          {/* CodeInput Reutilizável */}
+          <CodeInput
+            verificationCode={code}
+            setVerificationCode={setCode}
+            focusedIndex={focusedIndex}
+            setFocusedIndex={setFocusedIndex}
+            length={6}
+          />
 
           <TouchableOpacity
             style={[styles.button, isLoading && styles.buttonDisabled]}
             onPress={handleVerify}
-            disabled={isLoading}>
+            disabled={isLoading}
+            activeOpacity={0.8}>
             {isLoading ? (
               <ActivityIndicator color={colors.primaryWhite} />
             ) : (
               <Text style={styles.buttonText}>Verificar</Text>
             )}
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.resendButton}
+            onPress={handleResendCode}
+            disabled={timer > 0 || isResending}
+            activeOpacity={0.7}>
+            <Text
+              style={[
+                styles.resendText,
+                timer > 0 && styles.resendTextDisabled,
+              ]}>
+              {isResending
+                ? 'Reenviando...'
+                : timer > 0
+                  ? `Reenviar código em ${timer}s`
+                  : 'Reenviar código'}
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <FeedbackModal
+        visible={feedbackVisible}
+        type={feedbackData.type}
+        title={feedbackData.title}
+        message={feedbackData.message}
+        onClose={feedbackData.onClose}
+      />
+
+      <Text style={styles.footer}>
+        © DelBicos - {new Date().getFullYear()} – Todos os direitos reservados.
+      </Text>
     </View>
   );
 }

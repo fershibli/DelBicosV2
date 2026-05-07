@@ -11,7 +11,6 @@ import { createStyles } from './styles';
 import { FontAwesome } from '@expo/vector-icons';
 import { useColors } from '@theme/ThemeProvider';
 
-// Habilita LayoutAnimation no Android
 if (
   Platform.OS === 'android' &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -30,7 +29,6 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children }) => {
   const styles = createStyles(colors);
 
   const toggleOpen = () => {
-    // Anima a transição de abertura/fechamento
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setIsOpen(!isOpen);
   };
@@ -40,19 +38,25 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children }) => {
       <TouchableOpacity
         onPress={toggleOpen}
         style={styles.header}
-        activeOpacity={0.7}>
+        activeOpacity={0.7}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: isOpen }}>
         <Text style={styles.title}>{title}</Text>
         <FontAwesome
           name={isOpen ? 'chevron-up' : 'chevron-down'}
           size={16}
-          color={colors.primaryOrange} // Cor de destaque
+          color={colors.primaryOrange}
           style={styles.icon}
         />
       </TouchableOpacity>
 
       {isOpen && (
         <View style={styles.body}>
-          <Text style={styles.bodyText}>{children}</Text>
+          {typeof children === 'string' ? (
+            <Text style={styles.bodyText}>{children}</Text>
+          ) : (
+            children
+          )}
         </View>
       )}
     </View>

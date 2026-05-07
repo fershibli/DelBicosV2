@@ -1,143 +1,156 @@
-import React, { useEffect, useState } from 'react';
-import { useCategoryStore } from '@stores/Category/Category';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   ActivityIndicator,
   FlatList,
   Text,
   View,
   Pressable,
+  Platform,
+  ImageBackground,
+  useWindowDimensions,
 } from 'react-native';
-import { Category } from '@stores/Category/types';
 import { useNavigation } from '@react-navigation/native';
-import colors from '@theme/colors';
-import { styles } from './styles';
+import { useCategoryStore } from '@stores/Category/Category';
+import { Category } from '@stores/Category/types';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
+import { useColors } from '@theme/ThemeProvider';
+import { createStyles } from './styles';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
-// @ts-ignore
-import beautySVG from '@assets/categories/beauty.svg';
-// @ts-ignore
-import healthSVG from '@assets/categories/health.svg';
-// @ts-ignore
-import homeSVG from '@assets/categories/home.svg';
-// @ts-ignore
-import miscSVG from '@assets/categories/miscellaneous.svg';
-// @ts-ignore
-import petsSVG from '@assets/categories/pets.svg';
-// @ts-ignore
-import repairSVG from '@assets/categories/repair.svg';
-
-// {IconComponent, width, height}
-const categoryImagesById: Record<number, any> = {
-  1: { IconComponent: healthSVG, width: 72, height: 70 },
-  2: { IconComponent: beautySVG, width: 63, height: 87 },
-  3: { IconComponent: repairSVG, width: 70, height: 75 },
-  4: { IconComponent: miscSVG, width: 51, height: 69 },
-  5: { IconComponent: homeSVG, width: 61, height: 50 },
-  6: { IconComponent: petsSVG, width: 74, height: 74 },
+const CATEGORY_ICONS: Record<number, string> = {
+  1: 'heartbeat',
+  2: 'cut',
+  3: 'tools',
+  4: 'lightbulb',
+  5: 'home',
+  6: 'paw',
 };
 
-function getCategoryImagesById(id: number) {
-  return categoryImagesById[id] || categoryImagesById[4];
+const CATEGORY_IMAGES = [
+  'https://images.unsplash.com/photo-1505506874110-6a7a6c9924c7?q=80&w=800&auto=format&fit=crop', // 0
+  'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?q=80&w=800&auto=format&fit=crop', // 1
+  'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=800&auto=format&fit=crop', // 2
+  'https://images.unsplash.com/photo-1581092926214-ee854bb359ea?q=80&w=800&auto=format&fit=crop', // 3
+  'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop', // 4
+  'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=800&auto=format&fit=crop', // 5
+  'https://images.unsplash.com/photo-1556910103-1c02745a872f?q=80&w=800&auto=format&fit=crop', // 6 - tech
+  'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop', // 7 - events/food
+  'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800&auto=format&fit=crop', // 8 - teaching
+  'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=800&auto=format&fit=crop', // 9 - driving
+];
+
+function getCategoryIconName(id: number) {
+  return CATEGORY_ICONS[id] || 'shapes';
+}
+
+function getCategoryImage(id: number) {
+  return CATEGORY_IMAGES[id % CATEGORY_IMAGES.length];
 }
 
 interface CategoryCardProps {
   category: Category;
   onPress: (category: Category) => void;
+  isWebLayout: boolean;
 }
 
-function CategoryCard({ category, onPress }: CategoryCardProps) {
-  const image = getCategoryImagesById(category.id);
-  const { theme } = useThemeStore();
-  const isDark = theme === ThemeMode.DARK;
-  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
-
-  // 6. ADICIONE o estado de hover
+function CategoryCard({ category, onPress, isWebLayout }: CategoryCardProps) {
+  const iconName = getCategoryIconName(category.id);
+  const imageUrl = getCategoryImage(category.id);
   const [isHovered, setIsHovered] = useState(false);
 
-  // 7. Estilos dinâmicos para o card, texto e ícone
-  const cardStyle = [
-    styles.categoryCard,
-    {
-      backgroundColor: colors.cardBackground,
-      borderColor: isDark ? colors.cardBackground : colors.borderColor,
-    },
-    isHighContrast && {
-      backgroundColor: colors.primaryWhite,
-      borderWidth: 2,
-      borderColor: colors.borderColor,
-    },
-    isHovered &&
-      isDark && {
-        backgroundColor: colors.primaryOrange,
-        borderColor: colors.primaryOrange,
-      },
-    isHovered &&
-      isHighContrast && {
-        backgroundColor: colors.primaryBlue,
-        borderColor: colors.primaryBlue,
-      },
-    isHovered && !isDark && !isHighContrast && styles.categoryCardHovered,
-  ];
+  const { theme } = useThemeStore();
+  const colors = useColors();
+  const styles = createStyles(colors);
 
-  const titleStyle = [
-    styles.categoryTitle,
-    { color: isDark ? colors.primaryBlack : undefined },
-    isHighContrast && {
-      color: colors.primaryOrange,
-      fontWeight: 'bold' as const,
-    },
-    isHovered && isDark && { color: '#E2E8F0' },
-    isHovered && isHighContrast && { color: colors.primaryWhite },
-    isHovered && !isDark && !isHighContrast && styles.categoryTitleHovered,
-  ];
+  const isDark = theme === ThemeMode.DARK;
 
-  const iconColor = isDark
-    ? '#E2E8F0'
-    : isHighContrast
-      ? isHovered
-        ? colors.primaryWhite
-        : colors.primaryOrange
-      : isHovered
-        ? '#E2E8F0'
-        : colors.primaryOrange;
+  // --- RENDERING WEB IMAGE CARD ---
+  if (isWebLayout) {
+    return (
+      <Pressable
+        style={[styles.webCard, isHovered && styles.webCardHovered]}
+        onPress={() => onPress(category)}
+        onHoverIn={() => setIsHovered(true)}
+        onHoverOut={() => setIsHovered(false)}
+        accessibilityRole="button">
+        <ImageBackground
+          source={{ uri: imageUrl }}
+          style={styles.webCardImage}
+          imageStyle={{ borderRadius: 16 }}>
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.8)']}
+            style={styles.webCardGradient}>
+            <Text style={styles.webCardTitle} numberOfLines={1}>
+              {category.title}
+            </Text>
+          </LinearGradient>
+        </ImageBackground>
+      </Pressable>
+    );
+  }
+
+  // --- RENDERING MOBILE BUBBLE ---
+  const bubbleBgColor = isDark ? '#2C2C2C' : colors.primaryOrange + '15'; // 15% opacity of original color
 
   return (
-    // 8. Mude para Pressable e adicione eventos de hover
     <Pressable
-      style={cardStyle}
+      style={styles.bubbleCard}
       onPress={() => onPress(category)}
-      onHoverIn={() => setIsHovered(true)}
-      onHoverOut={() => setIsHovered(false)}>
-      <image.IconComponent
-        style={{
-          width: image.width * 0.7, // Ícones um pouco menores
-          height: image.height * 0.7,
-          resizeMode: 'contain',
-        }}
-        color={iconColor} // Cor do ícone agora é dinâmica
-      />
-      <Text style={titleStyle}>{category.title}</Text>
+      accessibilityRole="button">
+      <View
+        style={[
+          styles.bubble,
+          {
+            backgroundColor: isHovered
+              ? colors.primaryOrange + '30'
+              : bubbleBgColor,
+          },
+        ]}>
+        <FontAwesome5
+          name={iconName}
+          size={26}
+          color={isDark ? colors.primaryWhite : colors.primaryOrange}
+          solid
+        />
+      </View>
+      <Text
+        style={[
+          styles.bubbleTitle,
+          { color: isDark ? colors.primaryWhite : colors.primaryBlack },
+        ]}
+        numberOfLines={2}>
+        {category.title}
+      </Text>
     </Pressable>
   );
 }
 
 function CategorySlider() {
   const [isLoading, setIsLoading] = useState(true);
-
   const { categories, fetchCategories } = useCategoryStore();
-
+  const [hasFetched, setHasFetched] = useState(false);
   const navigation = useNavigation();
+  const colors = useColors();
+  const styles = createStyles(colors);
+  const { width } = useWindowDimensions();
+
+  // If we are on web AND the screen is wider than a tablet, show the Image Cards.
+  // Otherwise (mobile devices or small web screens), show the Bubbles.
+  const isWebLayout = Platform.OS === 'web' && width > 768;
 
   useEffect(() => {
-    if (!categories?.length) {
+    if (!isLoading && !hasFetched) {
+      console.log('Fetching categories...');
       setIsLoading(true);
-      fetchCategories().then(() => {
+      fetchCategories().finally(() => {
         setIsLoading(false);
+        setHasFetched(true);
       });
     } else {
       setIsLoading(false);
     }
-  }, [categories, fetchCategories]);
+  }, [categories, fetchCategories, hasFetched, isLoading]);
 
   const handleCategoryPress = (category: Category) => {
     // @ts-ignore
@@ -147,9 +160,13 @@ function CategorySlider() {
     });
   };
 
+  const ITEM_WIDTH = isWebLayout ? 236 : 96; // Adjust based on layout sizes + gap
+  const contentWidth = categories?.length ? categories.length * ITEM_WIDTH : 0;
+  const shouldCenter = contentWidth < width && contentWidth > 0;
+
   if (isLoading) {
     return (
-      <View style={styles.externalContainer}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primaryBlue} />
       </View>
     );
@@ -157,27 +174,46 @@ function CategorySlider() {
 
   if (!categories || categories.length === 0) {
     return (
-      <View style={styles.externalContainer}>
-        <Text>No categories available</Text>
+      <View style={styles.loadingContainer}>
+        <Text style={styles.emptyText}>Nenhuma categoria disponível</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.externalContainer}>
-      <FlatList
-        contentContainerStyle={styles.flatList}
-        data={categories}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <CategoryCard
-            category={item}
-            onPress={handleCategoryPress} // Passa a função de navegação
+    <View style={styles.container}>
+      <View style={styles.sliderWrapper}>
+        {isWebLayout ? (
+          <FlatList
+            data={categories}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <CategoryCard
+                category={item}
+                onPress={handleCategoryPress}
+                isWebLayout={isWebLayout}
+              />
+            )}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={[
+              styles.listContent,
+              { justifyContent: shouldCenter ? 'center' : 'flex-start' },
+            ]}
           />
+        ) : (
+          <View style={styles.gridContainer}>
+            {categories.map((item) => (
+              <CategoryCard
+                key={item.id.toString()}
+                category={item}
+                onPress={handleCategoryPress}
+                isWebLayout={isWebLayout}
+              />
+            ))}
+          </View>
         )}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      />
+      </View>
     </View>
   );
 }

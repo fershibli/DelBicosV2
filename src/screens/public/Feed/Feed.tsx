@@ -1,22 +1,27 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   Text,
   ScrollView,
   View,
   TouchableOpacity,
   Platform,
-  Dimensions,
+  useWindowDimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  TextInput,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { createStyles } from './styles';
-import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { useColors } from '@theme/ThemeProvider';
 import CategorySlider from '@components/features/CategorySlider';
 import ListProfessionals from '@components/features/ListProfessionals';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 import { HighlightCard, HighlightItem } from '@components/ui/HighlightCard';
-import { useUserStore } from '@stores/User';
+import { useServiceSearch } from '@lib/hooks/useServiceSearch';
+import { useCategoryStore } from '@stores/Category';
+import { SubCategory } from '@stores/SubCategory/types';
+
+import { getIconForSubCategory } from '@utils/icons';
 
 const HIGHLIGHT_DATA: HighlightItem[] = [
   {
@@ -38,49 +43,56 @@ const HIGHLIGHT_DATA: HighlightItem[] = [
     title: 'Beleza & Estética',
     description: 'Manicures e cabeleireiros para as festas.',
     image:
-      'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=1200&h=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?q=80&w=1200&h=800&auto=format&fit=crop',
   },
   {
     id: '4',
     title: 'Cuidados Pet',
     description: 'Dog walkers e pet sitters perto de você.',
     image:
-      'https://images.unsplash.com/photo-1574610758891-5b809b6e6e2e?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=800&auto=format&fit=crop',
   },
 ];
-
-const { width } = Dimensions.get('window');
-const CARD_WIDTH = width * 0.7;
-const CARD_MARGIN = 8;
-const SNAP_INTERVAL = CARD_WIDTH + CARD_MARGIN * 2;
 
 const FeedScreen: React.FC = () => {
   const scrollRef = useRef<ScrollView | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { user } = useUserStore();
+  const [search, setSearch] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const navigation = useNavigation();
+
   const colors = useColors();
   const styles = createStyles(colors);
+  const { width } = useWindowDimensions();
+
+  const { results, search: fetchSearch } = useServiceSearch();
+  const { categories } = useCategoryStore();
+
+  useEffect(() => {
+    fetchSearch(search);
+    if (search.trim().length > 0) {
+      setShowDropdown(true);
+    } else {
+      setShowDropdown(false);
+    }
+  }, [search]);
 
   const handleScrollLeft = () => {
-    const newIndex = currentIndex - 1;
-    if (newIndex >= 0) {
-      scrollRef.current?.scrollTo({
-        x: newIndex * width,
-        animated: true,
-      });
+    const newIndex = Math.max(0, currentIndex - 1);
+    if (newIndex !== currentIndex) {
+      scrollRef.current?.scrollTo({ x: newIndex * width, animated: true });
       setCurrentIndex(newIndex);
     }
   };
+
   const handleScrollRight = () => {
-    const newIndex = currentIndex + 1;
-    if (newIndex < HIGHLIGHT_DATA.length) {
-      scrollRef.current?.scrollTo({
-        x: newIndex * width,
-        animated: true,
-      });
+    const newIndex = Math.min(HIGHLIGHT_DATA.length - 1, currentIndex + 1);
+    if (newIndex !== currentIndex) {
+      scrollRef.current?.scrollTo({ x: newIndex * width, animated: true });
       setCurrentIndex(newIndex);
     }
   };
+
   const onMomentumScrollEnd = (
     event: NativeSyntheticEvent<NativeScrollEvent>,
   ) => {
@@ -90,80 +102,172 @@ const FeedScreen: React.FC = () => {
       setCurrentIndex(newIndex);
     }
   };
-  const { theme } = useThemeStore();
-  const isDark = theme === ThemeMode.DARK;
-  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prevIndex) => {
+        const nextIndex =
+          prevIndex === HIGHLIGHT_DATA.length - 1 ? 0 : prevIndex + 1;
+        scrollRef.current?.scrollTo({ x: nextIndex * width, animated: true });
+        return nextIndex;
+      });
+    }, 5000); // Roda a cada 5 segundos
+    return () => clearInterval(timer);
+  }, [width]);
+
+  const handleSearchSubmit = () => {
+    if (search.trim()) {
+      setShowDropdown(false);
+      // @ts-ignore
+      navigation.navigate('SearchResult', { query: search.trim() });
+    }
+  };
+
+  const handleSelectService = (item: SubCategory) => {
+    setShowDropdown(false);
+    setSearch('');
+    const category = categories.find((c) => c.id === item.categoryId);
+    // @ts-ignore
+    navigation.navigate('SubCategoryScreen', {
+      categoryId: item.categoryId,
+      categoryTitle: category ? category.title : 'Serviços',
+      serviceId: item.id,
+    });
+  };
 
   return (
-    <ScrollView
-      style={[
-        styles.container,
-        isDark ? { backgroundColor: colors.primaryWhite } : null,
-      ]}
-      contentContainerStyle={styles.contentContainer}>
-      <View style={styles.carouselSection}>
-        {/* <Text style={styles.title}>Destaques para você</Text> */}
+    <View style={styles.container}>
+      <ListProfessionals
+        style={styles.list}
+        listHeader={
+          <>
+            {/* Mobile Search Bar */}
+            {Platform.OS !== 'web' && (
+              <View style={[styles.mobileSearchSection, { zIndex: 100 }]}>
+                <View style={styles.mobileSearchContainer}>
+                  <TextInput
+                    style={styles.mobileSearchInput}
+                    placeholder="Busque por um serviço (ex: Chaveiro)"
+                    placeholderTextColor={colors.textTertiary}
+                    value={search}
+                    onChangeText={setSearch}
+                    onSubmitEditing={handleSearchSubmit}
+                    onFocus={() => {
+                      if (search.trim().length > 0) setShowDropdown(true);
+                    }}
+                  />
+                  <TouchableOpacity
+                    style={styles.mobileSearchButton}
+                    onPress={handleSearchSubmit}>
+                    <FontAwesome
+                      name="search"
+                      size={18}
+                      color={colors.textSecondary}
+                    />
+                  </TouchableOpacity>
+                </View>
 
-        <View style={styles.carouselContainer}>
-          {Platform.OS === 'web' && currentIndex > 0 && (
-            <TouchableOpacity
-              style={[styles.scrollButton, styles.scrollButtonLeft]}
-              onPress={handleScrollLeft}>
-              <FontAwesome
-                name="chevron-left"
-                size={18}
-                color={colors.primaryBlue}
-              />
-            </TouchableOpacity>
-          )}
-
-          <ScrollView
-            ref={scrollRef}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.carouselListContainer}
-            pagingEnabled
-            onMomentumScrollEnd={onMomentumScrollEnd}
-            scrollEventThrottle={16}
-            snapToInterval={SNAP_INTERVAL}
-            decelerationRate="fast">
-            {HIGHLIGHT_DATA.map((item) => (
-              <HighlightCard key={item.id} item={item} />
-            ))}
-          </ScrollView>
-
-          {Platform.OS === 'web' &&
-            currentIndex < HIGHLIGHT_DATA.length - 1 && (
-              <TouchableOpacity
-                style={[styles.scrollButton, styles.scrollButtonRight]}
-                onPress={handleScrollRight}>
-                <FontAwesome
-                  name="chevron-right"
-                  size={18}
-                  color={colors.primaryBlue}
-                />
-              </TouchableOpacity>
+                {/* Autocomplete Dropdown */}
+                {showDropdown && search.trim().length > 0 && (
+                  <View style={styles.dropdownContainer}>
+                    {results.length > 0 ? (
+                      results.map((item) => (
+                        <TouchableOpacity
+                          key={item.id}
+                          style={styles.dropdownItem}
+                          onPress={() => handleSelectService(item)}>
+                          <View style={styles.dropdownIcon}>
+                            <FontAwesome5 name={getIconForSubCategory(item.title)} size={16} color={colors.primaryBlue} />
+                          </View>
+                          <View style={styles.dropdownTextContainer}>
+                            <Text style={styles.dropdownName} numberOfLines={1}>{item.title}</Text>
+                          </View>
+                          <FontAwesome name="angle-right" size={16} color={colors.textTertiary} />
+                        </TouchableOpacity>
+                      ))
+                    ) : (
+                      <View style={styles.dropdownEmpty}>
+                        <Text style={styles.dropdownEmptyText}>
+                          Nenhum serviço encontrado com "{search}".
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                )}
+              </View>
             )}
+            {/* Seção Carrossel Destaques */}
+            <View style={styles.carouselSection}>
+              <View style={styles.carouselContainer}>
+                {Platform.OS === 'web' && currentIndex > 0 && (
+                  <TouchableOpacity
+                    style={[styles.scrollButton, styles.scrollButtonLeft]}
+                    onPress={handleScrollLeft}
+                    activeOpacity={0.8}>
+                    <FontAwesome
+                      name="chevron-left"
+                      size={16}
+                      color={colors.primaryBlue}
+                    />
+                  </TouchableOpacity>
+                )}
 
-          <View style={styles.paginationContainer}>
-            {HIGHLIGHT_DATA.map((_, index) => (
-              <View
-                key={index}
-                style={[styles.dot, currentIndex === index && styles.dotActive]}
-              />
-            ))}
-          </View>
-        </View>
-      </View>
-      <View style={styles.categorySection}>
-        <Text style={styles.title}>Selecione por Categorias</Text>
-        <CategorySlider />
-      </View>
-      <View style={styles.listSection}>
-        <Text style={styles.title}>Profissionais próximos a você</Text>
-        <ListProfessionals />
-      </View>
-    </ScrollView>
+                <ScrollView
+                  ref={scrollRef}
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.carouselListContainer}
+                  onMomentumScrollEnd={onMomentumScrollEnd}
+                  scrollEventThrottle={16}
+                  decelerationRate="fast"
+                  snapToInterval={width}>
+                  {HIGHLIGHT_DATA.map((item) => (
+                    <HighlightCard key={item.id} item={item} />
+                  ))}
+                </ScrollView>
+
+                {Platform.OS === 'web' &&
+                  currentIndex < HIGHLIGHT_DATA.length - 1 && (
+                    <TouchableOpacity
+                      style={[styles.scrollButton, styles.scrollButtonRight]}
+                      onPress={handleScrollRight}
+                      activeOpacity={0.8}>
+                      <FontAwesome
+                        name="chevron-right"
+                        size={16}
+                        color={colors.primaryBlue}
+                      />
+                    </TouchableOpacity>
+                  )}
+
+                {/* Paginação (Dots) */}
+                <View style={styles.paginationContainer}>
+                  {HIGHLIGHT_DATA.map((_, index) => (
+                    <View
+                      key={index}
+                      style={[
+                        styles.dot,
+                        currentIndex === index && styles.dotActive,
+                      ]}
+                    />
+                  ))}
+                </View>
+              </View>
+            </View>
+
+            {/* Seção Categorias */}
+            <View style={styles.categorySection}>
+              <Text style={styles.title}>Selecione por Categorias</Text>
+              <CategorySlider />
+            </View>
+
+            {/* Título da seção de profissionais */}
+            <Text style={styles.title}>Profissionais próximos a você</Text>
+          </>
+        }
+      />
+    </View>
   );
 };
 

@@ -1,44 +1,47 @@
 import { StyleSheet } from 'react-native';
-import colors from '@theme/colors';
+import { ColorsType } from '@theme/types';
 
-export const styles = StyleSheet.create({
-  professionalContainer: {
-    alignItems: 'flex-start',
-    marginBottom: 15,
-    paddingHorizontal: 15,
-  },
-  viewProfessionalText: {
-    fontWeight: '300',
-    fontSize: 9,
-    lineHeight: 11,
-    color: colors.primaryBlue,
-  },
-  professionalName: {
-    fontWeight: '700',
-    fontSize: 15,
-    lineHeight: 18,
-    color: colors.primaryBlack,
-    marginBottom: 5,
-  },
-  serviceInfo: {
-    fontWeight: '300',
-    fontSize: 12,
-    color: colors.primaryBlack,
-    marginBottom: 5,
-  },
-
-  professionalInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  partnerLogo: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  textContainer: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-  },
-});
+export const createStyles = (colors: ColorsType) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 12,
+      paddingHorizontal: 0,
+    },
+    avatar: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      marginRight: 12,
+      backgroundColor: colors.inputBackground,
+      borderWidth: 1,
+      borderColor: colors.borderColor,
+    },
+    textContainer: {
+      flex: 1,
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    },
+    name: {
+      fontSize: 16,
+      fontFamily: 'Afacad-Bold',
+      color: colors.primaryBlack,
+      marginBottom: 2,
+    },
+    serviceDetails: {
+      fontSize: 12,
+      fontFamily: 'Afacad-Regular',
+      color: colors.textSecondary,
+      marginBottom: 4,
+    },
+    viewProfileButton: {
+      paddingVertical: 2,
+    },
+    viewProfileText: {
+      fontSize: 12,
+      fontFamily: 'Afacad-SemiBold',
+      color: colors.primaryBlue,
+      textDecorationLine: 'underline',
+    },
+  });
