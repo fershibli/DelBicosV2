@@ -118,17 +118,14 @@ function CategoryList() {
   else if (width > 768) numColumns = 3;
 
   useEffect(() => {
-    if (!isLoading && !hasFetched) {
-      console.log('Fetching categories...');
-      setIsLoading(true);
-      fetchCategories().finally(() => {
-        setIsLoading(false);
-        setHasFetched(true);
-      });
-    } else {
+    if (hasFetched) return;
+    setIsLoading(true);
+    console.log('Fetching categories...');
+    fetchCategories().finally(() => {
       setIsLoading(false);
-    }
-  }, [categories, fetchCategories, hasFetched, isLoading]);
+      setHasFetched(true);
+    });
+  }, [fetchCategories, hasFetched]);
 
   const handleCategoryPress = (category: Category) => {
     // @ts-ignore

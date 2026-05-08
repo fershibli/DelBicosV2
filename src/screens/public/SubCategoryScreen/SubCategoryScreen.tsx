@@ -121,10 +121,10 @@ const SubCategoryButton: React.FC<{
       onHoverOut={() => setIsHovered(false)}
       accessibilityRole="button"
       accessibilityState={{ selected: isActive }}>
-      <FontAwesome5 
-        name={getIconForSubCategory(item.title)} 
-        size={20} 
-        color={styleProps.text} 
+      <FontAwesome5
+        name={getIconForSubCategory(item.title)}
+        size={20}
+        color={styleProps.text}
         style={styles.subCategoryIcon as any}
       />
       <Text style={[styles.subCategoryText, { color: styleProps.text }]}>
@@ -160,14 +160,20 @@ function SubCategoryScreen() {
       setIsLoading(false);
       return;
     }
+    if (!categoryId) {
+      setIsLoading(false);
+      return;
+    }
+    let cancelled = false;
     const loadSubCategories = async () => {
       setIsLoading(true);
       await fetchSubCategoriesByCategoryId(categoryId);
-      setIsLoading(false);
+      if (!cancelled) setIsLoading(false);
     };
-    if (categoryId !== -1) {
-      loadSubCategories();
-    }
+    loadSubCategories();
+    return () => {
+      cancelled = true;
+    };
   }, [categoryId, fetchSubCategoriesByCategoryId, singleSubCategory]);
 
   const subCategoriesToDisplay = singleSubCategory
@@ -258,22 +264,22 @@ function SubCategoryScreen() {
                 todayTextColor: 'rgba(255, 255, 255, 0.4)',
                 todayDotColor: 'rgba(255, 255, 255, 0.4)',
 
-              // --- SELEÇÃO ---
-              selectedDayBackgroundColor: '#ffffff',
-              selectedDayTextColor: colors.primaryOrange,
-            }}
-            onDayPress={(day) => setSelectedDate(day.dateString)}
-            markedDates={markedDates}
-            minDate={(() => {
-              const minTime = new Date(Date.now() + 26 * 60 * 60 * 1000);
-              const y = minTime.getFullYear();
-              const m = String(minTime.getMonth() + 1).padStart(2, '0');
-              const d = String(minTime.getDate()).padStart(2, '0');
-              return `${y}-${m}-${d}`;
-            })()}
-            enableSwipeMonths={true}
-          />
-        </View>
+                // --- SELEÇÃO ---
+                selectedDayBackgroundColor: '#ffffff',
+                selectedDayTextColor: colors.primaryOrange,
+              }}
+              onDayPress={(day) => setSelectedDate(day.dateString)}
+              markedDates={markedDates}
+              minDate={(() => {
+                const minTime = new Date(Date.now() + 26 * 60 * 60 * 1000);
+                const y = minTime.getFullYear();
+                const m = String(minTime.getMonth() + 1).padStart(2, '0');
+                const d = String(minTime.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+              })()}
+              enableSwipeMonths={true}
+            />
+          </View>
 
           <Pressable
             style={[

@@ -19,15 +19,24 @@ export const useServiceSearch = () => {
         const promises = categories.map((cat) =>
           backendHttpClient.get(`/api/subcategories/category/${cat.id}`),
         );
-        const responses = await Promise.all(promises);
-        
+        const responses = await Promise.allSettled(promises);
+
         const combined: SubCategory[] = [];
-        responses.forEach((res) => {
-          if (res.data && Array.isArray(res.data)) {
-            combined.push(...res.data);
+        responses.forEach((result, index) => {
+          if (
+            result.status === 'fulfilled' &&
+            Array.isArray(result.value.data)
+          ) {
+            const withCategoryId = result.value.data.map(
+              (sub: SubCategory) => ({
+                ...sub,
+                categoryId: categories[index].id,
+              }),
+            );
+            combined.push(...withCategoryId);
           }
         });
-        
+
         setAllSubCategories(combined);
       } catch (error) {
         console.error('Erro ao buscar subcategorias:', error);
@@ -45,9 +54,9 @@ export const useServiceSearch = () => {
       return;
     }
     const lowerTerm = term.toLowerCase().trim();
-    const filtered = allSubCategories.filter(sub => 
-      sub.title.toLowerCase().includes(lowerTerm)
-    ).slice(0, 5);
+    const filtered = allSubCategories
+      .filter((sub) => sub.title.toLowerCase().includes(lowerTerm))
+      .slice(0, 5);
     setResults(filtered);
   };
 
