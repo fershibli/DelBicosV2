@@ -101,7 +101,11 @@ function CategoryCard({ category, onPress, isWebLayout }: CategoryCardProps) {
       <View
         style={[
           styles.bubble,
-          { backgroundColor: isHovered ? colors.primaryOrange + '30' : bubbleBgColor },
+          {
+            backgroundColor: isHovered
+              ? colors.primaryOrange + '30'
+              : bubbleBgColor,
+          },
         ]}>
         <FontAwesome5
           name={iconName}
@@ -111,7 +115,10 @@ function CategoryCard({ category, onPress, isWebLayout }: CategoryCardProps) {
         />
       </View>
       <Text
-        style={[styles.bubbleTitle, { color: isDark ? colors.primaryWhite : colors.primaryBlack }]}
+        style={[
+          styles.bubbleTitle,
+          { color: isDark ? colors.primaryWhite : colors.primaryBlack },
+        ]}
         numberOfLines={2}>
         {category.title}
       </Text>
@@ -122,6 +129,7 @@ function CategoryCard({ category, onPress, isWebLayout }: CategoryCardProps) {
 function CategorySlider() {
   const [isLoading, setIsLoading] = useState(true);
   const { categories, fetchCategories } = useCategoryStore();
+  const [hasFetched, setHasFetched] = useState(false);
   const navigation = useNavigation();
   const colors = useColors();
   const styles = createStyles(colors);
@@ -132,13 +140,14 @@ function CategorySlider() {
   const isWebLayout = Platform.OS === 'web' && width > 768;
 
   useEffect(() => {
-    if (!categories?.length) {
-      setIsLoading(true);
-      fetchCategories().finally(() => setIsLoading(false));
-    } else {
+    if (hasFetched) return;
+    setIsLoading(true);
+    console.log('Fetching categories...');
+    fetchCategories().finally(() => {
       setIsLoading(false);
-    }
-  }, [categories, fetchCategories]);
+      setHasFetched(true);
+    });
+  }, [fetchCategories, hasFetched]);
 
   const handleCategoryPress = (category: Category) => {
     // @ts-ignore
@@ -176,7 +185,11 @@ function CategorySlider() {
             data={categories}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
-              <CategoryCard category={item} onPress={handleCategoryPress} isWebLayout={isWebLayout} />
+              <CategoryCard
+                category={item}
+                onPress={handleCategoryPress}
+                isWebLayout={isWebLayout}
+              />
             )}
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -188,11 +201,11 @@ function CategorySlider() {
         ) : (
           <View style={styles.gridContainer}>
             {categories.map((item) => (
-              <CategoryCard 
-                key={item.id.toString()} 
-                category={item} 
-                onPress={handleCategoryPress} 
-                isWebLayout={isWebLayout} 
+              <CategoryCard
+                key={item.id.toString()}
+                category={item}
+                onPress={handleCategoryPress}
+                isWebLayout={isWebLayout}
               />
             ))}
           </View>

@@ -19,8 +19,24 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
     lng?: number,
   ) => {
     try {
+      const params: any = {};
+      if (!!filter?.length) {
+        params.termo = filter;
+      }
+      if (page) {
+        params.page = page;
+      }
+      if (limit) {
+        params.limit = limit;
+      }
+      if (lat) {
+        params.lat = lat;
+      }
+      if (lng) {
+        params.lng = lng;
+      }
       const response = await backendHttpClient.get('/api/professionals', {
-        params: { termo: filter, page, limit, lat, lng },
+        params,
       });
 
       const rawData = Array.isArray(response.data)

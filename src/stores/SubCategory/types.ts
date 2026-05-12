@@ -2,7 +2,8 @@
 export interface SubCategory {
   id: number;
   title: string;
-  categoryId: number; // Para sabermos a qual categoria ela pertence
+  description?: string;
+  category_id: number; // Para sabermos a qual categoria ela pertence
 }
 
 // Interface para o store

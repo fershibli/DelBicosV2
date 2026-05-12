@@ -103,6 +103,7 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
 function CategoryList() {
   const [isLoading, setIsLoading] = useState(true);
   const { categories, fetchCategories } = useCategoryStore();
+  const [hasFetched, setHasFetched] = useState(false);
   const navigation = useNavigation();
   const colors = useColors();
   const styles = createStyles(colors);
@@ -117,13 +118,14 @@ function CategoryList() {
   else if (width > 768) numColumns = 3;
 
   useEffect(() => {
-    if (!categories?.length) {
-      setIsLoading(true);
-      fetchCategories().finally(() => setIsLoading(false));
-    } else {
+    if (hasFetched) return;
+    setIsLoading(true);
+    console.log('Fetching categories...');
+    fetchCategories().finally(() => {
       setIsLoading(false);
-    }
-  }, [categories, fetchCategories]);
+      setHasFetched(true);
+    });
+  }, [fetchCategories, hasFetched]);
 
   const handleCategoryPress = (category: Category) => {
     // @ts-ignore
