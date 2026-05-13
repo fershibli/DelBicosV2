@@ -72,14 +72,33 @@ const MenuNavegacao = () => {
   const currentSubroute =
     (route.params as any)?.subroute || ClientProfileSubRoutes.DadosConta;
 
-  const handlePress = (subroute: ClientProfileSubRoutes) => {
+  const isProviderTab = route.name === 'ProviderProfileTab';
+
+  const dynamicMenuOptions = menuOptions.map((option) => {
+    if (option.id === ClientProfileSubRoutes.TornarParceiro && isProviderTab) {
+      return {
+        id: 'VoltarCliente',
+        label: 'Voltar para o Cliente',
+        icon: 'arrow-back',
+        activeIcon: 'arrow-back',
+      };
+    }
+    return option;
+  });
+
+  const handlePress = (subroute: string) => {
+    if (subroute === 'VoltarCliente') {
+      // @ts-ignore
+      navigation.navigate('MainTabs');
+      return;
+    }
     // @ts-ignore - Atualiza o parâmetro na rota atual
     navigation.setParams({ subroute });
   };
 
   return (
     <View style={styles.menuContainer}>
-      {menuOptions.map((item) => {
+      {dynamicMenuOptions.map((item) => {
         const isActive = currentSubroute === item.id;
         const iconName = isActive ? item.activeIcon : item.icon;
 

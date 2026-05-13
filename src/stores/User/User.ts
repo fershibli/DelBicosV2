@@ -378,7 +378,15 @@ export const useUserStore = create<UserStore>()(
           if (error.response?.data?.error) {
             throw new Error(error.response.data.error);
           }
-          throw new Error('Ocorreu um erro ao enviar sua solicitação. Tente novamente.');
+          if (error.response?.data?.message) {
+            throw new Error(error.response.data.message);
+          }
+          if (error.response?.data?.msg) {
+            throw new Error(error.response.data.msg);
+          }
+          
+          const debugData = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+          throw new Error(`Erro inesperado: ${debugData}`);
         }
       },
 
