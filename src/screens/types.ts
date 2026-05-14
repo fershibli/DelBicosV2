@@ -46,11 +46,11 @@ export type NavigationParams = {
       }
     | undefined;
   MySchedules: undefined;
-  ProviderTabs: undefined;
-  ProviderHomeTab: undefined;
-  ProviderSchedulesTab: undefined;
-  ProviderEarningsTab: undefined;
-  ProviderProfileTab: undefined;
+  ProfessionalTabs: undefined;
+  ProfessionalHomeTab: undefined;
+  ProfessionalSchedulesTab: undefined;
+  ProfessionalEarningsTab: undefined;
+  ProfessionalProfileTab: undefined;
   Help: undefined;
   AdminDashboard: undefined;
   AdminAnalytics: undefined;
