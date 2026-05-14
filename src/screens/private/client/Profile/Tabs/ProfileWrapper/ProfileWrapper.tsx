@@ -25,6 +25,7 @@ import AvaliacoesTab from '@screens/private/client/Profile/Tabs/AvaliacoesTab';
 import FavoritosTab from '@screens/private/client/Profile/Tabs/FavoritosTab';
 import HistoricoCompras from '@screens/private/client/Profile/Tabs/HistoricoCompras';
 import MenuNavegacao from '@screens/private/client/Profile/Tabs/MenuNavegacao';
+import TornarParceiroForm from '@screens/private/client/Profile/Tabs/TornarParceiroForm';
 
 type ClientProfileRouteParams = {
   subroute?: ClientProfileSubRoutes;
@@ -66,6 +67,8 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
         return <FavoritosTab />;
       case ClientProfileSubRoutes.Historico:
         return <HistoricoCompras />;
+      case ClientProfileSubRoutes.TornarParceiro:
+        return <TornarParceiroForm />;
       default:
         return <DadosContaForm user={user} />;
     }

@@ -56,7 +56,11 @@ export const useUserStore = create<UserStore>()(
             cpf: user.Client.cpf,
             avatar_uri: user.avatar_uri,
             banner_uri: user.banner_uri,
+            professional_id: user.professional_id || user.Professional?.id || user.professional?.id || undefined,
           };
+
+          console.log('[DEBUG fetchCurrentUser] Payload recebido do backend:', user);
+          console.log('[DEBUG fetchCurrentUser] Valor do professional_id:', userData.professional_id);
 
           const prevUser = get().user;
           set({
@@ -91,22 +95,26 @@ export const useUserStore = create<UserStore>()(
             cpf: user.cpf,
             avatar_uri: user.avatar_uri || null,
             banner_uri: user.banner_uri || null,
+            professional_id: user.professional_id || user.Professional?.id || user.professional?.id || undefined,
           };
+
+          console.log('[DEBUG signInPassword] Payload recebido do backend:', user);
+          console.log('[DEBUG signInPassword] Valor do professional_id:', userData.professional_id);
 
           const addressData: Address | null = user.address
             ? {
-                id: user.address.id,
-                lat: user.address.lat,
-                lng: user.address.lng,
-                street: user.address.street,
-                number: user.address.number,
-                complement: user.address.complement,
-                neighborhood: user.address.neighborhood,
-                city: user.address.city,
-                state: user.address.state,
-                country_iso: user.address.country_iso,
-                postal_code: user.address.postal_code,
-              }
+              id: user.address.id,
+              lat: user.address.lat,
+              lng: user.address.lng,
+              street: user.address.street,
+              number: user.address.number,
+              complement: user.address.complement,
+              neighborhood: user.address.neighborhood,
+              city: user.address.city,
+              state: user.address.state,
+              country_iso: user.address.country_iso,
+              postal_code: user.address.postal_code,
+            }
             : null;
 
           get().setLoggedInUser({
@@ -119,6 +127,7 @@ export const useUserStore = create<UserStore>()(
               phone: user.phone,
               cpf: user.cpf,
               avatar_uri: user.avatar_uri,
+              professional_id: user.professional_id || user.Professional?.id || user.professional?.id || undefined,
             },
             address: addressData,
           });
@@ -346,6 +355,39 @@ export const useUserStore = create<UserStore>()(
         }
 
         return data;
+      },
+
+      becomeProfessional: async (data) => {
+        try {
+          const response = await backendHttpClient.post('/api/professionals', data);
+          if (response.status === 201 && response.data.professional) {
+            const currentUser = get().user;
+            if (currentUser) {
+              set({
+                user: {
+                  ...currentUser,
+                  professional_id: response.data.professional.id,
+                },
+              });
+            }
+          } else {
+            throw new Error('Falha ao registrar profissional.');
+          }
+        } catch (error: any) {
+          console.error('Erro ao registrar profissional:', error);
+          if (error.response?.data?.error) {
+            throw new Error(error.response.data.error);
+          }
+          if (error.response?.data?.message) {
+            throw new Error(error.response.data.message);
+          }
+          if (error.response?.data?.msg) {
+            throw new Error(error.response.data.msg);
+          }
+          
+          const debugData = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+          throw new Error(`Erro inesperado: ${debugData}`);
+        }
       },
 
       signOut: () => {
