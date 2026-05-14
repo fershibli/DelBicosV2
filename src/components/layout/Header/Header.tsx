@@ -322,7 +322,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                 </MenuOption>
                 {user?.professional_id && (
                   <MenuOption
-                    onSelect={() => navigateTo('ProviderTabs')}>
+                    onSelect={() => navigateTo('ProfessionalTabs')}>
                     <View style={styles.menuOption}>
                       <FontAwesome
                         name="briefcase"
