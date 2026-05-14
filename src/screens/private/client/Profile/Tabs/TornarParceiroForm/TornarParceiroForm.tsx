@@ -62,7 +62,7 @@ const TornarParceiroForm: React.FC = () => {
             text: 'OK',
             onPress: () => {
               // @ts-ignore
-              navigation.navigate('ProviderTabs');
+              navigation.navigate('ProfessionalTabs');
             },
           },
         ]

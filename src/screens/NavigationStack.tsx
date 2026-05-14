@@ -25,10 +25,10 @@ import MySchedulesScreen from './private/client/MySchedulesScreen';
 import HelpScreen from '@screens/public/HelpScreen';
 import AdminDashboard from './private/admin/AdminDashboard';
 import AdminAnalytics from './private/admin/AdminAnalytics';
-import ProviderDashboard from './private/ProviderDashboard';
+import ProfessionalDashboard from './private/ProfessionalDashboard';
 import ProfileScreen from '@screens/private/client/Profile/Tabs/ProfileScreen';
 
-import ProviderEarningsScreen from './private/ProviderEarningsScreen/ProviderEarningsScreen';
+import ProfessionalEarningsScreen from './private/ProfessionalEarningsScreen/ProfessionalEarningsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -90,7 +90,7 @@ const MainTabs = () => {
   );
 };
 
-const ProviderTabs = () => {
+const ProfessionalTabs = () => {
   const { user } = useUserStore();
 
   return (
@@ -114,22 +114,22 @@ const ProviderTabs = () => {
       }}
     >
       <Tab.Screen 
-        name="ProviderHomeTab" 
-        component={ProviderDashboard} 
+        name="ProfessionalHomeTab" 
+        component={ProfessionalDashboard} 
         options={{ title: 'Início', tabBarIcon: ({ color, size }) => <FontAwesome name="home" size={size} color={color} /> }} 
       />
       <Tab.Screen 
-        name="ProviderSchedulesTab" 
+        name="ProfessionalSchedulesTab" 
         component={MySchedulesScreen} 
         options={{ title: 'Agenda', tabBarIcon: ({ color, size }) => <FontAwesome name="calendar-o" size={size} color={color} /> }} 
       />
       <Tab.Screen 
-        name="ProviderEarningsTab" 
-        component={ProviderEarningsScreen} 
+        name="ProfessionalEarningsTab" 
+        component={ProfessionalEarningsScreen} 
         options={{ title: 'Saldo', tabBarIcon: ({ color, size }) => <FontAwesome name="dollar" size={size} color={color} /> }} 
       />
       <Tab.Screen 
-        name="ProviderProfileTab" 
+        name="ProfessionalProfileTab" 
         component={ProfileScreen} 
         options={{ 
           title: 'Perfil', 
@@ -283,8 +283,8 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
         title: 'Meus Agendamentos',
       },
     },
-    ProviderTabs: {
-      screen: ProviderTabs,
+    ProfessionalTabs: {
+      screen: ProfessionalTabs,
       options: {
         headerShown: false,
       },

@@ -72,10 +72,10 @@ const MenuNavegacao = () => {
   const currentSubroute =
     (route.params as any)?.subroute || ClientProfileSubRoutes.DadosConta;
 
-  const isProviderTab = route.name === 'ProviderProfileTab';
+  const isProfessionalTab = route.name === 'ProfessionalProfileTab';
 
   const dynamicMenuOptions = menuOptions.map((option) => {
-    if (option.id === ClientProfileSubRoutes.TornarParceiro && isProviderTab) {
+    if (option.id === ClientProfileSubRoutes.TornarParceiro && isProfessionalTab) {
       return {
         id: 'VoltarCliente',
         label: 'Voltar para o Cliente',
