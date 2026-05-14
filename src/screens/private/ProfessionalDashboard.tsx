@@ -14,7 +14,7 @@ import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 
-const ProviderDashboard: React.FC = () => {
+const ProfessionalDashboard: React.FC = () => {
   const { kpis, loading, error, fetchKpis, fetchEarnings, fetchCategories } = useDashboardStore();
   const { user } = useUserStore();
   const navigation = useNavigation<any>();
@@ -52,7 +52,7 @@ const ProviderDashboard: React.FC = () => {
   };
 
   const navigateToSchedules = () => {
-    navigation.navigate('ProviderSchedulesTab');
+    navigation.navigate('ProfessionalSchedulesTab');
   };
 
   // Mock value for now, or use kpis.totalEarnings if backend provides it
@@ -190,4 +190,4 @@ const ProviderDashboard: React.FC = () => {
   );
 };
 
-export default ProviderDashboard;
+export default ProfessionalDashboard;
