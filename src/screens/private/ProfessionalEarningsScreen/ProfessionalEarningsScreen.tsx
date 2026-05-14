@@ -5,7 +5,7 @@ import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
 import { useDashboardStore } from '@stores/Dashboard';
 
-const ProviderEarningsScreen: React.FC = () => {
+const ProfessionalEarningsScreen: React.FC = () => {
   const colors = useColors();
   const styles = createStyles(colors);
   
@@ -97,4 +97,4 @@ const ProviderEarningsScreen: React.FC = () => {
   );
 };
 
-export default ProviderEarningsScreen;
+export default ProfessionalEarningsScreen;
