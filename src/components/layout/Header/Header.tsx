@@ -70,13 +70,29 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
   const navigateTo = useCallback(
     (screen?: keyof NavigationParams) => {
       if (!screen) return;
-      
+
       if (!isWebOrLargeScreen) {
         // Roteamento explícito para dentro do MainTabs registrado no RootStack
-        if (screen === 'Feed') return navigation.navigate('MainTabs' as never, { screen: 'FeedTab' } as never);
-        if (screen === 'Category') return navigation.navigate('MainTabs' as never, { screen: 'CategoryTab' } as never);
-        if (screen === 'MySchedules') return navigation.navigate('MainTabs' as never, { screen: 'SchedulesTab' } as never);
-        if (screen === 'ClientProfile') return navigation.navigate('MainTabs' as never, { screen: 'ProfileTab' } as never);
+        if (screen === 'Feed')
+          return navigation.navigate(
+            'MainTabs' as never,
+            { screen: 'FeedTab' } as never,
+          );
+        if (screen === 'Category')
+          return navigation.navigate(
+            'MainTabs' as never,
+            { screen: 'CategoryTab' } as never,
+          );
+        if (screen === 'MySchedules')
+          return navigation.navigate(
+            'MainTabs' as never,
+            { screen: 'SchedulesTab' } as never,
+          );
+        if (screen === 'ClientProfile')
+          return navigation.navigate(
+            'MainTabs' as never,
+            { screen: 'ProfileTab' } as never,
+          );
       }
 
       // @ts-ignore
@@ -295,6 +311,17 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                 <Text style={styles.menuOptionText}>Categorias</Text>
               </View>
             </MenuOption>
+            {/* <MenuOption onSelect={() => navigateTo('Help')}>
+              <View style={styles.menuOption}>
+                <FontAwesome
+                  name="question-circle-o"
+                  size={18}
+                  color={headerIconColor}
+                  style={styles.menuIcon}
+                />
+                <Text style={styles.menuOptionText}>Quem Somos</Text>
+              </View>
+            </MenuOption> */}
             <MenuOption onSelect={() => navigateTo('Help')}>
               <View style={styles.menuOption}>
                 <FontAwesome
@@ -321,8 +348,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                   </View>
                 </MenuOption>
                 {user?.professional_id && (
-                  <MenuOption
-                    onSelect={() => navigateTo('ProfessionalTabs')}>
+                  <MenuOption onSelect={() => navigateTo('ProfessionalTabs')}>
                     <View style={styles.menuOption}>
                       <FontAwesome
                         name="briefcase"
@@ -371,8 +397,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
 
             {!!user ? (
               <>
-                <MenuOption
-                  onSelect={() => navigateTo('ClientProfile')}>
+                <MenuOption onSelect={() => navigateTo('ClientProfile')}>
                   <View style={styles.menuOption}>
                     <FontAwesome
                       name="user-circle-o"
@@ -417,20 +442,26 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
           </MenuOptions>
         </Menu>
 
-        <TouchableOpacity onPress={() => navigateTo('Feed')} style={styles.mobileLogoContainer}>
+        <TouchableOpacity
+          onPress={() => navigateTo('Feed')}
+          style={styles.mobileLogoContainer}>
           <Image source={logo} style={styles.mobileLogo} />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => !!user ? navigateTo('ClientProfile') : navigateTo('Login')} style={styles.mobileProfileContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            !!user ? navigateTo('ClientProfile') : navigateTo('Login')
+          }
+          style={styles.mobileProfileContainer}>
           {!!user ? (
-             <Image
-                source={
-                  user.avatar_uri
-                    ? { uri: user.avatar_uri }
-                    : require('@assets/logo.png')
-                }
-                style={styles.mobileProfileImage}
-              />
+            <Image
+              source={
+                user.avatar_uri
+                  ? { uri: user.avatar_uri }
+                  : require('@assets/logo.png')
+              }
+              style={styles.mobileProfileImage}
+            />
           ) : (
             <FontAwesome name="user-circle" size={26} color={headerIconColor} />
           )}
@@ -452,6 +483,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         <View style={styles.menu}>
           <MenuItem screen={'Feed'}>Página Inicial</MenuItem>
           <MenuItem screen={'Category'}>Categorias</MenuItem>
+          <MenuItem screen={'AboutUs'}>Quem Somos</MenuItem>
           <MenuItem screen={'Help'}>FAQ</MenuItem>
           {!!user && (
             <>
