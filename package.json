@@ -71,7 +71,7 @@
     "expo-linear-gradient": "^15.0.7",
     "expo-location": "^19.0.7",
     "expo-notifications": "^0.32.12",
-    "expo-print": "~15.0.8",
+    "expo-print": "15.0.8",
     "expo-sharing": "^14.0.7",
     "expo-sms": "^14.0.7",
     "expo-splash-screen": "~31.0.10",
@@ -116,7 +116,7 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
     "husky": "^9.1.7",
-    "jest-expo": "~54.0.17",
+    "jest-expo": "54.0.17",
     "prettier": "^3.5.3",
     "react-native-svg-transformer": "^1.5.1",
     "typescript": "^5.7.2"

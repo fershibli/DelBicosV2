@@ -11,6 +11,7 @@ export enum ClientProfileSubRoutes {
   Historico = 'Historico',
   Pagamentos = 'Pagamentos',
   Ajuda = 'Ajuda',
+  TornarParceiro = 'TornarParceiro',
 }
 
 export type ClientProfileParams = {
@@ -45,7 +46,11 @@ export type NavigationParams = {
       }
     | undefined;
   MySchedules: undefined;
-  ProviderDashboard: undefined;
+  ProfessionalTabs: undefined;
+  ProfessionalHomeTab: undefined;
+  ProfessionalSchedulesTab: undefined;
+  ProfessionalEarningsTab: undefined;
+  ProfessionalProfileTab: undefined;
   Help: undefined;
   AdminDashboard: undefined;
   AdminAnalytics: undefined;

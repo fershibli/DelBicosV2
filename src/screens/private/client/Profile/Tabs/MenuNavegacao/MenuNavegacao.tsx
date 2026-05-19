@@ -55,6 +55,12 @@ const menuOptions = [
     icon: 'history',
     activeIcon: 'history',
   },
+  {
+    id: ClientProfileSubRoutes.TornarParceiro,
+    label: 'Tornar-se Colaborador',
+    icon: 'card-travel',
+    activeIcon: 'work',
+  },
 ];
 
 const MenuNavegacao = () => {
@@ -66,14 +72,33 @@ const MenuNavegacao = () => {
   const currentSubroute =
     (route.params as any)?.subroute || ClientProfileSubRoutes.DadosConta;
 
-  const handlePress = (subroute: ClientProfileSubRoutes) => {
+  const isProfessionalTab = route.name === 'ProfessionalProfileTab';
+
+  const dynamicMenuOptions = menuOptions.map((option) => {
+    if (option.id === ClientProfileSubRoutes.TornarParceiro && isProfessionalTab) {
+      return {
+        id: 'VoltarCliente',
+        label: 'Voltar para o Cliente',
+        icon: 'arrow-back',
+        activeIcon: 'arrow-back',
+      };
+    }
+    return option;
+  });
+
+  const handlePress = (subroute: string) => {
+    if (subroute === 'VoltarCliente') {
+      // @ts-ignore
+      navigation.navigate('MainTabs');
+      return;
+    }
     // @ts-ignore - Atualiza o parâmetro na rota atual
     navigation.setParams({ subroute });
   };
 
   return (
     <View style={styles.menuContainer}>
-      {menuOptions.map((item) => {
+      {dynamicMenuOptions.map((item) => {
         const isActive = currentSubroute === item.id;
         const iconName = isActive ? item.activeIcon : item.icon;
 
