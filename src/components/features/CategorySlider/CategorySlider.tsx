@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -129,7 +129,7 @@ function CategoryCard({ category, onPress, isWebLayout }: CategoryCardProps) {
 function CategorySlider() {
   const [isLoading, setIsLoading] = useState(true);
   const { categories, fetchCategories } = useCategoryStore();
-  const [hasFetched, setHasFetched] = useState(false);
+  const hasFetchedRef = useRef(false);
   const navigation = useNavigation();
   const colors = useColors();
   const styles = createStyles(colors);
@@ -139,15 +139,20 @@ function CategorySlider() {
   // Otherwise (mobile devices or small web screens), show the Bubbles.
   const isWebLayout = Platform.OS === 'web' && width > 768;
 
+
   useEffect(() => {
-    if (hasFetched) return;
+    if (hasFetchedRef.current) return;
+
+    hasFetchedRef.current = true;
+
     setIsLoading(true);
+
     console.log('Fetching categories...');
+
     fetchCategories().finally(() => {
       setIsLoading(false);
-      setHasFetched(true);
     });
-  }, [fetchCategories, hasFetched]);
+  }, []);
 
   const handleCategoryPress = (category: Category) => {
     // @ts-ignore
