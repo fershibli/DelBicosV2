@@ -11,7 +11,7 @@ export const createStyles = (colors: ColorsType) =>
       paddingBottom: 40,
     },
 
-    // ── Title ──────────────────────────────────────────────────────────────
+    // Title
     pageTitle: {
       fontSize: 62,
       fontFamily: 'Afacad-Bold',
@@ -21,7 +21,7 @@ export const createStyles = (colors: ColorsType) =>
       paddingVertical: 20,
     },
 
-    // ── Mission Card ───────────────────────────────────────────────────────
+    // Mission Card 
     missionCard: {
       flexDirection: 'row',
       marginHorizontal: 16,
@@ -57,9 +57,6 @@ export const createStyles = (colors: ColorsType) =>
     teamPhotoLogo: {
       width: '100%',
       height: 500,
-      borderColor: colors.primaryOrange,
-      borderWidth: 2,
-      borderRadius: 12,
     },
     missionTextCol: {
       flex: 1,
@@ -86,7 +83,7 @@ export const createStyles = (colors: ColorsType) =>
       marginTop: 4,
     },
 
-    // ── Developers Banner ──────────────────────────────────────────────────
+    //  Developers Banner
     developersBanner: {
       backgroundColor: colors.primaryBlue,
       paddingVertical: 10,
@@ -101,7 +98,7 @@ export const createStyles = (colors: ColorsType) =>
       letterSpacing: 0.5,
     },
 
-    // ── Developer Card ─────────────────────────────────────────────────────
+    //  Developer Card
     developerCard: {
       flexDirection: 'row',
       marginHorizontal: 16,
@@ -127,24 +124,24 @@ export const createStyles = (colors: ColorsType) =>
         },
       }),
     },
+    developerCardReversed: {
+      flexDirection: 'row-reverse',
+    },
     developerPhotoWrapper: {
       alignItems: 'center',
     },
     developerPhoto: {
-      width: 172,
-      height: 172,
-      borderRadius: 86,
+      width: 300,
+      height: 300,
     },
     developerPhotoPlaceholder: {
-      width: 172,
-      height: 172,
-      borderRadius: 36,
-      backgroundColor: colors.primaryOrange,
-      alignItems: 'center',
+      width: 372,
+      height: 372,
+      alignItems: 'flex-end',
       justifyContent: 'center',
     },
     developerPhotoInitial: {
-      fontSize: 28,
+      fontSize: 48,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryWhite,
     },
@@ -152,19 +149,25 @@ export const createStyles = (colors: ColorsType) =>
       flex: 1,
     },
     developerName: {
-      fontSize: 30,
+      fontSize: 40,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryOrange,
       marginBottom: 2,
     },
+    developerNameReversed: {
+      textAlign: 'right',
+    },
     developerRoleRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 8,
+      gap: 18,
       marginBottom: 8,
     },
+    developerRoleRowReversed: {
+      flexDirection: 'row-reverse',
+    },
     developerRole: {
-      fontSize: 24,
+      fontSize: 30,
       fontFamily: 'Afacad-SemiBold',
       color: colors.primaryBlue,
     },
@@ -182,7 +185,7 @@ export const createStyles = (colors: ColorsType) =>
       color: colors.primaryWhite,
     },
     developerBio: {
-      fontSize: 22,
+      fontSize: 25,
       fontFamily: 'Afacad-Regular',
       color: colors.primaryBlack,
       lineHeight: 28,
