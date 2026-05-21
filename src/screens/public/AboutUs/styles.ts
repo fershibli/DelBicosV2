@@ -137,8 +137,23 @@ export const createStyles = (colors: ColorsType) =>
     developerPhotoPlaceholder: {
       width: 372,
       height: 372,
-      alignItems: 'flex-end',
+      alignItems: 'center',
       justifyContent: 'center',
+    },
+    developerSocialIcons: {
+      flexDirection: 'row',
+      gap: 8,
+      alignItems: 'center',
+    },
+    socialIconButton: {
+      padding: 2,
+    },
+    socialIcon: {
+      width: 30,
+      height: 30,
+    },
+    socialIconDisabled: {
+      opacity: 0.3,
     },
     developerPhotoInitial: {
       fontSize: 48,
@@ -190,5 +205,15 @@ export const createStyles = (colors: ColorsType) =>
       color: colors.primaryBlack,
       lineHeight: 28,
       textAlign: 'justify',
+    },
+
+    // Separator line between developer cards
+    separatorLine: {
+      width: '100%',
+      height: 70,
+      marginVertical: 2,
+    },
+    separatorLineReversed: {
+      transform: [{ scaleX: -1 }],
     },
   });
