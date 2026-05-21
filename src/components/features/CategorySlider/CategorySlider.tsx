@@ -28,8 +28,8 @@ const CATEGORY_ICONS: Record<number, string> = {
   6: 'paw',
 };
 
-// Imagem padrão caso o campo imageUrl venha nulo ou indefinido do backend
 const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop';
+
 
 function getCategoryIconName(id: number) {
   return CATEGORY_ICONS[id] || 'shapes';
@@ -43,10 +43,10 @@ interface CategoryCardProps {
 
 function CategoryCard({ category, onPress, isWebLayout }: CategoryCardProps) {
   const iconName = getCategoryIconName(category.id);
-  
+
   // Consome diretamente a propriedade vinda do backend, caindo no placeholder se necessário
   const imageUrl = category.imageUrl || PLACEHOLDER_IMAGE;
-  
+
   const [isHovered, setIsHovered] = useState(false);
   const { theme } = useThemeStore();
   const colors = useColors();
