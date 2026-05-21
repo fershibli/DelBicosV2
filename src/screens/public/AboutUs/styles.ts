@@ -184,7 +184,7 @@ export const createStyles = (colors: ColorsType) =>
     developerRole: {
       fontSize: 30,
       fontFamily: 'Afacad-SemiBold',
-      color: colors.primaryBlue,
+      color: colors.primaryBlack,
     },
     developerInitialBadge: {
       width: 22,
