@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -18,6 +18,7 @@ import { createStyles } from './styles';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
+// Mantemos os ícones mapeados por enquanto, até que decida trazê-los do banco também!
 const CATEGORY_ICONS: Record<number, string> = {
   1: 'heartbeat',
   2: 'cut',
@@ -27,25 +28,11 @@ const CATEGORY_ICONS: Record<number, string> = {
   6: 'paw',
 };
 
-const CATEGORY_IMAGES = [
-  'https://images.unsplash.com/photo-1505506874110-6a7a6c9924c7?q=80&w=800&auto=format&fit=crop', // 0
-  'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?q=80&w=800&auto=format&fit=crop', // 1
-  'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=800&auto=format&fit=crop', // 2
-  'https://images.unsplash.com/photo-1581092926214-ee854bb359ea?q=80&w=800&auto=format&fit=crop', // 3
-  'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop', // 4
-  'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=800&auto=format&fit=crop', // 5
-  'https://images.unsplash.com/photo-1556910103-1c02745a872f?q=80&w=800&auto=format&fit=crop', // 6 - tech
-  'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop', // 7 - events/food
-  'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800&auto=format&fit=crop', // 8 - teaching
-  'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=800&auto=format&fit=crop', // 9 - driving
-];
+const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop';
+
 
 function getCategoryIconName(id: number) {
   return CATEGORY_ICONS[id] || 'shapes';
-}
-
-function getCategoryImage(id: number) {
-  return CATEGORY_IMAGES[id % CATEGORY_IMAGES.length];
 }
 
 interface CategoryCardProps {
@@ -56,13 +43,14 @@ interface CategoryCardProps {
 
 function CategoryCard({ category, onPress, isWebLayout }: CategoryCardProps) {
   const iconName = getCategoryIconName(category.id);
-  const imageUrl = getCategoryImage(category.id);
-  const [isHovered, setIsHovered] = useState(false);
 
+  // Consome diretamente a propriedade vinda do backend, caindo no placeholder se necessário
+  const imageUrl = category.imageUrl || PLACEHOLDER_IMAGE;
+
+  const [isHovered, setIsHovered] = useState(false);
   const { theme } = useThemeStore();
   const colors = useColors();
   const styles = createStyles(colors);
-
   const isDark = theme === ThemeMode.DARK;
 
   // --- RENDERING WEB IMAGE CARD ---
@@ -91,7 +79,7 @@ function CategoryCard({ category, onPress, isWebLayout }: CategoryCardProps) {
   }
 
   // --- RENDERING MOBILE BUBBLE ---
-  const bubbleBgColor = isDark ? '#2C2C2C' : colors.primaryOrange + '15'; // 15% opacity of original color
+  const bubbleBgColor = isDark ? '#2C2C2C' : colors.primaryOrange + '15';
 
   return (
     <Pressable
@@ -135,19 +123,12 @@ function CategorySlider() {
   const styles = createStyles(colors);
   const { width } = useWindowDimensions();
 
-  // If we are on web AND the screen is wider than a tablet, show the Image Cards.
-  // Otherwise (mobile devices or small web screens), show the Bubbles.
   const isWebLayout = Platform.OS === 'web' && width > 768;
-
 
   useEffect(() => {
     if (hasFetchedRef.current) return;
-
     hasFetchedRef.current = true;
-
     setIsLoading(true);
-
-    console.log('Fetching categories...');
 
     fetchCategories().finally(() => {
       setIsLoading(false);
@@ -162,7 +143,7 @@ function CategorySlider() {
     });
   };
 
-  const ITEM_WIDTH = isWebLayout ? 236 : 96; // Adjust based on layout sizes + gap
+  const ITEM_WIDTH = isWebLayout ? 236 : 96;
   const contentWidth = categories?.length ? categories.length * ITEM_WIDTH : 0;
   const shouldCenter = contentWidth < width && contentWidth > 0;
 
