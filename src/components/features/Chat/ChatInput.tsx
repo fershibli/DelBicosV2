@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-} from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   onSend: (text: string) => void;
@@ -35,10 +30,7 @@ const ChatInput: React.FC<Props> = ({ onSend }) => {
         blurOnSubmit={false}
       />
       <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
-        <Image
-          source={require('@assets/send-icon.png')} // Substitua pelo ícone real
-          style={styles.sendIcon}
-        />
+        <Ionicons name="send" size={24} color="#FC8200" />
       </TouchableOpacity>
     </View>
   );
@@ -69,11 +61,6 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  sendIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#FC8200',
   },
 });
 
