@@ -27,6 +27,8 @@ import AdminDashboard from './private/admin/AdminDashboard';
 import AdminAnalytics from './private/admin/AdminAnalytics';
 import ProfessionalDashboard from './private/ProfessionalDashboard';
 import ProfileScreen from '@screens/private/client/Profile/Tabs/ProfileScreen';
+import ChatListScreen from '@screens/private/chat/ChatListScreen';
+import ChatScreen from '@screens/private/chat/ChatScreen';
 
 import ProfessionalEarningsScreen from './private/ProfessionalEarningsScreen/ProfessionalEarningsScreen';
 
@@ -312,6 +314,14 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       options: {
         title: 'Analytics',
       },
+    },
+    ChatList: {
+      screen: ChatListScreen,
+      options: { title: 'Conversas' },
+    },
+    Chat: {
+      screen: ChatScreen,
+      options: { title: 'Chat' },
     },
   },
 });
