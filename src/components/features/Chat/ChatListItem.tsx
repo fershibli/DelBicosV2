@@ -1,6 +1,8 @@
 import React from 'react';
 import { TouchableOpacity, View, Image, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import type { Conversation } from '@stores/Types/chat';
+import theme from '@theme';
 
 interface Props {
   conversation: Conversation;
@@ -9,9 +11,14 @@ interface Props {
 
 const ChatListItem: React.FC<Props> = ({ conversation, onPress }) => {
   const { participant, lastMessage } = conversation;
-  const avatarSource = participant.avatar
-    ? { uri: participant.avatar }
-    : require('@assets/default-avatar.png'); // Certifique-se de ter uma imagem padrão
+
+  const avatarContent = participant.avatar ? (
+    <Image source={{ uri: participant.avatar }} style={styles.avatar} />
+  ) : (
+    <View style={[styles.avatar, styles.avatarPlaceholder]}>
+      <Ionicons name="person" size={36} color="#FFFFFF" />
+    </View>
+  );
 
   return (
     <TouchableOpacity
@@ -19,7 +26,7 @@ const ChatListItem: React.FC<Props> = ({ conversation, onPress }) => {
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <Image source={avatarSource} style={styles.avatar} />
+      {avatarContent}
       <View style={styles.info}>
         <Text style={styles.name} numberOfLines={1}>
           {participant.name}
@@ -57,7 +64,11 @@ const styles = StyleSheet.create({
     height: 71,
     borderRadius: 35.5,
     marginRight: 12,
-    backgroundColor: '#E0E0E0',
+  },
+  avatarPlaceholder: {
+    backgroundColor: '#CCCCCC',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   info: {
     flex: 1,
