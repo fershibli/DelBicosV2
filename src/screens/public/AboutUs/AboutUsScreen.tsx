@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, Linking } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 
@@ -21,18 +28,6 @@ const portIcon = require('@assets/aboutus/port-icon.png');
 const developers = [
   {
     id: 1,
-    name: 'Fernando Chibli',
-    role: 'CTO and Developer FullStack',
-    initial: 'F',
-    bio: 'Desenvolvedor com sólida experiência em desenvolvimento de software com Node, Python, React e Java. Formado em Tecnologia em Jogos Digitais, conta com uma carreira de mais de 11 (onze) anos de experiência nacional e internacional trazendo soluções e melhorias para projetos em diversas tecnologias, de aplicativos mobile à servidores em nuvem.',
-    photo: FernandoChibliProfile,
-    github: 'https://github.com/fershibli',
-    linkedin: 'https://www.linkedin.com/in/fernando-luiz-neme-chibli-25623169',
-    portfolio: 'https://portfolio-fershibli.vercel.app/',
-  },
-
-  {
-    id: 2,
     name: 'Douglas Wenzel',
     role: 'Scrum Master and Developer FullStack',
     initial: 'D',
@@ -44,31 +39,7 @@ const developers = [
   },
 
   {
-    id: 3,
-    name: 'Isabel Maito',
-    role: 'Designer and Developer FullStack',
-    initial: 'I',
-    bio: 'Formada em Design Gráfico e com mais de uma década de atuação no setor editorial, trago um olhar apurado para usabilidade e hierarquia visual que aplico diretamente na criação de interfaces centradas no usuário. Como Desenvolvedora Frontend e Fullstack, uno essa forte base criativa a mais de dois anos de experiência técnica na construção de aplicações web do zero. Possuo domínio prático de todo o ciclo de desenvolvimento, atuando com autonomia desde o levantamento de requisitos e prototipagem no Figma até a codificação frontend, integração com APIs REST e modelagem de dados, utilizando tecnologias como React, Node.js e MySQL.',
-    photo: IsabelMaitoProfile,
-    github: 'https://github.com/isabelmaito',
-    linkedin: 'https://www.linkedin.com/in/isabelmaito/',
-    portfolio: 'https://www.isabelmaito.com.br/',
-  },
-
-  {
-    id: 4,
-    name: 'Gustavo Ferreira',
-    role: 'Developer Frontend',
-    initial: 'G',
-    bio: 'Sou Frontend Software Developer, apaixonado por criar interfaces que sejam ao mesmo tempo bonitas, funcionais e fáceis de usar. Trabalho com desenvolvimento web utilizando principalmente React, JavaScript/TypeScript, HTML e CSS, sempre buscando escrever código limpo, reutilizável e bem estruturado. Estou em constante evolução, aprimorando minhas habilidades em arquitetura frontend, boas práticas de desenvolvimento e integração com APIs.',
-    photo: GustavoFerreiraProfile,
-    github: 'https://github.com/Gspedine',
-    linkedin: '',
-    portfolio: '',
-  },
-
-  {
-    id: 5,
+    id: 2,
     name: 'Eduardo Kamo',
     role: 'Developer FullStack',
     initial: 'E',
@@ -77,6 +48,42 @@ const developers = [
     github: 'https://github.com/edukamoz',
     linkedin: 'https://www.linkedin.com/in/eduardo-kamo/',
     portfolio: 'https://edukamoz.github.io/my-portfolio/',
+  },
+
+  {
+    id: 3,
+    name: 'Fernando Chibli',
+    role: 'CTO and Developer FullStack',
+    initial: 'F',
+    bio: 'Desenvolvedor com sólida experiência em desenvolvimento de software com Node, Python, React e Java. Formado em Tecnologia em Jogos Digitais, conta com uma carreira de mais de 11 (onze) anos de experiência nacional e internacional trazendo soluções e melhorias para projetos em diversas tecnologias, de aplicativos mobile à servidores em nuvem.',
+    photo: FernandoChibliProfile,
+    github: 'https://github.com/fershibli',
+    linkedin: 'https://www.linkedin.com/in/fernando-luiz-neme-chibli-25623169',
+    portfolio: 'https://portfolio-fershibli.vercel.app/',
+  },
+
+  {
+    id: 4,
+    name: 'Fernando Ribeiro',
+    role: 'Developer FullStack',
+    initial: 'F2',
+    bio: 'Desenvolvedor focado em Frontend, sempre buscando novas formas de melhorar o visual e acessibilidade dos meus projetos. Acredito que a tecnologia deve ser para todos e meu aprendizado pode trazer a facilidade a quem quiser acessar. Tenho 20 anos e estou cursando DSM (Desenvolvimento de Sistemas Multiplataforma). Atualmente tenho como profissão Analista de Sistemas com uma ponta em Correspondente Bancário na Pulse Client Experts, onde aplico tudo que aprendi até hoje.',
+    photo: FernandoRibeiroProfile,
+    github: 'https://github.com/FernandoRSantos',
+    linkedin: 'https://www.linkedin.com/in/fernando-ribeiro-a9a405301/',
+    portfolio: '',
+  },
+
+  {
+    id: 5,
+    name: 'Gustavo Ferreira',
+    role: 'Developer Frontend',
+    initial: 'G',
+    bio: 'Sou Frontend Software Developer, apaixonado por criar interfaces que sejam ao mesmo tempo bonitas, funcionais e fáceis de usar. Trabalho com desenvolvimento web utilizando principalmente React, JavaScript/TypeScript, HTML e CSS, sempre buscando escrever código limpo, reutilizável e bem estruturado. Estou em constante evolução, aprimorando minhas habilidades em arquitetura frontend, boas práticas de desenvolvimento e integração com APIs.',
+    photo: GustavoFerreiraProfile,
+    github: 'https://github.com/Gspedine',
+    linkedin: 'https://www.linkedin.com/in/gustavo-lopes-ferreira-1245b7179/',
+    portfolio: '',
   },
 
   {
@@ -93,6 +100,18 @@ const developers = [
 
   {
     id: 7,
+    name: 'Isabel Maito',
+    role: 'Designer and Developer FullStack',
+    initial: 'I',
+    bio: 'Formada em Design Gráfico e com mais de uma década de atuação no setor editorial, trago um olhar apurado para usabilidade e hierarquia visual que aplico diretamente na criação de interfaces centradas no usuário. Como Desenvolvedora Frontend e Fullstack, uno essa forte base criativa a mais de dois anos de experiência técnica na construção de aplicações web do zero. Possuo domínio prático de todo o ciclo de desenvolvimento, atuando com autonomia desde o levantamento de requisitos e prototipagem no Figma até a codificação frontend, integração com APIs REST e modelagem de dados, utilizando tecnologias como React, Node.js e MySQL.',
+    photo: IsabelMaitoProfile,
+    github: 'https://github.com/isabelmaito',
+    linkedin: 'https://www.linkedin.com/in/isabelmaito/',
+    portfolio: 'https://www.isabelmaito.com.br/',
+  },
+
+  {
+    id: 8,
     name: 'Lucas Consani',
     role: 'Developer FullStack',
     initial: 'L',
@@ -101,18 +120,6 @@ const developers = [
     github: 'https://github.com/konsanii',
     linkedin: 'https://www.linkedin.com/in/lucas-consani-0a742b159/',
     portfolio: 'https://konsanii.github.io/Portifolio/',
-  },
-
-  {
-    id: 8,
-    name: 'Fernando Ribeiro',
-    role: 'Developer FullStack',
-    initial: 'F2',
-    bio: 'Desenvolvedor focado em Frontend, sempre buscando novas formas de melhorar o visual e acessibilidade dos meus projetos. Acredito que a tecnologia deve ser para todos e meu aprendizado pode trazer a facilidade a quem quiser acessar. Tenho 20 anos e estou cursando DSM (Desenvolvimento de Sistemas Multiplataforma). Atualmente tenho como profissão Analista de Sistemas com uma ponta em Correspondente Bancário na Pulse Client Experts, onde aplico tudo que aprendi até hoje.',
-    photo: FernandoRibeiroProfile,
-    github: 'https://github.com/FernandoRSantos',
-    linkedin: 'https://www.linkedin.com/in/fernando-ribeiro-a9a405301/',
-    portfolio: '',
   },
 ];
 
@@ -167,41 +174,66 @@ function AboutUsScreen() {
               styles.developerCard,
               index % 2 !== 0 && styles.developerCardReversed,
             ]}>
-          <View style={styles.developerPhotoWrapper}>
-            {dev.photo ? (
-              <Image source={dev.photo} style={styles.developerPhoto} />
-            ) : (
-              <View style={styles.developerPhotoPlaceholder} />
-            )}
-          </View>
-
-          <View style={styles.developerInfo}>
-            <Text style={[styles.developerName, index % 2 !== 0 && styles.developerNameReversed]}>{dev.name}</Text>
-            <View style={[styles.developerRoleRow, index % 2 !== 0 && styles.developerRoleRowReversed]}>
-              <Text style={styles.developerRole}>{dev.role}</Text>
-              <View style={styles.developerSocialIcons}>
-                <TouchableOpacity
-                  onPress={() => dev.linkedin ? Linking.openURL(dev.linkedin) : undefined}
-                  disabled={!dev.linkedin}
-                  style={[styles.socialIconButton, !dev.linkedin && styles.socialIconDisabled]}>
-                  <Image source={linkIcon} style={styles.socialIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => dev.github ? Linking.openURL(dev.github) : undefined}
-                  disabled={!dev.github}
-                  style={[styles.socialIconButton, !dev.github && styles.socialIconDisabled]}>
-                  <Image source={gitIcon} style={styles.socialIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => dev.portfolio ? Linking.openURL(dev.portfolio) : undefined}
-                  disabled={!dev.portfolio}
-                  style={[styles.socialIconButton, !dev.portfolio && styles.socialIconDisabled]}>
-                  <Image source={portIcon} style={styles.socialIcon} />
-                </TouchableOpacity>
-              </View>
+            <View style={styles.developerPhotoWrapper}>
+              {dev.photo ? (
+                <Image source={dev.photo} style={styles.developerPhoto} />
+              ) : (
+                <View style={styles.developerPhotoPlaceholder} />
+              )}
             </View>
-            <Text style={styles.developerBio}>{dev.bio}</Text>
-          </View>
+
+            <View style={styles.developerInfo}>
+              <Text
+                style={[
+                  styles.developerName,
+                  index % 2 !== 0 && styles.developerNameReversed,
+                ]}>
+                {dev.name}
+              </Text>
+              <View
+                style={[
+                  styles.developerRoleRow,
+                  index % 2 !== 0 && styles.developerRoleRowReversed,
+                ]}>
+                <Text style={styles.developerRole}>{dev.role}</Text>
+                <View style={styles.developerSocialIcons}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      dev.linkedin ? Linking.openURL(dev.linkedin) : undefined
+                    }
+                    disabled={!dev.linkedin}
+                    style={[
+                      styles.socialIconButton,
+                      !dev.linkedin && styles.socialIconDisabled,
+                    ]}>
+                    <Image source={linkIcon} style={styles.socialIcon} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() =>
+                      dev.github ? Linking.openURL(dev.github) : undefined
+                    }
+                    disabled={!dev.github}
+                    style={[
+                      styles.socialIconButton,
+                      !dev.github && styles.socialIconDisabled,
+                    ]}>
+                    <Image source={gitIcon} style={styles.socialIcon} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() =>
+                      dev.portfolio ? Linking.openURL(dev.portfolio) : undefined
+                    }
+                    disabled={!dev.portfolio}
+                    style={[
+                      styles.socialIconButton,
+                      !dev.portfolio && styles.socialIconDisabled,
+                    ]}>
+                    <Image source={portIcon} style={styles.socialIcon} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <Text style={styles.developerBio}>{dev.bio}</Text>
+            </View>
           </View>
           {index < developers.length - 1 && (
             <Image
