@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 
 const logoImage = require('@assets/DelBicos_LogoH.png');
 const teamPhoto = require('@assets/aboutus/TeamDelbicos-profile.png');
@@ -44,7 +45,7 @@ const developers = [
   {
     id: 2,
     name: 'Eduardo Kamo',
-    role: 'Developer Front-end',
+    role: 'Developer Frontend',
     initial: 'E',
     bio: 'Desenvolvedor Full Stack / Frontend com sólida base em JavaScript/TypeScript e especialização no ecossistema React. Com foco no desenvolvimento mobile híbrido usando React Native e construção de APIs eficientes para o ecossistema web, atua na criação de soluções escaláveis, modernas e com alta performance de interface.',
     photo: EduardoKamoProfile,
@@ -80,7 +81,7 @@ const developers = [
   {
     id: 5,
     name: 'Gustavo Ferreira',
-    role: 'Developer Front-end',
+    role: 'Developer Frontend',
     initial: 'G',
     bio: 'Sou Frontend Software Developer, apaixonado por criar interfaces que sejam ao mesmo tempo bonitas, funcionais e fáceis de usar. Trabalho com desenvolvimento web utilizando principalmente React, JavaScript/TypeScript, HTML e CSS, sempre buscando escrever código limpo, reutilizável e bem estruturado. Estou em constante evolução, aprimorando minhas habilidades em arquitetura frontend, boas práticas de desenvolvimento e integração com APIs.',
     photo: GustavoFerreiraProfile,
@@ -128,9 +129,12 @@ const developers = [
 
 function AboutUsScreen() {
   const colors = useColors();
+  const { theme } = useThemeStore();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
-  const styles = createStyles(colors, isMobile);
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const styles = createStyles(colors, isMobile, isDark, isHighContrast);
 
   return (
     <ScrollView
