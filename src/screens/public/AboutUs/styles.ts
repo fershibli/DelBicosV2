@@ -5,10 +5,15 @@ export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.inputBackground,
+      backgroundColor: '#DDE6F0',
     },
     contentContainer: {
       paddingBottom: 40,
+    },
+
+    headerSection: {
+      width: '100%',
+      paddingBottom: 24,
     },
 
     // Title
@@ -21,12 +26,30 @@ export const createStyles = (colors: ColorsType) =>
       paddingVertical: 20,
     },
 
-    // Mission Card 
-    missionCard: {
-      flexDirection: 'row',
+    missionWrapper: {
+      position: 'relative',
       marginHorizontal: 16,
       marginBottom: 24,
-      backgroundColor: colors.cardBackground,
+      minHeight: 620,
+    },
+    teamPhotoOverlay: {
+      position: 'absolute',
+      top: 100,
+      left: 30,
+      width: '42%',
+      height: 500,
+    },
+    missionRow: {
+      flexDirection: 'row',
+    },
+    missionPhotoSpace: {
+      width: '45%',
+      minHeight: 100,
+    },
+
+    // Mission Card
+    missionCard: {
+      flexDirection: 'column',
       borderRadius: 12,
       borderWidth: 1,
       borderColor: colors.borderColor,
@@ -42,7 +65,7 @@ export const createStyles = (colors: ColorsType) =>
           elevation: 3,
         },
         web: {
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+          boxShadow: '0px 2px 8px #DDE6F0',
         },
       }),
     },
@@ -51,7 +74,7 @@ export const createStyles = (colors: ColorsType) =>
       //backgroundColor: colors.primaryBlue,
       alignItems: 'center',
       justifyContent: 'center',
-      minHeight: 200,
+      minHeight: 100,
       padding: 12,
     },
     teamPhotoLogo: {
@@ -60,9 +83,9 @@ export const createStyles = (colors: ColorsType) =>
     },
     missionTextCol: {
       flex: 1,
-      padding: 14,
+      padding: 55,
       justifyContent: 'center',
-      gap: 10,
+      gap: 5,
     },
     missionText: {
       fontSize: 24,
@@ -103,7 +126,7 @@ export const createStyles = (colors: ColorsType) =>
       flexDirection: 'row',
       marginHorizontal: 16,
       marginBottom: 16,
-      backgroundColor: colors.cardBackground,
+      //backgroundColor: colors.cardBackground,
       borderRadius: 12,
       borderWidth: 1,
       borderColor: colors.borderColor,
@@ -120,7 +143,7 @@ export const createStyles = (colors: ColorsType) =>
           elevation: 2,
         },
         web: {
-          boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.06)',
+          //boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.06)',
         },
       }),
     },
