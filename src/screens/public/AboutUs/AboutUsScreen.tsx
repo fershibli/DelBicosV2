@@ -145,12 +145,12 @@ function AboutUsScreen() {
             <View style={styles.missionPhotoSpace} />
             <View style={styles.missionTextCol}>
               <Text style={styles.missionText}>
-                Nossa missão é revolucionar a experiência de entrega na
-                tecnologia e paixão, conectando pessoas e negócios de forma
-                rápida, segura e confiável.
-              </Text>
-              <Text style={styles.tagline}>
-                Existimos para simplificar o seu dia a dia.
+                Somos uma empresa de tecnologia focada em desenvolver soluções
+                digitais que geram impacto social real e transformam a dinâmica
+                das cidades. Nosso propósito é utilizar a inovação para encurtar
+                distâncias, fomentar a economia local e promover a
+                sustentabilidade, criando produtos que resolvem dores cotidianas
+                com inteligência e segurança.
               </Text>
               <Image
                 source={logoImage}
