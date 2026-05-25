@@ -23,7 +23,7 @@ const EduardoKamoProfile = require('@assets/aboutus/Edu-profile.png');
 const IagoRossanProfile = require('@assets/aboutus/Iago-profile.png');
 const LucasConsaniProfile = require('@assets/aboutus/Lucas-profile.png');
 const FernandoRibeiroProfile = require('@assets/aboutus/Fernando-profile2.png');
-const hexBackImage = require('@assets/aboutus/hex-back.png');
+const hexBackImage = require('@assets/aboutus/hex-back2.png');
 const lineDelbicos = require('@assets/aboutus/line-delbicos.png');
 const gitIcon = require('@assets/aboutus/git-icon.png');
 const linkIcon = require('@assets/aboutus/link-icon.png');
@@ -165,6 +165,14 @@ function AboutUsScreen() {
                 distâncias, fomentar a economia local e promover a
                 sustentabilidade, criando produtos que resolvem dores cotidianas
                 com inteligência e segurança.
+                <p>
+                Acreditamos que a tecnologia deve servir para conectar pessoas e
+                 fortalecer comunidades. Nosso projeto de destaque, o DelBicos, é a 
+                 materialização dessa visão: uma plataforma web projetada para unir 
+                 clientes e trabalhadores informais da mesma vizinhança. 
+                 Transformamos a dificuldade de captação de clientes e a insegurança 
+                 na contratação de serviços em uma rede local eficiente, confiável e acessível.
+                 </p>
               </Text>
               <Image
                 source={logoImage}
