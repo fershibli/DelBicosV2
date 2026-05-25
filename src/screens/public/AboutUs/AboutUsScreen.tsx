@@ -7,6 +7,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   Linking,
+  useWindowDimensions,
 } from 'react-native';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
@@ -127,7 +128,9 @@ const developers = [
 
 function AboutUsScreen() {
   const colors = useColors();
-  const styles = createStyles(colors);
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+  const styles = createStyles(colors, isMobile);
 
   return (
     <ScrollView
@@ -141,6 +144,13 @@ function AboutUsScreen() {
           style={styles.missionCard}
           resizeMode="cover">
           <Text style={styles.pageTitle}>Quem somos</Text>
+          {isMobile && (
+            <Image
+              source={teamPhoto}
+              style={styles.mobileTeamPhoto}
+              resizeMode="contain"
+            />
+          )}
           <View style={styles.missionRow}>
             <View style={styles.missionPhotoSpace} />
             <View style={styles.missionTextCol}>
@@ -161,14 +171,16 @@ function AboutUsScreen() {
           </View>
         </ImageBackground>
 
-        {/* Team photo - half above card, half inside */}
-        <View style={styles.teamPhotoOverlay}>
-          <Image
-            source={teamPhoto}
-            style={styles.teamPhotoLogo}
-            resizeMode="contain"
-          />
-        </View>
+        {/* Team photo - half above card, half inside (desktop only) */}
+        {!isMobile && (
+          <View style={styles.teamPhotoOverlay}>
+            <Image
+              source={teamPhoto}
+              style={styles.teamPhotoLogo}
+              resizeMode="contain"
+            />
+          </View>
+        )}
       </View>
 
       {/* Developers Banner */}
@@ -182,7 +194,7 @@ function AboutUsScreen() {
           <View
             style={[
               styles.developerCard,
-              index % 2 !== 0 && styles.developerCardReversed,
+              !isMobile && index % 2 !== 0 && styles.developerCardReversed,
             ]}>
             <View style={styles.developerPhotoWrapper}>
               {dev.photo ? (
@@ -196,14 +208,16 @@ function AboutUsScreen() {
               <Text
                 style={[
                   styles.developerName,
-                  index % 2 !== 0 && styles.developerNameReversed,
+                  !isMobile && index % 2 !== 0 && styles.developerNameReversed,
                 ]}>
                 {dev.name}
               </Text>
               <View
                 style={[
                   styles.developerRoleRow,
-                  index % 2 !== 0 && styles.developerRoleRowReversed,
+                  !isMobile &&
+                    index % 2 !== 0 &&
+                    styles.developerRoleRowReversed,
                 ]}>
                 <Text style={styles.developerRole}>{dev.role}</Text>
                 <View style={styles.developerSocialIcons}>

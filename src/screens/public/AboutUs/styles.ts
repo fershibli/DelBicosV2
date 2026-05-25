@@ -1,7 +1,7 @@
 import { StyleSheet, Platform } from 'react-native';
 import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: ColorsType) =>
+export const createStyles = (colors: ColorsType, isMobile: boolean = false) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -18,19 +18,19 @@ export const createStyles = (colors: ColorsType) =>
 
     // Title
     pageTitle: {
-      fontSize: 62,
+      fontSize: isMobile ? 36 : 62,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryOrange,
       textAlign: 'center',
       paddingHorizontal: 20,
-      paddingVertical: 20,
+      paddingVertical: isMobile ? 16 : 20,
     },
 
     missionWrapper: {
       position: 'relative',
-      marginHorizontal: 16,
+      marginHorizontal: isMobile ? 8 : 16,
       marginBottom: 24,
-      minHeight: 620,
+      minHeight: isMobile ? 0 : 620,
     },
     teamPhotoOverlay: {
       position: 'absolute',
@@ -45,6 +45,7 @@ export const createStyles = (colors: ColorsType) =>
     missionPhotoSpace: {
       width: '45%',
       minHeight: 100,
+      display: isMobile ? 'none' : 'flex',
     },
 
     // Mission Card
@@ -71,7 +72,6 @@ export const createStyles = (colors: ColorsType) =>
     },
     teamPhotoPlaceholder: {
       width: '42%',
-      //backgroundColor: colors.primaryBlue,
       alignItems: 'center',
       justifyContent: 'center',
       minHeight: 100,
@@ -79,25 +79,32 @@ export const createStyles = (colors: ColorsType) =>
     },
     teamPhotoLogo: {
       width: '100%',
-      height: 500,
+      height: isMobile ? 200 : 500,
     },
     missionTextCol: {
       flex: 1,
-      padding: 35,
+      padding: isMobile ? 16 : 35,
       justifyContent: 'center',
       gap: 5,
     },
     missionText: {
-      fontSize: 24,
+      fontSize: isMobile ? 16 : 24,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryBlack,
-      lineHeight: 28,
+      lineHeight: isMobile ? 22 : 28,
       textAlign: 'justify',
     },
     logoImage: {
       width: '90%',
-      height: 120,
-      marginTop: 150,
+      height: isMobile ? 60 : 120,
+      marginTop: isMobile ? 16 : 150,
+    },
+
+    // Mobile team photo (non-overlay, shown inline on mobile)
+    mobileTeamPhoto: {
+      width: '100%',
+      height: 220,
+      marginBottom: 12,
     },
 
     //  Developers Banner
@@ -109,7 +116,7 @@ export const createStyles = (colors: ColorsType) =>
       alignItems: 'center',
     },
     developersBannerTitle: {
-      fontSize: 60,
+      fontSize: isMobile ? 36 : 60,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryWhite,
       letterSpacing: 0.5,
@@ -117,15 +124,14 @@ export const createStyles = (colors: ColorsType) =>
 
     //  Developer Card
     developerCard: {
-      flexDirection: 'row',
-      marginHorizontal: 16,
+      flexDirection: isMobile ? 'column' : 'row',
+      marginHorizontal: isMobile ? 8 : 16,
       marginBottom: 16,
-      //backgroundColor: colors.cardBackground,
       borderRadius: 12,
       borderWidth: 1,
       borderColor: colors.borderColor,
-      padding: 16,
-      gap: 14,
+      padding: isMobile ? 12 : 16,
+      gap: isMobile ? 10 : 14,
       ...Platform.select({
         ios: {
           shadowColor: colors.primaryBlack,
@@ -136,24 +142,23 @@ export const createStyles = (colors: ColorsType) =>
         android: {
           elevation: 2,
         },
-        web: {
-          //boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.06)',
-        },
+        web: {},
       }),
     },
     developerCardReversed: {
-      flexDirection: 'row-reverse',
+      flexDirection: isMobile ? 'column' : 'row-reverse',
     },
     developerPhotoWrapper: {
       alignItems: 'center',
     },
     developerPhoto: {
-      width: 300,
-      height: 300,
+      width: isMobile ? 120 : 300,
+      height: isMobile ? 120 : 300,
+      borderRadius: isMobile ? 60 : 0,
     },
     developerPhotoPlaceholder: {
-      width: 372,
-      height: 372,
+      width: isMobile ? 120 : 372,
+      height: isMobile ? 120 : 372,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -166,8 +171,8 @@ export const createStyles = (colors: ColorsType) =>
       padding: 2,
     },
     socialIcon: {
-      width: 30,
-      height: 30,
+      width: isMobile ? 24 : 30,
+      height: isMobile ? 24 : 30,
     },
     socialIconDisabled: {
       opacity: 0.3,
@@ -181,25 +186,26 @@ export const createStyles = (colors: ColorsType) =>
       flex: 1,
     },
     developerName: {
-      fontSize: 40,
+      fontSize: isMobile ? 22 : 40,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryOrange,
       marginBottom: 2,
     },
     developerNameReversed: {
-      textAlign: 'right',
+      textAlign: isMobile ? 'left' : 'right',
     },
     developerRoleRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 18,
+      gap: isMobile ? 10 : 18,
       marginBottom: 8,
+      flexWrap: 'wrap',
     },
     developerRoleRowReversed: {
-      flexDirection: 'row-reverse',
+      flexDirection: isMobile ? 'row' : 'row-reverse',
     },
     developerRole: {
-      fontSize: 30,
+      fontSize: isMobile ? 16 : 30,
       fontFamily: 'Afacad-SemiBold',
       color: colors.primaryBlack,
     },
@@ -217,17 +223,17 @@ export const createStyles = (colors: ColorsType) =>
       color: colors.primaryWhite,
     },
     developerBio: {
-      fontSize: 25,
+      fontSize: isMobile ? 14 : 25,
       fontFamily: 'Afacad-Regular',
       color: colors.primaryBlack,
-      lineHeight: 28,
+      lineHeight: isMobile ? 20 : 28,
       textAlign: 'justify',
     },
 
     // Separator line between developer cards
     separatorLine: {
       width: '100%',
-      height: 70,
+      height: isMobile ? 40 : 70,
       marginVertical: 2,
     },
     separatorLineReversed: {
