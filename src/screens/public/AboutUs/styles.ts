@@ -32,7 +32,8 @@ export const createStyles = (
       color: colors.primaryOrange,
       textAlign: 'center',
       paddingHorizontal: 20,
-      paddingVertical: isMobile ? 16 : 20,
+      paddingVertical: isMobile ? 16 : 0,
+      //marginTop: isMobile ? 16 : 5,
     },
 
     missionWrapper: {
@@ -43,7 +44,7 @@ export const createStyles = (
     },
     teamPhotoOverlay: {
       position: 'absolute',
-      top: 100,
+      top: 90,
       left: 30,
       width: '42%',
       height: 500,
@@ -62,7 +63,8 @@ export const createStyles = (
       flexDirection: 'column',
       width: '100%',
       flexShrink: 0,
-      borderRadius: 12,
+      borderRadius: 25,
+      backgroundColor: '#FFFFFF',
       borderWidth: isHighContrast ? 3 : isDark ? 0 : 1,
       borderColor: isHighContrast ? colors.primaryBlack : colors.borderColor,
       overflow: 'hidden',
@@ -94,7 +96,7 @@ export const createStyles = (
       flex: 1,
       padding: isMobile ? 16 : 35,
       justifyContent: 'center',
-      gap: 5,
+      gap: 1,
     },
     missionText: {
       fontSize: isMobile ? 16 : 24,
@@ -106,7 +108,7 @@ export const createStyles = (
     logoImage: {
       width: '90%',
       height: isMobile ? 60 : 120,
-      marginTop: isMobile ? 16 : 150,
+      marginTop: isMobile ? 16 : 20,
     },
 
     // Mobile team photo (non-overlay, shown inline on mobile)
