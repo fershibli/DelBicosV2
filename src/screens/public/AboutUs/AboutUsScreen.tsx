@@ -4,6 +4,7 @@ import {
   Text,
   ScrollView,
   Image,
+  ImageBackground,
   TouchableOpacity,
   Linking,
 } from 'react-native';
@@ -20,6 +21,7 @@ const EduardoKamoProfile = require('@assets/aboutus/Edu-profile.png');
 const IagoRossanProfile = require('@assets/aboutus/Iago-profile.png');
 const LucasConsaniProfile = require('@assets/aboutus/Lucas-profile.png');
 const FernandoRibeiroProfile = require('@assets/aboutus/Fernando-profile2.png');
+const hexBackImage = require('@assets/aboutus/hex-back.png');
 const lineDelbicos = require('@assets/aboutus/line-delbicos.png');
 const gitIcon = require('@assets/aboutus/git-icon.png');
 const linkIcon = require('@assets/aboutus/link-icon.png');
@@ -41,7 +43,7 @@ const developers = [
   {
     id: 2,
     name: 'Eduardo Kamo',
-    role: 'Developer FullStack',
+    role: 'Developer Front-end',
     initial: 'E',
     bio: 'Desenvolvedor Full Stack / Frontend com sólida base em JavaScript/TypeScript e especialização no ecossistema React. Com foco no desenvolvimento mobile híbrido usando React Native e construção de APIs eficientes para o ecossistema web, atua na criação de soluções escaláveis, modernas e com alta performance de interface.',
     photo: EduardoKamoProfile,
@@ -77,7 +79,7 @@ const developers = [
   {
     id: 5,
     name: 'Gustavo Ferreira',
-    role: 'Developer Frontend',
+    role: 'Developer Front-end',
     initial: 'G',
     bio: 'Sou Frontend Software Developer, apaixonado por criar interfaces que sejam ao mesmo tempo bonitas, funcionais e fáceis de usar. Trabalho com desenvolvimento web utilizando principalmente React, JavaScript/TypeScript, HTML e CSS, sempre buscando escrever código limpo, reutilizável e bem estruturado. Estou em constante evolução, aprimorando minhas habilidades em arquitetura frontend, boas práticas de desenvolvimento e integração com APIs.',
     photo: GustavoFerreiraProfile,
@@ -131,31 +133,39 @@ function AboutUsScreen() {
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}>
-      {/* Title */}
-      <Text style={styles.pageTitle}>Quem somos</Text>
+      {/* Mission section */}
+      <View style={styles.missionWrapper}>
+        {/* Card with title inside */}
+        <ImageBackground
+          source={hexBackImage}
+          style={styles.missionCard}
+          resizeMode="cover">
+          <Text style={styles.pageTitle}>Quem somos</Text>
+          <View style={styles.missionRow}>
+            <View style={styles.missionPhotoSpace} />
+            <View style={styles.missionTextCol}>
+              <Text style={styles.missionText}>
+                Nossa missão é revolucionar a experiência de entrega na
+                tecnologia e paixão, conectando pessoas e negócios de forma
+                rápida, segura e confiável.
+              </Text>
+              <Text style={styles.tagline}>
+                Existimos para simplificar o seu dia a dia.
+              </Text>
+              <Image
+                source={logoImage}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
+            </View>
+          </View>
+        </ImageBackground>
 
-      {/* Mission Card */}
-      <View style={styles.missionCard}>
-        <View style={styles.teamPhotoPlaceholder}>
+        {/* Team photo - half above card, half inside */}
+        <View style={styles.teamPhotoOverlay}>
           <Image
             source={teamPhoto}
             style={styles.teamPhotoLogo}
-            resizeMode="contain"
-          />
-        </View>
-
-        <View style={styles.missionTextCol}>
-          <Text style={styles.missionText}>
-            Nossa missão é revolucionar a experiência de entrega na tecnologia e
-            paixão, conectando pessoas e negócios de forma rápida, segura e
-            confiável.
-          </Text>
-          <Text style={styles.tagline}>
-            Existimos para simplificar o seu dia a dia.
-          </Text>
-          <Image
-            source={logoImage}
-            style={styles.logoImage}
             resizeMode="contain"
           />
         </View>
