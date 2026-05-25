@@ -83,7 +83,7 @@ export const createStyles = (colors: ColorsType) =>
     },
     missionTextCol: {
       flex: 1,
-      padding: 55,
+      padding: 35,
       justifyContent: 'center',
       gap: 5,
     },
@@ -94,16 +94,10 @@ export const createStyles = (colors: ColorsType) =>
       lineHeight: 28,
       textAlign: 'justify',
     },
-    tagline: {
-      fontSize: 24,
-      fontFamily: 'Afacad-Regular',
-      color: colors.primaryOrange,
-      textDecorationLine: 'underline',
-    },
     logoImage: {
-      width: '100%',
-      height: 100,
-      marginTop: 4,
+      width: '90%',
+      height: 120,
+      marginTop: 150,
     },
 
     //  Developers Banner
