@@ -1,11 +1,20 @@
 import { StyleSheet, Platform } from 'react-native';
 import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: ColorsType, isMobile: boolean = false) =>
+export const createStyles = (
+  colors: ColorsType,
+  isMobile: boolean = false,
+  isDark: boolean = false,
+  isHighContrast: boolean = false,
+) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#DDE6F0',
+      backgroundColor: isDark
+        ? colors.secondaryGray
+        : isHighContrast
+          ? colors.primaryWhite
+          : '#DDE6F0',
     },
     contentContainer: {
       paddingBottom: 40,
@@ -51,9 +60,11 @@ export const createStyles = (colors: ColorsType, isMobile: boolean = false) =>
     // Mission Card
     missionCard: {
       flexDirection: 'column',
+      width: '100%',
+      flexShrink: 0,
       borderRadius: 12,
-      borderWidth: 1,
-      borderColor: colors.borderColor,
+      borderWidth: isHighContrast ? 3 : isDark ? 0 : 1,
+      borderColor: isHighContrast ? colors.primaryBlack : colors.borderColor,
       overflow: 'hidden',
       ...Platform.select({
         ios: {
@@ -65,9 +76,7 @@ export const createStyles = (colors: ColorsType, isMobile: boolean = false) =>
         android: {
           elevation: 3,
         },
-        web: {
-          boxShadow: '0px 2px 8px #DDE6F0',
-        },
+        web: {},
       }),
     },
     teamPhotoPlaceholder: {
@@ -90,7 +99,7 @@ export const createStyles = (colors: ColorsType, isMobile: boolean = false) =>
     missionText: {
       fontSize: isMobile ? 16 : 24,
       fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlack,
+      color: isDark ? '#000000' : colors.primaryBlack,
       lineHeight: isMobile ? 22 : 28,
       textAlign: 'justify',
     },
@@ -128,8 +137,10 @@ export const createStyles = (colors: ColorsType, isMobile: boolean = false) =>
       marginHorizontal: isMobile ? 8 : 16,
       marginBottom: 16,
       borderRadius: 12,
-      borderWidth: 1,
-      borderColor: colors.borderColor,
+      borderWidth: isHighContrast ? 3 : 1,
+      borderColor: isHighContrast ? colors.primaryBlack : colors.borderColor,
+      backgroundColor:
+        isDark || isHighContrast ? colors.cardBackground : 'transparent',
       padding: isMobile ? 12 : 16,
       gap: isMobile ? 10 : 14,
       ...Platform.select({
