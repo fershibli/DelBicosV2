@@ -247,4 +247,14 @@ export const createStyles = (
     separatorLineReversed: {
       transform: [{ scaleX: -1 }],
     },
+
+    // Footer
+    footer: {
+      padding: 20,
+      textAlign: 'center',
+      fontSize: 12,
+      fontFamily: 'Afacad-Regular',
+      color: colors.textTertiary,
+      marginTop: 8,
+    },
   });
