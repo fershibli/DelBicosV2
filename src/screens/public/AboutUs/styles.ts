@@ -94,7 +94,7 @@ export const createStyles = (
     },
     missionTextCol: {
       flex: 1,
-      padding: isMobile ? 16 : 35,
+      padding: isMobile ? 16 : 25,
       justifyContent: 'center',
       gap: 1,
     },
@@ -165,8 +165,8 @@ export const createStyles = (
       alignItems: 'center',
     },
     developerPhoto: {
-      width: isMobile ? 120 : 300,
-      height: isMobile ? 120 : 300,
+      width: isMobile ? 250 : 350,
+      height: isMobile ? 250 : 350,
       borderRadius: isMobile ? 60 : 0,
     },
     developerPhotoPlaceholder: {
@@ -230,16 +230,11 @@ export const createStyles = (
       alignItems: 'center',
       justifyContent: 'center',
     },
-    developerInitialBadgeText: {
-      fontSize: 11,
-      fontFamily: 'Afacad-Bold',
-      color: colors.primaryWhite,
-    },
     developerBio: {
-      fontSize: isMobile ? 14 : 25,
+      fontSize: isMobile ? 14 : 30,
       fontFamily: 'Afacad-Regular',
       color: colors.primaryBlack,
-      lineHeight: isMobile ? 20 : 28,
+      lineHeight: isMobile ? 20 : 37,
       textAlign: 'justify',
     },
 
@@ -247,7 +242,7 @@ export const createStyles = (
     separatorLine: {
       width: '100%',
       height: isMobile ? 40 : 70,
-      marginVertical: 2,
+      //marginVertical: 0,
     },
     separatorLineReversed: {
       transform: [{ scaleX: -1 }],
