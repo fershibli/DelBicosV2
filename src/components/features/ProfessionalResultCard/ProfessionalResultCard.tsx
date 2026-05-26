@@ -4,6 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
+import { formatBRLFromUnits } from '@lib/helpers/formatCurrency';
 
 // Interface movida para fora ou importada de um arquivo de types
 export interface ProfessionalResult {
@@ -74,12 +75,14 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
         <View style={styles.imageOverlay} />
 
         <View style={styles.tagsRow}>
-           <View style={styles.distanceTag}>
-             <Text style={styles.distanceText}>{professional.distance}km</Text>
-           </View>
-           <View style={styles.priceTag}>
-             <Text style={styles.priceText}>R$ {professional.priceFrom}</Text>
-           </View>
+          <View style={styles.distanceTag}>
+            <Text style={styles.distanceText}>{professional.distance}km</Text>
+          </View>
+          <View style={styles.priceTag}>
+            <Text style={styles.priceText}>
+              {formatBRLFromUnits(professional.priceFrom)}
+            </Text>
+          </View>
         </View>
       </ImageBackground>
 
@@ -127,7 +130,9 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
               ))}
               {validAvailableTimes.length > 4 && (
                 <View style={styles.timeSlot}>
-                  <Text style={styles.timeText}>+{validAvailableTimes.length - 4}</Text>
+                  <Text style={styles.timeText}>
+                    +{validAvailableTimes.length - 4}
+                  </Text>
                 </View>
               )}
             </View>
