@@ -29,6 +29,8 @@ import ProfessionalDashboard from './private/ProfessionalDashboard';
 import ProfileScreen from '@screens/private/client/Profile/Tabs/ProfileScreen';
 
 import ProfessionalEarningsScreen from './private/ProfessionalEarningsScreen/ProfessionalEarningsScreen';
+import ServicesListScreen from '@screens/private/professional/Services/ServicesList';
+import AvailabilityListScreen from '@screens/private/professional/Availability/AvailabilityList';
 
 const Tab = createBottomTabNavigator();
 
@@ -39,52 +41,75 @@ const MainTabs = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: Platform.OS === 'web' ? { display: 'none' } : {
-          backgroundColor: '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: '#EEEEEE',
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
-        },
+        tabBarStyle:
+          Platform.OS === 'web'
+            ? { display: 'none' }
+            : {
+                backgroundColor: '#FFFFFF',
+                borderTopWidth: 1,
+                borderTopColor: '#EEEEEE',
+                height: 60,
+                paddingBottom: 8,
+                paddingTop: 8,
+              },
         tabBarActiveTintColor: '#FF6F00', // primaryOrange
         tabBarInactiveTintColor: '#9CA3AF',
         tabBarLabelStyle: {
           fontFamily: 'Afacad-SemiBold',
           fontSize: 12,
-        }
-      }}
-    >
-      <Tab.Screen 
-        name="FeedTab" 
-        component={Feed} 
-        options={{ title: 'Início', tabBarIcon: ({ color, size }) => <FontAwesome name="home" size={size} color={color} /> }} 
+        },
+      }}>
+      <Tab.Screen
+        name="FeedTab"
+        component={Feed}
+        options={{
+          title: 'Início',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="home" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="CategoryTab" 
-        component={CategoryScreen} 
-        options={{ title: 'Buscar', tabBarIcon: ({ color, size }) => <FontAwesome name="search" size={size} color={color} /> }} 
+      <Tab.Screen
+        name="CategoryTab"
+        component={CategoryScreen}
+        options={{
+          title: 'Buscar',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="search" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="SchedulesTab" 
-        component={MySchedulesScreen} 
-        options={{ title: 'Agenda', tabBarIcon: ({ color, size }) => <FontAwesome name="calendar-o" size={size} color={color} /> }} 
+      <Tab.Screen
+        name="SchedulesTab"
+        component={MySchedulesScreen}
+        options={{
+          title: 'Agenda',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="calendar-o" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="ProfileTab" 
-        component={ProfileScreen} 
-        options={{ 
-          title: 'Perfil', 
-          tabBarIcon: ({ color, size }) => 
+      <Tab.Screen
+        name="ProfileTab"
+        component={ProfileScreen}
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({ color, size }) =>
             user?.avatar_uri ? (
-              <Image 
-                source={{ uri: user.avatar_uri }} 
-                style={{ width: size, height: size, borderRadius: size / 2, borderWidth: 1, borderColor: color }} 
+              <Image
+                source={{ uri: user.avatar_uri }}
+                style={{
+                  width: size,
+                  height: size,
+                  borderRadius: size / 2,
+                  borderWidth: 1,
+                  borderColor: color,
+                }}
               />
             ) : (
               <FontAwesome name="user-o" size={size} color={color} />
-            ) 
-        }} 
+            ),
+        }}
       />
     </Tab.Navigator>
   );
@@ -97,52 +122,95 @@ const ProfessionalTabs = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: Platform.OS === 'web' ? { display: 'none' } : {
-          backgroundColor: '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: '#EEEEEE',
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
-        },
+        tabBarStyle:
+          Platform.OS === 'web'
+            ? { display: 'none' }
+            : {
+                backgroundColor: '#FFFFFF',
+                borderTopWidth: 1,
+                borderTopColor: '#EEEEEE',
+                height: 60,
+                paddingBottom: 8,
+                paddingTop: 8,
+              },
         tabBarActiveTintColor: '#FF6F00',
         tabBarInactiveTintColor: '#9CA3AF',
         tabBarLabelStyle: {
           fontFamily: 'Afacad-SemiBold',
           fontSize: 12,
-        }
-      }}
-    >
-      <Tab.Screen 
-        name="ProfessionalHomeTab" 
-        component={ProfessionalDashboard} 
-        options={{ title: 'Início', tabBarIcon: ({ color, size }) => <FontAwesome name="home" size={size} color={color} /> }} 
+        },
+      }}>
+      <Tab.Screen
+        name="ProfessionalHomeTab"
+        component={ProfessionalDashboard}
+        options={{
+          title: 'Início',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="home" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="ProfessionalSchedulesTab" 
-        component={MySchedulesScreen} 
-        options={{ title: 'Agenda', tabBarIcon: ({ color, size }) => <FontAwesome name="calendar-o" size={size} color={color} /> }} 
+      <Tab.Screen
+        name="ProfessionalSchedulesTab"
+        component={MySchedulesScreen}
+        options={{
+          title: 'Agenda',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="calendar-o" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="ProfessionalEarningsTab" 
-        component={ProfessionalEarningsScreen} 
-        options={{ title: 'Saldo', tabBarIcon: ({ color, size }) => <FontAwesome name="dollar" size={size} color={color} /> }} 
+      <Tab.Screen
+        name="ProfessionalEarningsTab"
+        component={ProfessionalEarningsScreen}
+        options={{
+          title: 'Saldo',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="dollar" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="ProfessionalProfileTab" 
-        component={ProfileScreen} 
-        options={{ 
-          title: 'Perfil', 
-          tabBarIcon: ({ color, size }) => 
+      <Tab.Screen
+        name="ProfessionalServicesTab"
+        component={ServicesListScreen}
+        options={{
+          title: 'Serviços',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="wrench" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="ProfessionalAvailabilityTab"
+        component={AvailabilityListScreen}
+        options={{
+          title: 'Disponibilidade',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="calendar" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="ProfessionalProfileTab"
+        component={ProfileScreen}
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({ color, size }) =>
             user?.avatar_uri ? (
-              <Image 
-                source={{ uri: user.avatar_uri }} 
-                style={{ width: size, height: size, borderRadius: size / 2, borderWidth: 1, borderColor: color }} 
+              <Image
+                source={{ uri: user.avatar_uri }}
+                style={{
+                  width: size,
+                  height: size,
+                  borderRadius: size / 2,
+                  borderWidth: 1,
+                  borderColor: color,
+                }}
               />
             ) : (
               <FontAwesome name="user-o" size={size} color={color} />
-            ) 
-        }} 
+            ),
+        }}
       />
     </Tab.Navigator>
   );
@@ -151,7 +219,7 @@ const ProfessionalTabs = () => {
 // If logged in Home = MainTabs (mobile) or Feed (web), otherwise Home = Login
 const Home = () => {
   const { user } = useUserStore();
-  return user ? (Platform.OS === 'web' ? <Feed /> : <MainTabs />) : <Login />;
+  return user ? Platform.OS === 'web' ? <Feed /> : <MainTabs /> : <Login />;
 };
 
 const RootStack = createNativeStackNavigator<NavigationParams>({

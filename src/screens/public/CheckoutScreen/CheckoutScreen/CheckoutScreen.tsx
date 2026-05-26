@@ -11,6 +11,7 @@ import {
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useColors } from '@theme/ThemeProvider';
+import { formatBRLFromCents } from '@lib/helpers/formatCurrency';
 import { NavigationParams } from '@screens/types';
 import { StripeProvider, useStripe } from '@stripe/stripe-react-native';
 import { STRIPE_PUBLISHABLE_KEY, HTTP_DOMAIN } from '@config/varEnvs';
@@ -136,7 +137,7 @@ function CheckoutScreenContent() {
         setErrorIntent(null);
 
         const secret = await fetchPaymentIntent(
-          parseFloat(service.price),
+          (service.price_cents ?? 0) / 100,
           professionalId,
           service.id,
           selectedTime,
@@ -301,7 +302,7 @@ function CheckoutScreenContent() {
                     <Text style={styles.serviceTitle}>{service.title}</Text>
                   </View>
                   <Text style={styles.priceTag}>
-                    R$ {parseFloat(service.price).toFixed(2)}
+                    {formatBRLFromCents(service.price_cents)}
                   </Text>
                 </View>
 

@@ -17,6 +17,7 @@ import ProfessionalResultCard, {
 } from '@components/features/ProfessionalResultCard';
 import { useProfessionalStore } from '@stores/Professional';
 import { useLocation } from '@lib/hooks/LocationContext';
+// radius filters removed (RF04 reverted)
 
 function SearchResultScreen() {
   const route = useRoute();
@@ -31,6 +32,7 @@ function SearchResultScreen() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [results, setResults] = useState<ProfessionalResult[]>([]);
+  // radius filter removed
 
   const numColumns = width > 1100 ? 3 : width > 768 ? 2 : 1;
 
@@ -57,18 +59,24 @@ function SearchResultScreen() {
     };
 
     loadResults();
-  }, [subCategoryId, date, fetchProfessionalsByAvailability, address]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    subCategoryId,
+    date,
+    fetchProfessionalsByAvailability,
+    address,
+    debouncedRadius,
+  ]);
 
   const colors = useColors();
   const styles = createStyles(colors);
 
   const renderFilterBar = () => (
-    <ScrollView 
-      horizontal 
+    <ScrollView
+      horizontal
       showsHorizontalScrollIndicator={false}
       style={styles.filterBarContainer}
-      contentContainerStyle={styles.filterBar}
-    >
+      contentContainerStyle={styles.filterBar}>
       <TouchableOpacity style={styles.filterButton}>
         <FontAwesome
           name="filter"
