@@ -87,7 +87,7 @@ const developers = [
     photo: GustavoFerreiraProfile,
     github: 'https://github.com/Gspedine',
     linkedin: 'https://www.linkedin.com/in/gustavo-lopes-ferreira-1245b7179/',
-    portfolio: '',
+    portfolio: 'https://gspedine.github.io/contact',
   },
 
   {
@@ -95,7 +95,7 @@ const developers = [
     name: 'Iago Rossan',
     role: 'Developer FullStack',
     initial: 'I2',
-    bio: 'Profissional de TI de 24 anos com perfil sociável, analítico e focado em negócios. Minha trajetória começou no suporte de hardware e evoluiu por áreas de logística e comercial (Selbetti), o que me deu uma visão completa da jornada do cliente. Atualmente cursando Desenvolvimento de Software (Fatec) e atuando na Faktory Softwares, utilizo minha bagagem técnica e comercial para traduzir as necessidades dos usuários, apoiar o desenvolvimento de sistemas e aplicar soluções eficientes e adaptáveis',
+    bio: 'Profissional de TI de 24 anos com perfil sociável, analítico e focado em negócios. Minha trajetória começou no suporte de hardware e evoluiu por áreas de logística e comercial (Selbetti), o que me deu uma visão completa da jornada do cliente. Atualmente cursando Desenvolvimento de Software (Fatec) e atuando na Faktory Softwares, utilizo minha bagagem técnica e comercial para traduzir as necessidades dos usuários, apoiar o desenvolvimento de sistemas e aplicar soluções eficientes e adaptáveis.',
     photo: IagoRossanProfile,
     github: 'https://github.com/IagoYuriRossan',
     linkedin: 'https://www.linkedin.com/in/iago-yuri-rossan-ab792419b/',
