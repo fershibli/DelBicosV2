@@ -283,6 +283,10 @@ function AboutUsScreen() {
           )}
         </React.Fragment>
       ))}
+
+      <Text style={styles.footer}>
+        © DelBicos - {new Date().getFullYear()} – Todos os direitos reservados.
+      </Text>
     </ScrollView>
   );
 }
