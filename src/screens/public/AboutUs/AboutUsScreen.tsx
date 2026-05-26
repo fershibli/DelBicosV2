@@ -87,7 +87,7 @@ const developers = [
     photo: GustavoFerreiraProfile,
     github: 'https://github.com/Gspedine',
     linkedin: 'https://www.linkedin.com/in/gustavo-lopes-ferreira-1245b7179/',
-    portfolio: 'https://gspedine.github.io/contact',
+    portfolio: 'https://gspedine.github.io/Portifolio-main/',
   },
 
   {
