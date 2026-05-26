@@ -120,5 +120,10 @@ export interface AppointmentStore {
     review: string,
   ) => Promise<boolean>;
 
+  updateAppointmentStatus: (
+    appointmentId: number,
+    status: AppointmentStatus,
+  ) => Promise<boolean>;
+
   fetchInvoice: (appointmentId: number) => Promise<InvoiceData | null>;
 }

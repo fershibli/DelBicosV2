@@ -110,4 +110,22 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
       return null;
     }
   },
+
+  updateAppointmentStatus: async (appointmentId, status) => {
+    try {
+      const response = await backendHttpClient.put(
+        `api/appointments/${appointmentId}`,
+        { status },
+      );
+      if (response.status === 200) {
+        const store = useAppointmentStore.getState();
+        await store.fetchAppointments();
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to update appointment status:', error);
+      return false;
+    }
+  },
 }));

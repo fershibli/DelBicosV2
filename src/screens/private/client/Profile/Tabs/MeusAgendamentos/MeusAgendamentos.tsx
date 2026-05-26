@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Text, View, ScrollView, useWindowDimensions } from 'react-native';
 import { useAppointmentStore } from '@stores/Appointment';
 import { useFavoriteStore } from '@stores/Favorite';
+import { useUserStore } from '@stores/User';
 import { useColors } from '@theme/ThemeProvider';
 import { AppointmentDetailsModal } from '@components/features/AppointmentDetailsModal';
 import { RateServiceModal } from '@components/features/RateServiceModal';
@@ -55,9 +56,10 @@ const appointmentStatusRenderOrder: AppointmentStatus[] = [
 import { createStyles } from './styles';
 
 function MeusAgendamentos() {
-  const { appointments, appointmentsByStatus, fetchAppointments } =
+  const { appointments, appointmentsByStatus, fetchAppointments, updateAppointmentStatus } =
     useAppointmentStore();
   const { addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
+  const { user } = useUserStore();
   const colors = useColors();
   const styles = createStyles(colors);
 
@@ -107,6 +109,32 @@ function MeusAgendamentos() {
         serviceTitle: appointment.Service.title,
         addedAt: new Date().toISOString(),
       });
+    }
+  };
+
+  const handleAccept = async () => {
+    if (!selectedAppointment) return;
+    const success = await updateAppointmentStatus(
+      selectedAppointment.id,
+      AppointmentStatus.CONFIRMED,
+    );
+    if (success) {
+      setIsModalVisible(false);
+    } else {
+      // Alert.alert('Erro', 'Não foi possível aceitar o agendamento.');
+    }
+  };
+
+  const handleReject = async () => {
+    if (!selectedAppointment) return;
+    const success = await updateAppointmentStatus(
+      selectedAppointment.id,
+      AppointmentStatus.CANCELED,
+    );
+    if (success) {
+      setIsModalVisible(false);
+    } else {
+      // Alert.alert('Erro', 'Não foi possível recusar o agendamento.');
     }
   };
 
@@ -189,6 +217,16 @@ function MeusAgendamentos() {
         onClose={() => setIsModalVisible(false)}
         appointment={selectedAppointment}
         onCancel={() => fetchAppointments()}
+        onAccept={
+          user?.id === selectedAppointment?.Professional?.user_id
+            ? handleAccept
+            : undefined
+        }
+        onReject={
+          user?.id === selectedAppointment?.Professional?.user_id
+            ? handleReject
+            : undefined
+        }
       />
 
       {appointmentToRate && (
