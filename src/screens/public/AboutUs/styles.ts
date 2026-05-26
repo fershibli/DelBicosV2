@@ -65,6 +65,7 @@ export const createStyles = (
       flexShrink: 0,
       borderRadius: 25,
       backgroundColor: '#FFFFFF',
+      marginTop: isMobile ? 15 : 10,
       borderWidth: isHighContrast ? 3 : isDark ? 0 : 1,
       borderColor: isHighContrast ? colors.primaryBlack : colors.borderColor,
       overflow: 'hidden',
@@ -91,6 +92,7 @@ export const createStyles = (
     teamPhotoLogo: {
       width: '100%',
       height: isMobile ? 200 : 500,
+      marginTop: isMobile ? 16 : 20,
     },
     missionTextCol: {
       flex: 1,
