@@ -52,6 +52,7 @@ export type NavigationParams = {
   ProfessionalEarningsTab: undefined;
   ProfessionalProfileTab: undefined;
   Help: undefined;
+  AboutUs: undefined;
   AdminDashboard: undefined;
   AdminAnalytics: undefined;
 };
