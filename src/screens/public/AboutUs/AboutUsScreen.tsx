@@ -75,7 +75,7 @@ const developers = [
     photo: FernandoRibeiroProfile,
     github: 'https://github.com/FernandoRSantos',
     linkedin: 'https://www.linkedin.com/in/fernando-ribeiro-a9a405301/',
-    portfolio: '',
+    portfolio: 'https://cloudflare-workers-autoconfig-portifolio.fernandorsantos2802.workers.dev/',
   },
 
   {
