@@ -311,17 +311,17 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
                 <Text style={styles.menuOptionText}>Categorias</Text>
               </View>
             </MenuOption>
-            {/* <MenuOption onSelect={() => navigateTo('Help')}>
+            <MenuOption onSelect={() => navigateTo('AboutUs')}>
               <View style={styles.menuOption}>
                 <FontAwesome
-                  name="question-circle-o"
+                  name="users"
                   size={18}
                   color={headerIconColor}
                   style={styles.menuIcon}
                 />
                 <Text style={styles.menuOptionText}>Quem Somos</Text>
               </View>
-            </MenuOption> */}
+            </MenuOption>
             <MenuOption onSelect={() => navigateTo('Help')}>
               <View style={styles.menuOption}>
                 <FontAwesome
