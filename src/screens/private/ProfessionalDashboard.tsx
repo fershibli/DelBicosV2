@@ -173,7 +173,9 @@ const ProfessionalDashboard: React.FC = () => {
           { paddingHorizontal: 20 },
           styles.quickActionsRow,
         ]}>
-        <QuickAction title="Área de Atendimento">
+        <QuickAction
+          title="Área de Atendimento"
+          onPress={() => navigation.navigate('ProfessionalArea' as never)}>
           <View style={styles.quickActionIcon}>
             <FontAwesome name="sliders" size={22} color={colors.primaryBlack} />
           </View>
@@ -181,7 +183,9 @@ const ProfessionalDashboard: React.FC = () => {
 
         <QuickAction
           title="Serviços"
-          onPress={() => navigation.navigate('ProfessionalServicesTab')}>
+          onPress={() =>
+            navigation.navigate('ProfessionalServicesTab', { openCreate: true })
+          }>
           <View style={styles.quickActionIcon}>
             <FontAwesome name="wrench" size={22} color={colors.primaryBlack} />
           </View>
