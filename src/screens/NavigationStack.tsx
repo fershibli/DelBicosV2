@@ -31,6 +31,7 @@ import ProfileScreen from '@screens/private/client/Profile/Tabs/ProfileScreen';
 import ProfessionalEarningsScreen from './private/ProfessionalEarningsScreen/ProfessionalEarningsScreen';
 import ServicesListScreen from '@screens/private/professional/Services/ServicesList';
 import AvailabilityListScreen from '@screens/private/professional/Availability/AvailabilityList';
+import ProfessionalRadiusScreen from '@screens/private/professional/RadiusScreen/ProfessionalRadiusScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -379,6 +380,12 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       },
       options: {
         title: 'Analytics',
+      },
+    },
+    ProfessionalArea: {
+      screen: ProfessionalRadiusScreen,
+      options: {
+        title: 'Área de Atendimento',
       },
     },
   },
