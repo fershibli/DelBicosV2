@@ -8,6 +8,8 @@ export const registerTokenProvider = (provider: () => string | null) => {
   getToken = provider;
 };
 
+export const getAuthToken = () => (getToken ? getToken() : null);
+
 export const registerLogoutHandler = (handler: () => void) => {
   logoutHandler = handler;
 };
