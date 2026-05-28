@@ -177,4 +177,19 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
       return [];
     }
   },
+
+  updateRadius: async (professionalId: number, radiusKm: number) => {
+    await backendHttpClient.put(`/api/professionals/${professionalId}/radius`, {
+      service_radius_km: Math.floor(radiusKm),
+    });
+    const current = useProfessionalStore.getState().selectedProfessional;
+    if (current && current.id === professionalId) {
+      set({
+        selectedProfessional: {
+          ...current,
+          service_radius_km: Math.floor(radiusKm),
+        },
+      });
+    }
+  },
 }));
