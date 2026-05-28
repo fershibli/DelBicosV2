@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -16,14 +17,23 @@ import { formatBRL } from '@lib/helpers/formatCurrency';
 const ServicesList: React.FC = () => {
   const colors = useColors();
   const styles = createStyles(colors);
-  const { services, fetchServices, deleteService } = useServicesStore();
+  const { services, fetchMyServices, deleteService } = useServicesStore();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [editing, setEditing] = useState<ServiceItem | null>(null);
 
+  const route = useRoute<RouteProp<Record<string, any>, string>>();
+
   useEffect(() => {
-    fetchServices();
-  }, [fetchServices]);
+    if (route?.params?.openCreate) {
+      setEditing(null);
+      setModalVisible(true);
+    }
+  }, [route?.params?.openCreate]);
+
+  useEffect(() => {
+    fetchMyServices();
+  }, [fetchMyServices]);
 
   const openCreate = () => {
     setEditing(null);

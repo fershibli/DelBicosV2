@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  Animated,
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
@@ -16,8 +17,10 @@ import CustomTextInput from '@components/ui/CustomTextInput';
 import CustomSelect from '@components/ui/CustomSelect';
 import { useServicesStore, ServiceItem } from '@stores/Services/Services';
 import { useSubCategoryStore } from '@stores/SubCategory';
+import { useCategoryStore } from '@stores/Category';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { useColors } from '@theme/ThemeProvider';
+import AvailabilityManager from '@components/features/ServiceAvailability/AvailabilityManager';
 
 type Props = {
   initial?: ServiceItem | null;
@@ -53,21 +56,35 @@ function unmaskCurrency(masked: string): string {
 }
 
 const ServiceForm: React.FC<Props> = ({ initial, onClose }) => {
-  const { createService, updateService } = useServicesStore();
-  const { subCategories, fetchAllSubCategories } = useSubCategoryStore();
+  const { createService, updateService, reloadServices, reloadMyServices } =
+    useServicesStore();
+  const {
+    subCategories,
+    fetchAllSubCategories,
+    fetchSubCategoriesByCategoryId,
+  } = useSubCategoryStore();
+  const { categories, fetchCategories } = useCategoryStore();
   const colors = useColors();
   const styles = createStyles(colors);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
+  const [subcategoryError, setSubcategoryError] = useState<string | null>(null);
+  const saveBtnAnim = useRef(new Animated.Value(1)).current;
+
+  // Anima o botão Salvar ao entrar/sair do estado desabilitado
+  useEffect(() => {
+    Animated.timing(saveBtnAnim, {
+      toValue: submitting || uploading ? 0.55 : 1,
+      duration: 180,
+      useNativeDriver: true,
+    }).start();
+  }, [submitting, uploading, saveBtnAnim]);
 
   useEffect(() => {
+    fetchCategories();
     fetchAllSubCategories();
-  }, [fetchAllSubCategories]);
-
-  const subCategoryOptions = subCategories.map((s) => ({
-    label: s.title,
-    value: String(s.id),
-  }));
+  }, [fetchCategories, fetchAllSubCategories]);
 
   const { control, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
@@ -77,15 +94,30 @@ const ServiceForm: React.FC<Props> = ({ initial, onClose }) => {
         ? maskCurrency(String(initial.price_cents))
         : '',
       duration: initial?.duration ? String(initial.duration) : '',
+      category_id: initial?.category_id ? String(initial.category_id) : '',
       subcategory_id: initial?.subcategory_id
         ? String(initial.subcategory_id)
         : '',
       banner_uri: initial?.banner_uri || '',
       active: initial?.active !== undefined ? initial.active : true,
+      availabilities: initial?.availabilities || [],
     },
   });
 
   const bannerUri = watch('banner_uri');
+
+  const categoryOptions = categories.map((c) => ({
+    label: c.title,
+    value: String(c.id),
+  }));
+
+  const subCategoryOptions = subCategories
+    .filter((s) => {
+      const catId = watch('category_id');
+      if (!catId) return true;
+      return s.category_id === Number(catId);
+    })
+    .map((s) => ({ label: s.title, value: String(s.id) }));
 
   const pickImage = useCallback(async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -136,23 +168,49 @@ const ServiceForm: React.FC<Props> = ({ initial, onClose }) => {
     }
   }, [setValue]);
 
+  // Desabilita o botão imediatamente no toque, antes de react-hook-form validar
+  const handleSave = useCallback(async () => {
+    if (submittingRef.current || submitting) return;
+    setSubmitting(true);
+    submittingRef.current = true;
+    // handleSubmit só chama onSubmit se a validação passar;
+    // se falhar, onSubmit não roda e finally não reseta — resetamos aqui
+    await handleSubmit(onSubmit)();
+    if (submittingRef.current) {
+      setSubmitting(false);
+      submittingRef.current = false;
+    }
+  }, [submitting, handleSubmit]);
+
   const onSubmit = async (data: any) => {
-    const payload: Partial<ServiceItem> = {
+    if (subcategoryError) {
+      setSubmitting(false);
+      submittingRef.current = false;
+      Alert.alert('Erro', subcategoryError);
+      return;
+    }
+
+    const payload: any = {
       title: data.title,
-      description: data.description || undefined,
-      // send only price_cents (integer) — backend middleware updated to accept it
-      price_cents: data.price
-        ? Math.round(Number(unmaskCurrency(data.price)) * 100)
-        : undefined,
+      description: data.description,
+      // Contrato: enviar price como float; backend calcula price_cents
+      price: data.price ? Number(unmaskCurrency(data.price)) : undefined,
       duration: data.duration ? Number(data.duration) : undefined,
+      category_id: data.category_id ? Number(data.category_id) : undefined,
       subcategory_id: data.subcategory_id
         ? Number(data.subcategory_id)
         : undefined,
       banner_uri: data.banner_uri || undefined,
       active: data.active,
+      availabilities: Array.isArray(data.availabilities)
+        ? data.availabilities.map((a: any) => ({
+            day: Number(a.day),
+            start: String(a.start),
+            end: String(a.end),
+          }))
+        : undefined,
     };
 
-    setSubmitting(true);
     try {
       let result;
       if (initial?.id) {
@@ -161,18 +219,66 @@ const ServiceForm: React.FC<Props> = ({ initial, onClose }) => {
         result = await createService(payload);
       }
 
-      if (!result) {
-        Alert.alert(
-          'Erro ao salvar',
-          'Não foi possível salvar o serviço. Verifique sua conexão e tente novamente.',
-        );
-        return;
+      // Refresh public list of services to reflect changes immediately
+      try {
+        if (typeof reloadMyServices === 'function') {
+          await reloadMyServices();
+        } else {
+          await reloadServices();
+        }
+      } catch (e) {
+        console.warn('[ServiceForm] reload services failed', e);
       }
+
+      // success: close modal
       onClose();
+    } catch (error: any) {
+      console.error('[ServiceForm] save error', error);
+      const status = error?.response?.status;
+      const data = error?.response?.data;
+      const message =
+        data?.error ||
+        data?.message ||
+        data?.msg ||
+        error?.message ||
+        'Erro ao salvar serviço.';
+      if (status === 401) {
+        try {
+          const signOut =
+            require('@stores/User').useUserStore.getState().signOut;
+          if (typeof signOut === 'function') signOut();
+        } catch (e) {
+          console.error('Failed to sign out after 401', e);
+        }
+      }
+      Alert.alert('Erro', message);
     } finally {
       setSubmitting(false);
+      submittingRef.current = false;
     }
   };
+
+  // Validação UX: subcategoria pertence à categoria selecionada
+  useEffect(() => {
+    const catId = watch('category_id');
+    const subId = watch('subcategory_id');
+    if (!subId) {
+      setSubcategoryError(null);
+      return;
+    }
+    const found = subCategories.find((s) => String(s.id) === String(subId));
+    if (!found) {
+      setSubcategoryError('Subcategoria inválida');
+      return;
+    }
+    if (catId && String(found.category_id) !== String(catId)) {
+      setSubcategoryError(
+        'A subcategoria não pertence à categoria selecionada',
+      );
+    } else {
+      setSubcategoryError(null);
+    }
+  }, [watch('category_id'), watch('subcategory_id'), subCategories]);
 
   return (
     <ScrollView
@@ -201,13 +307,36 @@ const ServiceForm: React.FC<Props> = ({ initial, onClose }) => {
       <Controller
         control={control}
         name="description"
-        render={({ field: { onChange, value } }) => (
+        rules={{ required: true }}
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
           <CustomTextInput
-            label="Descrição"
+            label="Descrição *"
             value={value}
             onChangeText={onChange}
             multiline
             numberOfLines={3}
+            error={error ? 'Campo obrigatório' : undefined}
+          />
+        )}
+      />
+
+      {/* Categoria */}
+      <Controller
+        control={control}
+        name="category_id"
+        rules={{ required: true }}
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <CustomSelect
+            label="Categoria *"
+            value={value}
+            options={categoryOptions}
+            onChange={(v) => {
+              onChange(v);
+              // limpar subcategoria ao trocar categoria
+              setValue('subcategory_id', '');
+            }}
+            placeholder="Selecione a categoria"
+            error={error}
           />
         )}
       />
@@ -224,9 +353,17 @@ const ServiceForm: React.FC<Props> = ({ initial, onClose }) => {
             options={subCategoryOptions}
             onChange={onChange}
             placeholder="Selecione a subcategoria"
-            error={error}
+            error={error ? 'Campo obrigatório' : subcategoryError}
           />
         )}
+      />
+
+      {/* Disponibilidades */}
+      <Text style={styles.fieldLabel}>Disponibilidades</Text>
+      <AvailabilityManager
+        control={control}
+        setValue={setValue}
+        watch={watch}
       />
 
       {/* Duração */}
@@ -313,19 +450,20 @@ const ServiceForm: React.FC<Props> = ({ initial, onClose }) => {
         <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
           <Text style={styles.cancelText}>Cancelar</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.saveBtn,
-            (uploading || submitting) && { opacity: 0.6 },
-          ]}
-          onPress={handleSubmit(onSubmit)}
-          disabled={uploading || submitting}>
-          {submitting ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text style={styles.saveText}>Salvar</Text>
-          )}
-        </TouchableOpacity>
+        <Animated.View
+          style={[styles.saveBtnWrapper, { opacity: saveBtnAnim }]}>
+          <TouchableOpacity
+            style={styles.saveBtn}
+            onPress={handleSave}
+            disabled={uploading || submitting}
+            activeOpacity={0.85}>
+            {submitting ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.saveText}>Salvar</Text>
+            )}
+          </TouchableOpacity>
+        </Animated.View>
       </View>
     </ScrollView>
   );
@@ -399,9 +537,11 @@ const createStyles = (colors: any) =>
       alignItems: 'center',
     },
     cancelText: { fontFamily: 'Afacad-SemiBold', color: colors.textSecondary },
-    saveBtn: {
+    saveBtnWrapper: {
       flex: 1,
       marginLeft: 8,
+    },
+    saveBtn: {
       padding: 13,
       borderRadius: 8,
       backgroundColor: colors.primaryOrange,
