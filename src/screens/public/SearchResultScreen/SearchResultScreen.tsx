@@ -40,8 +40,8 @@ function SearchResultScreen() {
     const loadResults = async () => {
       setIsLoading(true);
 
-      const lat = address?.lat ? parseFloat(address.lat) : undefined;
-      const lng = address?.lon ? parseFloat(address.lon) : undefined;
+      const lat = address?.lat ? parseFloat(String(address.lat)) : undefined;
+      const lng = address?.lng ? parseFloat(String(address.lng)) : undefined;
 
       try {
         const data = await fetchProfessionalsByAvailability(
@@ -60,13 +60,7 @@ function SearchResultScreen() {
 
     loadResults();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    subCategoryId,
-    date,
-    fetchProfessionalsByAvailability,
-    address,
-    debouncedRadius,
-  ]);
+  }, [subCategoryId, date, fetchProfessionalsByAvailability, address]);
 
   const colors = useColors();
   const styles = createStyles(colors);
