@@ -56,4 +56,5 @@ export type NavigationParams = {
   Help: undefined;
   AdminDashboard: undefined;
   AdminAnalytics: undefined;
+  ProfessionalArea: undefined;
 };
