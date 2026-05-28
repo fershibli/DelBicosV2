@@ -23,6 +23,7 @@ import { UserProfileProps } from '../../types';
 import { FontAwesome } from '@expo/vector-icons';
 import PhoneInput from '@components/ui/PhoneInput';
 import { useUserStore } from '@stores/User';
+import { useProfessionalStore } from '@stores/Professional';
 
 interface DadosContaFormProps {
   user?: UserProfileProps;
@@ -163,6 +164,7 @@ export default function DadosContaForm({
   const [statusMessage, setStatusMessage] = useState('');
   const [tempAvatarBase64, setTempAvatarBase64] = useState<string | null>(null);
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   const {
     user: storeUser,
@@ -170,6 +172,7 @@ export default function DadosContaForm({
     uploadAvatar,
     removeAvatar,
   } = useUserStore();
+
   const { theme } = useThemeStore();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
@@ -322,6 +325,12 @@ export default function DadosContaForm({
   };
 
   const handleSaveChanges = async () => {
+    // Open preview modal to confirm changes before saving
+    setShowPreviewModal(true);
+  };
+
+  const confirmSaveChanges = async () => {
+    setShowPreviewModal(false);
     setShowStatusModal(true);
     setStatus('loading');
     setStatusMessage('Salvando alterações...');
@@ -481,6 +490,34 @@ export default function DadosContaForm({
         hasPhoto={!!avatarUriToDisplay}
         uploading={(currentUser as any)?.uploading}
       />
+
+      {/* Preview / Confirmation Modal before saving changes */}
+      <Modal visible={showPreviewModal} animationType="fade" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.statusModalContainer}>
+            <Text style={styles.statusModalTitle}>Confirmar alterações</Text>
+            <Text style={{ marginTop: 8 }}>
+              Nome: {nome} {sobrenome}
+            </Text>
+            <Text>E-mail: {email}</Text>
+            <Text>Telefone: {telefone}</Text>
+
+            <View style={{ flexDirection: 'row', marginTop: 16 }}>
+              <TouchableOpacity
+                style={[styles.statusModalButton, { flex: 1, marginRight: 8 }]}
+                onPress={() => setShowPreviewModal(false)}>
+                <Text style={styles.statusModalButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.statusModalButton, { flex: 1 }]}
+                onPress={confirmSaveChanges}>
+                <Text style={styles.statusModalButtonText}>Confirmar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       <StatusModal
         visible={showStatusModal}
