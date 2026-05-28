@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ImageBackground } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ImageBackground,
+  ScrollView,
+} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useColors } from '@theme/ThemeProvider';
@@ -110,8 +116,15 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
         <View style={styles.timesContainer}>
           <Text style={styles.timesTitle}>Horários disponíveis:</Text>
           {validAvailableTimes.length > 0 ? (
-            <View style={styles.timesRow}>
-              {validAvailableTimes.slice(0, 4).map((time) => (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{
+                flexDirection: 'row',
+                gap: 8,
+                alignItems: 'center',
+              }}>
+              {validAvailableTimes.map((time) => (
                 <TouchableOpacity
                   key={time}
                   style={[
@@ -128,14 +141,7 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
                   </Text>
                 </TouchableOpacity>
               ))}
-              {validAvailableTimes.length > 4 && (
-                <View style={styles.timeSlot}>
-                  <Text style={styles.timeText}>
-                    +{validAvailableTimes.length - 4}
-                  </Text>
-                </View>
-              )}
-            </View>
+            </ScrollView>
           ) : (
             <Text style={[styles.timeText, { color: colors.textSecondary }]}>
               Nenhum horário atende à regra de 26h.

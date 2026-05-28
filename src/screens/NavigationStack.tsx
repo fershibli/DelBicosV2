@@ -23,6 +23,7 @@ import CheckoutScreen from './public/CheckoutScreen/CheckoutScreen';
 import PaymentStatusScreen from './public/PaymentStatusScreen';
 import MySchedulesScreen from './private/client/MySchedulesScreen';
 import HelpScreen from '@screens/public/HelpScreen';
+import AboutUsScreen from '@screens/public/AboutUs';
 import AdminDashboard from './private/admin/AdminDashboard';
 import AdminAnalytics from './private/admin/AdminAnalytics';
 import ProfessionalDashboard from './private/ProfessionalDashboard';
@@ -362,6 +363,15 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: HelpScreen,
       options: {
         title: 'Central de Ajuda',
+      },
+    },
+    AboutUs: {
+      screen: AboutUsScreen,
+      linking: {
+        path: 'about-us',
+      },
+      options: {
+        title: 'Sobre Nós',
       },
     },
     AdminDashboard: {
