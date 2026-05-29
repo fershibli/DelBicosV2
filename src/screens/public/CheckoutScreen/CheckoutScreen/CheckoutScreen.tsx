@@ -186,8 +186,12 @@ function CheckoutScreenContent() {
       setLoadingIntent(true);
       setErrorIntent(null);
 
+      const amountValue = (service as any).price_cents
+        ? (service as any).price_cents / 100
+        : Number(service.price);
+
       const secret = await fetchPaymentIntent(
-        (service.price_cents ?? 0) / 100,
+        amountValue,
         professionalId,
         service.id,
         selectedTime,
@@ -374,7 +378,9 @@ function CheckoutScreenContent() {
                     <Text style={styles.serviceTitle}>{service.title}</Text>
                   </View>
                   <Text style={styles.priceTag}>
-                    {formatBRLFromCents(service.price_cents)}
+                    {formatBRLFromCents(
+                      (service as any).price_cents ?? Number(service.price) * 100
+                    )}
                   </Text>
                 </View>
 
