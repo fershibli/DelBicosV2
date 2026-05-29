@@ -234,6 +234,8 @@ function AboutUsScreen() {
                 <Text style={styles.developerRole}>{dev.role}</Text>
                 <View style={styles.developerSocialIcons}>
                   <TouchableOpacity
+                  accessibilityRole="button"
+                    accessibilityLabel={`LinkedIn de ${dev.name}`}
                     onPress={() =>
                       dev.linkedin ? Linking.openURL(dev.linkedin) : undefined
                     }
@@ -245,6 +247,8 @@ function AboutUsScreen() {
                     <Image source={linkIcon} style={styles.socialIcon} />
                   </TouchableOpacity>
                   <TouchableOpacity
+                    accessibilityRole="button"
+                    accessibilityLabel={`GitHub de ${dev.name}`}
                     onPress={() =>
                       dev.github ? Linking.openURL(dev.github) : undefined
                     }
@@ -256,6 +260,8 @@ function AboutUsScreen() {
                     <Image source={gitIcon} style={styles.socialIcon} />
                   </TouchableOpacity>
                   <TouchableOpacity
+                  accessibilityRole="button"
+                    accessibilityLabel={`Portfólio de ${dev.name}`}
                     onPress={() =>
                       dev.portfolio ? Linking.openURL(dev.portfolio) : undefined
                     }
