@@ -23,6 +23,7 @@ import CheckoutScreen from './public/CheckoutScreen/CheckoutScreen';
 import PaymentStatusScreen from './public/PaymentStatusScreen';
 import MySchedulesScreen from './private/client/MySchedulesScreen';
 import HelpScreen from '@screens/public/HelpScreen';
+import AboutUsScreen from '@screens/public/AboutUs';
 import AdminDashboard from './private/admin/AdminDashboard';
 import AdminAnalytics from './private/admin/AdminAnalytics';
 import ProfessionalDashboard from './private/ProfessionalDashboard';
@@ -39,52 +40,75 @@ const MainTabs = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: Platform.OS === 'web' ? { display: 'none' } : {
-          backgroundColor: '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: '#EEEEEE',
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
-        },
+        tabBarStyle:
+          Platform.OS === 'web'
+            ? { display: 'none' }
+            : {
+                backgroundColor: '#FFFFFF',
+                borderTopWidth: 1,
+                borderTopColor: '#EEEEEE',
+                height: 60,
+                paddingBottom: 8,
+                paddingTop: 8,
+              },
         tabBarActiveTintColor: '#FF6F00', // primaryOrange
         tabBarInactiveTintColor: '#9CA3AF',
         tabBarLabelStyle: {
           fontFamily: 'Afacad-SemiBold',
           fontSize: 12,
-        }
-      }}
-    >
-      <Tab.Screen 
-        name="FeedTab" 
-        component={Feed} 
-        options={{ title: 'Início', tabBarIcon: ({ color, size }) => <FontAwesome name="home" size={size} color={color} /> }} 
+        },
+      }}>
+      <Tab.Screen
+        name="FeedTab"
+        component={Feed}
+        options={{
+          title: 'Início',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="home" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="CategoryTab" 
-        component={CategoryScreen} 
-        options={{ title: 'Buscar', tabBarIcon: ({ color, size }) => <FontAwesome name="search" size={size} color={color} /> }} 
+      <Tab.Screen
+        name="CategoryTab"
+        component={CategoryScreen}
+        options={{
+          title: 'Buscar',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="search" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="SchedulesTab" 
-        component={MySchedulesScreen} 
-        options={{ title: 'Agenda', tabBarIcon: ({ color, size }) => <FontAwesome name="calendar-o" size={size} color={color} /> }} 
+      <Tab.Screen
+        name="SchedulesTab"
+        component={MySchedulesScreen}
+        options={{
+          title: 'Agenda',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="calendar-o" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="ProfileTab" 
-        component={ProfileScreen} 
-        options={{ 
-          title: 'Perfil', 
-          tabBarIcon: ({ color, size }) => 
+      <Tab.Screen
+        name="ProfileTab"
+        component={ProfileScreen}
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({ color, size }) =>
             user?.avatar_uri ? (
-              <Image 
-                source={{ uri: user.avatar_uri }} 
-                style={{ width: size, height: size, borderRadius: size / 2, borderWidth: 1, borderColor: color }} 
+              <Image
+                source={{ uri: user.avatar_uri }}
+                style={{
+                  width: size,
+                  height: size,
+                  borderRadius: size / 2,
+                  borderWidth: 1,
+                  borderColor: color,
+                }}
               />
             ) : (
               <FontAwesome name="user-o" size={size} color={color} />
-            ) 
-        }} 
+            ),
+        }}
       />
     </Tab.Navigator>
   );
@@ -97,52 +121,75 @@ const ProfessionalTabs = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: Platform.OS === 'web' ? { display: 'none' } : {
-          backgroundColor: '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: '#EEEEEE',
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
-        },
+        tabBarStyle:
+          Platform.OS === 'web'
+            ? { display: 'none' }
+            : {
+                backgroundColor: '#FFFFFF',
+                borderTopWidth: 1,
+                borderTopColor: '#EEEEEE',
+                height: 60,
+                paddingBottom: 8,
+                paddingTop: 8,
+              },
         tabBarActiveTintColor: '#FF6F00',
         tabBarInactiveTintColor: '#9CA3AF',
         tabBarLabelStyle: {
           fontFamily: 'Afacad-SemiBold',
           fontSize: 12,
-        }
-      }}
-    >
-      <Tab.Screen 
-        name="ProfessionalHomeTab" 
-        component={ProfessionalDashboard} 
-        options={{ title: 'Início', tabBarIcon: ({ color, size }) => <FontAwesome name="home" size={size} color={color} /> }} 
+        },
+      }}>
+      <Tab.Screen
+        name="ProfessionalHomeTab"
+        component={ProfessionalDashboard}
+        options={{
+          title: 'Início',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="home" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="ProfessionalSchedulesTab" 
-        component={MySchedulesScreen} 
-        options={{ title: 'Agenda', tabBarIcon: ({ color, size }) => <FontAwesome name="calendar-o" size={size} color={color} /> }} 
+      <Tab.Screen
+        name="ProfessionalSchedulesTab"
+        component={MySchedulesScreen}
+        options={{
+          title: 'Agenda',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="calendar-o" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="ProfessionalEarningsTab" 
-        component={ProfessionalEarningsScreen} 
-        options={{ title: 'Saldo', tabBarIcon: ({ color, size }) => <FontAwesome name="dollar" size={size} color={color} /> }} 
+      <Tab.Screen
+        name="ProfessionalEarningsTab"
+        component={ProfessionalEarningsScreen}
+        options={{
+          title: 'Saldo',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="dollar" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="ProfessionalProfileTab" 
-        component={ProfileScreen} 
-        options={{ 
-          title: 'Perfil', 
-          tabBarIcon: ({ color, size }) => 
+      <Tab.Screen
+        name="ProfessionalProfileTab"
+        component={ProfileScreen}
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({ color, size }) =>
             user?.avatar_uri ? (
-              <Image 
-                source={{ uri: user.avatar_uri }} 
-                style={{ width: size, height: size, borderRadius: size / 2, borderWidth: 1, borderColor: color }} 
+              <Image
+                source={{ uri: user.avatar_uri }}
+                style={{
+                  width: size,
+                  height: size,
+                  borderRadius: size / 2,
+                  borderWidth: 1,
+                  borderColor: color,
+                }}
               />
             ) : (
               <FontAwesome name="user-o" size={size} color={color} />
-            ) 
-        }} 
+            ),
+        }}
       />
     </Tab.Navigator>
   );
@@ -151,7 +198,7 @@ const ProfessionalTabs = () => {
 // If logged in Home = MainTabs (mobile) or Feed (web), otherwise Home = Login
 const Home = () => {
   const { user } = useUserStore();
-  return user ? (Platform.OS === 'web' ? <Feed /> : <MainTabs />) : <Login />;
+  return user ? Platform.OS === 'web' ? <Feed /> : <MainTabs /> : <Login />;
 };
 
 const RootStack = createNativeStackNavigator<NavigationParams>({
@@ -293,6 +340,15 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
       screen: HelpScreen,
       options: {
         title: 'Central de Ajuda',
+      },
+    },
+    AboutUs: {
+      screen: AboutUsScreen,
+      linking: {
+        path: 'about-us',
+      },
+      options: {
+        title: 'Sobre Nós',
       },
     },
     AdminDashboard: {
