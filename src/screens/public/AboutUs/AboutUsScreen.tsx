@@ -35,7 +35,7 @@ const developers = [
     name: 'Douglas Wenzel',
     role: 'Scrum Master and Developer FullStack',
     initial: 'D',
-    bio: 'Desenvolvedor de software com foco em soluções intuitivas, seguras e escaláveis. Possuo conhecientos com Node.js no backend com Express + Sequelize, React Native no mobile, e Python para Machine Learning. Tenho olhar analítico pra segurança, busco código limpo e eficiente. Acredito em tecnologia acessível, por isso crio conteúdos didáticos. Simplicidade é o ápice da sofisticação, e é assim que eu programo. Nos intervalos dos commits, a Pitchuluca - minha filha de quatro patas - supervisiona tudo em casa.',
+    bio: 'Desenvolvedor de software com foco em soluções intuitivas, seguras e escaláveis. Possuo conhecimentos com Node.js no backend com Express + Sequelize, React Native no mobile, e Python para Machine Learning. Tenho olhar analítico pra segurança, busco código limpo e eficiente. Acredito em tecnologia acessível, por isso crio conteúdos didáticos. Simplicidade é o ápice da sofisticação, e é assim que eu programo. Nos intervalos dos commits, a Pitchuluca - minha filha de quatro patas - supervisiona tudo em casa.',
     photo: DouglasWenzelProfile,
     github: 'https://github.com/douglaswenzel',
     linkedin: 'https://www.linkedin.com/in/douglas-wenzel',
