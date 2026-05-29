@@ -55,7 +55,11 @@ const appointmentStatusRenderOrder: AppointmentStatus[] = [
 ];
 import { createStyles } from './styles';
 
-function MeusAgendamentos() {
+interface MeusAgendamentosProps {
+  role?: 'client' | 'professional';
+}
+
+function MeusAgendamentos({ role }: MeusAgendamentosProps = {}) {
   const { appointments, appointmentsByStatus, fetchAppointments, updateAppointmentStatus } =
     useAppointmentStore();
   const { addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
@@ -74,8 +78,8 @@ function MeusAgendamentos() {
     useState<Appointment | null>(null);
 
   useEffect(() => {
-    fetchAppointments();
-  }, [fetchAppointments]);
+    fetchAppointments(role);
+  }, [fetchAppointments, role]);
 
   const proximosAgendamentos = useMemo(() => {
     return appointments
@@ -216,7 +220,7 @@ function MeusAgendamentos() {
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         appointment={selectedAppointment}
-        onCancel={() => fetchAppointments()}
+        onCancel={() => fetchAppointments(role)}
         onAccept={
           user?.id === selectedAppointment?.Professional?.user_id
             ? handleAccept
@@ -238,7 +242,7 @@ function MeusAgendamentos() {
           existingRating={appointmentToRate.rating}
           existingReview={appointmentToRate.review}
           onClose={() => setIsRateModalVisible(false)}
-          onSuccess={() => fetchAppointments()}
+          onSuccess={() => fetchAppointments(role)}
         />
       )}
     </ScrollView>
