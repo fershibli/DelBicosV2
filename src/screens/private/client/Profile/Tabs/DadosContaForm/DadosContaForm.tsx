@@ -23,6 +23,7 @@ import { UserProfileProps } from '../../types';
 import { FontAwesome } from '@expo/vector-icons';
 import PhoneInput from '@components/ui/PhoneInput';
 import { useUserStore } from '@stores/User';
+import { useProfessionalStore } from '@stores/Professional';
 
 interface DadosContaFormProps {
   user?: UserProfileProps;
@@ -145,7 +146,9 @@ const AvatarOptionsModal = ({
   );
 };
 
-export default function DadosContaForm({ user: propUser }: DadosContaFormProps) {
+export default function DadosContaForm({
+  user: propUser,
+}: DadosContaFormProps) {
   const [nome, setNome] = useState('');
   const [sobrenome, setSobrenome] = useState('');
   const [cpf, setCpf] = useState('');
@@ -155,12 +158,21 @@ export default function DadosContaForm({ user: propUser }: DadosContaFormProps) 
   const [showOptions, setShowOptions] = useState(false);
   const [overlayOpacity] = useState(new Animated.Value(0));
   const [showStatusModal, setShowStatusModal] = useState(false);
-  const [status, setStatus] = useState<'success' | 'error' | 'loading' | null>(null);
+  const [status, setStatus] = useState<'success' | 'error' | 'loading' | null>(
+    null,
+  );
   const [statusMessage, setStatusMessage] = useState('');
   const [tempAvatarBase64, setTempAvatarBase64] = useState<string | null>(null);
   const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
-  const { user: storeUser, updateUserProfile, uploadAvatar, removeAvatar } = useUserStore();
+  const {
+    user: storeUser,
+    updateUserProfile,
+    uploadAvatar,
+    removeAvatar,
+  } = useUserStore();
+
   const { theme } = useThemeStore();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
@@ -200,10 +212,11 @@ export default function DadosContaForm({ user: propUser }: DadosContaFormProps) 
     [isMobile],
   );
 
-useEffect(() => {
+  useEffect(() => {
     if (Platform.OS !== 'web') {
       (async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
           Alert.alert('Permissão necessária', 'Acesso à galeria negado.');
         }
@@ -212,8 +225,6 @@ useEffect(() => {
 
     if (currentUser) {
       const u = currentUser as any;
-      
-      console.log("Dados do usuário no Form:", u);
 
       const fullName = u.userName || u.name || u.nome || u.full_name || '';
       const emailValue = u.userEmail || u.email || '';
@@ -221,7 +232,7 @@ useEffect(() => {
       const cpfValue = u.userCpf || u.cpf || '';
 
       const fullNameParts = fullName.split(' ');
-      
+
       setNome(fullNameParts[0] || '');
       setSobrenome(fullNameParts.slice(1).join(' ') || '');
       setEmail(emailValue);
@@ -300,7 +311,7 @@ useEffect(() => {
 
       if (!result.canceled && result.assets[0]) {
         setShowOptions(false);
-        handleImageSelection(result.assets[0]); 
+        handleImageSelection(result.assets[0]);
       }
     } catch (error) {
       Alert.alert('Erro', 'Não foi possível abrir a câmera.');
@@ -314,6 +325,12 @@ useEffect(() => {
   };
 
   const handleSaveChanges = async () => {
+    // Open preview modal to confirm changes before saving
+    setShowPreviewModal(true);
+  };
+
+  const confirmSaveChanges = async () => {
+    setShowPreviewModal(false);
     setShowStatusModal(true);
     setStatus('loading');
     setStatusMessage('Salvando alterações...');
@@ -346,23 +363,34 @@ useEffect(() => {
 
   const avatarUriToDisplay = useMemo(() => {
     if (isAvatarRemoved) return null;
-    const uri = tempAvatarBase64 || (currentUser as any)?.avatar_uri || (currentUser as any)?.avatarSource?.uri;
+    const uri =
+      tempAvatarBase64 ||
+      (currentUser as any)?.avatar_uri ||
+      (currentUser as any)?.avatarSource?.uri;
     if (typeof uri !== 'string' || uri === '[object Object]') return null;
     return uri;
   }, [tempAvatarBase64, currentUser, isAvatarRemoved]);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 40 }}>
       <Text style={styles.pageTitle}>Dados da Conta</Text>
 
-      <View style={[styles.card, isHighContrast && { borderWidth: 2, borderColor: colors.primaryBlack }]}>
+      <View
+        style={[
+          styles.card,
+          isHighContrast && {
+            borderWidth: 2,
+            borderColor: colors.primaryBlack,
+          },
+        ]}>
         <View style={responsiveStyles.contentWrapper}>
           <View style={responsiveStyles.avatarContainer}>
             <TouchableOpacity
               style={styles.avatarTouchable}
               onPress={() => setShowOptions(true)}
               disabled={(currentUser as any)?.uploading}>
-              
               <Animated.View style={styles.avatarAnimatedWrapper}>
                 {avatarUriToDisplay ? (
                   <Image
@@ -378,9 +406,13 @@ useEffect(() => {
                   />
                 )}
 
-                <Animated.View style={[styles.avatarOverlay, { opacity: overlayOpacity }]}>
+                <Animated.View
+                  style={[styles.avatarOverlay, { opacity: overlayOpacity }]}>
                   {(currentUser as any)?.uploading ? (
-                    <ActivityIndicator size="small" color={colors.primaryWhite} />
+                    <ActivityIndicator
+                      size="small"
+                      color={colors.primaryWhite}
+                    />
                   ) : (
                     <View style={{ alignItems: 'center' }}>
                       <FontAwesome name="camera" size={20} color="white" />
@@ -395,10 +427,18 @@ useEffect(() => {
           <View style={responsiveStyles.formGrid}>
             <View style={responsiveStyles.formRow}>
               <View style={responsiveStyles.inputWrapper}>
-                <CustomTextInput label="Nome" value={nome} onChangeText={setNome} />
+                <CustomTextInput
+                  label="Nome"
+                  value={nome}
+                  onChangeText={setNome}
+                />
               </View>
               <View style={responsiveStyles.inputWrapper}>
-                <CustomTextInput label="Sobrenome" value={sobrenome} onChangeText={setSobrenome} />
+                <CustomTextInput
+                  label="Sobrenome"
+                  value={sobrenome}
+                  onChangeText={setSobrenome}
+                />
               </View>
             </View>
 
@@ -408,7 +448,10 @@ useEffect(() => {
                   label="CPF"
                   value={cpf}
                   editable={false}
-                  style={{ opacity: 0.6, backgroundColor: colors.inputBackground }}
+                  style={{
+                    opacity: 0.6,
+                    backgroundColor: colors.inputBackground,
+                  }}
                 />
               </View>
               <View style={responsiveStyles.inputWrapper}>
@@ -428,7 +471,9 @@ useEffect(() => {
             </View>
 
             <View style={styles.saveButtonContainer}>
-              <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={handleSaveChanges}>
                 <Text style={styles.saveButtonText}>Salvar Alterações</Text>
               </TouchableOpacity>
             </View>
@@ -445,6 +490,34 @@ useEffect(() => {
         hasPhoto={!!avatarUriToDisplay}
         uploading={(currentUser as any)?.uploading}
       />
+
+      {/* Preview / Confirmation Modal before saving changes */}
+      <Modal visible={showPreviewModal} animationType="fade" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.statusModalContainer}>
+            <Text style={styles.statusModalTitle}>Confirmar alterações</Text>
+            <Text style={{ marginTop: 8 }}>
+              Nome: {nome} {sobrenome}
+            </Text>
+            <Text>E-mail: {email}</Text>
+            <Text>Telefone: {telefone}</Text>
+
+            <View style={{ flexDirection: 'row', marginTop: 16 }}>
+              <TouchableOpacity
+                style={[styles.statusModalButton, { flex: 1, marginRight: 8 }]}
+                onPress={() => setShowPreviewModal(false)}>
+                <Text style={styles.statusModalButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.statusModalButton, { flex: 1 }]}
+                onPress={confirmSaveChanges}>
+                <Text style={styles.statusModalButtonText}>Confirmar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       <StatusModal
         visible={showStatusModal}

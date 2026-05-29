@@ -129,7 +129,7 @@ export default function HistoricoCompras() {
                 key={item.id}
                 service={item.Service.title}
                 date={new Date(item.start_time).toLocaleDateString()}
-                price={parseFloat(item.Service.price)}
+                price={(item.Service.price_cents ?? 0) / 100}
                 status={item.status}
                 colors={colors}
                 styles={styles}

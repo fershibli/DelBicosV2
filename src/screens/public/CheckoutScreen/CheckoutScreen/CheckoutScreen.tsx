@@ -11,6 +11,7 @@ import {
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useColors } from '@theme/ThemeProvider';
+import { formatBRLFromCents } from '@lib/helpers/formatCurrency';
 import { NavigationParams } from '@screens/types';
 import { StripeProvider, useStripe } from '@stripe/stripe-react-native';
 import { STRIPE_PUBLISHABLE_KEY, HTTP_DOMAIN } from '@config/varEnvs';
@@ -24,6 +25,24 @@ import { createStyles } from './styles';
 import CheckoutForm from '@screens/public/CheckoutScreen/CheckoutForm';
 
 type CheckoutRouteParams = NavigationParams['Checkout'];
+
+/** Haversine distance in km between two lat/lng pairs */
+function haversineKm(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number,
+): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 async function fetchPaymentIntent(
   amount: number,
@@ -84,6 +103,7 @@ function CheckoutScreenContent() {
   const [isLoadingProfessional, setIsLoadingProfessional] = useState(true);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentMessage, setPaymentMessage] = useState<string | null>(null);
+  const [radiusWarning, setRadiusWarning] = useState<string | null>(null);
 
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
@@ -130,43 +150,74 @@ function CheckoutScreenContent() {
 
   // 3. Inicializa Pagamento (Quando tiver serviço + endereço)
   useEffect(() => {
-    if (service && selectedAddress && token) {
-      const initPayment = async () => {
-        setLoadingIntent(true);
-        setErrorIntent(null);
+    if (!service || !selectedAddress || !token) return;
 
-        const secret = await fetchPaymentIntent(
-          parseFloat(service.price),
-          professionalId,
-          service.id,
-          selectedTime,
-          selectedAddress.id,
-          token,
-        );
-
-        if (secret) {
-          setClientSecret(secret);
-
-          const { error } = await initPaymentSheet({
-            paymentIntentClientSecret: secret,
-            merchantDisplayName: 'DelBicos',
-            allowsDelayedPaymentMethods: false,
-          });
-
-          if (error) {
-            console.error('[CheckoutScreen] initPaymentSheet error:', error);
-            setErrorIntent('Falha ao inicializar pagamento.');
-          }
-        } else {
-          setErrorIntent('Falha ao iniciar pagamento.');
-        }
-        setLoadingIntent(false);
-      };
-      initPayment();
+    // Validate geocoded coordinates
+    if (!selectedAddress.lat || !selectedAddress.lng) {
+      setRadiusWarning(
+        'Endereço sem coordenadas. Adicione um endereço geocodificado para continuar.',
+      );
+      setClientSecret(null);
+      return;
     }
+
+    // Haversine pre-check against professional radius
+    const profLat = selectedProfessional?.MainAddress?.lat;
+    const profLng = selectedProfessional?.MainAddress?.lng;
+    const radius = selectedProfessional?.service_radius_km;
+    if (profLat && profLng && radius != null && radius > 0) {
+      const distKm = haversineKm(
+        profLat,
+        profLng,
+        selectedAddress.lat,
+        selectedAddress.lng,
+      );
+      if (distKm > radius) {
+        setRadiusWarning(
+          `Este endereço está a ~${Math.round(distKm)} km do profissional, fora do raio de ${radius} km. Escolha outro endereço.`,
+        );
+        setClientSecret(null);
+        return;
+      }
+    }
+    setRadiusWarning(null);
+
+    const initPayment = async () => {
+      setLoadingIntent(true);
+      setErrorIntent(null);
+
+      const secret = await fetchPaymentIntent(
+        (service.price_cents ?? 0) / 100,
+        professionalId,
+        service.id,
+        selectedTime,
+        selectedAddress.id,
+        token,
+      );
+
+      if (secret) {
+        setClientSecret(secret);
+
+        const { error } = await initPaymentSheet({
+          paymentIntentClientSecret: secret,
+          merchantDisplayName: 'DelBicos',
+          allowsDelayedPaymentMethods: false,
+        });
+
+        if (error) {
+          console.error('[CheckoutScreen] initPaymentSheet error:', error);
+          setErrorIntent('Falha ao inicializar pagamento.');
+        }
+      } else {
+        setErrorIntent('Falha ao iniciar pagamento.');
+      }
+      setLoadingIntent(false);
+    };
+    initPayment();
   }, [
     service,
     selectedAddress,
+    selectedProfessional,
     professionalId,
     selectedTime,
     token,
@@ -214,9 +265,31 @@ function CheckoutScreenContent() {
       const confirmData = await confirmResponse.json();
 
       if (!confirmResponse.ok) {
-        throw new Error(
-          confirmData.error || 'Falha ao confirmar agendamento no servidor.',
-        );
+        // Handle specific case: address out of professional radius
+        const msg =
+          confirmData.error ||
+          confirmData.message ||
+          'Falha ao confirmar agendamento no servidor.';
+        if (typeof msg === 'string' && msg.includes('fora do raio')) {
+          Alert.alert(
+            'Endereço fora do raio',
+            'O endereço selecionado está fora do raio de atendimento do profissional. Deseja escolher outro endereço ou procurar outro profissional?',
+            [
+              {
+                text: 'Escolher Endereço',
+                onPress: () => setIsAddressModalVisible(true),
+              },
+              {
+                text: 'Procurar Outro',
+                onPress: () => navigation.goBack(),
+              },
+            ],
+          );
+          setIsProcessingPayment(false);
+          return;
+        }
+
+        throw new Error(msg);
       }
 
       const newAppointment = confirmData.appointment as Appointment;
@@ -301,7 +374,7 @@ function CheckoutScreenContent() {
                     <Text style={styles.serviceTitle}>{service.title}</Text>
                   </View>
                   <Text style={styles.priceTag}>
-                    R$ {parseFloat(service.price).toFixed(2)}
+                    {formatBRLFromCents(service.price_cents)}
                   </Text>
                 </View>
 
@@ -333,6 +406,35 @@ function CheckoutScreenContent() {
                     <Text style={styles.changeAddressLink}>Alterar</Text>
                   </TouchableOpacity>
                 </View>
+                {radiusWarning && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'flex-start',
+                      backgroundColor: '#fef2f2',
+                      borderRadius: 8,
+                      padding: 10,
+                      marginTop: 8,
+                      gap: 8,
+                    }}>
+                    <FontAwesome
+                      name="exclamation-circle"
+                      size={14}
+                      color="#dc2626"
+                      style={{ marginTop: 2 }}
+                    />
+                    <Text
+                      style={{
+                        flex: 1,
+                        fontFamily: 'Afacad-Regular',
+                        fontSize: 13,
+                        color: '#dc2626',
+                        lineHeight: 18,
+                      }}>
+                      {radiusWarning}
+                    </Text>
+                  </View>
+                )}
               </View>
             ) : (
               <TouchableOpacity
@@ -372,7 +474,7 @@ function CheckoutScreenContent() {
                 </Text>
               )}
 
-              {clientSecret && selectedAddress && (
+              {clientSecret && selectedAddress && !radiusWarning && (
                 <CheckoutForm
                   onPay={handlePay}
                   isLoading={isProcessingPayment}
