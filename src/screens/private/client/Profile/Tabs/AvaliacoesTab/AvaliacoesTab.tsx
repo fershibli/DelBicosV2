@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,9 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { ReviewCard } from '@components/ui/ReviewCard';
+import { RateServiceModal } from '@components/features/RateServiceModal';
 import { useAppointmentStore } from '@stores/Appointment';
+import { Appointment } from '@stores/Appointment/types';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
 
@@ -18,6 +20,9 @@ const AvaliacoesTab: React.FC = () => {
   const { width } = useWindowDimensions();
 
   const isDesktop = width >= 768;
+
+  const [isRateModalVisible, setIsRateModalVisible] = useState(false);
+  const [appointmentToRate, setAppointmentToRate] = useState<Appointment | null>(null);
 
   useEffect(() => {
     fetchAppointments();
@@ -92,11 +97,28 @@ const AvaliacoesTab: React.FC = () => {
                   }
                   date={formatarData(appointment.start_time)}
                   review={appointment.review || undefined}
+                  onEdit={() => {
+                    setAppointmentToRate(appointment);
+                    setIsRateModalVisible(true);
+                  }}
                 />
               </View>
             ))}
           </View>
         </ScrollView>
+      )}
+
+      {appointmentToRate && (
+        <RateServiceModal
+          visible={isRateModalVisible}
+          appointmentId={appointmentToRate.id}
+          professionalName={appointmentToRate.Professional.User.name}
+          serviceTitle={appointmentToRate.Service.title}
+          existingRating={appointmentToRate.rating}
+          existingReview={appointmentToRate.review}
+          onClose={() => setIsRateModalVisible(false)}
+          onSuccess={() => fetchAppointments()}
+        />
       )}
     </View>
   );

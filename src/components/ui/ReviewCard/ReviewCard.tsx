@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Rating } from 'react-native-ratings';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
@@ -12,6 +12,7 @@ interface ReviewCardProps {
   clientAvatar?: string;
   date: string;
   review?: string;
+  onEdit?: () => void;
 }
 
 export function ReviewCard({
@@ -22,6 +23,7 @@ export function ReviewCard({
   clientAvatar,
   date,
   review,
+  onEdit,
 }: ReviewCardProps) {
   const colors = useColors();
   const styles = createStyles(colors);
@@ -72,6 +74,11 @@ export function ReviewCard({
           </Text>
           <Text style={styles.date}>{date}</Text>
         </View>
+        {onEdit && (
+          <TouchableOpacity onPress={onEdit} style={{ marginLeft: 'auto', padding: 4 }}>
+             <Text style={{ fontSize: 12, color: colors.primaryOrange, fontFamily: 'Afacad-Medium' }}>Editar</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
