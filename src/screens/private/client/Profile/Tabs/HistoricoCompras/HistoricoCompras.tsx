@@ -182,14 +182,23 @@ export default function HistoricoCompras() {
                 key={item.id}
                 id={item.id}
                 service={item.Service.title}
-                date={new Date(item.start_time).toLocaleDateString()}
-                price={(item.Service.price_cents ?? 0) / 100}
+                date={new Date(item.start_time).toLocaleDateString('pt-BR')}
+                price={item.Service.price ? parseFloat(item.Service.price) : 0}
                 status={item.status}
                 rating={item.rating}
                 colors={colors}
                 styles={styles}
                 onDetails={() => {
-                   Alert.alert("Detalhes", `Você visualizou os detalhes do serviço: ${item.Service.title}`);
+                   const dateObj = new Date(item.start_time);
+                   const dataFormatada = dateObj.toLocaleDateString('pt-BR');
+                   const horario = dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                   const preco = item.Service.price ? `R$ ${parseFloat(item.Service.price).toFixed(2).replace('.', ',')}` : 'R$ 0,00';
+                   const profissional = item.Professional?.User?.name || 'Não informado';
+                   
+                   Alert.alert(
+                     "Detalhes do Serviço", 
+                     `Serviço: ${item.Service.title}\nData: ${dataFormatada}\nHorário: ${horario}\nPreço: ${preco}\nProfissional: ${profissional}`
+                   );
                 }}
                 onRate={() => {
                   setAppointmentToRate(item);
