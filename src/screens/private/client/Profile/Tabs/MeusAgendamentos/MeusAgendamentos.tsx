@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View, ScrollView, useWindowDimensions } from 'react-native';
+import { Text, View, ScrollView, useWindowDimensions, TouchableOpacity } from 'react-native';
 import { useAppointmentStore } from '@stores/Appointment';
 import { useFavoriteStore } from '@stores/Favorite';
 import { useUserStore } from '@stores/User';
@@ -50,8 +50,6 @@ const appointmentStatusRenderInfo = (
 const appointmentStatusRenderOrder: AppointmentStatus[] = [
   AppointmentStatus.PENDING,
   AppointmentStatus.CONFIRMED,
-  AppointmentStatus.COMPLETED,
-  AppointmentStatus.CANCELED,
 ];
 import { createStyles } from './styles';
 
@@ -76,6 +74,8 @@ function MeusAgendamentos({ role }: MeusAgendamentosProps = {}) {
   const [isRateModalVisible, setIsRateModalVisible] = useState(false);
   const [appointmentToRate, setAppointmentToRate] =
     useState<Appointment | null>(null);
+
+  const [activeFilter, setActiveFilter] = useState<'all' | AppointmentStatus.PENDING | AppointmentStatus.CONFIRMED>('all');
 
   useEffect(() => {
     fetchAppointments(role);
@@ -160,7 +160,27 @@ function MeusAgendamentos({ role }: MeusAgendamentosProps = {}) {
       contentContainerStyle={{ paddingBottom: 40 }}>
       <Text style={styles.pageTitle}>Meus Agendamentos</Text>
 
-      {appointmentStatusRenderOrder.map((status) => {
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
+        <TouchableOpacity 
+          style={[styles.filterChip, activeFilter === 'all' && styles.filterChipActive]} 
+          onPress={() => setActiveFilter('all')}>
+          <Text style={[styles.filterText, activeFilter === 'all' && styles.filterTextActive]}>Todos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.filterChip, activeFilter === AppointmentStatus.PENDING && styles.filterChipActive]} 
+          onPress={() => setActiveFilter(AppointmentStatus.PENDING)}>
+          <Text style={[styles.filterText, activeFilter === AppointmentStatus.PENDING && styles.filterTextActive]}>Pendentes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.filterChip, activeFilter === AppointmentStatus.CONFIRMED && styles.filterChipActive]} 
+          onPress={() => setActiveFilter(AppointmentStatus.CONFIRMED)}>
+          <Text style={[styles.filterText, activeFilter === AppointmentStatus.CONFIRMED && styles.filterTextActive]}>Confirmados</Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      {appointmentStatusRenderOrder
+        .filter(status => activeFilter === 'all' || status === activeFilter)
+        .map((status) => {
         const renderInfo = appointmentStatusRenderInfo(colors)[status];
         const appointmentInfo = appointmentsByStatus[status] || [];
 
