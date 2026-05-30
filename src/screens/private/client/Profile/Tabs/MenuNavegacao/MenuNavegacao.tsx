@@ -26,12 +26,7 @@ const menuOptions = [
     icon: 'lock-outline',
     activeIcon: 'lock',
   },
-  {
-    id: ClientProfileSubRoutes.MeusAgendamentos,
-    label: 'Agendamentos',
-    icon: 'calendar-today',
-    activeIcon: 'calendar-view-day',
-  },
+
   {
     id: ClientProfileSubRoutes.Notificacoes,
     label: 'Notificações',
