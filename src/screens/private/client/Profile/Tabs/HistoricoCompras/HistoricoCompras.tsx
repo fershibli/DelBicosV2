@@ -64,7 +64,7 @@ const HistoryRow = ({ id, date, service, price, status, rating, colors, styles, 
             <Text style={styles.detailsButtonText}>Detalhes</Text>
           </TouchableOpacity>
         )}
-        {isCompleted && rating == null && (
+        {isCompleted && rating == null && onRate && (
           <TouchableOpacity style={styles.rateButton} onPress={onRate}>
             <Text style={styles.rateButtonText}>Avaliar Serviço</Text>
           </TouchableOpacity>
@@ -74,7 +74,7 @@ const HistoryRow = ({ id, date, service, price, status, rating, colors, styles, 
   );
 };
 
-export default function HistoricoCompras() {
+export default function HistoricoCompras({ role = 'client' }: { role?: 'client' | 'professional' } = {}) {
   const { fetchAppointmentsAsSheet, appointments, fetchAppointments } =
     useAppointmentStore();
   const colors = useColors();
@@ -94,8 +94,8 @@ export default function HistoricoCompras() {
   const isDesktop = width >= 768;
 
   useEffect(() => {
-    fetchAppointments();
-  }, [fetchAppointments]);
+    fetchAppointments(role);
+  }, [fetchAppointments, role]);
 
   const recentHistory = appointments
     .filter((a) => a.status === 'completed' || a.status === 'canceled')
@@ -111,7 +111,7 @@ export default function HistoricoCompras() {
   const handleExport = async (type: 'csv' | 'xlsx') => {
     setIsExporting(true);
     try {
-      const rows = await fetchAppointmentsAsSheet();
+      const rows = await fetchAppointmentsAsSheet(role);
       if (rows.length === 0) {
         Alert.alert('Atenção', 'Nenhum dado para exportar');
         return;
@@ -153,9 +153,13 @@ export default function HistoricoCompras() {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.pageTitle}>Histórico e Relatórios</Text>
+      <Text style={styles.pageTitle}>
+        {role === 'professional' ? 'Histórico de Trabalhos' : 'Histórico e Relatórios'}
+      </Text>
       <Text style={styles.subtitle}>
-        Visualize suas últimas transações e exporte o relatório completo.
+        {role === 'professional'
+          ? 'Visualize os ganhos obtidos nos serviços realizados e exporte o relatório.'
+          : 'Visualize suas últimas transações e exporte o relatório completo.'}
       </Text>
 
       <View style={styles.contentWrapper}>
@@ -193,17 +197,24 @@ export default function HistoricoCompras() {
                    const dataFormatada = dateObj.toLocaleDateString('pt-BR');
                    const horario = dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                    const preco = item.Service.price ? `R$ ${parseFloat(item.Service.price).toFixed(2).replace('.', ',')}` : 'R$ 0,00';
-                   const profissional = item.Professional?.User?.name || 'Não informado';
+                   const labelUsuario = role === 'professional' ? 'Cliente' : 'Profissional';
+                   const nomeUsuario = role === 'professional'
+                     ? item.Client?.User?.name
+                     : item.Professional?.User?.name || 'Não informado';
                    
                    Alert.alert(
                      "Detalhes do Serviço", 
-                     `Serviço: ${item.Service.title}\nData: ${dataFormatada}\nHorário: ${horario}\nPreço: ${preco}\nProfissional: ${profissional}`
+                     `Serviço: ${item.Service.title}\nData: ${dataFormatada}\nHorário: ${horario}\nPreço: ${preco}\n${labelUsuario}: ${nomeUsuario}`
                    );
                 }}
-                onRate={() => {
-                  setAppointmentToRate(item);
-                  setIsRateModalVisible(true);
-                }}
+                onRate={
+                  role === 'client'
+                    ? () => {
+                        setAppointmentToRate(item);
+                        setIsRateModalVisible(true);
+                      }
+                    : undefined
+                }
               />
             ))
           ) : (

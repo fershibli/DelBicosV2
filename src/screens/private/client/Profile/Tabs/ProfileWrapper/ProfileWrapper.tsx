@@ -44,6 +44,9 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
 
   const params = route.params as ClientProfileRouteParams;
 
+  const isProfessionalTab = route.name === 'ProfessionalProfileTab';
+  const role = isProfessionalTab ? 'professional' : 'client';
+
   // No mobile, se não tem subrota, mostra o menu. No desktop, padrão é DadosConta.
   const activeSubroute =
     params?.subroute ||
@@ -58,15 +61,15 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
       case ClientProfileSubRoutes.Seguranca:
         return <TrocarSenhaForm />;
       case ClientProfileSubRoutes.MeusAgendamentos:
-        return <MeusAgendamentos />;
+        return <MeusAgendamentos role={role} />;
       case ClientProfileSubRoutes.Notificacoes:
         return <NotificacoesContent />;
       case ClientProfileSubRoutes.Avaliacoes:
-        return <AvaliacoesTab />;
+        return <AvaliacoesTab role={role} />;
       case ClientProfileSubRoutes.Favoritos:
         return <FavoritosTab />;
       case ClientProfileSubRoutes.Historico:
-        return <HistoricoCompras />;
+        return <HistoricoCompras role={role} />;
       case ClientProfileSubRoutes.TornarParceiro:
         return <TornarParceiroForm />;
       default:
