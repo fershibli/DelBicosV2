@@ -75,7 +75,8 @@ const developers = [
     photo: FernandoRibeiroProfile,
     github: 'https://github.com/FernandoRSantos',
     linkedin: 'https://www.linkedin.com/in/fernando-ribeiro-a9a405301/',
-    portfolio: 'https://cloudflare-workers-autoconfig-portifolio.fernandorsantos2802.workers.dev/',
+    portfolio:
+      'https://cloudflare-workers-autoconfig-portifolio.fernandorsantos2802.workers.dev/',
   },
 
   {
@@ -165,14 +166,15 @@ function AboutUsScreen() {
                 distâncias, fomentar a economia local e promover a
                 sustentabilidade, criando produtos que resolvem dores cotidianas
                 com inteligência e segurança.
-                <p>
+              </Text>
+              <Text style={styles.missionText}>
                 Acreditamos que a tecnologia deve servir para conectar pessoas e
-                 fortalecer comunidades. Nosso projeto de destaque, o DelBicos, é a 
-                 materialização dessa visão: uma plataforma web projetada para unir 
-                 clientes e trabalhadores informais da mesma vizinhança. 
-                 Transformamos a dificuldade de captação de clientes e a insegurança 
-                 na contratação de serviços em uma rede local eficiente, confiável e acessível.
-                 </p>
+                fortalecer comunidades. Nosso projeto de destaque, o DelBicos, é
+                a materialização dessa visão: uma plataforma web projetada para
+                unir clientes e trabalhadores informais da mesma vizinhança.
+                Transformamos a dificuldade de captação de clientes e a
+                insegurança na contratação de serviços em uma rede local
+                eficiente, confiável e acessível.
               </Text>
               <Image
                 source={logoImage}
@@ -234,7 +236,7 @@ function AboutUsScreen() {
                 <Text style={styles.developerRole}>{dev.role}</Text>
                 <View style={styles.developerSocialIcons}>
                   <TouchableOpacity
-                  accessibilityRole="button"
+                    accessibilityRole="button"
                     accessibilityLabel={`LinkedIn de ${dev.name}`}
                     onPress={() =>
                       dev.linkedin ? Linking.openURL(dev.linkedin) : undefined
@@ -260,7 +262,7 @@ function AboutUsScreen() {
                     <Image source={gitIcon} style={styles.socialIcon} />
                   </TouchableOpacity>
                   <TouchableOpacity
-                  accessibilityRole="button"
+                    accessibilityRole="button"
                     accessibilityLabel={`Portfólio de ${dev.name}`}
                     onPress={() =>
                       dev.portfolio ? Linking.openURL(dev.portfolio) : undefined
