@@ -31,7 +31,7 @@ export const createStyles = (
       fontFamily: 'Afacad-Bold',
       color: colors.primaryOrange,
       textAlign: 'center',
-      paddingHorizontal: 20,
+      //paddingHorizontal: 20,
       paddingVertical: isMobile ? 16 : 0,
       //marginTop: isMobile ? 16 : 5,
     },
