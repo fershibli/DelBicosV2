@@ -227,7 +227,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
               style={[
                 styles.modalButton,
                 (isLocationLoading || !tempMarker) &&
-                  styles.modalButtonDisabled,
+                styles.modalButtonDisabled,
               ]}
               onPress={handleConfirmLocation}
               disabled={isLocationLoading || !tempMarker}>
