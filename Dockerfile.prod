@@ -5,15 +5,13 @@ RUN apk add --no-cache git bash curl
 
 WORKDIR /app
 
-RUN npm install -g pnpm
-
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm install
 
 COPY . .
 
 # Gera o build estático para web
-RUN pnpm exec expo export --platform web
+RUN npx expo export --platform web
 
 # Etapa 2: Servir com nginx
 FROM nginx:alpine
