@@ -133,12 +133,13 @@ export const createStyles = (colors: ColorsType) =>
     },
 
     timeSlot: {
-      flex: 1,
+      minWidth: 64,
       backgroundColor: colors.inputBackground,
       borderWidth: 1,
       borderColor: colors.borderColor,
       borderRadius: 6,
       paddingVertical: 6,
+      paddingHorizontal: 8,
       alignItems: 'center',
       justifyContent: 'center',
     },

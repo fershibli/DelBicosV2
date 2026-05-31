@@ -2,6 +2,7 @@ import { Assets as NavigationAssets } from '@react-navigation/elements';
 import { Asset } from 'expo-asset';
 import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
+// RF04 auto-location request reverted
 import { useFonts } from 'expo-font';
 import { Navigation } from '@screens/NavigationStack';
 import { LocationProvider } from '@lib/hooks/LocationContext';
@@ -18,6 +19,7 @@ import { initClarityWeb } from './utils/clarity';
 import { GOOGLE_ANALYTICS_ID, CLARITY_ID } from './config/varEnvs';
 import VLibrasSetup from '@components/features/Accessibility/VLibrasSetup';
 import { registerTokenProvider } from '@lib/helpers/httpClient';
+import { registerLogoutHandler } from '@lib/helpers/httpClient';
 import { useUserStore } from '@stores/User';
 
 Asset.loadAsync([...NavigationAssets]);
@@ -28,7 +30,17 @@ function NotificationManager() {
   return null;
 }
 
+// AutoRequestLocation removed
+
 registerTokenProvider(() => useUserStore.getState().token);
+registerLogoutHandler(() => {
+  try {
+    const signOut = useUserStore.getState().signOut;
+    if (typeof signOut === 'function') signOut();
+  } catch (e) {
+    console.error('Failed to execute registered logout handler', e);
+  }
+});
 
 const styles = StyleSheet.create({
   safeArea: {

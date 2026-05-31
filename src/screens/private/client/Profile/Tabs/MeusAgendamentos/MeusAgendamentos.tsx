@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View, ScrollView, useWindowDimensions } from 'react-native';
+import { Text, View, ScrollView, useWindowDimensions, TouchableOpacity } from 'react-native';
 import { useAppointmentStore } from '@stores/Appointment';
 import { useFavoriteStore } from '@stores/Favorite';
+import { useUserStore } from '@stores/User';
 import { useColors } from '@theme/ThemeProvider';
 import { AppointmentDetailsModal } from '@components/features/AppointmentDetailsModal';
 import { RateServiceModal } from '@components/features/RateServiceModal';
@@ -49,15 +50,18 @@ const appointmentStatusRenderInfo = (
 const appointmentStatusRenderOrder: AppointmentStatus[] = [
   AppointmentStatus.PENDING,
   AppointmentStatus.CONFIRMED,
-  AppointmentStatus.COMPLETED,
-  AppointmentStatus.CANCELED,
 ];
 import { createStyles } from './styles';
 
-function MeusAgendamentos() {
-  const { appointments, appointmentsByStatus, fetchAppointments } =
+interface MeusAgendamentosProps {
+  role?: 'client' | 'professional';
+}
+
+function MeusAgendamentos({ role }: MeusAgendamentosProps = {}) {
+  const { appointments, appointmentsByStatus, fetchAppointments, updateAppointmentStatus } =
     useAppointmentStore();
   const { addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
+  const { user } = useUserStore();
   const colors = useColors();
   const styles = createStyles(colors);
 
@@ -71,9 +75,11 @@ function MeusAgendamentos() {
   const [appointmentToRate, setAppointmentToRate] =
     useState<Appointment | null>(null);
 
+  const [activeFilter, setActiveFilter] = useState<'all' | AppointmentStatus.PENDING | AppointmentStatus.CONFIRMED>('all');
+
   useEffect(() => {
-    fetchAppointments();
-  }, [fetchAppointments]);
+    fetchAppointments(role);
+  }, [fetchAppointments, role]);
 
   const proximosAgendamentos = useMemo(() => {
     return appointments
@@ -110,6 +116,32 @@ function MeusAgendamentos() {
     }
   };
 
+  const handleAccept = async () => {
+    if (!selectedAppointment) return;
+    const success = await updateAppointmentStatus(
+      selectedAppointment.id,
+      AppointmentStatus.CONFIRMED,
+    );
+    if (success) {
+      setIsModalVisible(false);
+    } else {
+      // Alert.alert('Erro', 'Não foi possível aceitar o agendamento.');
+    }
+  };
+
+  const handleReject = async () => {
+    if (!selectedAppointment) return;
+    const success = await updateAppointmentStatus(
+      selectedAppointment.id,
+      AppointmentStatus.CANCELED,
+    );
+    if (success) {
+      setIsModalVisible(false);
+    } else {
+      // Alert.alert('Erro', 'Não foi possível recusar o agendamento.');
+    }
+  };
+
   const EmptyState = ({ text }: { text: string }) => (
     <View style={styles.emptyContainer}>
       <FontAwesome
@@ -128,7 +160,27 @@ function MeusAgendamentos() {
       contentContainerStyle={{ paddingBottom: 40 }}>
       <Text style={styles.pageTitle}>Meus Agendamentos</Text>
 
-      {appointmentStatusRenderOrder.map((status) => {
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
+        <TouchableOpacity 
+          style={[styles.filterChip, activeFilter === 'all' && styles.filterChipActive]} 
+          onPress={() => setActiveFilter('all')}>
+          <Text style={[styles.filterText, activeFilter === 'all' && styles.filterTextActive]}>Todos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.filterChip, activeFilter === AppointmentStatus.PENDING && styles.filterChipActive]} 
+          onPress={() => setActiveFilter(AppointmentStatus.PENDING)}>
+          <Text style={[styles.filterText, activeFilter === AppointmentStatus.PENDING && styles.filterTextActive]}>Pendentes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.filterChip, activeFilter === AppointmentStatus.CONFIRMED && styles.filterChipActive]} 
+          onPress={() => setActiveFilter(AppointmentStatus.CONFIRMED)}>
+          <Text style={[styles.filterText, activeFilter === AppointmentStatus.CONFIRMED && styles.filterTextActive]}>Confirmados</Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      {appointmentStatusRenderOrder
+        .filter(status => activeFilter === 'all' || status === activeFilter)
+        .map((status) => {
         const renderInfo = appointmentStatusRenderInfo(colors)[status];
         const appointmentInfo = appointmentsByStatus[status] || [];
 
@@ -188,7 +240,17 @@ function MeusAgendamentos() {
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         appointment={selectedAppointment}
-        onCancel={() => fetchAppointments()}
+        onCancel={() => fetchAppointments(role)}
+        onAccept={
+          user?.id === selectedAppointment?.Professional?.user_id
+            ? handleAccept
+            : undefined
+        }
+        onReject={
+          user?.id === selectedAppointment?.Professional?.user_id
+            ? handleReject
+            : undefined
+        }
       />
 
       {appointmentToRate && (
@@ -200,7 +262,7 @@ function MeusAgendamentos() {
           existingRating={appointmentToRate.rating}
           existingReview={appointmentToRate.review}
           onClose={() => setIsRateModalVisible(false)}
-          onSuccess={() => fetchAppointments()}
+          onSuccess={() => fetchAppointments(role)}
         />
       )}
     </ScrollView>

@@ -17,6 +17,8 @@ interface AppointmentDetailsModalProps {
   onClose: () => void;
   appointment: Appointment | null;
   onCancel?: () => void;
+  onAccept?: () => void;
+  onReject?: () => void;
 }
 
 export function AppointmentDetailsModal({
@@ -24,6 +26,8 @@ export function AppointmentDetailsModal({
   onClose,
   appointment,
   onCancel,
+  onAccept,
+  onReject,
 }: AppointmentDetailsModalProps) {
   const colors = useColors();
   const styles = createStyles(colors);
@@ -193,7 +197,30 @@ export function AppointmentDetailsModal({
                 <Text style={styles.okButtonText}>Ok</Text>
               </TouchableOpacity>
 
-              {appointment.status !== 'completed' &&
+              {onAccept && appointment.status === 'pending' ? (
+                <>
+                  <TouchableOpacity
+                    style={[styles.okButton, { backgroundColor: colors.successText, marginBottom: 10 }]}
+                    onPress={() => {
+                      if (onAccept) onAccept();
+                      onClose();
+                    }}
+                    activeOpacity={0.8}>
+                    <Text style={styles.okButtonText}>Aceitar Serviço</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={() => {
+                      if (onReject) onReject();
+                      onClose();
+                    }}
+                    activeOpacity={0.8}>
+                    <Text style={styles.cancelButtonText}>Recusar Serviço</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                appointment.status !== 'completed' &&
                 appointment.status !== 'canceled' && (
                   <TouchableOpacity
                     style={styles.cancelButton}
@@ -203,7 +230,8 @@ export function AppointmentDetailsModal({
                       Cancelar Agendamento
                     </Text>
                   </TouchableOpacity>
-                )}
+                )
+              )}
             </View>
           </ScrollView>
         </View>
