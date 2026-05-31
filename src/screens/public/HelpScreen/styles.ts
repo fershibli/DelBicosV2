@@ -23,7 +23,7 @@ export const createStyles = (colors: ColorsType) => {
     title: {
       fontSize: 28,
       fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlue,
+      color: colors.primaryBlack,
       marginBottom: 24,
       textAlign: 'center',
     },
