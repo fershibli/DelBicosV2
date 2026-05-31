@@ -64,7 +64,7 @@ export const createStyles = (
       width: '100%',
       flexShrink: 0,
       borderRadius: 25,
-      backgroundColor: '#FFFFFF',
+      backgroundColor: isDark ? colors.cardBackground : '#FFFFFF',
       marginTop: isMobile ? 15 : 10,
       borderWidth: isHighContrast ? 3 : isDark ? 0 : 1,
       borderColor: isHighContrast ? colors.primaryBlack : colors.borderColor,
@@ -103,7 +103,7 @@ export const createStyles = (
     missionText: {
       fontSize: isMobile ? 16 : 24,
       fontFamily: 'Afacad-Bold',
-      color: isDark ? '#000000' : colors.primaryBlack,
+      color: colors.primaryBlack,
       lineHeight: isMobile ? 22 : 28,
       textAlign: 'justify',
     },
@@ -131,7 +131,7 @@ export const createStyles = (
     developersBannerTitle: {
       fontSize: isMobile ? 36 : 60,
       fontFamily: 'Afacad-Bold',
-      color: colors.primaryWhite,
+      color: isDark ? colors.primaryBlack : colors.primaryWhite,
       letterSpacing: 0.5,
     },
 
