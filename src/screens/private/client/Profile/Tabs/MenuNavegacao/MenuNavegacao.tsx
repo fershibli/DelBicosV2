@@ -77,27 +77,24 @@ const MenuNavegacao = () => {
   const isProfessionalTab = route.name === 'ProfessionalProfileTab';
 
   const dynamicMenuOptions = menuOptions.map((option) => {
-    // If user is already a professional, disable "Tornar-se Colaborador"
-    if (
-      option.id === ClientProfileSubRoutes.TornarParceiro &&
-      user?.professional_id
-    ) {
-      return {
-        ...option,
-        disabled: true,
-      } as any;
-    }
-
-    if (
-      option.id === ClientProfileSubRoutes.TornarParceiro &&
-      isProfessionalTab
-    ) {
-      return {
-        id: 'VoltarCliente',
-        label: 'Voltar para o Cliente',
-        icon: 'arrow-back',
-        activeIcon: 'arrow-back',
-      };
+    if (option.id === ClientProfileSubRoutes.TornarParceiro) {
+      if (isProfessionalTab) {
+        return {
+          ...option,
+          id: 'VoltarCliente',
+          label: 'Acessar Painel Cliente',
+          icon: 'person',
+          activeIcon: 'person',
+        } as any;
+      } else if (user?.professional_id) {
+        return {
+          ...option,
+          id: 'AcessarParceiro',
+          label: 'Acessar Painel Colaborador',
+          icon: 'work',
+          activeIcon: 'work',
+        } as any;
+      }
     }
 
     return option;
@@ -107,6 +104,11 @@ const MenuNavegacao = () => {
     if (subroute === 'VoltarCliente') {
       // @ts-ignore
       navigation.navigate('MainTabs');
+      return;
+    }
+    if (subroute === 'AcessarParceiro') {
+      // @ts-ignore
+      navigation.navigate('ProfessionalProfileTab');
       return;
     }
     // @ts-ignore - Atualiza o parâmetro na rota atual

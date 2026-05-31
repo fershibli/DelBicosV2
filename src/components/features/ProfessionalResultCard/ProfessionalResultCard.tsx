@@ -66,7 +66,7 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
     const [year, month, day] = selectedDate.split('-').map(Number);
     const [hours, minutes] = time.split(':').map(Number);
     const slotDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
-    const minTime = Date.now() + 26 * 60 * 60 * 1000;
+    const minTime = Date.now() + 12 * 60 * 60 * 1000;
     return slotDate.getTime() >= minTime;
   });
 
@@ -144,7 +144,7 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
             </ScrollView>
           ) : (
             <Text style={[styles.timeText, { color: colors.textSecondary }]}>
-              Nenhum horário atende à regra de 26h.
+              Nenhum horário atende à regra de 12h.
             </Text>
           )}
         </View>

@@ -13,14 +13,18 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
   appointments: [],
   appointmentsByStatus: {},
   loading: false,
+  activeRole: undefined,
 
-  fetchAppointments: async () => {
-    set({ loading: true, appointments: [] });
+  fetchAppointments: async (role) => {
+    set({ loading: true, appointments: [], activeRole: role });
     try {
       const { user } = useUserStore.getState();
       if (!user) throw new Error('Usuário não autenticado.');
 
-      const endpoint = `api/appointments/user/${user.id}`;
+      let endpoint = `api/appointments/user/${user.id}`;
+      if (role) {
+        endpoint += `?role=${role}`;
+      }
       const response = await backendHttpClient.get(endpoint);
 
       const sortedData = response.data.sort(
@@ -108,6 +112,24 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
     } catch (error) {
       console.error('Failed to fetch invoice:', error);
       return null;
+    }
+  },
+
+  updateAppointmentStatus: async (appointmentId, status) => {
+    try {
+      const response = await backendHttpClient.put(
+        `api/appointments/${appointmentId}`,
+        { status },
+      );
+      if (response.status === 200) {
+        const store = useAppointmentStore.getState();
+        await store.fetchAppointments(store.activeRole);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to update appointment status:', error);
+      return false;
     }
   },
 }));

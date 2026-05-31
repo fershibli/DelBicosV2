@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Text, View, ScrollView, useWindowDimensions } from 'react-native';
 import { useAppointmentStore } from '@stores/Appointment';
 import { useFavoriteStore } from '@stores/Favorite';
+import { useUserStore } from '@stores/User';
 import { useColors } from '@theme/ThemeProvider';
 import { AppointmentDetailsModal } from '@components/features/AppointmentDetailsModal';
 import { RateServiceModal } from '@components/features/RateServiceModal';
@@ -54,10 +55,15 @@ const appointmentStatusRenderOrder: AppointmentStatus[] = [
 ];
 import { createStyles } from './styles';
 
-function MeusAgendamentos() {
-  const { appointments, appointmentsByStatus, fetchAppointments } =
+interface MeusAgendamentosProps {
+  role?: 'client' | 'professional';
+}
+
+function MeusAgendamentos({ role }: MeusAgendamentosProps = {}) {
+  const { appointments, appointmentsByStatus, fetchAppointments, updateAppointmentStatus } =
     useAppointmentStore();
   const { addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
+  const { user } = useUserStore();
   const colors = useColors();
   const styles = createStyles(colors);
 
@@ -72,8 +78,8 @@ function MeusAgendamentos() {
     useState<Appointment | null>(null);
 
   useEffect(() => {
-    fetchAppointments();
-  }, [fetchAppointments]);
+    fetchAppointments(role);
+  }, [fetchAppointments, role]);
 
   const proximosAgendamentos = useMemo(() => {
     return appointments
@@ -107,6 +113,32 @@ function MeusAgendamentos() {
         serviceTitle: appointment.Service.title,
         addedAt: new Date().toISOString(),
       });
+    }
+  };
+
+  const handleAccept = async () => {
+    if (!selectedAppointment) return;
+    const success = await updateAppointmentStatus(
+      selectedAppointment.id,
+      AppointmentStatus.CONFIRMED,
+    );
+    if (success) {
+      setIsModalVisible(false);
+    } else {
+      // Alert.alert('Erro', 'Não foi possível aceitar o agendamento.');
+    }
+  };
+
+  const handleReject = async () => {
+    if (!selectedAppointment) return;
+    const success = await updateAppointmentStatus(
+      selectedAppointment.id,
+      AppointmentStatus.CANCELED,
+    );
+    if (success) {
+      setIsModalVisible(false);
+    } else {
+      // Alert.alert('Erro', 'Não foi possível recusar o agendamento.');
     }
   };
 
@@ -188,7 +220,17 @@ function MeusAgendamentos() {
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         appointment={selectedAppointment}
-        onCancel={() => fetchAppointments()}
+        onCancel={() => fetchAppointments(role)}
+        onAccept={
+          user?.id === selectedAppointment?.Professional?.user_id
+            ? handleAccept
+            : undefined
+        }
+        onReject={
+          user?.id === selectedAppointment?.Professional?.user_id
+            ? handleReject
+            : undefined
+        }
       />
 
       {appointmentToRate && (
@@ -200,7 +242,7 @@ function MeusAgendamentos() {
           existingRating={appointmentToRate.rating}
           existingReview={appointmentToRate.review}
           onClose={() => setIsRateModalVisible(false)}
-          onSuccess={() => fetchAppointments()}
+          onSuccess={() => fetchAppointments(role)}
         />
       )}
     </ScrollView>

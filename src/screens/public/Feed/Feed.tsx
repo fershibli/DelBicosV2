@@ -127,10 +127,10 @@ const FeedScreen: React.FC = () => {
   const handleSelectService = (item: SubCategory) => {
     setShowDropdown(false);
     setSearch('');
-    const category = categories.find((c) => c.id === item.categoryId);
+    const category = categories.find((c) => c.id === item.category_id);
     // @ts-ignore
     navigation.navigate('SubCategoryScreen', {
-      categoryId: item.categoryId,
+      categoryId: item.category_id,
       categoryTitle: category ? category.title : 'Serviços',
       serviceId: item.id,
     });
