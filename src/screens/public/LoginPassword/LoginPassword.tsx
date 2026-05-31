@@ -35,7 +35,8 @@ export const LoginPassword = () => {
 
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
+  type LoginRole = 'user' | 'partner' | 'admin';
+  const [selectedRole, setSelectedRole] = useState<LoginRole>('user');
 
   const {
     control,
@@ -51,7 +52,7 @@ export const LoginPassword = () => {
     setErrorModalVisible(false);
 
     try {
-      if (isAdmin) {
+      if (selectedRole === 'admin') {
         // @ts-ignore
         const signInAdminFn = useUserStore.getState().signInAdmin;
 
@@ -63,6 +64,18 @@ export const LoginPassword = () => {
 
         // @ts-ignore
         navigation.navigate('Feed');
+      } else if (selectedRole === 'partner') {
+        await signInPassword(data.email, data.password);
+        const user = useUserStore.getState().user;
+
+        if (!user || !user.professional_id) {
+          // Desloga para segurança e lança erro se não for parceiro
+          useUserStore.getState().signOut();
+          throw new Error('Esta conta não possui cadastro de parceiro colaborador.');
+        }
+
+        // @ts-ignore
+        navigation.navigate('ProfessionalTabs');
       } else {
         await signInPassword(data.email, data.password);
 
@@ -107,20 +120,29 @@ export const LoginPassword = () => {
           {/* Seletor de Tipo de Conta */}
           <View style={styles.roleToggle}>
             <TouchableOpacity
-              onPress={() => setIsAdmin(false)}
-              style={[styles.roleButton, !isAdmin && styles.roleButtonActive]}
+              onPress={() => setSelectedRole('user')}
+              style={[styles.roleButton, selectedRole === 'user' && styles.roleButtonActive]}
               activeOpacity={0.8}>
               <Text
-                style={[styles.roleText, !isAdmin && styles.roleTextActive]}>
+                style={[styles.roleText, selectedRole === 'user' && styles.roleTextActive]}>
                 Usuário
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => setIsAdmin(true)}
-              style={[styles.roleButton, isAdmin && styles.roleButtonActive]}
+              onPress={() => setSelectedRole('partner')}
+              style={[styles.roleButton, selectedRole === 'partner' && styles.roleButtonActive]}
               activeOpacity={0.8}>
-              <Text style={[styles.roleText, isAdmin && styles.roleTextActive]}>
-                Administrador
+              <Text
+                style={[styles.roleText, selectedRole === 'partner' && styles.roleTextActive]}>
+                Parceiro
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setSelectedRole('admin')}
+              style={[styles.roleButton, selectedRole === 'admin' && styles.roleButtonActive]}
+              activeOpacity={0.8}>
+              <Text style={[styles.roleText, selectedRole === 'admin' && styles.roleTextActive]}>
+                Admin
               </Text>
             </TouchableOpacity>
           </View>
@@ -187,7 +209,13 @@ export const LoginPassword = () => {
             ) : (
               <View style={styles.buttonContent}>
                 <FontAwesome
-                  name={isAdmin ? 'lock' : 'user'}
+                  name={
+                    selectedRole === 'admin'
+                      ? 'lock'
+                      : selectedRole === 'partner'
+                        ? 'briefcase'
+                        : 'user'
+                  }
                   size={18}
                   color={colors.primaryWhite}
                 />
