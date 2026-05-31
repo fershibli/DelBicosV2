@@ -299,7 +299,7 @@ export const useUserStore = create<UserStore>()(
         try {
           const fileName = `avatar_${Date.now()}.jpg`;
           const {
-            data: { uploadUrl, fileUrl },
+            data: { uploadUrl, fileUrl: initialFileUrl },
           } = await backendHttpClient.post('/api/avatar/upload-url', {
             fileName,
             fileType: 'image/jpeg',
@@ -314,8 +314,19 @@ export const useUserStore = create<UserStore>()(
             headers: { 'Content-Type': 'image/jpeg' },
           });
 
-          if (!uploadResponse.ok)
-            throw new Error('Falha no upload para o bucket S3');
+          if (!uploadResponse.ok) throw new Error('Falha no upload');
+
+          // S3: PUT retorna vazio → usa fileUrl do POST
+          // ImgBB proxy: PUT retorna { fileUrl } com a URL real do ImgBB
+          let fileUrl = initialFileUrl;
+          // Verifica se content-type indica resposta JSON (caso do ImgBB proxy)
+          const contentType = uploadResponse.headers.get('content-type');
+          if (contentType?.includes('application/json')) {
+            const responseData = await uploadResponse.json();
+            if (responseData?.fileUrl) {
+              fileUrl = responseData.fileUrl;
+            }
+          }
 
           await backendHttpClient.patch('/api/avatar/update-path', {
             avatar_uri: fileUrl,
