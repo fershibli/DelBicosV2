@@ -1,0 +1,41 @@
+version: '3.8'
+
+name: frontend-delbicos-prod
+
+services:
+  delbicos-frontend-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      args:
+        # Repassa as variáveis de build do ambiente local/.env para o Dockerfile
+        - EXPO_PUBLIC_ENVIRONMENT=production
+        - EXPO_PUBLIC_DOMAIN_WEB=${EXPO_PUBLIC_DOMAIN_WEB:-localhost}
+        - EXPO_PUBLIC_HTTP_PROTOCOL=${EXPO_PUBLIC_HTTP_PROTOCOL:-http}
+        - EXPO_PUBLIC_WS_PROTOCOL=${EXPO_PUBLIC_WS_PROTOCOL:-ws}
+        - EXPO_PUBLIC_PORT=${EXPO_PUBLIC_PORT:-3000}
+        - EXPO_PUBLIC_UNSPLASH_API_KEY=${EXPO_PUBLIC_UNSPLASH_API_KEY}
+        - EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY=${EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+        - EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=${EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}
+        - EXPO_PUBLIC_LOCATIONIQ_API_KEY=${EXPO_PUBLIC_LOCATIONIQ_API_KEY}
+        - EXPO_PUBLIC_GOOGLE_ANALYTICS_ID=${EXPO_PUBLIC_GOOGLE_ANALYTICS_ID}
+        - EXPO_PUBLIC_CLARITY_ID=${EXPO_PUBLIC_CLARITY_ID}
+    container_name: webapp-delbicos-prod
+    ports:
+      # Exponde na porta 8080 do host (redirecionando para a porta 80 do Nginx)
+      - '8080:80'
+    environment:
+      # Define a URL de destino para o Proxy Reverso do Nginx.
+      # Substitui a variável ${BACKEND_API_URL} definida no default.conf.template em tempo de execução.
+      # Por padrão tenta usar host.docker.internal (localhost da máquina host)
+      - BACKEND_API_URL=${BACKEND_API_URL:-http://host.docker.internal:3000}
+    networks:
+      - delbicos-network
+    restart: always
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+networks:
+  delbicos-network:
+    external: true
+    name: delbicos-shared-network
