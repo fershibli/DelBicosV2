@@ -67,4 +67,39 @@ export const createStyles = (colors: ColorsType) =>
       marginTop: 12,
       lineHeight: 26,
     },
+    webCard: {
+      width: '100%',
+      height: 160,
+      borderRadius: 16,
+      overflow: 'hidden',
+      backgroundColor: colors.cardBackground,
+      ...Platform.select({
+        web: {
+          boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.12)',
+          cursor: 'pointer',
+          transition: 'transform 0.2s ease',
+        } as any,
+      }),
+    },
+    webCardHovered: {
+      transform: [{ scale: 1.03 }],
+    },
+    webCardImage: {
+      width: '100%',
+      height: '100%',
+      justifyContent: 'flex-end',
+    },
+    webCardGradient: {
+      height: '50%',
+      justifyContent: 'flex-end',
+      padding: 16,
+    },
+    webCardTitle: {
+      fontSize: 20,
+      fontFamily: 'Afacad-Bold',
+      color: '#FFFFFF',
+      textShadowColor: 'rgba(0, 0, 0, 0.75)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 3,
+    },
   });

@@ -6,6 +6,8 @@ import {
   View,
   Pressable,
   useWindowDimensions,
+  Platform,
+  ImageBackground,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useCategoryStore } from '@stores/Category/Category';
@@ -14,6 +16,7 @@ import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const CATEGORY_ICONS: Record<number, string> = {
   1: 'heartbeat',
@@ -24,8 +27,11 @@ const CATEGORY_ICONS: Record<number, string> = {
   6: 'paw',
 };
 
-function getCategoryIconName(id: number) {
-  return CATEGORY_ICONS[id] || 'shapes';
+const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop';
+
+function getCategoryIconName(id: any) {
+  const numericId = Number(id);
+  return CATEGORY_ICONS[numericId] || 'shapes';
 }
 
 interface CategoryCardProps {
@@ -34,7 +40,6 @@ interface CategoryCardProps {
 }
 
 function CategoryCard({ category, onPress }: CategoryCardProps) {
-  const iconName = getCategoryIconName(category.id);
   const [isHovered, setIsHovered] = useState(false);
 
   const { theme } = useThemeStore();
@@ -44,6 +49,36 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
   const isDark = theme === ThemeMode.DARK;
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
 
+  const isWeb = Platform.OS === 'web';
+  const imageUrl = category.imageUrl || PLACEHOLDER_IMAGE;
+
+  // --- RENDERING WEB IMAGE CARD ---
+  if (isWeb) {
+    return (
+      <Pressable
+        style={[styles.webCard, isHovered && styles.webCardHovered]}
+        onPress={() => onPress(category)}
+        onHoverIn={() => setIsHovered(true)}
+        onHoverOut={() => setIsHovered(false)}
+        accessibilityRole="button">
+        <ImageBackground
+          source={{ uri: imageUrl }}
+          style={styles.webCardImage}
+          imageStyle={{ borderRadius: 16 }}>
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.8)']}
+            style={styles.webCardGradient}>
+            <Text style={styles.webCardTitle} numberOfLines={1}>
+              {category.title}
+            </Text>
+          </LinearGradient>
+        </ImageBackground>
+      </Pressable>
+    );
+  }
+
+  // --- RENDERING MOBILE ICON CARD (Keep untouched) ---
+  const iconName = getCategoryIconName(category.id);
   const colorProps = useMemo(() => {
     let bgColor = colors.cardBackground;
     let borderColor = colors.borderColor;
@@ -90,6 +125,7 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
         size={48}
         color={colorProps.contentColor}
         style={{ marginBottom: 16 }}
+        solid
       />
       <Text
         style={[styles.categoryTitle, { color: colorProps.contentColor }]}
@@ -103,7 +139,6 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
 function CategoryList() {
   const [isLoading, setIsLoading] = useState(true);
   const { categories, fetchCategories } = useCategoryStore();
-  const hasFetchedRef = useRef(false);
   const navigation = useNavigation();
   const colors = useColors();
   const styles = createStyles(colors);

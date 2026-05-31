@@ -278,7 +278,20 @@ export default function HistoricoCompras({ role = 'client' }: { role?: 'client' 
               <View style={styles.pickerWrapper}>
                 <Picker
                   selectedValue={tempMonth}
-                  onValueChange={(itemValue) => setTempMonth(itemValue as number)}>
+                  onValueChange={(itemValue) => setTempMonth(itemValue as number)}
+                  style={Platform.OS === 'web' ? {
+                    backgroundColor: 'transparent',
+                    borderWidth: 0,
+                    color: colors.primaryBlack,
+                    fontFamily: 'Afacad-Regular',
+                    fontSize: 16,
+                    paddingHorizontal: 8,
+                    height: '100%',
+                    width: '100%',
+                    outlineStyle: 'none',
+                    cursor: 'pointer',
+                  } as any : undefined}
+                  dropdownIconColor={colors.primaryBlack}>
                   {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => (
                      <Picker.Item key={m} label={getMonthName(m)} value={m} color={colors.primaryBlack} />
                   ))}
@@ -288,7 +301,20 @@ export default function HistoricoCompras({ role = 'client' }: { role?: 'client' 
               <View style={styles.pickerWrapper}>
                 <Picker
                   selectedValue={tempYear}
-                  onValueChange={(itemValue) => setTempYear(itemValue as number)}>
+                  onValueChange={(itemValue) => setTempYear(itemValue as number)}
+                  style={Platform.OS === 'web' ? {
+                    backgroundColor: 'transparent',
+                    borderWidth: 0,
+                    color: colors.primaryBlack,
+                    fontFamily: 'Afacad-Regular',
+                    fontSize: 16,
+                    paddingHorizontal: 8,
+                    height: '100%',
+                    width: '100%',
+                    outlineStyle: 'none',
+                    cursor: 'pointer',
+                  } as any : undefined}
+                  dropdownIconColor={colors.primaryBlack}>
                   {[2024, 2025, 2026, 2027].map(y => (
                      <Picker.Item key={y} label={y.toString()} value={y} color={colors.primaryBlack} />
                   ))}

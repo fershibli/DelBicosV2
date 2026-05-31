@@ -10,9 +10,9 @@ const HTTP_PROTOCOL = process.env.EXPO_PUBLIC_HTTP_PROTOCOL;
 const WS_PROTOCOL = process.env.EXPO_PUBLIC_WS_PROTOCOL;
 
 const localhost = Platform.select({
-  android: DOMAIN_ANDROID,
-  ios: DOMAIN_IOS,
-  web: DOMAIN_WEB,
+  android: DOMAIN_ANDROID || '10.0.2.2',
+  ios: DOMAIN_IOS || 'localhost',
+  web: DOMAIN_WEB || 'localhost',
 });
 
 const DOMAIN = PORT ? `${localhost}:${PORT}` : `${localhost}`;
