@@ -15,13 +15,7 @@ const localhost = Platform.select({
   web: DOMAIN_WEB,
 });
 
-// Avoid adding the port twice when the domain already contains one (e.g. "10.0.2.2:3000")
-const DOMAIN = (() => {
-  if (!PORT) return `${localhost}`;
-  // if localhost already looks like host:port, don't append PORT again
-  if (String(localhost).includes(':')) return `${localhost}`;
-  return `${localhost}:${PORT}`;
-})();
+const DOMAIN = PORT ? `${localhost}:${PORT}` : `${localhost}`;
 
 export const HTTP_DOMAIN = `${HTTP_PROTOCOL}://${DOMAIN}`;
 
