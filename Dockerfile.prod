@@ -1,0 +1,71 @@
+# ==========================================
+# Estágio 1: Build da aplicação Expo Web
+# ==========================================
+FROM node:22.15.1-alpine AS builder
+
+WORKDIR /app
+
+# Instalar dependências necessárias para compilação (se houver pacotes nativos ou bash/git)
+RUN apk add --no-cache bash git
+
+# Copiar package.json e package-lock.json
+COPY package.json package-lock.json* ./
+
+# Instalar todas as dependências
+RUN npm install
+
+# Definir argumentos de build para as variáveis EXPO_PUBLIC
+# (O Expo exige que estejam presentes no momento do build para embuti-las no JS compilado)
+ARG EXPO_PUBLIC_ENVIRONMENT=production
+ARG EXPO_PUBLIC_DOMAIN_ANDROID
+ARG EXPO_PUBLIC_DOMAIN_IOS
+ARG EXPO_PUBLIC_DOMAIN_WEB
+ARG EXPO_PUBLIC_PORT
+ARG EXPO_PUBLIC_HTTP_PROTOCOL
+ARG EXPO_PUBLIC_WS_PROTOCOL
+ARG EXPO_PUBLIC_UNSPLASH_API_KEY
+ARG EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY
+ARG EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
+ARG EXPO_PUBLIC_LOCATIONIQ_API_KEY
+ARG EXPO_PUBLIC_GOOGLE_ANALYTICS_ID
+ARG EXPO_PUBLIC_CLARITY_ID
+
+# Repassar os argumentos para as variáveis de ambiente utilizadas no processo de build
+ENV EXPO_PUBLIC_ENVIRONMENT=$EXPO_PUBLIC_ENVIRONMENT
+ENV EXPO_PUBLIC_DOMAIN_ANDROID=$EXPO_PUBLIC_DOMAIN_ANDROID
+ENV EXPO_PUBLIC_DOMAIN_IOS=$EXPO_PUBLIC_DOMAIN_IOS
+ENV EXPO_PUBLIC_DOMAIN_WEB=$EXPO_PUBLIC_DOMAIN_WEB
+ENV EXPO_PUBLIC_PORT=$EXPO_PUBLIC_PORT
+ENV EXPO_PUBLIC_HTTP_PROTOCOL=$EXPO_PUBLIC_HTTP_PROTOCOL
+ENV EXPO_PUBLIC_WS_PROTOCOL=$EXPO_PUBLIC_WS_PROTOCOL
+ENV EXPO_PUBLIC_UNSPLASH_API_KEY=$EXPO_PUBLIC_UNSPLASH_API_KEY
+ENV EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY=$EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY
+ENV EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=$EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
+ENV EXPO_PUBLIC_LOCATIONIQ_API_KEY=$EXPO_PUBLIC_LOCATIONIQ_API_KEY
+ENV EXPO_PUBLIC_GOOGLE_ANALYTICS_ID=$EXPO_PUBLIC_GOOGLE_ANALYTICS_ID
+ENV EXPO_PUBLIC_CLARITY_ID=$EXPO_PUBLIC_CLARITY_ID
+
+# Copiar o código fonte do projeto
+COPY . .
+
+# Compilar o build de produção do Expo Web
+# (O comando gera os arquivos estáticos compilados na pasta /app/dist)
+RUN npm run web:build
+
+# ==========================================
+# Estágio 2: Servidor Nginx de produção
+# ==========================================
+FROM nginx:1.25-alpine
+
+# Copiar os arquivos estáticos compilados do estágio anterior
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Copiar o template de configuração do Nginx. A imagem oficial do Nginx Alpine
+# executa um script na inicialização que substitui as variáveis de ambiente no formato ${VAR}
+# presentes nos arquivos da pasta /etc/nginx/templates/ e gera o conf final em /etc/nginx/conf.d/
+COPY ./nginx/templates/default.conf.template /etc/nginx/templates/default.conf.template
+
+# Expor a porta padrão
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
