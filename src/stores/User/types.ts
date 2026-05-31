@@ -84,5 +84,6 @@ export type UserStore = {
     cpf: string;
     cnpj?: string;
     description: string;
+    service_radius_km?: number;
   }) => Promise<void>;
 };

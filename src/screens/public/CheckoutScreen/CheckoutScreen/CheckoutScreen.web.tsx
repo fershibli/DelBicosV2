@@ -22,7 +22,7 @@ import { Address } from '@stores/Address/types';
 import { useProfessionalStore } from '@stores/Professional';
 import AddressSelectionModal from '@components/features/AddressSelectionModal';
 import { createStyles } from './styles';
-import CheckoutForm from '@screens/public/CheckoutScreen/CheckoutForm';
+import CheckoutForm from '../CheckoutForm/CheckoutForm.web';
 
 type CheckoutRouteParams = NavigationParams['Checkout'];
 
@@ -91,6 +91,24 @@ function CheckoutScreen() {
 
   const colors = useColors();
   const styles = createStyles(colors);
+
+  const formattedTime = useMemo(() => {
+    if (!selectedTime) return '';
+    try {
+      const date = new Date(selectedTime);
+      if (isNaN(date.getTime())) {
+        return selectedTime;
+      }
+      const dataFormatada = date.toLocaleDateString('pt-BR');
+      const horario = date.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      return `${dataFormatada} às ${horario}`;
+    } catch (e) {
+      return selectedTime;
+    }
+  }, [selectedTime]);
 
   // Voltar com segurança
   const handleGoBack = () => {
@@ -236,7 +254,7 @@ function CheckoutScreen() {
                 <View style={styles.divider} />
 
                 <Text style={styles.dateLabel}>Data e Horário</Text>
-                <Text style={styles.dateValue}>{selectedTime}</Text>
+                <Text style={styles.dateValue}>{formattedTime}</Text>
               </View>
             </View>
           </View>

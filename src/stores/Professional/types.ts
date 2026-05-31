@@ -36,6 +36,7 @@ export interface Service {
   title: string;
   description?: string;
   price: string;
+  price_cents?: number;
   duration: number;
   banner_uri?: string;
   active: boolean;

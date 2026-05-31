@@ -149,7 +149,7 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
                   color={colors.primaryWhite}
                 />
                 <Text style={styles.distanceText}>
-                  {professional.distance} km
+                  {professional.distance.toFixed(2)} km
                 </Text>
               </View>
             )}

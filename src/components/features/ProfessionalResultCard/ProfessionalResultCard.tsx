@@ -44,7 +44,10 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
 
   const handleTimeSlotPress = (time: string) => {
     setSelectedTime(time);
-    const dateTimeString = `${selectedDate} ${time}`;
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    const [hours, minutes] = time.split(':').map(Number);
+    const localDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+    const dateTimeString = localDate.toISOString();
 
     // @ts-ignore
     navigation.navigate('Checkout', {
@@ -82,7 +85,7 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
 
         <View style={styles.tagsRow}>
           <View style={styles.distanceTag}>
-            <Text style={styles.distanceText}>{professional.distance}km</Text>
+            <Text style={styles.distanceText}>{professional.distance.toFixed(2)} km</Text>
           </View>
           <View style={styles.priceTag}>
             <Text style={styles.priceText}>

@@ -29,8 +29,18 @@ type ServicesState = {
     subcategory_id?: number;
     q?: string;
   };
-  fetchServices: () => Promise<ServiceItem[]>;
+  fetchServices: (opts?: {
+    day?: number;
+    category_id?: number;
+    subcategory_id?: number;
+    q?: string;
+  }) => Promise<ServiceItem[]>;
+  fetchMyServices: (opts?: {
+    page?: number;
+    limit?: number;
+  }) => Promise<ServiceItem[]>;
   reloadServices: () => Promise<ServiceItem[]>;
+  reloadMyServices: () => Promise<ServiceItem[]>;
   createService: (data: Partial<ServiceItem>) => Promise<ServiceItem | null>;
   updateService: (
     id: number,
@@ -72,24 +82,24 @@ export const useServicesStore = create<ServicesState>((set, get) => ({
         title: r.title,
         description: r.description,
         date: r.date,
-        price_cents: r.price_cents ?? r.price ?? undefined,
+        price_cents: r.price_cents ?? (r.price != null ? Math.round(Number(r.price) * 100) : undefined),
         duration: r.duration,
         subcategory_id: r.subcategory_id,
         banner_uri: r.banner_uri ?? r.bannerUrl ?? null,
         active: r.active,
-        category_id: r.category_id ?? (r.category ? r.category.id : undefined),
+        category_id: r.category_id ?? r.Subcategory?.category_id ?? r.subcategory?.category_id ?? (r.category ? r.category.id : undefined),
         availabilities: Array.isArray(r.availabilities)
           ? r.availabilities.map((a: any) => ({
-              day: a.day,
-              start: a.start,
-              end: a.end,
-            }))
+            day: a.day,
+            start: a.start,
+            end: a.end,
+          }))
           : Array.isArray(r.Availabilities)
             ? r.Availabilities.map((a: any) => ({
-                day: a.day_of_week ?? a.day,
-                start: a.start_time ?? a.start,
-                end: a.end_time ?? a.end,
-              }))
+              day: a.day_of_week ?? a.day,
+              start: a.start_time ?? a.start,
+              end: a.end_time ?? a.end,
+            }))
             : undefined,
       }));
       set({ services: data, loading: false });
@@ -116,24 +126,24 @@ export const useServicesStore = create<ServicesState>((set, get) => ({
         title: r.title,
         description: r.description,
         date: r.date,
-        price_cents: r.price_cents ?? r.price ?? undefined,
+        price_cents: r.price_cents ?? (r.price != null ? Math.round(Number(r.price) * 100) : undefined),
         duration: r.duration,
         subcategory_id: r.subcategory_id,
         banner_uri: r.banner_uri ?? r.bannerUrl ?? null,
         active: r.active,
-        category_id: r.category_id ?? (r.category ? r.category.id : undefined),
+        category_id: r.category_id ?? r.Subcategory?.category_id ?? r.subcategory?.category_id ?? (r.category ? r.category.id : undefined),
         availabilities: Array.isArray(r.availabilities)
           ? r.availabilities.map((a: any) => ({
-              day: a.day,
-              start: a.start,
-              end: a.end,
-            }))
+            day: a.day,
+            start: a.start,
+            end: a.end,
+          }))
           : Array.isArray(r.Availabilities)
             ? r.Availabilities.map((a: any) => ({
-                day: a.day_of_week ?? a.day,
-                start: a.start_time ?? a.start,
-                end: a.end_time ?? a.end,
-              }))
+              day: a.day_of_week ?? a.day,
+              start: a.start_time ?? a.start,
+              end: a.end_time ?? a.end,
+            }))
             : undefined,
       }));
       set({ services: data, loading: false });
@@ -164,24 +174,24 @@ export const useServicesStore = create<ServicesState>((set, get) => ({
         title: r.title,
         description: r.description,
         date: r.date,
-        price_cents: r.price_cents ?? r.price,
+        price_cents: r.price_cents ?? (r.price != null ? Math.round(Number(r.price) * 100) : undefined),
         duration: r.duration,
         subcategory_id: r.subcategory_id,
         banner_uri: r.banner_uri ?? r.bannerUrl ?? null,
         active: r.active,
-        category_id: r.category_id ?? (r.category ? r.category.id : undefined),
+        category_id: r.category_id ?? r.Subcategory?.category_id ?? r.subcategory?.category_id ?? (r.category ? r.category.id : undefined),
         availabilities: Array.isArray(r.availabilities)
           ? r.availabilities.map((a: any) => ({
-              day: a.day,
-              start: a.start,
-              end: a.end,
-            }))
+            day: a.day,
+            start: a.start,
+            end: a.end,
+          }))
           : Array.isArray(r.Availabilities)
             ? r.Availabilities.map((a: any) => ({
-                day: a.day_of_week ?? a.day,
-                start: a.start_time ?? a.start,
-                end: a.end_time ?? a.end,
-              }))
+              day: a.day_of_week ?? a.day,
+              start: a.start_time ?? a.start,
+              end: a.end_time ?? a.end,
+            }))
             : undefined,
       };
       set({ services: [...(get().services || []), created] });
@@ -202,24 +212,24 @@ export const useServicesStore = create<ServicesState>((set, get) => ({
         title: r.title,
         description: r.description,
         date: r.date,
-        price_cents: r.price_cents ?? r.price,
+        price_cents: r.price_cents ?? (r.price != null ? Math.round(Number(r.price) * 100) : undefined),
         duration: r.duration,
         subcategory_id: r.subcategory_id,
         banner_uri: r.banner_uri ?? r.bannerUrl ?? null,
         active: r.active,
-        category_id: r.category_id ?? (r.category ? r.category.id : undefined),
+        category_id: r.category_id ?? r.Subcategory?.category_id ?? r.subcategory?.category_id ?? (r.category ? r.category.id : undefined),
         availabilities: Array.isArray(r.availabilities)
           ? r.availabilities.map((a: any) => ({
-              day: a.day,
-              start: a.start,
-              end: a.end,
-            }))
+            day: a.day,
+            start: a.start,
+            end: a.end,
+          }))
           : Array.isArray(r.Availabilities)
             ? r.Availabilities.map((a: any) => ({
-                day: a.day_of_week ?? a.day,
-                start: a.start_time ?? a.start,
-                end: a.end_time ?? a.end,
-              }))
+              day: a.day_of_week ?? a.day,
+              start: a.start_time ?? a.start,
+              end: a.end_time ?? a.end,
+            }))
             : undefined,
       };
       set({

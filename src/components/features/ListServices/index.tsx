@@ -119,8 +119,12 @@ const ListServices: React.FC = () => {
   };
 
   const displayed = useMemo(() => {
-    if (!onlyNow) return services;
-    return (services || []).filter((s) => isServiceAvailableNow(s));
+    const list = services || [];
+    const withAvailability = list.filter(
+      (s) => s.availabilities && s.availabilities.length > 0,
+    );
+    if (!onlyNow) return withAvailability;
+    return withAvailability.filter((s) => isServiceAvailableNow(s));
   }, [services, onlyNow]);
 
   const subCategoriesForSelected = selectedCategory
