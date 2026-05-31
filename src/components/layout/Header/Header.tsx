@@ -74,25 +74,13 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       if (!isWebOrLargeScreen) {
         // Roteamento explícito para dentro do MainTabs registrado no RootStack
         if (screen === 'Feed')
-          return navigation.navigate(
-            'MainTabs' as never,
-            { screen: 'FeedTab' } as never,
-          );
+          return (navigation as any).navigate('MainTabs', { screen: 'FeedTab' });
         if (screen === 'Category')
-          return navigation.navigate(
-            'MainTabs' as never,
-            { screen: 'CategoryTab' } as never,
-          );
+          return (navigation as any).navigate('MainTabs', { screen: 'CategoryTab' });
         if (screen === 'MySchedules')
-          return navigation.navigate(
-            'MainTabs' as never,
-            { screen: 'SchedulesTab' } as never,
-          );
+          return (navigation as any).navigate('MainTabs', { screen: 'SchedulesTab' });
         if (screen === 'ClientProfile')
-          return navigation.navigate(
-            'MainTabs' as never,
-            { screen: 'ProfileTab' } as never,
-          );
+          return (navigation as any).navigate('MainTabs', { screen: 'ProfileTab' });
       }
 
       // @ts-ignore

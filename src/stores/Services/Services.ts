@@ -29,8 +29,18 @@ type ServicesState = {
     subcategory_id?: number;
     q?: string;
   };
-  fetchServices: () => Promise<ServiceItem[]>;
+  fetchServices: (opts?: {
+    day?: number;
+    category_id?: number;
+    subcategory_id?: number;
+    q?: string;
+  }) => Promise<ServiceItem[]>;
+  fetchMyServices: (opts?: {
+    page?: number;
+    limit?: number;
+  }) => Promise<ServiceItem[]>;
   reloadServices: () => Promise<ServiceItem[]>;
+  reloadMyServices: () => Promise<ServiceItem[]>;
   createService: (data: Partial<ServiceItem>) => Promise<ServiceItem | null>;
   updateService: (
     id: number,

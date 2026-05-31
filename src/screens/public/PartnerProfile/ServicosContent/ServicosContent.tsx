@@ -15,7 +15,7 @@ export function ServicosContent({ servicos }: ServicosContentProps) {
   const styles = createStyles(colors);
   const navigation = useNavigation();
 
-  const formatarPreco = (preco: string, preco_cents?: number) => {
+  const formatarPreco = (preco?: string, preco_cents?: number) => {
     return formatBRL({ price: preco, price_cents: preco_cents });
   };
 
@@ -67,7 +67,7 @@ export function ServicosContent({ servicos }: ServicosContentProps) {
 
         <View style={styles.detalhesRow}>
           <Text style={styles.servicoPreco}>
-            {formatarPreco(undefined, item.price_cents)}
+            {formatarPreco(item.price, item.price_cents)}
           </Text>
 
           <View style={styles.duracaoBadge}>

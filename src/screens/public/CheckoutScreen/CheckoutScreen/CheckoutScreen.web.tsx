@@ -22,7 +22,7 @@ import { Address } from '@stores/Address/types';
 import { useProfessionalStore } from '@stores/Professional';
 import AddressSelectionModal from '@components/features/AddressSelectionModal';
 import { createStyles } from './styles';
-import CheckoutForm from '@screens/public/CheckoutScreen/CheckoutForm';
+import CheckoutForm from '../CheckoutForm/CheckoutForm.web';
 
 type CheckoutRouteParams = NavigationParams['Checkout'];
 

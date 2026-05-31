@@ -224,7 +224,7 @@ const Home = () => {
   return user ? Platform.OS === 'web' ? <Feed /> : <MainTabs /> : <Login />;
 };
 
-const RootStack = createNativeStackNavigator<NavigationParams>({
+const RootStack = createNativeStackNavigator({
   screenOptions: {
     header: (props) => <Header {...props} />,
   },
@@ -403,10 +403,10 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
 
 export const Navigation = createStaticNavigation(RootStack);
 
-type RootStackParamList = StaticParamList<typeof RootStack>;
+type RootStackParamList = NavigationParams;
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList { }
+    interface RootParamList extends RootStackParamList {}
   }
 }

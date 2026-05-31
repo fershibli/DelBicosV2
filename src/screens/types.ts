@@ -28,9 +28,14 @@ export type NavigationParams = {
   NotFound: undefined;
   VerificationScreen: { email: string };
   Category: undefined;
-  SubCategoryScreen: { categoryId: string };
+  SubCategoryScreen: {
+    categoryId: number;
+    categoryTitle?: string;
+    serviceId?: number;
+    singleSubCategory?: { id: number; title: string };
+  };
   ClientProfile: { subroute?: ClientProfileSubRoutes };
-  SearchResult: { subcategoryId: number; date: string };
+  SearchResult: { subCategoryId: number; date: string };
   Checkout: {
     professionalId: number;
     priceFrom: number;
