@@ -85,7 +85,7 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
 
         <View style={styles.tagsRow}>
           <View style={styles.distanceTag}>
-            <Text style={styles.distanceText}>{professional.distance}km</Text>
+            <Text style={styles.distanceText}>{professional.distance.toFixed(2)} km</Text>
           </View>
           <View style={styles.priceTag}>
             <Text style={styles.priceText}>
