@@ -299,7 +299,7 @@ export const useUserStore = create<UserStore>()(
         try {
           const fileName = `avatar_${Date.now()}.jpg`;
           const {
-            data: { uploadUrl, fileUrl },
+            data: { uploadUrl, fileUrl: initialFileUrl },
           } = await backendHttpClient.post('/api/avatar/upload-url', {
             fileName,
             fileType: 'image/jpeg',
@@ -308,14 +308,30 @@ export const useUserStore = create<UserStore>()(
           const responseFetch = await fetch(imageUri);
           const blob = await responseFetch.blob();
 
-          const uploadResponse = await fetch(uploadUrl, {
-            method: 'PUT',
-            body: blob,
-            headers: { 'Content-Type': 'image/jpeg' },
-          });
+          const isProxyUpload = uploadUrl.startsWith('/api/');
 
-          if (!uploadResponse.ok)
-            throw new Error('Falha no upload para o bucket S3');
+          let fileUrl = initialFileUrl;
+
+          if (isProxyUpload) {
+            // Proxy ImgBB — usa backendHttpClient que já tem a baseURL configurada
+            const proxyRes = await backendHttpClient.put<{ fileUrl?: string }>(
+              uploadUrl,
+              blob,
+              {
+                headers: { 'Content-Type': 'image/jpeg' },
+              },
+            );
+            if (proxyRes.data?.fileUrl) fileUrl = proxyRes.data.fileUrl;
+          } else {
+            // S3 — PUT direto na AWS
+            const uploadResponse = await fetch(uploadUrl, {
+              method: 'PUT',
+              body: blob,
+              headers: { 'Content-Type': 'image/jpeg' },
+            });
+            if (!uploadResponse.ok)
+              throw new Error('Falha no upload para o bucket S3');
+          }
 
           await backendHttpClient.patch('/api/avatar/update-path', {
             avatar_uri: fileUrl,
