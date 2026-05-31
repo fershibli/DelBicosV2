@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { useNavigation, useRoute, CommonActions } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
 import { ClientProfileSubRoutes } from '@screens/types';
 import { useColors } from '@theme/ThemeProvider';
@@ -62,7 +62,7 @@ const menuOptions = [
 const MenuNavegacao = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { user } = useUserStore();
+  const { user, signOut } = useUserStore();
   const colors = useColors();
   const styles = createStyles(colors);
 
@@ -95,6 +95,15 @@ const MenuNavegacao = () => {
     return option;
   });
 
+  // Adiciona a opção de Sair da conta no final
+  dynamicMenuOptions.push({
+    id: 'SairConta',
+    label: 'Sair da conta',
+    icon: 'logout',
+    activeIcon: 'logout',
+    isDestructive: true,
+  } as any);
+
   const handlePress = (subroute: string) => {
     if (subroute === 'VoltarCliente') {
       // @ts-ignore
@@ -106,6 +115,32 @@ const MenuNavegacao = () => {
       navigation.navigate('ProfessionalTabs', { screen: 'ProfessionalHomeTab' });
       return;
     }
+    if (subroute === 'SairConta') {
+      Alert.alert(
+        'Sair da Conta',
+        'Tem certeza que deseja sair da sua conta?',
+        [
+          {
+            text: 'Cancelar',
+            style: 'cancel',
+          },
+          {
+            text: 'Sair',
+            style: 'destructive',
+            onPress: () => {
+              signOut();
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: 'Home' }],
+                }),
+              );
+            },
+          },
+        ]
+      );
+      return;
+    }
     // @ts-ignore - Atualiza o parâmetro na rota atual
     navigation.setParams({ subroute });
   };
@@ -115,6 +150,7 @@ const MenuNavegacao = () => {
       {dynamicMenuOptions.map((item) => {
         const isActive = currentSubroute === item.id;
         const iconName = isActive ? item.activeIcon : item.icon;
+        const isDestructive = (item as any).isDestructive;
 
         return (
           <TouchableOpacity
@@ -138,11 +174,22 @@ const MenuNavegacao = () => {
               <MaterialIcons
                 name={iconName as any}
                 size={22}
-                color={isActive ? colors.primaryOrange : colors.textTertiary}
+                color={
+                  isActive
+                    ? colors.primaryOrange
+                    : isDestructive
+                    ? colors.primaryRed
+                    : colors.textTertiary
+                }
               />
             </View>
 
-            <Text style={[styles.menuText, isActive && styles.activeMenuText]}>
+            <Text
+              style={[
+                styles.menuText,
+                isActive && styles.activeMenuText,
+                isDestructive && { color: colors.primaryRed },
+              ]}>
               {item.label}
             </Text>
 
@@ -150,7 +197,7 @@ const MenuNavegacao = () => {
               <MaterialIcons
                 name="chevron-right"
                 size={20}
-                color={colors.borderColor}
+                color={isDestructive ? colors.primaryRed : colors.borderColor}
                 style={styles.chevronIcon}
               />
             )}
