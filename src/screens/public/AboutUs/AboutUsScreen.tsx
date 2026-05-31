@@ -149,7 +149,7 @@ function AboutUsScreen() {
           source={hexBackImage}
           style={styles.missionCard}
           imageStyle={{ resizeMode: 'cover', top: -60 }}>
-          <Text style={styles.pageTitle}>Quem somos</Text>
+          <Text style={styles.pageTitle}>Quem Somos</Text>
           {isMobile && (
             <Image
               source={teamPhoto}
