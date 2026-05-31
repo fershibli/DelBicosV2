@@ -70,6 +70,5 @@ jobs:
             sudo docker run -d \
               --name delbicos-frontend \
               --restart on-failure:3 \
-              -v /home/$EC2_USER/.env:/app/.env:ro \
               -p 80:80 \
               "${IMAGE}"
