@@ -28,9 +28,14 @@ export type NavigationParams = {
   NotFound: undefined;
   VerificationScreen: { email: string };
   Category: undefined;
-  SubCategoryScreen: { categoryId: string };
+  SubCategoryScreen: {
+    categoryId: number;
+    categoryTitle?: string;
+    serviceId?: number;
+    singleSubCategory?: { id: number; title: string };
+  };
   ClientProfile: { subroute?: ClientProfileSubRoutes };
-  SearchResult: { subcategoryId: number; date: string };
+  SearchResult: { subCategoryId: number; date: string };
   Checkout: {
     professionalId: number;
     priceFrom: number;
@@ -40,19 +45,22 @@ export type NavigationParams = {
     serviceId: number;
   };
   PaymentStatus:
-    | {
-        appointmentId?: number;
-        paymentIntentId?: string;
-      }
-    | undefined;
+  | {
+    appointmentId?: number;
+    paymentIntentId?: string;
+  }
+  | undefined;
   MySchedules: undefined;
   ProfessionalTabs: undefined;
   ProfessionalHomeTab: undefined;
   ProfessionalSchedulesTab: undefined;
   ProfessionalEarningsTab: undefined;
+  ProfessionalServicesTab: undefined;
+  ProfessionalAvailabilityTab: undefined;
   ProfessionalProfileTab: undefined;
   Help: undefined;
   AboutUs: undefined;
   AdminDashboard: undefined;
   AdminAnalytics: undefined;
+  ProfessionalArea: undefined;
 };

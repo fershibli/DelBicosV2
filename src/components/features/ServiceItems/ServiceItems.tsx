@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
+import { formatBRLFromUnits } from '@lib/helpers/formatCurrency';
 
 interface ServiceItemData {
   id: string;
@@ -9,7 +10,9 @@ interface ServiceItemData {
   date: string;
   startTime: string;
   endTime: string;
-  price: number;
+  // `price` kept for backward compatibility (units), prefer `price_cents` (integer)
+  price?: number;
+  price_cents?: number;
   professional: string;
 }
 
@@ -21,11 +24,10 @@ const ServiceItems: React.FC<ServiceItemsProps> = ({ items }) => {
   const colors = useColors();
   const styles = createStyles(colors);
 
-  const formatPrice = (price: number) => {
-    return price.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    });
+  const formatPrice = (price?: number, price_cents?: number) => {
+    if (typeof price_cents === 'number')
+      return formatBRLFromUnits(price_cents / 100);
+    return formatBRLFromUnits(price ?? 0);
   };
 
   const formatDate = (dateString: string) => {
@@ -58,7 +60,9 @@ const ServiceItems: React.FC<ServiceItemsProps> = ({ items }) => {
               <Text style={styles.itemTime}>
                 Horário: {item.startTime} - {item.endTime}
               </Text>
-              <Text style={styles.itemPrice}>{formatPrice(item.price)}</Text>
+              <Text style={styles.itemPrice}>
+                {formatPrice(item.price, (item as any).price_cents)}
+              </Text>
             </View>
 
             <Text style={styles.professionalText}>

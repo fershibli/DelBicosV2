@@ -4,6 +4,9 @@ import { Rating } from 'react-native-ratings';
 import { FontAwesome } from '@expo/vector-icons';
 import { useColors } from '@theme/ThemeProvider';
 import { Appointment, AppointmentStatus } from '@stores/Appointment/types';
+import { useUserStore } from '@stores/User';
+import { useAppointmentStore } from '@stores/Appointment';
+import { ActivityIndicator } from 'react-native';
 import { createStyles } from './styles';
 
 interface AppointmentCardProps {
@@ -42,17 +45,39 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   const colors = useColors();
   const styles = createStyles(colors);
 
+  const user = useUserStore((state) => state.user);
+  const { updateAppointmentStatus } = useAppointmentStore();
+  const [loadingAction, setLoadingAction] = React.useState(false);
+
+  const isProfessional = user?.professional_id === appointment.professional_id;
+  const isPending = statusVariant === AppointmentStatus.PENDING;
+
+  const handleAccept = async () => {
+    setLoadingAction(true);
+    await updateAppointmentStatus(appointment.id, AppointmentStatus.CONFIRMED);
+    setLoadingAction(false);
+  };
+
+  const handleReject = async () => {
+    setLoadingAction(true);
+    await updateAppointmentStatus(appointment.id, AppointmentStatus.CANCELED);
+    setLoadingAction(false);
+  };
+
   const imageUrl = useMemo(
     () =>
       appointment.Service.banner_uri || 'https://via.placeholder.com/400x200',
     [appointment.Service.banner_uri],
   );
 
-  const professionalAvatar = useMemo(
-    () =>
-      appointment.Professional.User.avatar_uri ||
-      'https://via.placeholder.com/100',
-    [appointment.Professional.User.avatar_uri],
+  const displayAvatar = useMemo(
+    () => {
+      const uri = isProfessional
+        ? appointment.Client.User.avatar_uri
+        : appointment.Professional.User.avatar_uri;
+      return uri || 'https://via.placeholder.com/100';
+    },
+    [isProfessional, appointment.Client.User.avatar_uri, appointment.Professional.User.avatar_uri],
   );
 
   return (
@@ -84,17 +109,16 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
 
         <View style={styles.avatarContainer}>
           <Image
-            source={{ uri: professionalAvatar }}
+            source={{ uri: displayAvatar }}
             style={styles.avatarImage}
           />
         </View>
       </View>
 
-      {/* Conteúdo */}
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.profName} numberOfLines={1}>
-            {appointment.Professional.User.name}
+            {isProfessional ? appointment.Client.User.name : appointment.Professional.User.name}
           </Text>
           {appointment.rating && (
             <View style={styles.ratingRow}>
@@ -123,12 +147,33 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
         </View>
 
         <View style={styles.actions}>
-          <TouchableOpacity
-            style={styles.detailsButton}
-            onPress={() => onOpenDetails(appointment)}
-            activeOpacity={0.8}>
-            <Text style={styles.btnTextPrimary}>Detalhes</Text>
-          </TouchableOpacity>
+          {isPending && isProfessional ? (
+            loadingAction ? (
+              <ActivityIndicator size="small" color={colors.primaryOrange} style={{ flex: 1 }} />
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={[styles.detailsButton, { backgroundColor: colors.primaryGreen, borderColor: colors.primaryGreen }]}
+                  onPress={handleAccept}
+                  activeOpacity={0.8}>
+                  <Text style={styles.btnTextPrimary}>Aceitar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.detailsButton, { backgroundColor: '#ef4444', borderColor: '#ef4444' }]}
+                  onPress={handleReject}
+                  activeOpacity={0.8}>
+                  <Text style={styles.btnTextPrimary}>Recusar</Text>
+                </TouchableOpacity>
+              </>
+            )
+          ) : (
+            <TouchableOpacity
+              style={styles.detailsButton}
+              onPress={() => onOpenDetails(appointment)}
+              activeOpacity={0.8}>
+              <Text style={styles.btnTextPrimary}>Detalhes</Text>
+            </TouchableOpacity>
+          )}
 
           {statusVariant === AppointmentStatus.COMPLETED && onOpenRate && (
             <TouchableOpacity

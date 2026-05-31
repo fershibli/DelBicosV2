@@ -29,12 +29,8 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
       if (limit) {
         params.limit = limit;
       }
-      if (lat) {
-        params.lat = lat;
-      }
-      if (lng) {
-        params.lng = lng;
-      }
+      if (lat) params.lat = lat;
+      if (lng) params.lng = lng;
       const response = await backendHttpClient.get('/api/professionals', {
         params,
       });
@@ -42,6 +38,43 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
       const rawData = Array.isArray(response.data)
         ? response.data
         : response.data.professionals || [];
+
+      // Helper to extract coordinates from various possible shapes returned by backend
+      const extractCoords = (
+        prof: any,
+      ): { lat?: number; lng?: number } | null => {
+        try {
+          const addr =
+            prof.MainAddress ||
+            prof.Address ||
+            prof.address ||
+            prof.User?.MainAddress ||
+            prof.User?.address;
+          if (addr) {
+            const lat = addr.lat ?? addr.latitude ?? addr.latitud ?? null;
+            const lng =
+              addr.lng ?? addr.longitude ?? addr.long ?? addr.lon ?? null;
+            if (
+              lat !== null &&
+              lat !== undefined &&
+              lng !== null &&
+              lng !== undefined
+            ) {
+              return { lat: Number(lat), lng: Number(lng) };
+            }
+          }
+
+          // try top-level fields
+          const topLat = prof.lat ?? prof.latitude ?? prof.latitud;
+          const topLng = prof.lng ?? prof.longitude ?? prof.long ?? prof.lon;
+          if (topLat !== undefined && topLng !== undefined) {
+            return { lat: Number(topLat), lng: Number(topLng) };
+          }
+        } catch (e) {
+          // ignore
+        }
+        return null;
+      };
 
       const mappedProfessionals: ListedProfessional[] = rawData.map(
         (prof: any) => {
@@ -57,28 +90,23 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
               prof.avatar_uri ||
               prof.User?.avatar_uri ||
               'https://via.placeholder.com/150',
-
             location:
               prof.MainAddress && prof.MainAddress.city
                 ? `${prof.MainAddress.city}, ${prof.MainAddress.state || 'BR'}`
                 : 'Localização não informada',
-
             distance:
               rawDist !== null && rawDist !== undefined
-                ? parseFloat(String(rawDist)).toFixed(1)
+                ? Number(rawDist)
                 : undefined,
-
             offeredServices: prof.Services
               ? prof.Services.map((s: any) =>
                   typeof s === 'string' ? s : s.title,
                 )
               : ['Serviços Gerais'],
-
             category: prof.Services?.[0]?.title || 'Serviços Diversos',
           };
         },
       );
-
       return mappedProfessionals;
     } catch (error) {
       console.error('[ProfessionalStore] Erro ao buscar profissionais:', error);
@@ -131,15 +159,14 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
     lng?: number,
   ): Promise<ProfessionalResult[]> => {
     try {
+      const params: any = { subCategoryId, date };
+      if (lat) params.lat = lat;
+      if (lng) params.lng = lng;
+
       const response = await backendHttpClient.get(
         '/api/professionals/search-availability',
         {
-          params: {
-            subCategoryId,
-            date,
-            lat,
-            lng,
-          },
+          params,
         },
       );
 
@@ -148,6 +175,21 @@ export const useProfessionalStore = create<ProfessionalStore>((set) => ({
     } catch (error) {
       console.error('[ProfessionalStore] Error fetching availability:', error);
       return [];
+    }
+  },
+
+  updateRadius: async (professionalId: number, radiusKm: number) => {
+    await backendHttpClient.put(`/api/professionals/${professionalId}/radius`, {
+      service_radius_km: Math.floor(radiusKm),
+    });
+    const current = useProfessionalStore.getState().selectedProfessional;
+    if (current && current.id === professionalId) {
+      set({
+        selectedProfessional: {
+          ...current,
+          service_radius_km: Math.floor(radiusKm),
+        },
+      });
     }
   },
 }));

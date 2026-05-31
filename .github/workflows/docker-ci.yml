@@ -2,7 +2,7 @@ name: 02 - Buildar e publicar imagem Docker
 
 on:
   workflow_run:
-    workflows: ["01 - Análise Semântica Pós-Merge"]
+    workflows: ['01 - Análise Semântica Pós-Merge']
     types:
       - completed
 
@@ -55,6 +55,7 @@ jobs:
           else
             TAGS+=("${DOCKER_REPO}:sha-${GITHUB_SHA::8}")
           fi
+          TAGS+=("${DOCKER_REPO}:latest")
 
           {
             echo "tags<<EOF"
@@ -62,10 +63,13 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Escrever .env para o build
+        run: printf '%s\n' "${{ secrets.ENV_FILE }}" > .env
+
       - name: Buildar e enviar imagem Docker
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile
+          file: ./Dockerfile.prod
           push: true
           tags: ${{ steps.prepare-tags.outputs.tags }}

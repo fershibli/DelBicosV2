@@ -6,7 +6,7 @@ services:
   delbicos-frontend:
     build:
       context: .
-      dockerfile: ${DOCKERFILE:-Dockerfile}
+      dockerfile: ${DOCKERFILE:-Dockerfile.dev}
     container_name: webapp-delbicos
     ports:
       - '8081:8081' # Metro bundler
