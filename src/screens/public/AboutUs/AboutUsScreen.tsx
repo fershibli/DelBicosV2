@@ -148,7 +148,7 @@ function AboutUsScreen() {
         <ImageBackground
           source={hexBackImage}
           style={styles.missionCard}
-          resizeMode="cover">
+          imageStyle={{ resizeMode: 'cover', top: -60 }}>
           <Text style={styles.pageTitle}>Quem somos</Text>
           {isMobile && (
             <Image
