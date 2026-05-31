@@ -26,12 +26,7 @@ const menuOptions = [
     icon: 'lock-outline',
     activeIcon: 'lock',
   },
-  {
-    id: ClientProfileSubRoutes.MeusAgendamentos,
-    label: 'Agendamentos',
-    icon: 'calendar-today',
-    activeIcon: 'calendar-view-day',
-  },
+
   {
     id: ClientProfileSubRoutes.Notificacoes,
     label: 'Notificações',
@@ -103,12 +98,12 @@ const MenuNavegacao = () => {
   const handlePress = (subroute: string) => {
     if (subroute === 'VoltarCliente') {
       // @ts-ignore
-      navigation.navigate('MainTabs');
+      navigation.navigate('MainTabs', { screen: 'FeedTab' });
       return;
     }
     if (subroute === 'AcessarParceiro') {
       // @ts-ignore
-      navigation.navigate('ProfessionalProfileTab');
+      navigation.navigate('ProfessionalTabs', { screen: 'ProfessionalHomeTab' });
       return;
     }
     // @ts-ignore - Atualiza o parâmetro na rota atual

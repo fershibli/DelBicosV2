@@ -53,14 +53,17 @@ export const useAppointmentStore = create<AppointmentStore>()((set) => ({
     }
   },
 
-  fetchAppointmentsAsSheet: async (): Promise<AppointmentSheetRow[]> => {
+  fetchAppointmentsAsSheet: async (role): Promise<AppointmentSheetRow[]> => {
     try {
       const { user } = useUserStore.getState();
       if (!user) {
         throw new Error('Usuário não autenticado para buscar agendamentos.');
       }
 
-      const endpoint = `api/appointments/user/${user.id}`;
+      let endpoint = `api/appointments/user/${user.id}`;
+      if (role) {
+        endpoint += `?role=${role}`;
+      }
       const response = await backendHttpClient.get(endpoint);
       const appointments: Appointment[] = response.data;
 

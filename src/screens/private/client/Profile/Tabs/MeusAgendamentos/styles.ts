@@ -55,4 +55,29 @@ export const createStyles = (colors: ColorsType) =>
       color: colors.textSecondary,
       textAlign: 'center',
     },
+    filterContainer: {
+      flexDirection: 'row',
+      marginBottom: 20,
+      gap: 10,
+    },
+    filterChip: {
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      borderRadius: 20,
+      backgroundColor: colors.inputBackground,
+      borderWidth: 1,
+      borderColor: colors.borderColor,
+    },
+    filterChipActive: {
+      backgroundColor: colors.primaryBlue,
+      borderColor: colors.primaryBlue,
+    },
+    filterText: {
+      fontSize: 14,
+      fontFamily: 'Afacad-Medium',
+      color: colors.textSecondary,
+    },
+    filterTextActive: {
+      color: colors.primaryWhite,
+    },
   });
