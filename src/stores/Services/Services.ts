@@ -82,12 +82,12 @@ export const useServicesStore = create<ServicesState>((set, get) => ({
         title: r.title,
         description: r.description,
         date: r.date,
-        price_cents: r.price_cents ?? r.price ?? undefined,
+        price_cents: r.price_cents ?? (r.price != null ? Math.round(Number(r.price) * 100) : undefined),
         duration: r.duration,
         subcategory_id: r.subcategory_id,
         banner_uri: r.banner_uri ?? r.bannerUrl ?? null,
         active: r.active,
-        category_id: r.category_id ?? (r.category ? r.category.id : undefined),
+        category_id: r.category_id ?? r.Subcategory?.category_id ?? r.subcategory?.category_id ?? (r.category ? r.category.id : undefined),
         availabilities: Array.isArray(r.availabilities)
           ? r.availabilities.map((a: any) => ({
             day: a.day,
@@ -126,12 +126,12 @@ export const useServicesStore = create<ServicesState>((set, get) => ({
         title: r.title,
         description: r.description,
         date: r.date,
-        price_cents: r.price_cents ?? r.price ?? undefined,
+        price_cents: r.price_cents ?? (r.price != null ? Math.round(Number(r.price) * 100) : undefined),
         duration: r.duration,
         subcategory_id: r.subcategory_id,
         banner_uri: r.banner_uri ?? r.bannerUrl ?? null,
         active: r.active,
-        category_id: r.category_id ?? (r.category ? r.category.id : undefined),
+        category_id: r.category_id ?? r.Subcategory?.category_id ?? r.subcategory?.category_id ?? (r.category ? r.category.id : undefined),
         availabilities: Array.isArray(r.availabilities)
           ? r.availabilities.map((a: any) => ({
             day: a.day,
@@ -174,12 +174,12 @@ export const useServicesStore = create<ServicesState>((set, get) => ({
         title: r.title,
         description: r.description,
         date: r.date,
-        price_cents: r.price_cents ?? r.price,
+        price_cents: r.price_cents ?? (r.price != null ? Math.round(Number(r.price) * 100) : undefined),
         duration: r.duration,
         subcategory_id: r.subcategory_id,
         banner_uri: r.banner_uri ?? r.bannerUrl ?? null,
         active: r.active,
-        category_id: r.category_id ?? (r.category ? r.category.id : undefined),
+        category_id: r.category_id ?? r.Subcategory?.category_id ?? r.subcategory?.category_id ?? (r.category ? r.category.id : undefined),
         availabilities: Array.isArray(r.availabilities)
           ? r.availabilities.map((a: any) => ({
             day: a.day,
@@ -212,12 +212,12 @@ export const useServicesStore = create<ServicesState>((set, get) => ({
         title: r.title,
         description: r.description,
         date: r.date,
-        price_cents: r.price_cents ?? r.price,
+        price_cents: r.price_cents ?? (r.price != null ? Math.round(Number(r.price) * 100) : undefined),
         duration: r.duration,
         subcategory_id: r.subcategory_id,
         banner_uri: r.banner_uri ?? r.bannerUrl ?? null,
         active: r.active,
-        category_id: r.category_id ?? (r.category ? r.category.id : undefined),
+        category_id: r.category_id ?? r.Subcategory?.category_id ?? r.subcategory?.category_id ?? (r.category ? r.category.id : undefined),
         availabilities: Array.isArray(r.availabilities)
           ? r.availabilities.map((a: any) => ({
             day: a.day,
