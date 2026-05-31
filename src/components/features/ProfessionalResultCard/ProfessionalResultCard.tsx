@@ -44,7 +44,10 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
 
   const handleTimeSlotPress = (time: string) => {
     setSelectedTime(time);
-    const dateTimeString = `${selectedDate} ${time}`;
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    const [hours, minutes] = time.split(':').map(Number);
+    const localDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+    const dateTimeString = localDate.toISOString();
 
     // @ts-ignore
     navigation.navigate('Checkout', {
