@@ -63,6 +63,9 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Escrever .env para o build
+        run: printf '%s\n' "${{ secrets.ENV_FILE }}" > .env
+
       - name: Buildar e enviar imagem Docker
         uses: docker/build-push-action@v5
         with:
