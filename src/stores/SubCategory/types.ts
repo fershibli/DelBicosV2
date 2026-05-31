@@ -10,4 +10,5 @@ export interface SubCategory {
 export interface SubCategoryStore {
   subCategories: SubCategory[];
   fetchSubCategoriesByCategoryId: (categoryId: number) => Promise<void>;
+  fetchAllSubCategories: () => Promise<void>;
 }

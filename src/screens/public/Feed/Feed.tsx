@@ -15,6 +15,7 @@ import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
 import CategorySlider from '@components/features/CategorySlider';
 import ListProfessionals from '@components/features/ListProfessionals';
+import ListServices from '@components/features/ListServices';
 import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 import { HighlightCard, HighlightItem } from '@components/ui/HighlightCard';
 import { useServiceSearch } from '@lib/hooks/useServiceSearch';
@@ -126,10 +127,10 @@ const FeedScreen: React.FC = () => {
   const handleSelectService = (item: SubCategory) => {
     setShowDropdown(false);
     setSearch('');
-    const category = categories.find((c) => c.id === item.categoryId);
+    const category = categories.find((c) => c.id === item.category_id);
     // @ts-ignore
     navigation.navigate('SubCategoryScreen', {
-      categoryId: item.categoryId,
+      categoryId: item.category_id,
       categoryTitle: category ? category.title : 'Serviços',
       serviceId: item.id,
     });
@@ -177,12 +178,22 @@ const FeedScreen: React.FC = () => {
                           style={styles.dropdownItem}
                           onPress={() => handleSelectService(item)}>
                           <View style={styles.dropdownIcon}>
-                            <FontAwesome5 name={getIconForSubCategory(item.title)} size={16} color={colors.primaryBlue} />
+                            <FontAwesome5
+                              name={getIconForSubCategory(item.title)}
+                              size={16}
+                              color={colors.primaryBlue}
+                            />
                           </View>
                           <View style={styles.dropdownTextContainer}>
-                            <Text style={styles.dropdownName} numberOfLines={1}>{item.title}</Text>
+                            <Text style={styles.dropdownName} numberOfLines={1}>
+                              {item.title}
+                            </Text>
                           </View>
-                          <FontAwesome name="angle-right" size={16} color={colors.textTertiary} />
+                          <FontAwesome
+                            name="angle-right"
+                            size={16}
+                            color={colors.textTertiary}
+                          />
                         </TouchableOpacity>
                       ))
                     ) : (
@@ -260,6 +271,12 @@ const FeedScreen: React.FC = () => {
             <View style={styles.categorySection}>
               <Text style={styles.title}>Selecione por Categorias</Text>
               <CategorySlider />
+            </View>
+
+            {/* Seção Serviços */}
+            <View style={styles.categorySection}>
+              <Text style={styles.title}>Serviços disponíveis</Text>
+              <ListServices />
             </View>
 
             {/* Título da seção de profissionais */}

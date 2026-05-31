@@ -126,11 +126,10 @@ function PartnerProfileScreen() {
   };
 
   return (
-    <ScrollView 
-      style={styles.container} 
+    <ScrollView
+      style={styles.container}
       contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
-      showsVerticalScrollIndicator={false}
-    >
+      showsVerticalScrollIndicator={false}>
       <StatusBar
         barStyle="light-content"
         translucent
@@ -194,6 +193,11 @@ function PartnerProfileScreen() {
                   color={colors.textTertiary}
                 />
                 <Text style={styles.locationText}>{addressShort}</Text>
+                {parceiro.service_radius_km != null && (
+                  <Text style={[styles.reviewCount, { marginLeft: 8 }]}>
+                    • Atende até {parceiro.service_radius_km} km
+                  </Text>
+                )}
                 {parceiro.ratings_count ? (
                   <Text style={styles.reviewCount}>
                     • {parceiro.ratings_count} avaliações

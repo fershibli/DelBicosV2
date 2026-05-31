@@ -109,15 +109,23 @@ export interface AppointmentStore {
   appointments: Appointment[];
   appointmentsByStatus: { [key in AppointmentStatus]?: Appointment[] };
   loading: boolean;
+  activeRole?: 'client' | 'professional';
 
-  fetchAppointments: () => Promise<void>;
+  fetchAppointments: (role?: 'client' | 'professional') => Promise<void>;
 
-  fetchAppointmentsAsSheet: () => Promise<AppointmentSheetRow[]>;
+  fetchAppointmentsAsSheet: (
+    role?: 'client' | 'professional',
+  ) => Promise<AppointmentSheetRow[]>;
 
   reviewAppointment: (
     appointmentId: number,
     rating: number,
     review: string,
+  ) => Promise<boolean>;
+
+  updateAppointmentStatus: (
+    appointmentId: number,
+    status: AppointmentStatus,
   ) => Promise<boolean>;
 
   fetchInvoice: (appointmentId: number) => Promise<InvoiceData | null>;

@@ -4,6 +4,7 @@ import { useColors } from '@theme/ThemeProvider';
 import { Service } from '@stores/Professional/types';
 import { useNavigation } from '@react-navigation/native';
 import { createStyles } from './styles';
+import { formatBRL } from '@lib/helpers/formatCurrency';
 
 type ServicosContentProps = {
   servicos: Service[];
@@ -14,13 +15,8 @@ export function ServicosContent({ servicos }: ServicosContentProps) {
   const styles = createStyles(colors);
   const navigation = useNavigation();
 
-  const formatarPreco = (preco: string) => {
-    const valor = parseFloat(preco);
-    if (isNaN(valor)) return 'R$ 0,00';
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(valor);
+  const formatarPreco = (preco: string, preco_cents?: number) => {
+    return formatBRL({ price: preco, price_cents: preco_cents });
   };
 
   const formatarDuracao = (minutos: number) => {
@@ -70,7 +66,9 @@ export function ServicosContent({ servicos }: ServicosContentProps) {
         </View>
 
         <View style={styles.detalhesRow}>
-          <Text style={styles.servicoPreco}>{formatarPreco(item.price)}</Text>
+          <Text style={styles.servicoPreco}>
+            {formatarPreco(undefined, item.price_cents)}
+          </Text>
 
           <View style={styles.duracaoBadge}>
             <Text style={styles.servicoDuracao}>
