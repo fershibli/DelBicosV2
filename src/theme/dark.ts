@@ -1,19 +1,19 @@
 import { ColorsType } from './types';
 
 const darkColors: ColorsType = {
-  primaryBlue: '#2A374C',
+  primaryBlue: '#545454',
   primaryOrange: '#FC8200',
   primaryBlack: '#F9FAFB',
   primaryGreen: '#4ADE80',
   primaryWhite: '#121212',
   primaryRed: '#F87171',
-  secondaryGray: '#1F2937',
+  secondaryGray: '#323232',
   secondaryBeige: '#374151',
   primaryWhiteHover: '#2A2A2A',
   primaryOrangeHover: '#FF983F',
 
   cardBackground: '#1E1E1E',
-  borderColor: '#374151',
+  borderColor: '#323232',
   textSecondary: '#9CA3AF',
   textTertiary: '#6B7280',
   backgroundElevated: '#27272A',
