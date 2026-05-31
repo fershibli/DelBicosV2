@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useUserStore } from '@stores/User';
 import { ClientProfileSubRoutes } from '@screens/types';
 import { useColors } from '@theme/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -66,6 +67,7 @@ const menuOptions = [
 const MenuNavegacao = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const { user } = useUserStore();
   const colors = useColors();
   const styles = createStyles(colors);
 
@@ -75,7 +77,21 @@ const MenuNavegacao = () => {
   const isProfessionalTab = route.name === 'ProfessionalProfileTab';
 
   const dynamicMenuOptions = menuOptions.map((option) => {
-    if (option.id === ClientProfileSubRoutes.TornarParceiro && isProfessionalTab) {
+    // If user is already a professional, disable "Tornar-se Colaborador"
+    if (
+      option.id === ClientProfileSubRoutes.TornarParceiro &&
+      user?.professional_id
+    ) {
+      return {
+        ...option,
+        disabled: true,
+      } as any;
+    }
+
+    if (
+      option.id === ClientProfileSubRoutes.TornarParceiro &&
+      isProfessionalTab
+    ) {
       return {
         id: 'VoltarCliente',
         label: 'Voltar para o Cliente',
@@ -83,6 +99,7 @@ const MenuNavegacao = () => {
         activeIcon: 'arrow-back',
       };
     }
+
     return option;
   });
 
@@ -105,11 +122,18 @@ const MenuNavegacao = () => {
         return (
           <TouchableOpacity
             key={item.id}
-            style={[styles.menuItem, isActive && styles.activeMenuItem]}
-            onPress={() => handlePress(item.id)}
+            style={[
+              styles.menuItem,
+              isActive && styles.activeMenuItem,
+              (item as any).disabled && { opacity: 0.5 },
+            ]}
+            onPress={() => !(item as any).disabled && handlePress(item.id)}
             activeOpacity={0.7}
             accessibilityRole="button"
-            accessibilityState={{ selected: isActive }}
+            accessibilityState={{
+              selected: isActive,
+              disabled: !!(item as any).disabled,
+            }}
             accessibilityLabel={`Ir para ${item.label}`}>
             {isActive && <View style={styles.activeIndicator} />}
 

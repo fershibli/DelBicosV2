@@ -24,6 +24,7 @@ const TornarParceiroForm: React.FC = () => {
   const [cpf, setCpf] = useState(user?.cpf || '');
   const [cnpj, setCnpj] = useState('');
   const [description, setDescription] = useState('');
+  const [serviceRadiusKm, setServiceRadiusKm] = useState<string>('10');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -39,7 +40,10 @@ const TornarParceiroForm: React.FC = () => {
       return;
     }
     if (!description) {
-      Alert.alert('Erro', 'Por favor, insira uma breve descrição sobre você ou seu serviço.');
+      Alert.alert(
+        'Erro',
+        'Por favor, insira uma breve descrição sobre você ou seu serviço.',
+      );
       return;
     }
 
@@ -51,6 +55,7 @@ const TornarParceiroForm: React.FC = () => {
         cpf: cpf.replace(/\D/g, ''),
         cnpj: cnpj ? cnpj.replace(/\D/g, '') : undefined,
         description,
+        service_radius_km: Number(serviceRadiusKm) || 0,
       });
 
       setIsLoading(false);
@@ -65,13 +70,53 @@ const TornarParceiroForm: React.FC = () => {
               navigation.navigate('ProfessionalTabs');
             },
           },
-        ]
+        ],
       );
     } catch (error: any) {
       setIsLoading(false);
-      Alert.alert('Erro', error.message || 'Ocorreu um erro ao enviar sua solicitação. Tente novamente.');
+      Alert.alert(
+        'Erro',
+        error.message ||
+          'Ocorreu um erro ao enviar sua solicitação. Tente novamente.',
+      );
     }
   };
+
+  const isAlreadyProfessional = !!user?.professional_id;
+
+  if (isAlreadyProfessional) {
+    return (
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
+          <View style={styles.header}>
+            <Text style={styles.title}>Você já é Colaborador</Text>
+            <Text style={styles.subtitle}>
+              Seu usuário já está registrado como colaborador. Acesse seu perfil
+              de parceiro para gerenciar seus serviços.
+            </Text>
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Button
+              colorVariant="primaryOrange"
+              sizeVariant="default"
+              fontVariant="AfacadBold16"
+              onPress={() => {
+                // @ts-ignore
+                navigation.navigate('ProfessionalTabs');
+              }}>
+              Ir para Perfil de Colaborador
+            </Button>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    );
+  }
 
   const handleCpfChange = (text: string) => {
     const masked = text
@@ -147,6 +192,17 @@ const TornarParceiroForm: React.FC = () => {
               onChangeText={setDescription}
               multiline
               numberOfLines={5}
+            />
+          </View>
+
+          <View style={styles.inputWrapper}>
+            <CustomTextInput
+              label="Raio de atendimento (km)"
+              placeholder="Ex: 10"
+              value={serviceRadiusKm}
+              onChangeText={(v) => setServiceRadiusKm(v.replace(/[^0-9]/g, ''))}
+              keyboardType="numeric"
+              maxLength={4}
             />
           </View>
 

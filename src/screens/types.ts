@@ -50,9 +50,12 @@ export type NavigationParams = {
   ProfessionalHomeTab: undefined;
   ProfessionalSchedulesTab: undefined;
   ProfessionalEarningsTab: undefined;
+  ProfessionalServicesTab: undefined;
+  ProfessionalAvailabilityTab: undefined;
   ProfessionalProfileTab: undefined;
   Help: undefined;
   AboutUs: undefined;
   AdminDashboard: undefined;
   AdminAnalytics: undefined;
+  ProfessionalArea: undefined;
 };

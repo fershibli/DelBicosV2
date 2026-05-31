@@ -3,6 +3,18 @@ import { SubCategory, SubCategoryStore } from './types';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 
 export const useSubCategoryStore = create<SubCategoryStore>()((set) => ({
+  fetchAllSubCategories: async () => {
+    try {
+      const response = await backendHttpClient.get('/api/subcategories');
+      const data: SubCategory[] = Array.isArray(response.data)
+        ? response.data
+        : response.data.subCategories || [];
+      set({ subCategories: data });
+    } catch (error) {
+      console.error('[SubCategoryStore] fetchAllSubCategories:', error);
+      set({ subCategories: [] });
+    }
+  },
   subCategories: [],
 
   fetchSubCategoriesByCategoryId: async (categoryId: number) => {
