@@ -14,6 +14,7 @@ import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
 
 const logoImage = require('@assets/DelBicos_LogoH.png');
+const logoImageDark = require('../../../../assets/DelBicos_git.png');
 const teamPhoto = require('@assets/aboutus/TeamDelbicos-profile.png');
 const FernandoChibliProfile = require('@assets/aboutus/Fer-profile.png');
 const DouglasWenzelProfile = require('@assets/aboutus/Doug-profile.png');
@@ -177,7 +178,7 @@ function AboutUsScreen() {
                 eficiente, confiável e acessível.
               </Text>
               <Image
-                source={logoImage}
+                source={isDark ? logoImageDark : logoImage}
                 style={styles.logoImage}
                 resizeMode="contain"
               />
