@@ -98,12 +98,12 @@ const MenuNavegacao = () => {
   const handlePress = (subroute: string) => {
     if (subroute === 'VoltarCliente') {
       // @ts-ignore
-      navigation.navigate('MainTabs', { screen: 'ProfileTab' });
+      navigation.navigate('MainTabs', { screen: 'FeedTab' });
       return;
     }
     if (subroute === 'AcessarParceiro') {
       // @ts-ignore
-      navigation.navigate('ProfessionalTabs', { screen: 'ProfessionalProfileTab' });
+      navigation.navigate('ProfessionalTabs', { screen: 'ProfessionalHomeTab' });
       return;
     }
     // @ts-ignore - Atualiza o parâmetro na rota atual
