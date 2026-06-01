@@ -3,34 +3,52 @@ import { ColorsType } from '@theme/types';
 
 export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
-    container: {
+    inboxRoot: {
+      flex: 1,
+      flexDirection: 'row',
+      minHeight: 0,
+      height: '100%',
+    },
+    listColumn: {
+      width: 320,
+      minWidth: 280,
+      maxWidth: 360,
+      borderRightWidth: StyleSheet.hairlineWidth,
+      borderRightColor: colors.divider,
+      minHeight: 0,
+    },
+    divider: {
+      width: 0,
+    },
+    threadColumn: {
+      flex: 1,
+      minWidth: 0,
+      minHeight: 0,
+    },
+    emptyThread: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
       padding: 40,
-      backgroundColor: 'transparent',
-      minHeight: 300,
-    },
-    iconContainer: {
-      marginBottom: 24,
-      opacity: 0.8,
       backgroundColor: colors.inputBackground,
-      padding: 24,
-      borderRadius: 50,
     },
-    title: {
-      fontSize: 24,
+    emptyThreadTitle: {
+      marginTop: 20,
+      fontSize: 20,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryBlack,
-      marginBottom: 12,
-      textAlign: 'center',
     },
-    subtitle: {
-      fontSize: 16,
+    emptyThreadText: {
+      marginTop: 8,
+      fontSize: 15,
       fontFamily: 'Afacad-Regular',
       color: colors.textSecondary,
       textAlign: 'center',
-      lineHeight: 24,
-      maxWidth: 300,
+      maxWidth: 320,
+      lineHeight: 22,
+    },
+    mobileListOnly: {
+      flex: 1,
+      minHeight: 400,
     },
   });

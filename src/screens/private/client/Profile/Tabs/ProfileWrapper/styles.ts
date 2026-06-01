@@ -56,6 +56,16 @@ export const createStyles = (
       }),
       overflow: 'hidden',
     },
+    desktopMainContentFill: {
+      minHeight: 0,
+      ...Platform.select({
+        web: {
+          height: 'calc(100vh - 120px)' as any,
+          maxHeight: 'calc(100vh - 120px)' as any,
+        },
+        default: {},
+      }),
+    },
     desktopContentScroll: {
       padding: 40,
       minHeight: '100%',

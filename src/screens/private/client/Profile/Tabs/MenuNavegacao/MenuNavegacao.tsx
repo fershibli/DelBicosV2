@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  Platform,
+  useWindowDimensions,
+} from 'react-native';
 import { useNavigation, useRoute, CommonActions } from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
 import { ClientProfileSubRoutes } from '@screens/types';
@@ -68,9 +75,11 @@ const menuOptions = [
 const MenuNavegacao = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const { width } = useWindowDimensions();
   const { user, signOut } = useUserStore();
   const colors = useColors();
   const styles = createStyles(colors);
+  const isWebDesktop = Platform.OS === 'web' && width >= 900;
 
   const currentSubroute =
     (route.params as any)?.subroute || ClientProfileSubRoutes.DadosConta;
@@ -122,7 +131,12 @@ const MenuNavegacao = () => {
       return;
     }
     if (subroute === ClientProfileSubRoutes.Conversas) {
-      // @ts-ignore - tela de Conversas vive no root stack
+      if (isWebDesktop) {
+        // @ts-ignore — inbox split dentro do perfil (menu lateral + lista + thread)
+        navigation.setParams({ subroute });
+        return;
+      }
+      // @ts-ignore — mobile: telas dedicadas no root stack
       navigation.navigate('ChatList');
       return;
     }

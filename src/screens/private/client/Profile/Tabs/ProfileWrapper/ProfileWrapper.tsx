@@ -26,6 +26,7 @@ import FavoritosTab from '@screens/private/client/Profile/Tabs/FavoritosTab';
 import HistoricoCompras from '@screens/private/client/Profile/Tabs/HistoricoCompras';
 import MenuNavegacao from '@screens/private/client/Profile/Tabs/MenuNavegacao';
 import TornarParceiroForm from '@screens/private/client/Profile/Tabs/TornarParceiroForm';
+import ConversasTab from '@screens/private/client/Profile/Tabs/ConversasTab/ConversasTab';
 
 type ClientProfileRouteParams = {
   subroute?: ClientProfileSubRoutes;
@@ -72,10 +73,15 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
         return <HistoricoCompras role={role} />;
       case ClientProfileSubRoutes.TornarParceiro:
         return <TornarParceiroForm />;
+      case ClientProfileSubRoutes.Conversas:
+        return <ConversasTab />;
       default:
         return <DadosContaForm user={user} />;
     }
   };
+
+  const isConversasDesktop =
+    !isMobile && activeSubroute === ClientProfileSubRoutes.Conversas;
 
   // --- RENDERIZAÇÃO MOBILE (Menu -> Subtela) ---
   if (isMobile) {
@@ -137,13 +143,21 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
           </ScrollView>
         </View>
 
-        {/* Conteúdo Rolável */}
-        <View style={styles.desktopMainContent}>
-          <ScrollView
-            contentContainerStyle={styles.desktopContentScroll}
-            showsVerticalScrollIndicator={Platform.OS === 'web'}>
-            {renderContent()}
-          </ScrollView>
+        {/* Conteúdo: Conversas usa layout fixo (lista + thread); demais abas rolam */}
+        <View
+          style={[
+            styles.desktopMainContent,
+            isConversasDesktop && styles.desktopMainContentFill,
+          ]}>
+          {isConversasDesktop ? (
+            renderContent()
+          ) : (
+            <ScrollView
+              contentContainerStyle={styles.desktopContentScroll}
+              showsVerticalScrollIndicator={Platform.OS === 'web'}>
+              {renderContent()}
+            </ScrollView>
+          )}
         </View>
       </View>
     </View>
