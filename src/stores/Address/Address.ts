@@ -87,7 +87,9 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {
           errorMessage = 'Não autorizado. Faça login novamente.';
-        } else if (error.response?.status.toString().startsWith('4')) {
+        } else if (error.response?.data?.error) {
+          errorMessage = error.response.data.error;
+        } else if (error.response?.status?.toString().startsWith('4')) {
           errorMessage = 'Dados inválidos. Verifique as informações.';
         }
       }

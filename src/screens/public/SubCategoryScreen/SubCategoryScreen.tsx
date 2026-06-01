@@ -262,7 +262,7 @@ function SubCategoryScreen() {
                 disabledArrowColor: 'rgba(255, 255, 255, 0.4)',
 
                 // --- HOJE ---
-                // Como sempre exige 26h de antecedência, "hoje" sempre estará desabilitado.
+                // Como sempre exige 12h de antecedência, "hoje" sempre estará desabilitado.
                 todayTextColor: 'rgba(255, 255, 255, 0.4)',
                 todayDotColor: 'rgba(255, 255, 255, 0.4)',
 
@@ -273,7 +273,7 @@ function SubCategoryScreen() {
               onDayPress={(day) => setSelectedDate(day.dateString)}
               markedDates={markedDates}
               minDate={(() => {
-                const minTime = new Date(Date.now() + 26 * 60 * 60 * 1000);
+                const minTime = new Date(Date.now() + 12 * 60 * 60 * 1000);
                 const y = minTime.getFullYear();
                 const m = String(minTime.getMonth() + 1).padStart(2, '0');
                 const d = String(minTime.getDate()).padStart(2, '0');

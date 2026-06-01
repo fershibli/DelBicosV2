@@ -1,0 +1,27 @@
+# Etapa 1: Build web do Expo
+FROM node:22.15.1-alpine AS builder
+
+RUN apk add --no-cache git bash curl
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+COPY . .
+
+# Gera o build estático para web
+RUN npx expo export --platform web
+
+# Etapa 2: Servir com nginx
+FROM nginx:alpine
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+# Copiar o template de configuração do Nginx. A imagem oficial do Nginx Alpine
+# executa um script na inicialização que substitui as variáveis de ambiente no formato ${VAR}
+# presentes nos arquivos da pasta /etc/nginx/templates/ e gera o conf final em /etc/nginx/conf.d/
+COPY ./nginx/templates/default.conf.template /etc/nginx/templates/default.conf.template
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

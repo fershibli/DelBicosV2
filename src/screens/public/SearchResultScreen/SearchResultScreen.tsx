@@ -18,6 +18,7 @@ import ProfessionalResultCard, {
 } from '@components/features/ProfessionalResultCard';
 import { useProfessionalStore } from '@stores/Professional';
 import { useLocation } from '@lib/hooks/LocationContext';
+// radius filters removed (RF04 reverted)
 
 function SearchResultScreen() {
   const route = useRoute();
@@ -32,6 +33,7 @@ function SearchResultScreen() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [results, setResults] = useState<ProfessionalResult[]>([]);
+  // radius filter removed
 
   const numColumns = width > 1100 ? 3 : width > 768 ? 2 : 1;
 
@@ -39,8 +41,8 @@ function SearchResultScreen() {
     const loadResults = async () => {
       setIsLoading(true);
 
-      const lat = address?.lat ? parseFloat(address.lat) : undefined;
-      const lng = address?.lon ? parseFloat(address.lon) : undefined;
+      const lat = address?.lat ? parseFloat(String(address.lat)) : undefined;
+      const lng = address?.lng ? parseFloat(String(address.lng)) : undefined;
 
       try {
         const data = await fetchProfessionalsByAvailability(
@@ -58,6 +60,7 @@ function SearchResultScreen() {
     };
 
     loadResults();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subCategoryId, date, fetchProfessionalsByAvailability, address]);
 
   const colors = useColors();

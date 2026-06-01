@@ -33,6 +33,9 @@ import ProfessionalDashboard from './private/ProfessionalDashboard';
 import ProfileScreen from '@screens/private/client/Profile/Tabs/ProfileScreen';
 
 import ProfessionalEarningsScreen from './private/ProfessionalEarningsScreen/ProfessionalEarningsScreen';
+import ServicesListScreen from '@screens/private/professional/Services/ServicesList';
+import AvailabilityListScreen from '@screens/private/professional/Availability/AvailabilityList';
+import ProfessionalRadiusScreen from '@screens/private/professional/RadiusScreen/ProfessionalRadiusScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -181,6 +184,26 @@ const ProfessionalTabs = () => {
         }}
       />
       <Tab.Screen
+        name="ProfessionalServicesTab"
+        component={ServicesListScreen}
+        options={{
+          title: 'Serviços',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="wrench" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="ProfessionalAvailabilityTab"
+        component={AvailabilityListScreen}
+        options={{
+          title: 'Disponibilidade',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="calendar" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="ProfessionalProfileTab"
         component={ProfileScreen}
         options={{
@@ -212,7 +235,7 @@ const Home = () => {
   return user ? Platform.OS === 'web' ? <Feed /> : <MainTabs /> : <Login />;
 };
 
-const RootStack = createNativeStackNavigator<NavigationParams>({
+const RootStack = createNativeStackNavigator({
   screenOptions: {
     header: (props) => <Header {...props} />,
   },
@@ -380,12 +403,18 @@ const RootStack = createNativeStackNavigator<NavigationParams>({
         title: 'Analytics',
       },
     },
+    ProfessionalArea: {
+      screen: ProfessionalRadiusScreen,
+      options: {
+        title: 'Área de Atendimento',
+      },
+    },
   },
 });
 
 export const Navigation = createStaticNavigation(RootStack);
 
-type RootStackParamList = StaticParamList<typeof RootStack>;
+type RootStackParamList = NavigationParams;
 
 declare global {
   namespace ReactNavigation {

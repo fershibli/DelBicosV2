@@ -36,8 +36,9 @@ export const useUserStore = create<UserStore>()(
         user: User;
         address: Address | null;
       }) => {
+        const tokenTrimmed = data.token ? data.token.trim() : data.token;
         set({
-          token: data.token,
+          token: tokenTrimmed,
           user: data.user,
           address: data.address,
         });
@@ -45,6 +46,8 @@ export const useUserStore = create<UserStore>()(
 
       fetchCurrentUser: async () => {
         try {
+          // debug logs removed
+
           const { user } = (await backendHttpClient.get('/api/user/me')).data;
 
           const userData: User = {
@@ -56,11 +59,14 @@ export const useUserStore = create<UserStore>()(
             cpf: user.Client.cpf,
             avatar_uri: user.avatar_uri,
             banner_uri: user.banner_uri,
-            professional_id: user.professional_id || user.Professional?.id || user.professional?.id || undefined,
+            professional_id:
+              user.professional_id ||
+              user.Professional?.id ||
+              user.professional?.id ||
+              undefined,
           };
 
-          console.log('[DEBUG fetchCurrentUser] Payload recebido do backend:', user);
-          console.log('[DEBUG fetchCurrentUser] Valor do professional_id:', userData.professional_id);
+          // fetchCurrentUser debug logs removed
 
           const prevUser = get().user;
           set({
@@ -86,6 +92,8 @@ export const useUserStore = create<UserStore>()(
             return;
           }
 
+          const tokenTrimmed = typeof token === 'string' ? token.trim() : token;
+
           const userData = {
             id: user.id,
             client_id: user.client_id,
@@ -95,30 +103,33 @@ export const useUserStore = create<UserStore>()(
             cpf: user.cpf,
             avatar_uri: user.avatar_uri || null,
             banner_uri: user.banner_uri || null,
-            professional_id: user.professional_id || user.Professional?.id || user.professional?.id || undefined,
+            professional_id:
+              user.professional_id ||
+              user.Professional?.id ||
+              user.professional?.id ||
+              undefined,
           };
 
-          console.log('[DEBUG signInPassword] Payload recebido do backend:', user);
-          console.log('[DEBUG signInPassword] Valor do professional_id:', userData.professional_id);
+          // signInPassword debug logs removed
 
           const addressData: Address | null = user.address
             ? {
-              id: user.address.id,
-              lat: user.address.lat,
-              lng: user.address.lng,
-              street: user.address.street,
-              number: user.address.number,
-              complement: user.address.complement,
-              neighborhood: user.address.neighborhood,
-              city: user.address.city,
-              state: user.address.state,
-              country_iso: user.address.country_iso,
-              postal_code: user.address.postal_code,
-            }
+                id: user.address.id,
+                lat: user.address.lat,
+                lng: user.address.lng,
+                street: user.address.street,
+                number: user.address.number,
+                complement: user.address.complement,
+                neighborhood: user.address.neighborhood,
+                city: user.address.city,
+                state: user.address.state,
+                country_iso: user.address.country_iso,
+                postal_code: user.address.postal_code,
+              }
             : null;
 
           get().setLoggedInUser({
-            token,
+            token: tokenTrimmed,
             user: {
               id: user.id,
               client_id: user.client_id,
@@ -127,7 +138,11 @@ export const useUserStore = create<UserStore>()(
               phone: user.phone,
               cpf: user.cpf,
               avatar_uri: user.avatar_uri,
-              professional_id: user.professional_id || user.Professional?.id || user.professional?.id || undefined,
+              professional_id:
+                user.professional_id ||
+                user.Professional?.id ||
+                user.professional?.id ||
+                undefined,
             },
             address: addressData,
           });
@@ -135,12 +150,12 @@ export const useUserStore = create<UserStore>()(
           set({
             user: userData,
             address: addressData,
-            token,
+            token: tokenTrimmed,
             avatarBase64: userData.avatar_uri || null,
           });
 
           get().setLoggedInUser({
-            token,
+            token: tokenTrimmed,
             user: userData,
             address: addressData,
           });
@@ -178,6 +193,8 @@ export const useUserStore = create<UserStore>()(
             throw new Error('No token received from the server');
           }
 
+          const tokenTrimmed = typeof token === 'string' ? token.trim() : token;
+
           const userData: User = {
             id: user.id,
             client_id: user.client_id || 0,
@@ -189,8 +206,12 @@ export const useUserStore = create<UserStore>()(
             admin: true,
           };
 
-          get().setLoggedInUser({ token, user: userData, address: null });
-          set({ user: userData, address: null, token });
+          get().setLoggedInUser({
+            token: tokenTrimmed,
+            user: userData,
+            address: null,
+          });
+          set({ user: userData, address: null, token: tokenTrimmed });
           return;
         } catch (error: any | AxiosError) {
           if (error instanceof AxiosError) {
@@ -277,24 +298,43 @@ export const useUserStore = create<UserStore>()(
       uploadAvatar: async (imageUri: string) => {
         try {
           const fileName = `avatar_${Date.now()}.jpg`;
-          const { data: { uploadUrl, fileUrl } } = await backendHttpClient.post(
-            '/api/avatar/upload-url', 
-            { fileName, fileType: 'image/jpeg' }
-          );
+          const {
+            data: { uploadUrl, fileUrl: initialFileUrl },
+          } = await backendHttpClient.post('/api/avatar/upload-url', {
+            fileName,
+            fileType: 'image/jpeg',
+          });
 
           const responseFetch = await fetch(imageUri);
           const blob = await responseFetch.blob();
 
-          const uploadResponse = await fetch(uploadUrl, {
-            method: 'PUT',
-            body: blob,
-            headers: { 'Content-Type': 'image/jpeg' },
-          });
+          const isProxyUpload = uploadUrl.startsWith('/api/');
 
-          if (!uploadResponse.ok) throw new Error('Falha no upload para o bucket S3');
+          let fileUrl = initialFileUrl;
 
-          await backendHttpClient.patch('/api/avatar/update-path', { 
-            avatar_uri: fileUrl 
+          if (isProxyUpload) {
+            // Proxy ImgBB — usa backendHttpClient que já tem a baseURL configurada
+            const proxyRes = await backendHttpClient.put<{ fileUrl?: string }>(
+              uploadUrl,
+              blob,
+              {
+                headers: { 'Content-Type': 'image/jpeg' },
+              },
+            );
+            if (proxyRes.data?.fileUrl) fileUrl = proxyRes.data.fileUrl;
+          } else {
+            // S3 — PUT direto na AWS
+            const uploadResponse = await fetch(uploadUrl, {
+              method: 'PUT',
+              body: blob,
+              headers: { 'Content-Type': 'image/jpeg' },
+            });
+            if (!uploadResponse.ok)
+              throw new Error('Falha no upload para o bucket S3');
+          }
+
+          await backendHttpClient.patch('/api/avatar/update-path', {
+            avatar_uri: fileUrl,
           });
 
           const currentUser = get().user;
@@ -310,17 +350,20 @@ export const useUserStore = create<UserStore>()(
             mensagem: 'Avatar atualizado com sucesso!',
             avatar_uri: fileUrl,
           };
-
         } catch (error: any) {
-            if (error.response) {
-              console.log("DADOS DO ERRO 500:", JSON.stringify(error.response.data, null, 2));
-            }
-            
-            return {
-              erro: true,
-              mensagem: error.response?.data?.message || 'Erro interno no servidor.',
-            };
+          if (error.response) {
+            console.log(
+              'DADOS DO ERRO 500:',
+              JSON.stringify(error.response.data, null, 2),
+            );
           }
+
+          return {
+            erro: true,
+            mensagem:
+              error.response?.data?.message || 'Erro interno no servidor.',
+          };
+        }
       },
 
       removeAvatar: async () => {
@@ -359,7 +402,10 @@ export const useUserStore = create<UserStore>()(
 
       becomeProfessional: async (data) => {
         try {
-          const response = await backendHttpClient.post('/api/professionals', data);
+          const response = await backendHttpClient.post(
+            '/api/professionals',
+            data,
+          );
           if (response.status === 201 && response.data.professional) {
             const currentUser = get().user;
             if (currentUser) {
@@ -384,8 +430,10 @@ export const useUserStore = create<UserStore>()(
           if (error.response?.data?.msg) {
             throw new Error(error.response.data.msg);
           }
-          
-          const debugData = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+
+          const debugData = error.response?.data
+            ? JSON.stringify(error.response.data)
+            : error.message;
           throw new Error(`Erro inesperado: ${debugData}`);
         }
       },

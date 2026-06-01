@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ImageBackground } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ImageBackground,
+  ScrollView,
+} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
+import { formatBRLFromUnits } from '@lib/helpers/formatCurrency';
 
 // Interface movida para fora ou importada de um arquivo de types
 export interface ProfessionalResult {
@@ -37,7 +44,10 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
 
   const handleTimeSlotPress = (time: string) => {
     setSelectedTime(time);
-    const dateTimeString = `${selectedDate} ${time}`;
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    const [hours, minutes] = time.split(':').map(Number);
+    const localDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+    const dateTimeString = localDate.toISOString();
 
     // @ts-ignore
     navigation.navigate('Checkout', {
@@ -59,7 +69,7 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
     const [year, month, day] = selectedDate.split('-').map(Number);
     const [hours, minutes] = time.split(':').map(Number);
     const slotDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
-    const minTime = Date.now() + 26 * 60 * 60 * 1000;
+    const minTime = Date.now() + 12 * 60 * 60 * 1000;
     return slotDate.getTime() >= minTime;
   });
 
@@ -74,12 +84,14 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
         <View style={styles.imageOverlay} />
 
         <View style={styles.tagsRow}>
-           <View style={styles.distanceTag}>
-             <Text style={styles.distanceText}>{professional.distance}km</Text>
-           </View>
-           <View style={styles.priceTag}>
-             <Text style={styles.priceText}>R$ {professional.priceFrom}</Text>
-           </View>
+          <View style={styles.distanceTag}>
+            <Text style={styles.distanceText}>{professional.distance.toFixed(2)} km</Text>
+          </View>
+          <View style={styles.priceTag}>
+            <Text style={styles.priceText}>
+              {formatBRLFromUnits(professional.priceFrom)}
+            </Text>
+          </View>
         </View>
       </ImageBackground>
 
@@ -107,8 +119,15 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
         <View style={styles.timesContainer}>
           <Text style={styles.timesTitle}>Horários disponíveis:</Text>
           {validAvailableTimes.length > 0 ? (
-            <View style={styles.timesRow}>
-              {validAvailableTimes.slice(0, 4).map((time) => (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{
+                flexDirection: 'row',
+                gap: 8,
+                alignItems: 'center',
+              }}>
+              {validAvailableTimes.map((time) => (
                 <TouchableOpacity
                   key={time}
                   style={[
@@ -125,15 +144,10 @@ const ProfessionalResultCard: React.FC<ProfessionalResultCardProps> = ({
                   </Text>
                 </TouchableOpacity>
               ))}
-              {validAvailableTimes.length > 4 && (
-                <View style={styles.timeSlot}>
-                  <Text style={styles.timeText}>+{validAvailableTimes.length - 4}</Text>
-                </View>
-              )}
-            </View>
+            </ScrollView>
           ) : (
             <Text style={[styles.timeText, { color: colors.textSecondary }]}>
-              Nenhum horário atende à regra de 26h.
+              Nenhum horário atende à regra de 12h.
             </Text>
           )}
         </View>

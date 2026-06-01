@@ -15,6 +15,8 @@ export interface ListedProfessional {
 
 export interface Address {
   id: number;
+  lat?: number;
+  lng?: number;
   street: string;
   number: string;
   complement?: string;
@@ -34,6 +36,7 @@ export interface Service {
   title: string;
   description?: string;
   price: string;
+  price_cents?: number;
   duration: number;
   banner_uri?: string;
   active: boolean;
@@ -77,6 +80,9 @@ export interface Professional {
   Services: Service[];
   Appointments: Review[];
 
+  // Raio de atendimento
+  service_radius_km?: number;
+
   // Dados calculados
   rating?: number;
   ratings_count?: number;
@@ -99,4 +105,5 @@ export interface ProfessionalStore {
     lat?: number,
     lng?: number,
   ) => Promise<ProfessionalResult[] | null>;
+  updateRadius: (professionalId: number, radiusKm: number) => Promise<void>;
 }

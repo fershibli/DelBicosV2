@@ -1,9 +1,11 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useRef } from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
+  Pressable,
+  Animated,
   ActivityIndicator,
   Image,
 } from 'react-native';
@@ -26,6 +28,45 @@ const ProfessionalDashboard: React.FC = () => {
   const isDark = theme === ThemeMode.DARK;
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
   const styles = createStyles(colors, isDark, isHighContrast);
+
+  const QuickAction: React.FC<{
+    title: string;
+    onPress?: () => void;
+    sos?: boolean;
+    children?: React.ReactNode;
+  }> = ({ title, onPress, sos, children }) => {
+    const scale = useRef(new Animated.Value(1)).current;
+
+    const pressIn = () =>
+      Animated.spring(scale, { toValue: 0.97, useNativeDriver: true }).start();
+    const pressOut = () =>
+      Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start();
+
+    return (
+      <Pressable
+        onPress={onPress}
+        onPressIn={pressIn}
+        onPressOut={pressOut}
+        android_ripple={{ color: 'rgba(0,0,0,0.06)', borderless: false }}
+        style={{ marginVertical: 0 }}>
+        <Animated.View
+          style={[
+            styles.quickActionBtn,
+            sos ? styles.quickActionBtnSOS : undefined,
+            { transform: [{ scale }] },
+          ]}>
+          {children}
+          <Text
+            style={[
+              styles.quickActionText,
+              sos ? styles.quickActionTextSOS : undefined,
+            ]}>
+            {title}
+          </Text>
+        </Animated.View>
+      </Pressable>
+    );
+  };
 
   const [isAvailable, setIsAvailable] = useState(false);
   const [showBalance, setShowBalance] = useState(false);
@@ -128,31 +169,50 @@ const ProfessionalDashboard: React.FC = () => {
         </Text>
       </View>
 
-      {/* 3. Ações Rápidas */}
-      <View style={styles.quickActionsRow}>
-        <TouchableOpacity style={styles.quickActionBtn}>
-          <FontAwesome
-            name="sliders"
-            size={16}
-            color={colors.primaryBlack}
-            style={styles.quickActionIcon}
-          />
-          <Text style={styles.quickActionText}>Área de Atendimento</Text>
-        </TouchableOpacity>
+      {/* 3. Ações Rápidas (scroll horizontal) */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={[
+          { paddingHorizontal: 20 },
+          styles.quickActionsRow,
+        ]}>
+        <QuickAction
+          title="Área de Atendimento"
+          onPress={() => navigation.navigate('ProfessionalArea' as never)}>
+          <View style={styles.quickActionIcon}>
+            <FontAwesome name="sliders" size={22} color={colors.primaryBlack} />
+          </View>
+        </QuickAction>
 
-        <TouchableOpacity
-          style={[styles.quickActionBtn, styles.quickActionBtnSOS]}>
-          <FontAwesome
-            name="warning"
-            size={16}
-            color="#ef4444"
-            style={styles.quickActionIcon}
-          />
-          <Text style={[styles.quickActionText, styles.quickActionTextSOS]}>
-            Suporte
-          </Text>
-        </TouchableOpacity>
-      </View>
+        <QuickAction
+          title="Serviços"
+          onPress={() =>
+            navigation.navigate('ProfessionalServicesTab', { openCreate: true })
+          }>
+          <View style={styles.quickActionIcon}>
+            <FontAwesome name="wrench" size={22} color={colors.primaryBlack} />
+          </View>
+        </QuickAction>
+
+        <QuickAction
+          title="Disponibilidade"
+          onPress={() => navigation.navigate('ProfessionalAvailabilityTab')}>
+          <View style={styles.quickActionIcon}>
+            <FontAwesome
+              name="calendar"
+              size={22}
+              color={colors.primaryBlack}
+            />
+          </View>
+        </QuickAction>
+
+        <QuickAction title="Suporte" sos>
+          <View style={[styles.quickActionIcon, styles.quickActionIconSOS]}>
+            <FontAwesome name="warning" size={22} color="#ef4444" />
+          </View>
+        </QuickAction>
+      </ScrollView>
 
       {error ? (
         <View style={styles.errorContainer}>

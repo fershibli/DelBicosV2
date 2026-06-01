@@ -126,14 +126,14 @@ function CategorySlider() {
   const isWebLayout = Platform.OS === 'web' && width > 768;
 
   useEffect(() => {
-    if (hasFetchedRef.current) return;
-    hasFetchedRef.current = true;
-    setIsLoading(true);
-
-    fetchCategories().finally(() => {
+    if (categories.length === 0) {
+      fetchCategories().finally(() => {
+        setIsLoading(false);
+      });
+    } else {
       setIsLoading(false);
-    });
-  }, []);
+    }
+  }, [fetchCategories, categories.length]);
 
   const handleCategoryPress = (category: Category) => {
     // @ts-ignore

@@ -197,6 +197,11 @@ function PartnerProfileScreen() {
                   color={colors.textTertiary}
                 />
                 <Text style={styles.locationText}>{addressShort}</Text>
+                {parceiro.service_radius_km != null && (
+                  <Text style={[styles.reviewCount, { marginLeft: 8 }]}>
+                    • Atende até {parceiro.service_radius_km} km
+                  </Text>
+                )}
                 {parceiro.ratings_count ? (
                   <Text style={styles.reviewCount}>
                     • {parceiro.ratings_count} avaliações

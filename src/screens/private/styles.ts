@@ -111,36 +111,53 @@ export const createStyles = (
     // --- Quick Actions ---
     quickActionsRow: {
       flexDirection: 'row',
-      justifyContent: 'center',
       alignItems: 'center',
-      marginHorizontal: 20,
       marginTop: 16,
-      gap: 12, // Space between if supported, otherwise wrapper handles it
+      gap: 12,
     },
     quickActionBtn: {
-      flex: 1,
-      flexDirection: 'row',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: colors.cardBackground,
-      paddingVertical: 12,
+      paddingVertical: 18,
       paddingHorizontal: 12,
       borderRadius: 20,
-      borderWidth: 1,
-      borderColor: colors.borderColor,
-      marginHorizontal: 6, // Fallback for gap
+      width: 108,
+      minHeight: 110,
+      // subtle card shadow
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.07,
+          shadowRadius: 8,
+        },
+        android: { elevation: 3 },
+      }),
     },
     quickActionBtnSOS: {
-      flex: 0.6,
-      borderColor: 'rgba(239, 68, 68, 0.3)',
+      borderWidth: 0,
     },
     quickActionIcon: {
-      marginRight: 8,
+      width: 52,
+      height: 52,
+      borderRadius: 26,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.inputBackground,
+      marginBottom: 10,
+    },
+    quickActionIconSOS: {
+      backgroundColor: 'rgba(239,68,68,0.08)',
     },
     quickActionText: {
       fontFamily: 'Afacad-SemiBold',
-      fontSize: 14,
+      fontSize: 13,
       color: colors.primaryBlack,
+      textAlign: 'center',
+      includeFontPadding: false,
+      flexShrink: 1,
     },
     quickActionTextSOS: {
       color: '#ef4444',

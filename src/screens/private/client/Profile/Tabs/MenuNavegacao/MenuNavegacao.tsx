@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { useNavigation, useRoute, CommonActions } from '@react-navigation/native';
+import { useUserStore } from '@stores/User';
 import { ClientProfileSubRoutes } from '@screens/types';
 import { useColors } from '@theme/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -25,12 +26,7 @@ const menuOptions = [
     icon: 'lock-outline',
     activeIcon: 'lock',
   },
-  {
-    id: ClientProfileSubRoutes.MeusAgendamentos,
-    label: 'Agendamentos',
-    icon: 'calendar-today',
-    activeIcon: 'calendar-view-day',
-  },
+
   {
     id: ClientProfileSubRoutes.Notificacoes,
     label: 'Notificações',
@@ -66,6 +62,7 @@ const menuOptions = [
 const MenuNavegacao = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const { user, signOut } = useUserStore();
   const colors = useColors();
   const styles = createStyles(colors);
 
@@ -75,21 +72,73 @@ const MenuNavegacao = () => {
   const isProfessionalTab = route.name === 'ProfessionalProfileTab';
 
   const dynamicMenuOptions = menuOptions.map((option) => {
-    if (option.id === ClientProfileSubRoutes.TornarParceiro && isProfessionalTab) {
-      return {
-        id: 'VoltarCliente',
-        label: 'Voltar para o Cliente',
-        icon: 'arrow-back',
-        activeIcon: 'arrow-back',
-      };
+    if (option.id === ClientProfileSubRoutes.TornarParceiro) {
+      if (isProfessionalTab) {
+        return {
+          ...option,
+          id: 'VoltarCliente',
+          label: 'Acessar Painel Cliente',
+          icon: 'person',
+          activeIcon: 'person',
+        } as any;
+      } else if (user?.professional_id) {
+        return {
+          ...option,
+          id: 'AcessarParceiro',
+          label: 'Acessar Painel Colaborador',
+          icon: 'work',
+          activeIcon: 'work',
+        } as any;
+      }
     }
+
     return option;
   });
+
+  // Adiciona a opção de Sair da conta no final
+  dynamicMenuOptions.push({
+    id: 'SairConta',
+    label: 'Sair da conta',
+    icon: 'logout',
+    activeIcon: 'logout',
+    isDestructive: true,
+  } as any);
 
   const handlePress = (subroute: string) => {
     if (subroute === 'VoltarCliente') {
       // @ts-ignore
-      navigation.navigate('MainTabs');
+      navigation.navigate('MainTabs', { screen: 'FeedTab' });
+      return;
+    }
+    if (subroute === 'AcessarParceiro') {
+      // @ts-ignore
+      navigation.navigate('ProfessionalTabs', { screen: 'ProfessionalHomeTab' });
+      return;
+    }
+    if (subroute === 'SairConta') {
+      Alert.alert(
+        'Sair da Conta',
+        'Tem certeza que deseja sair da sua conta?',
+        [
+          {
+            text: 'Cancelar',
+            style: 'cancel',
+          },
+          {
+            text: 'Sair',
+            style: 'destructive',
+            onPress: () => {
+              signOut();
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: 'Home' }],
+                }),
+              );
+            },
+          },
+        ]
+      );
       return;
     }
     // @ts-ignore - Atualiza o parâmetro na rota atual
@@ -101,15 +150,23 @@ const MenuNavegacao = () => {
       {dynamicMenuOptions.map((item) => {
         const isActive = currentSubroute === item.id;
         const iconName = isActive ? item.activeIcon : item.icon;
+        const isDestructive = (item as any).isDestructive;
 
         return (
           <TouchableOpacity
             key={item.id}
-            style={[styles.menuItem, isActive && styles.activeMenuItem]}
-            onPress={() => handlePress(item.id)}
+            style={[
+              styles.menuItem,
+              isActive && styles.activeMenuItem,
+              (item as any).disabled && { opacity: 0.5 },
+            ]}
+            onPress={() => !(item as any).disabled && handlePress(item.id)}
             activeOpacity={0.7}
             accessibilityRole="button"
-            accessibilityState={{ selected: isActive }}
+            accessibilityState={{
+              selected: isActive,
+              disabled: !!(item as any).disabled,
+            }}
             accessibilityLabel={`Ir para ${item.label}`}>
             {isActive && <View style={styles.activeIndicator} />}
 
@@ -117,11 +174,22 @@ const MenuNavegacao = () => {
               <MaterialIcons
                 name={iconName as any}
                 size={22}
-                color={isActive ? colors.primaryOrange : colors.textTertiary}
+                color={
+                  isActive
+                    ? colors.primaryOrange
+                    : isDestructive
+                    ? colors.primaryRed
+                    : colors.textTertiary
+                }
               />
             </View>
 
-            <Text style={[styles.menuText, isActive && styles.activeMenuText]}>
+            <Text
+              style={[
+                styles.menuText,
+                isActive && styles.activeMenuText,
+                isDestructive && { color: colors.primaryRed },
+              ]}>
               {item.label}
             </Text>
 
@@ -129,7 +197,7 @@ const MenuNavegacao = () => {
               <MaterialIcons
                 name="chevron-right"
                 size={20}
-                color={colors.borderColor}
+                color={isDestructive ? colors.primaryRed : colors.borderColor}
                 style={styles.chevronIcon}
               />
             )}
