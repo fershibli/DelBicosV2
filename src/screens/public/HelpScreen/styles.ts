@@ -3,13 +3,21 @@ import { ColorsType } from '@theme/types';
 // Reutilizando o estilo base de input para consistência
 import { createInputBaseStyle } from '@components/ui/CustomTextInput/styles';
 
-export const createStyles = (colors: ColorsType) => {
+export const createStyles = (
+  colors: ColorsType,
+  isDark: boolean = false,
+  isHighContrast: boolean = false,
+) => {
   const inputBaseStyle = createInputBaseStyle(colors);
 
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.inputBackground,
+      backgroundColor: isDark
+        ? colors.secondaryGray
+        : isHighContrast
+          ? colors.primaryWhite
+          : '#DDE6F0',
     },
     contentContainer: {
       alignItems: 'center',
