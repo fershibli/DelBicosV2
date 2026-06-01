@@ -9,6 +9,7 @@ import {
 import { backendHttpClient } from '@lib/helpers/httpClient';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { BarChart, LineChart } from 'react-native-chart-kit';
 
 type MonthData = {
@@ -42,7 +43,10 @@ export default function AdminDashboard() {
 
   const { width } = useWindowDimensions();
   const colors = useColors();
-  const styles = createStyles(colors);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const styles = createStyles(colors, isDark, isHighContrast);
 
   useEffect(() => {
     const load = async () => {
