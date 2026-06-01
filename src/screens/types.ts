@@ -64,3 +64,17 @@ export type NavigationParams = {
   AdminAnalytics: undefined;
   ProfessionalArea: undefined;
 };
+export type CalendarStatus =
+  | 'available'
+  | 'blocked'
+  | 'unavailable';
+
+export interface CalendarDay {
+  date: string;
+
+  status: CalendarStatus;
+
+  startTime?: string;
+
+  endTime?: string;
+}
