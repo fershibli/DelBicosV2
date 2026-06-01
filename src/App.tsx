@@ -57,6 +57,14 @@ function AppContent() {
         border: colors.borderColor,
         notification: colors.primaryOrange,
       },
+      fonts: {
+        regular: 'Afacad-Regular',
+        medium: 'Afacad-SemiBold',
+        bold: 'Afacad-Bold',
+      },
+      fontSize: 16,
+      fontWeight: 'normal',
+      fontStyle: 'normal',
     }),
     [isDark, colors],
   );
