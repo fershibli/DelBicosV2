@@ -98,14 +98,14 @@ function CategoryCard({ category, onPress, isWebLayout }: CategoryCardProps) {
         <FontAwesome5
           name={iconName}
           size={26}
-          color={isDark ? colors.primaryWhite : colors.primaryOrange}
+          color={isDark ? colors.primaryBlack : colors.primaryOrange}
           solid
         />
       </View>
       <Text
         style={[
           styles.bubbleTitle,
-          { color: isDark ? colors.primaryWhite : colors.primaryBlack },
+          { color: isDark ? colors.primaryBlack : colors.primaryBlack },
         ]}
         numberOfLines={2}>
         {category.title}
