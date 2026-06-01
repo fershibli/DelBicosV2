@@ -11,23 +11,30 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useDashboardStore } from '@stores/Dashboard';
 import { useUserStore } from '@stores/User';
 import { useColors } from '@theme/ThemeProvider';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { createStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 
 const ProfessionalDashboard: React.FC = () => {
-  const { kpis, loading, error, fetchKpis, fetchEarnings, fetchCategories } = useDashboardStore();
+  const { kpis, loading, error, fetchKpis, fetchEarnings, fetchCategories } =
+    useDashboardStore();
   const { user } = useUserStore();
   const navigation = useNavigation<any>();
-  
+
   const colors = useColors();
-  const styles = createStyles(colors);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const styles = createStyles(colors, isDark, isHighContrast);
 
   const [isAvailable, setIsAvailable] = useState(false);
   const [showBalance, setShowBalance] = useState(false);
 
   const loadAllData = useCallback(async () => {
     const to = new Date().toISOString().slice(0, 10);
-    const from = new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString().slice(0, 10);
+    const from = new Date(Date.now() - 1000 * 60 * 60 * 24 * 30)
+      .toISOString()
+      .slice(0, 10);
     try {
       await Promise.all([
         fetchKpis(),
@@ -57,33 +64,38 @@ const ProfessionalDashboard: React.FC = () => {
 
   // Mock value for now, or use kpis.totalEarnings if backend provides it
   const todayEarnings = kpis ? kpis.totalEarnings : 0;
-  const formattedEarnings = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(todayEarnings);
+  const formattedEarnings = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(todayEarnings);
 
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}>
-      
       {/* 1. Header do Prestador */}
       <View style={styles.topHeader}>
         <View style={styles.avatarContainer}>
-          <Image 
-            source={{ uri: user?.avatar_uri || 'https://ui-avatars.com/api/?name=' + (user?.name || 'P') }} 
-            style={styles.avatar} 
+          <Image
+            source={{
+              uri:
+                user?.avatar_uri ||
+                'https://ui-avatars.com/api/?name=' + (user?.name || 'P'),
+            }}
+            style={styles.avatar}
           />
         </View>
 
-        <TouchableOpacity 
-          style={styles.togglePill} 
+        <TouchableOpacity
+          style={styles.togglePill}
           onPress={toggleAvailability}
-          activeOpacity={0.8}
-        >
-          <FontAwesome 
-            name={isAvailable ? "check-circle" : "ban"} 
-            size={16} 
-            color={isAvailable ? "#16a34a" : colors.textSecondary} 
-            style={styles.toggleIcon} 
+          activeOpacity={0.8}>
+          <FontAwesome
+            name={isAvailable ? 'check-circle' : 'ban'}
+            size={16}
+            color={isAvailable ? '#16a34a' : colors.textSecondary}
+            style={styles.toggleIcon}
           />
           <Text style={styles.toggleText}>
             {isAvailable ? 'Disponível' : 'Indisponível'}
@@ -97,16 +109,21 @@ const ProfessionalDashboard: React.FC = () => {
       </View>
 
       {/* 2. Banner de Status */}
-      <View style={[styles.statusBanner, !isAvailable && styles.statusBannerOffline]}>
-        <FontAwesome 
-          name="lightbulb-o" 
-          size={20} 
-          color={isAvailable ? "#16a34a" : "#6b7280"} 
-          style={styles.statusIcon} 
+      <View
+        style={[
+          styles.statusBanner,
+          !isAvailable && styles.statusBannerOffline,
+        ]}>
+        <FontAwesome
+          name="lightbulb-o"
+          size={20}
+          color={isAvailable ? '#16a34a' : '#6b7280'}
+          style={styles.statusIcon}
         />
-        <Text style={[styles.statusText, !isAvailable && styles.statusTextOffline]}>
-          {isAvailable 
-            ? 'Fique online para receber orçamentos' 
+        <Text
+          style={[styles.statusText, !isAvailable && styles.statusTextOffline]}>
+          {isAvailable
+            ? 'Fique online para receber orçamentos'
             : 'Fique disponível para receber orçamentos'}
         </Text>
       </View>
@@ -114,20 +131,35 @@ const ProfessionalDashboard: React.FC = () => {
       {/* 3. Ações Rápidas */}
       <View style={styles.quickActionsRow}>
         <TouchableOpacity style={styles.quickActionBtn}>
-          <FontAwesome name="sliders" size={16} color={colors.primaryBlack} style={styles.quickActionIcon} />
+          <FontAwesome
+            name="sliders"
+            size={16}
+            color={colors.primaryBlack}
+            style={styles.quickActionIcon}
+          />
           <Text style={styles.quickActionText}>Área de Atendimento</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity style={[styles.quickActionBtn, styles.quickActionBtnSOS]}>
-          <FontAwesome name="warning" size={16} color="#ef4444" style={styles.quickActionIcon} />
-          <Text style={[styles.quickActionText, styles.quickActionTextSOS]}>Suporte</Text>
+
+        <TouchableOpacity
+          style={[styles.quickActionBtn, styles.quickActionBtnSOS]}>
+          <FontAwesome
+            name="warning"
+            size={16}
+            color="#ef4444"
+            style={styles.quickActionIcon}
+          />
+          <Text style={[styles.quickActionText, styles.quickActionTextSOS]}>
+            Suporte
+          </Text>
         </TouchableOpacity>
       </View>
 
       {error ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
-            {typeof error === 'string' ? error : 'Ocorreu um erro ao carregar os dados.'}
+            {typeof error === 'string'
+              ? error
+              : 'Ocorreu um erro ao carregar os dados.'}
           </Text>
         </View>
       ) : null}
@@ -138,21 +170,27 @@ const ProfessionalDashboard: React.FC = () => {
           <FontAwesome name="money" size={16} color="#9CA3AF" />
           <Text style={styles.summaryTitle}>Resumo de hoje</Text>
         </View>
-        
+
         <View style={styles.summaryValueRow}>
           {loading ? (
-             <ActivityIndicator size="small" color="#FFF" />
+            <ActivityIndicator size="small" color="#FFF" />
           ) : showBalance ? (
             <Text style={styles.summaryValue}>{formattedEarnings}</Text>
           ) : (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-               <Text style={styles.summaryValuePrefix}>R$</Text>
-               <Text style={styles.summaryHidden}>••••</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.summaryValuePrefix}>R$</Text>
+              <Text style={styles.summaryHidden}>••••</Text>
             </View>
           )}
 
-          <TouchableOpacity onPress={toggleBalance} style={styles.summaryEyeBtn}>
-            <FontAwesome name={showBalance ? "eye-slash" : "eye"} size={20} color="#FFF" />
+          <TouchableOpacity
+            onPress={toggleBalance}
+            style={styles.summaryEyeBtn}>
+            <FontAwesome
+              name={showBalance ? 'eye-slash' : 'eye'}
+              size={20}
+              color="#FFF"
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -160,7 +198,9 @@ const ProfessionalDashboard: React.FC = () => {
       {/* 5. Banner Promocional */}
       <View style={styles.promoBanner}>
         <Text style={styles.promoTitle}>Complete 5 serviços nesta semana!</Text>
-        <Text style={styles.promoSubtitle}>Ganhe o selo de Super Parceiro e apareça no topo das buscas.</Text>
+        <Text style={styles.promoSubtitle}>
+          Ganhe o selo de Super Parceiro e apareça no topo das buscas.
+        </Text>
         {/* Aqui poderia entrar uma imagem de background do banner */}
       </View>
 
@@ -172,20 +212,30 @@ const ProfessionalDashboard: React.FC = () => {
             <Text style={styles.sectionLink}>Ver agenda</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.sectionSubtitle}>Você não tem serviços marcados para hoje</Text>
+        <Text style={styles.sectionSubtitle}>
+          Você não tem serviços marcados para hoje
+        </Text>
 
-        <TouchableOpacity style={styles.scheduleCard} onPress={navigateToSchedules} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.scheduleCard}
+          onPress={navigateToSchedules}
+          activeOpacity={0.8}>
           <View style={styles.scheduleIconContainer}>
-            <FontAwesome name="calendar-plus-o" size={20} color={colors.primaryBlack} />
+            <FontAwesome
+              name="calendar-plus-o"
+              size={20}
+              color={colors.primaryBlack}
+            />
           </View>
           <View style={styles.scheduleCardContent}>
             <Text style={styles.scheduleCardTitle}>Ver todos os horários</Text>
-            <Text style={styles.scheduleCardSubtitle}>Acompanhe seus próximos compromissos</Text>
+            <Text style={styles.scheduleCardSubtitle}>
+              Acompanhe seus próximos compromissos
+            </Text>
           </View>
           <FontAwesome name="chevron-right" size={14} color="#9ca3af" />
         </TouchableOpacity>
       </View>
-
     </ScrollView>
   );
 };
