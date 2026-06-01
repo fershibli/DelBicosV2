@@ -33,6 +33,8 @@ import ProfessionalEarningsScreen from './private/ProfessionalEarningsScreen/Pro
 import ServicesListScreen from '@screens/private/professional/Services/ServicesList';
 import AvailabilityListScreen from '@screens/private/professional/Availability/AvailabilityList';
 import ProfessionalRadiusScreen from '@screens/private/professional/RadiusScreen/ProfessionalRadiusScreen';
+import ChatListScreen from '@screens/private/chat/ChatListScreen';
+import ChatThreadScreen from '@screens/private/chat/ChatThreadScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -396,6 +398,27 @@ const RootStack = createNativeStackNavigator({
       screen: ProfessionalRadiusScreen,
       options: {
         title: 'Área de Atendimento',
+      },
+    },
+    ChatList: {
+      screen: ChatListScreen,
+      linking: {
+        path: 'chats',
+      },
+      options: {
+        title: 'Conversas',
+      },
+    },
+    ChatThread: {
+      screen: ChatThreadScreen,
+      linking: {
+        path: 'chat/:roomId',
+        parse: {
+          roomId: (value: string) => Number(value),
+        },
+      },
+      options: {
+        headerShown: false,
       },
     },
   },
