@@ -11,6 +11,7 @@ import {
 import { useRoute } from '@react-navigation/native';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { FontAwesome } from '@expo/vector-icons';
 import ProfessionalResultCard, {
   ProfessionalResult,
@@ -63,7 +64,10 @@ function SearchResultScreen() {
   }, [subCategoryId, date, fetchProfessionalsByAvailability, address]);
 
   const colors = useColors();
-  const styles = createStyles(colors);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const styles = createStyles(colors, isDark, isHighContrast);
 
   const renderFilterBar = () => (
     <ScrollView
