@@ -6,8 +6,8 @@ import { useFonts } from 'expo-font';
 import { Navigation } from '@screens/NavigationStack';
 import { LocationProvider } from '@lib/hooks/LocationContext';
 import { MenuProvider } from 'react-native-popup-menu';
-import { ThemeProvider } from '@theme/ThemeProvider';
-import { Platform, StyleSheet } from 'react-native';
+import { ThemeProvider, useColors } from '@theme/ThemeProvider';
+import { Platform, StatusBar, StyleSheet } from 'react-native';
 import {
   SafeAreaProvider,
   SafeAreaView,
@@ -19,6 +19,8 @@ import { GOOGLE_ANALYTICS_ID, CLARITY_ID } from './config/varEnvs';
 import VLibrasSetup from '@components/features/Accessibility/VLibrasSetup';
 import { registerTokenProvider } from '@lib/helpers/httpClient';
 import { useUserStore } from '@stores/User';
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types';
 
 Asset.loadAsync([...NavigationAssets]);
 
@@ -35,6 +37,66 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+// Componente interno que vive dentro do ThemeProvider e tem acesso aos tokens de cor.
+// Responsável por sincronizar StatusBar, SafeAreaView e NavigationContainer com o tema atual.
+function AppContent() {
+  const { theme } = useThemeStore();
+  const colors = useColors();
+  const isDark = theme === ThemeMode.DARK;
+
+  // Tema do NavigationContainer mapeado para os nossos tokens de cor
+  const navTheme = React.useMemo(
+    () => ({
+      dark: isDark,
+      colors: {
+        primary: colors.primaryOrange,
+        background: colors.secondaryGray,
+        card: colors.cardBackground,
+        text: colors.primaryBlack,
+        border: colors.borderColor,
+        notification: colors.primaryOrange,
+      },
+      fonts: {
+        regular: 'Afacad-Regular',
+        medium: 'Afacad-SemiBold',
+        bold: 'Afacad-Bold',
+      },
+      fontSize: 16,
+      fontWeight: 'normal',
+      fontStyle: 'normal',
+    }),
+    [isDark, colors],
+  );
+
+  return (
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: colors.cardBackground }]}
+      edges={Platform.OS !== 'web' ? ['top', 'bottom'] : []}>
+      {Platform.OS !== 'web' && (
+        <StatusBar
+          barStyle={isDark ? 'light-content' : 'dark-content'}
+          backgroundColor={colors.cardBackground}
+          translucent={false}
+        />
+      )}
+      <LocationProvider>
+        <VLibrasSetup />
+        <NotificationManager />
+        <Navigation
+          theme={navTheme}
+          linking={{
+            enabled: 'auto',
+            prefixes: ['delbicos://'],
+          }}
+          onReady={() => {
+            SplashScreen.hideAsync();
+          }}
+        />
+      </LocationProvider>
+    </SafeAreaView>
+  );
+}
 
 export function App() {
   const [loaded, error] = useFonts({
@@ -73,27 +135,11 @@ export function App() {
 
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <SafeAreaView
-        style={styles.safeArea}
-        edges={Platform.OS !== 'web' ? ['top', 'bottom'] : []}>
-        <MenuProvider>
-          <ThemeProvider>
-            <LocationProvider>
-              <VLibrasSetup />
-              <NotificationManager />
-              <Navigation
-                linking={{
-                  enabled: 'auto',
-                  prefixes: ['delbicos://'],
-                }}
-                onReady={() => {
-                  SplashScreen.hideAsync();
-                }}
-              />
-            </LocationProvider>
-          </ThemeProvider>
-        </MenuProvider>
-      </SafeAreaView>
+      <MenuProvider>
+        <ThemeProvider>
+          <AppContent />
+        </ThemeProvider>
+      </MenuProvider>
     </SafeAreaProvider>
   );
 }

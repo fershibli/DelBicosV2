@@ -12,7 +12,7 @@ export const createStyles = (colors: ColorsType) =>
     sectionTitle: {
       fontSize: 18,
       fontFamily: 'Afacad-Bold',
-      color: colors.primaryBlue,
+      color: colors.primaryBlack,
       marginBottom: 12,
     },
     row: {

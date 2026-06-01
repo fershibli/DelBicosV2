@@ -6,6 +6,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome } from '@expo/vector-icons';
 import { Platform, Image } from 'react-native';
+import { useThemeStore } from '@stores/Theme';
+import { useColors } from '@theme/ThemeProvider';
+import { ThemeMode } from '@stores/Theme/types';
 import Feed from './public/Feed';
 import NotFound from './public/NotFound';
 import RegisterScreen from './public/RegisterScreen';
@@ -40,24 +43,28 @@ const Tab = createBottomTabNavigator();
 
 const MainTabs = () => {
   const { user } = useUserStore();
+  const { theme } = useThemeStore();
+  const colors = useColors();
+  const isDark = theme === ThemeMode.DARK;
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
+        sceneStyle: { backgroundColor: colors.cardBackground },
         tabBarStyle:
           Platform.OS === 'web'
             ? { display: 'none' }
             : {
-              backgroundColor: '#FFFFFF',
-              borderTopWidth: 1,
-              borderTopColor: '#EEEEEE',
-              height: 60,
-              paddingBottom: 8,
-              paddingTop: 8,
-            },
-        tabBarActiveTintColor: '#FF6F00', // primaryOrange
-        tabBarInactiveTintColor: '#9CA3AF',
+                backgroundColor: colors.cardBackground,
+                borderTopWidth: 1,
+                borderTopColor: colors.borderColor,
+                height: 60,
+                paddingBottom: 8,
+                paddingTop: 8,
+              },
+        tabBarActiveTintColor: colors.primaryOrange,
+        tabBarInactiveTintColor: colors.textTertiary,
         tabBarLabelStyle: {
           fontFamily: 'Afacad-SemiBold',
           fontSize: 12,
@@ -121,24 +128,28 @@ const MainTabs = () => {
 
 const ProfessionalTabs = () => {
   const { user } = useUserStore();
+  const { theme } = useThemeStore();
+  const colors = useColors();
+  const isDark = theme === ThemeMode.DARK;
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
+        sceneStyle: { backgroundColor: colors.cardBackground },
         tabBarStyle:
           Platform.OS === 'web'
             ? { display: 'none' }
             : {
-              backgroundColor: '#FFFFFF',
-              borderTopWidth: 1,
-              borderTopColor: '#EEEEEE',
-              height: 60,
-              paddingBottom: 8,
-              paddingTop: 8,
-            },
-        tabBarActiveTintColor: '#FF6F00',
-        tabBarInactiveTintColor: '#9CA3AF',
+                backgroundColor: colors.cardBackground,
+                borderTopWidth: 1,
+                borderTopColor: colors.borderColor,
+                height: 60,
+                paddingBottom: 8,
+                paddingTop: 8,
+              },
+        tabBarActiveTintColor: colors.primaryOrange,
+        tabBarInactiveTintColor: colors.textTertiary,
         tabBarLabelStyle: {
           fontFamily: 'Afacad-SemiBold',
           fontSize: 12,

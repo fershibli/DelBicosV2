@@ -13,6 +13,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 import CategorySlider from '@components/features/CategorySlider';
 import ListProfessionals from '@components/features/ListProfessionals';
 import ListServices from '@components/features/ListServices';
@@ -63,7 +64,10 @@ const FeedScreen: React.FC = () => {
   const navigation = useNavigation();
 
   const colors = useColors();
-  const styles = createStyles(colors);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const styles = createStyles(colors, isDark, isHighContrast);
   const { width } = useWindowDimensions();
 
   const { results, search: fetchSearch } = useServiceSearch();
