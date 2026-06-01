@@ -34,6 +34,12 @@ const menuOptions = [
     activeIcon: 'notifications',
   },
   {
+    id: ClientProfileSubRoutes.Conversas,
+    label: 'Conversas',
+    icon: 'chat-bubble-outline',
+    activeIcon: 'chat-bubble',
+  },
+  {
     id: ClientProfileSubRoutes.Favoritos,
     label: 'Favoritos',
     icon: 'favorite-border',
@@ -113,6 +119,11 @@ const MenuNavegacao = () => {
     if (subroute === 'AcessarParceiro') {
       // @ts-ignore
       navigation.navigate('ProfessionalTabs', { screen: 'ProfessionalHomeTab' });
+      return;
+    }
+    if (subroute === ClientProfileSubRoutes.Conversas) {
+      // @ts-ignore - tela de Conversas vive no root stack
+      navigation.navigate('ChatList');
       return;
     }
     if (subroute === 'SairConta') {

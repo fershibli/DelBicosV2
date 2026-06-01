@@ -17,7 +17,10 @@ RUN npx expo export --platform web
 FROM nginx:alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copiar o template de configuração do Nginx. A imagem oficial do Nginx Alpine
+# executa um script na inicialização que substitui as variáveis de ambiente no formato ${VAR}
+# presentes nos arquivos da pasta /etc/nginx/templates/ e gera o conf final em /etc/nginx/conf.d/
+COPY ./nginx/templates/default.conf.template /etc/nginx/templates/default.conf.template
 
 EXPOSE 80
 

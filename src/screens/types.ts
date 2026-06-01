@@ -1,3 +1,5 @@
+import type { ChatCorrespondent, ChatRoomStatus } from '@stores/Chat';
+
 export enum ClientProfileSubRoutes {
   DadosConta = 'DadosConta',
   MeusEnderecos = 'MeusEnderecos',
@@ -63,4 +65,11 @@ export type NavigationParams = {
   AdminDashboard: undefined;
   AdminAnalytics: undefined;
   ProfessionalArea: undefined;
+  ChatList: undefined;
+  ChatThread: {
+    roomId: number;
+    correspondent?: ChatCorrespondent | null;
+    serviceTitle?: string | null;
+    roomStatus?: ChatRoomStatus;
+  };
 };
