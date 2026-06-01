@@ -13,6 +13,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 import CategorySlider from '@components/features/CategorySlider';
 import ListProfessionals from '@components/features/ListProfessionals';
 import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
@@ -62,7 +63,10 @@ const FeedScreen: React.FC = () => {
   const navigation = useNavigation();
 
   const colors = useColors();
-  const styles = createStyles(colors);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const styles = createStyles(colors, isDark, isHighContrast);
   const { width } = useWindowDimensions();
 
   const { results, search: fetchSearch } = useServiceSearch();
@@ -177,12 +181,22 @@ const FeedScreen: React.FC = () => {
                           style={styles.dropdownItem}
                           onPress={() => handleSelectService(item)}>
                           <View style={styles.dropdownIcon}>
-                            <FontAwesome5 name={getIconForSubCategory(item.title)} size={16} color={colors.primaryBlue} />
+                            <FontAwesome5
+                              name={getIconForSubCategory(item.title)}
+                              size={16}
+                              color={colors.primaryBlue}
+                            />
                           </View>
                           <View style={styles.dropdownTextContainer}>
-                            <Text style={styles.dropdownName} numberOfLines={1}>{item.title}</Text>
+                            <Text style={styles.dropdownName} numberOfLines={1}>
+                              {item.title}
+                            </Text>
                           </View>
-                          <FontAwesome name="angle-right" size={16} color={colors.textTertiary} />
+                          <FontAwesome
+                            name="angle-right"
+                            size={16}
+                            color={colors.textTertiary}
+                          />
                         </TouchableOpacity>
                       ))
                     ) : (
