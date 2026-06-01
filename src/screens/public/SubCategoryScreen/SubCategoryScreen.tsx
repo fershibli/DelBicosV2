@@ -77,9 +77,10 @@ const SubCategoryButton: React.FC<{
 }> = ({ item, onPress, isActive }) => {
   const { theme } = useThemeStore();
   const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const isDark = theme === ThemeMode.DARK;
   const [isHovered, setIsHovered] = useState(false);
   const colors = useColors();
-  const styles = createStyles(colors);
+  const styles = createStyles(colors, isDark, isHighContrast);
 
   const styleProps = useMemo(() => {
     let bg = colors.cardBackground;
@@ -152,8 +153,9 @@ function SubCategoryScreen() {
   const { subCategories, fetchSubCategoriesByCategoryId } =
     useSubCategoryStore();
   const colors = useColors();
-  const styles = createStyles(colors);
   const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const styles = createStyles(colors, isDark, isHighContrast);
 
   useEffect(() => {
     if (singleSubCategory) {
