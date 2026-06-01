@@ -50,9 +50,9 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
     let contentColor = colors.primaryOrange;
 
     if (isDark) {
-      bgColor = '#2C2C2C';
-      borderColor = '#444';
-      contentColor = '#FFFFFF';
+      bgColor = colors.backgroundElevated;
+      borderColor = colors.borderColor;
+      contentColor = colors.primaryBlack;
     }
 
     if (isHighContrast) {
@@ -63,7 +63,7 @@ function CategoryCard({ category, onPress }: CategoryCardProps) {
 
     if (isHovered) {
       bgColor = isDark ? colors.primaryOrange : colors.primaryBlue;
-      contentColor = isDark ? colors.primaryWhite : colors.primaryWhite;
+      contentColor = isDark ? colors.primaryBlack : colors.primaryWhite;
       borderColor = bgColor;
     }
 
@@ -142,7 +142,7 @@ function CategoryList() {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primaryBlue} />
+        <ActivityIndicator size="large" color={colors.primaryOrange} />
       </View>
     );
   }
