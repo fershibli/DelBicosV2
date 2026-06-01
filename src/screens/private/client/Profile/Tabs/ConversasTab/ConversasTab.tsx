@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
 
 const ConversasTab: React.FC = () => {
   const colors = useColors();
   const styles = createStyles(colors);
+  const navigation = useNavigation();
+
+  // A lista de conversas vive em uma tela dedicada no root stack
+  useEffect(() => {
+    // @ts-ignore - rota tipada em NavigationParams
+    navigation.navigate('ChatList');
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
@@ -16,10 +24,7 @@ const ConversasTab: React.FC = () => {
 
       <Text style={styles.title}>Conversas</Text>
 
-      <Text style={styles.subtitle}>
-        O chat está em desenvolvimento. Em breve você poderá conversar
-        diretamente com os prestadores por aqui.
-      </Text>
+      <Text style={styles.subtitle}>Abrindo suas conversas…</Text>
     </View>
   );
 };
