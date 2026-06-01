@@ -8,6 +8,7 @@ import {
   Animated,
   ActivityIndicator,
   Image,
+  Platform,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useDashboardStore } from '@stores/Dashboard';
@@ -97,6 +98,14 @@ const ProfessionalDashboard: React.FC = () => {
 
   const navigateToSchedules = () => {
     navigation.navigate('ProfessionalSchedulesTab');
+  };
+
+  const navigateToEarnings = () => {
+    navigation.navigate('ProfessionalEarningsTab');
+  };
+
+  const navigateToProfile = () => {
+    navigation.navigate('ProfessionalProfileTab');
   };
 
   // Mock value for now, or use kpis.totalEarnings if backend provides it
@@ -202,6 +211,46 @@ const ProfessionalDashboard: React.FC = () => {
             />
           </View>
         </QuickAction>
+
+        {Platform.OS === 'web' && (
+          <>
+            <QuickAction
+              title="Agenda"
+              onPress={navigateToSchedules}>
+              <View style={styles.quickActionIcon}>
+                <FontAwesome
+                  name="calendar-check-o"
+                  size={22}
+                  color={colors.primaryBlack}
+                />
+              </View>
+            </QuickAction>
+
+            <QuickAction
+              title="Saldo"
+              onPress={navigateToEarnings}>
+              <View style={styles.quickActionIcon}>
+                <FontAwesome
+                  name="money"
+                  size={22}
+                  color={colors.primaryBlack}
+                />
+              </View>
+            </QuickAction>
+
+            <QuickAction
+              title="Perfil"
+              onPress={navigateToProfile}>
+              <View style={styles.quickActionIcon}>
+                <FontAwesome
+                  name="user-circle"
+                  size={22}
+                  color={colors.primaryBlack}
+                />
+              </View>
+            </QuickAction>
+          </>
+        )}
 
         <QuickAction title="Suporte" sos>
           <View style={[styles.quickActionIcon, styles.quickActionIconSOS]}>
