@@ -15,6 +15,7 @@ import InvoiceTemplate from '@components/features/InvoiceTemplate';
 import { generatePDF } from '@lib/helpers/fileGenerator';
 import { downloadFile } from '@lib/helpers/shareHelperSimple';
 import { useColors } from '@theme/ThemeProvider';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { NavigationParams } from '@screens/types';
 
 type StatusType = 'loading' | 'success' | 'error';
@@ -41,7 +42,10 @@ function PaymentStatusScreen() {
   const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
 
   const colors = useColors();
-  const styles = createStyles(colors);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const styles = createStyles(colors, isDark, isHighContrast);
 
   useEffect(() => {
     if (!appointmentId || !user) return;
