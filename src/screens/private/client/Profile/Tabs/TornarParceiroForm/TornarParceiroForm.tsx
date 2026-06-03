@@ -107,6 +107,7 @@ const TornarParceiroForm: React.FC = () => {
               sizeVariant="default"
               fontVariant="AfacadBold16"
               onPress={() => {
+                useUserStore.getState().setActiveRole('professional');
                 // @ts-ignore
                 navigation.navigate('ProfessionalTabs');
               }}>

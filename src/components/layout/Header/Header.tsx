@@ -10,6 +10,7 @@ import {
   Modal,
   ActivityIndicator,
   Alert,
+  Platform,
 } from 'react-native';
 import { createStyles } from './styles';
 import * as Location from 'expo-location';
@@ -71,16 +72,24 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
     (screen?: keyof NavigationParams) => {
       if (!screen) return;
 
-      if (!isWebOrLargeScreen) {
+      if (Platform.OS !== 'web' && !isWebOrLargeScreen) {
         // Roteamento explícito para dentro do MainTabs registrado no RootStack
         if (screen === 'Feed')
-          return (navigation as any).navigate('MainTabs', { screen: 'FeedTab' });
+          return (navigation as any).navigate('MainTabs', {
+            screen: 'FeedTab',
+          });
         if (screen === 'Category')
-          return (navigation as any).navigate('MainTabs', { screen: 'CategoryTab' });
+          return (navigation as any).navigate('MainTabs', {
+            screen: 'CategoryTab',
+          });
         if (screen === 'MySchedules')
-          return (navigation as any).navigate('MainTabs', { screen: 'SchedulesTab' });
+          return (navigation as any).navigate('MainTabs', {
+            screen: 'SchedulesTab',
+          });
         if (screen === 'ClientProfile')
-          return (navigation as any).navigate('MainTabs', { screen: 'ProfileTab' });
+          return (navigation as any).navigate('MainTabs', {
+            screen: 'ProfileTab',
+          });
       }
 
       // @ts-ignore
@@ -215,7 +224,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
               style={[
                 styles.modalButton,
                 (isLocationLoading || !tempMarker) &&
-                styles.modalButtonDisabled,
+                  styles.modalButtonDisabled,
               ]}
               onPress={handleConfirmLocation}
               disabled={isLocationLoading || !tempMarker}>
@@ -433,7 +442,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
         <TouchableOpacity
           onPress={() => navigateTo('Feed')}
           style={styles.mobileLogoContainer}>
-          <Image source={logo} style={styles.mobileLogo} />
+          <Image source={logo} style={styles.mobileLogo} resizeMode="contain" />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -465,7 +474,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
     <View style={styles.headerContainer}>
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigateTo('Feed')}>
-          <Image source={logo} style={styles.logoImage} />
+          <Image source={logo} style={styles.logoImage} resizeMode="contain" />
         </TouchableOpacity>
 
         <View style={styles.menu}>

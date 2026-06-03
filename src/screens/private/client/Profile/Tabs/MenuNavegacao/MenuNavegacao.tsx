@@ -1,13 +1,17 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
-import { useNavigation, useRoute, CommonActions } from '@react-navigation/native';
+import {
+  useNavigation,
+  useRoute,
+  CommonActions,
+} from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
 import { ClientProfileSubRoutes } from '@screens/types';
 import { useColors } from '@theme/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
 import { createStyles } from './styles';
 
-const menuOptions = [
+const clientMenuOptions = [
   {
     id: ClientProfileSubRoutes.DadosConta,
     label: 'Dados da Conta',
@@ -26,7 +30,6 @@ const menuOptions = [
     icon: 'lock-outline',
     activeIcon: 'lock',
   },
-
   {
     id: ClientProfileSubRoutes.Notificacoes,
     label: 'Notificações',
@@ -65,41 +68,89 @@ const menuOptions = [
   },
 ];
 
+const professionalMenuOptions = [
+  {
+    id: ClientProfileSubRoutes.DadosConta,
+    label: 'Dados da Conta',
+    icon: 'person-outline',
+    activeIcon: 'person',
+  },
+  {
+    id: ClientProfileSubRoutes.ProfessionalArea,
+    label: 'Área de Atendimento',
+    icon: 'my-location',
+    activeIcon: 'my-location',
+  },
+  {
+    id: ClientProfileSubRoutes.ProfessionalServices,
+    label: 'Meus Serviços',
+    icon: 'build',
+    activeIcon: 'build',
+  },
+  {
+    id: ClientProfileSubRoutes.ProfessionalAvailability,
+    label: 'Minha Disponibilidade',
+    icon: 'event-available',
+    activeIcon: 'event-available',
+  },
+  {
+    id: ClientProfileSubRoutes.ProfessionalEarnings,
+    label: 'Meu Extrato/Saldo',
+    icon: 'attach-money',
+    activeIcon: 'attach-money',
+  },
+  {
+    id: ClientProfileSubRoutes.Seguranca,
+    label: 'Segurança',
+    icon: 'lock-outline',
+    activeIcon: 'lock',
+  },
+  {
+    id: ClientProfileSubRoutes.Conversas,
+    label: 'Conversas',
+    icon: 'chat-bubble-outline',
+    activeIcon: 'chat-bubble',
+  },
+  {
+    id: 'VoltarCliente',
+    label: 'Acessar Painel Cliente',
+    icon: 'swap-horiz',
+    activeIcon: 'swap-horiz',
+  },
+];
+
 const MenuNavegacao = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { user, signOut } = useUserStore();
+  const { user, activeRole, signOut } = useUserStore();
   const colors = useColors();
   const styles = createStyles(colors);
 
   const currentSubroute =
     (route.params as any)?.subroute || ClientProfileSubRoutes.DadosConta;
 
-  const isProfessionalTab = route.name === 'ProfessionalProfileTab';
+  const isProfessionalTab = activeRole === 'professional';
 
-  const dynamicMenuOptions = menuOptions.map((option) => {
-    if (option.id === ClientProfileSubRoutes.TornarParceiro) {
-      if (isProfessionalTab) {
-        return {
-          ...option,
-          id: 'VoltarCliente',
-          label: 'Acessar Painel Cliente',
-          icon: 'person',
-          activeIcon: 'person',
-        } as any;
-      } else if (user?.professional_id) {
-        return {
-          ...option,
-          id: 'AcessarParceiro',
-          label: 'Acessar Painel Colaborador',
-          icon: 'work',
-          activeIcon: 'work',
-        } as any;
+  const baseOptions = isProfessionalTab
+    ? professionalMenuOptions
+    : clientMenuOptions;
+
+  const dynamicMenuOptions = baseOptions
+    .map((option) => {
+      if (option.id === ClientProfileSubRoutes.TornarParceiro) {
+        if (user?.professional_id) {
+          return {
+            ...option,
+            id: 'AcessarParceiro',
+            label: 'Acessar Painel Colaborador',
+            icon: 'swap-horiz',
+            activeIcon: 'swap-horiz',
+          } as any;
+        }
       }
-    }
-
-    return option;
-  });
+      return option;
+    })
+    .filter(Boolean);
 
   // Adiciona a opção de Sair da conta no final
   dynamicMenuOptions.push({
@@ -112,13 +163,17 @@ const MenuNavegacao = () => {
 
   const handlePress = (subroute: string) => {
     if (subroute === 'VoltarCliente') {
+      useUserStore.getState().setActiveRole('client');
       // @ts-ignore
       navigation.navigate('MainTabs', { screen: 'FeedTab' });
       return;
     }
     if (subroute === 'AcessarParceiro') {
+      useUserStore.getState().setActiveRole('professional');
       // @ts-ignore
-      navigation.navigate('ProfessionalTabs', { screen: 'ProfessionalHomeTab' });
+      navigation.navigate('ProfessionalTabs', {
+        screen: 'ProfessionalHomeTab',
+      });
       return;
     }
     if (subroute === ClientProfileSubRoutes.Conversas) {
@@ -148,7 +203,7 @@ const MenuNavegacao = () => {
               );
             },
           },
-        ]
+        ],
       );
       return;
     }
@@ -189,8 +244,8 @@ const MenuNavegacao = () => {
                   isActive
                     ? colors.primaryOrange
                     : isDestructive
-                    ? colors.primaryRed
-                    : colors.textTertiary
+                      ? colors.primaryRed
+                      : colors.textTertiary
                 }
               />
             </View>

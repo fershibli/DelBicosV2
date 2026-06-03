@@ -7,10 +7,9 @@ import { Navigation } from '@screens/NavigationStack';
 import { LocationProvider } from '@lib/hooks/LocationContext';
 import { MenuProvider } from 'react-native-popup-menu';
 import { ThemeProvider, useColors } from '@theme/ThemeProvider';
-import { Platform, StatusBar, StyleSheet } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import {
   SafeAreaProvider,
-  SafeAreaView,
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
 import { initGAWeb } from './utils/ga-web';
@@ -58,9 +57,22 @@ function AppContent() {
         notification: colors.primaryOrange,
       },
       fonts: {
-        regular: 'Afacad-Regular',
-        medium: 'Afacad-SemiBold',
-        bold: 'Afacad-Bold',
+        regular: {
+          fontFamily: 'Afacad-Regular',
+          fontWeight: 'normal' as const,
+        },
+        medium: {
+          fontFamily: 'Afacad-SemiBold',
+          fontWeight: 'normal' as const,
+        },
+        bold: {
+          fontFamily: 'Afacad-Bold',
+          fontWeight: 'normal' as const,
+        },
+        heavy: {
+          fontFamily: 'Afacad-Bold',
+          fontWeight: 'normal' as const,
+        },
       },
       fontSize: 16,
       fontWeight: 'normal',
@@ -70,14 +82,12 @@ function AppContent() {
   );
 
   return (
-    <SafeAreaView
-      style={[styles.safeArea, { backgroundColor: colors.cardBackground }]}
-      edges={Platform.OS !== 'web' ? ['top', 'bottom'] : []}>
+    <View style={[styles.safeArea, { backgroundColor: colors.cardBackground }]}>
       {Platform.OS !== 'web' && (
         <StatusBar
           barStyle={isDark ? 'light-content' : 'dark-content'}
-          backgroundColor={colors.cardBackground}
-          translucent={false}
+          backgroundColor="transparent"
+          translucent={true}
         />
       )}
       <LocationProvider>
@@ -94,7 +104,7 @@ function AppContent() {
           }}
         />
       </LocationProvider>
-    </SafeAreaView>
+    </View>
   );
 }
 

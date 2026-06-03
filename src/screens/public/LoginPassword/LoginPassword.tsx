@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Modal,
+  Platform,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -20,6 +21,7 @@ import { checkForNewNotifications } from '@utils/usePushNotifications';
 import LogoV3 from '@assets/LogoV3.png';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type FormData = {
   email: string;
@@ -32,6 +34,7 @@ export const LoginPassword = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const colors = useColors();
   const styles = createStyles(colors);
+  const insets = useSafeAreaInsets();
 
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -62,8 +65,19 @@ export const LoginPassword = () => {
           await signInPassword(data.email, data.password);
         }
 
-        // @ts-ignore
-        navigation.navigate('Feed');
+        useUserStore.getState().setActiveRole('admin');
+
+        if (Platform.OS === 'web') {
+          // @ts-ignore
+          navigation.navigate('Feed');
+        } else {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'Home' }],
+            }),
+          );
+        }
       } else if (selectedRole === 'partner') {
         await signInPassword(data.email, data.password);
         const user = useUserStore.getState().user;
@@ -71,13 +85,19 @@ export const LoginPassword = () => {
         if (!user || !user.professional_id) {
           // Desloga para segurança e lança erro se não for parceiro
           useUserStore.getState().signOut();
-          throw new Error('Esta conta não possui cadastro de parceiro colaborador.');
+          throw new Error(
+            'Esta conta não possui cadastro de parceiro colaborador.',
+          );
         }
+
+        useUserStore.getState().setActiveRole('professional');
 
         // @ts-ignore
         navigation.navigate('ProfessionalTabs');
       } else {
         await signInPassword(data.email, data.password);
+
+        useUserStore.getState().setActiveRole('client');
 
         const userId = useUserStore.getState().user?.id;
         if (userId) {
@@ -90,8 +110,17 @@ export const LoginPassword = () => {
           }, 1000);
         }
 
-        // @ts-ignore
-        navigation.navigate('Feed');
+        if (Platform.OS === 'web') {
+          // @ts-ignore
+          navigation.navigate('Feed');
+        } else {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'Home' }],
+            }),
+          );
+        }
       }
     } catch (error: any) {
       console.error('Erro no login:', error);
@@ -105,43 +134,62 @@ export const LoginPassword = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { paddingTop: insets.top, paddingBottom: insets.bottom },
+      ]}>
       <ScrollView
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Home' as never)}
-          activeOpacity={0.8}>
-          <Image source={LogoV3} style={styles.logo} />
-        </TouchableOpacity>
+        <Image source={LogoV3} style={styles.logo} />
 
         <View style={styles.formContainer}>
           {/* Seletor de Tipo de Conta */}
           <View style={styles.roleToggle}>
             <TouchableOpacity
               onPress={() => setSelectedRole('user')}
-              style={[styles.roleButton, selectedRole === 'user' && styles.roleButtonActive]}
+              style={[
+                styles.roleButton,
+                selectedRole === 'user' && styles.roleButtonActive,
+              ]}
               activeOpacity={0.8}>
               <Text
-                style={[styles.roleText, selectedRole === 'user' && styles.roleTextActive]}>
+                style={[
+                  styles.roleText,
+                  selectedRole === 'user' && styles.roleTextActive,
+                ]}>
                 Usuário
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setSelectedRole('partner')}
-              style={[styles.roleButton, selectedRole === 'partner' && styles.roleButtonActive]}
+              style={[
+                styles.roleButton,
+                selectedRole === 'partner' && styles.roleButtonActive,
+              ]}
               activeOpacity={0.8}>
               <Text
-                style={[styles.roleText, selectedRole === 'partner' && styles.roleTextActive]}>
+                style={[
+                  styles.roleText,
+                  selectedRole === 'partner' && styles.roleTextActive,
+                ]}>
                 Parceiro
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setSelectedRole('admin')}
-              style={[styles.roleButton, selectedRole === 'admin' && styles.roleButtonActive]}
+              style={[
+                styles.roleButton,
+                selectedRole === 'admin' && styles.roleButtonActive,
+              ]}
               activeOpacity={0.8}>
-              <Text style={[styles.roleText, selectedRole === 'admin' && styles.roleTextActive]}>
+              <Text
+                style={[
+                  styles.roleText,
+                  selectedRole === 'admin' && styles.roleTextActive,
+                ]}>
                 Admin
               </Text>
             </TouchableOpacity>

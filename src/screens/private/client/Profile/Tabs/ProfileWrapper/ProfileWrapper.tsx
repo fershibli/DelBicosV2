@@ -14,6 +14,7 @@ import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
 import { ClientProfileSubRoutes } from '@screens/types';
+import { useUserStore } from '@stores/User';
 import { UserProfileProps } from '../../types';
 import { createStyles } from './styles';
 import DadosContaForm from '@screens/private/client/Profile/Tabs/DadosContaForm';
@@ -26,6 +27,10 @@ import FavoritosTab from '@screens/private/client/Profile/Tabs/FavoritosTab';
 import HistoricoCompras from '@screens/private/client/Profile/Tabs/HistoricoCompras';
 import MenuNavegacao from '@screens/private/client/Profile/Tabs/MenuNavegacao';
 import TornarParceiroForm from '@screens/private/client/Profile/Tabs/TornarParceiroForm';
+import ProfessionalRadiusScreen from '@screens/private/professional/RadiusScreen/ProfessionalRadiusScreen';
+import ServicesListScreen from '@screens/private/professional/Services/ServicesList';
+import AvailabilityListScreen from '@screens/private/professional/Availability/AvailabilityList';
+import ProfessionalEarningsScreen from '@screens/private/ProfessionalEarningsScreen/ProfessionalEarningsScreen';
 
 type ClientProfileRouteParams = {
   subroute?: ClientProfileSubRoutes;
@@ -43,8 +48,9 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
   const styles = createStyles(colors, isMobile, isDark);
 
   const params = route.params as ClientProfileRouteParams;
+  const { activeRole } = useUserStore();
 
-  const isProfessionalTab = route.name === 'ProfessionalProfileTab';
+  const isProfessionalTab = activeRole === 'professional';
   const role = isProfessionalTab ? 'professional' : 'client';
 
   // No mobile, se não tem subrota, mostra o menu. No desktop, padrão é DadosConta.
@@ -72,6 +78,14 @@ const ProfileWrapper: React.FC<{ user: UserProfileProps }> = ({ user }) => {
         return <HistoricoCompras role={role} />;
       case ClientProfileSubRoutes.TornarParceiro:
         return <TornarParceiroForm />;
+      case ClientProfileSubRoutes.ProfessionalArea:
+        return <ProfessionalRadiusScreen />;
+      case ClientProfileSubRoutes.ProfessionalServices:
+        return <ServicesListScreen />;
+      case ClientProfileSubRoutes.ProfessionalAvailability:
+        return <AvailabilityListScreen />;
+      case ClientProfileSubRoutes.ProfessionalEarnings:
+        return <ProfessionalEarningsScreen />;
       default:
         return <DadosContaForm user={user} />;
     }

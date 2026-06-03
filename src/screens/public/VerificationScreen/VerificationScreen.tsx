@@ -7,7 +7,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 
 import LogoV3 from '@assets/LogoV3.png';
 import { createStyles } from './styles';
@@ -19,6 +19,7 @@ import { useColors } from '@theme/ThemeProvider';
 import { checkForNewNotifications } from '@utils/usePushNotifications';
 import { FeedbackModal } from '@components/ui/FeedbackModal';
 import CodeInput from '@components/ui/CodeInput';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function VerificationScreen() {
   const navigation = useNavigation();
@@ -33,6 +34,7 @@ function VerificationScreen() {
 
   const colors = useColors();
   const styles = createStyles(colors);
+  const insets = useSafeAreaInsets();
 
   // Estado para CodeInput
   const [code, setCode] = useState<string[]>(Array(6).fill(''));
@@ -210,7 +212,13 @@ function VerificationScreen() {
           'success',
           'Sucesso!',
           'Conta verificada com sucesso.',
-          () => navigation.navigate('Home' as never),
+          () =>
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'Home' }],
+              }),
+            ),
         );
       }
     } catch (error: any) {
@@ -224,14 +232,16 @@ function VerificationScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { paddingTop: insets.top, paddingBottom: insets.bottom },
+      ]}>
       <ScrollView
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home' as never)}>
-          <Image source={LogoV3} style={styles.logo} />
-        </TouchableOpacity>
+        <Image source={LogoV3} style={styles.logo} />
 
         <View style={styles.card}>
           <Text style={styles.title}>Verifique seu E-mail</Text>

@@ -7,14 +7,16 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { useLocation } from '@lib/hooks/LocationContext';
 import CustomTextInput from '@components/ui/CustomTextInput';
 import LogoV3 from '@assets/LogoV3.png';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function LoginScreen() {
   const navigation = useNavigation();
@@ -25,6 +27,7 @@ function LoginScreen() {
 
   const colors = useColors();
   const styles = createStyles(colors);
+  const insets = useSafeAreaInsets();
 
   const handleUseLocation = async () => {
     setIsLoadingLocation(true);
@@ -60,8 +63,17 @@ function LoginScreen() {
         const stateName = state || '';
 
         setLocation(cityName, stateName);
-        // @ts-ignore
-        navigation.navigate('Feed');
+        if (Platform.OS === 'web') {
+          // @ts-ignore
+          navigation.navigate('Feed');
+        } else {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'Home' }],
+            }),
+          );
+        }
       } else {
         throw new Error('Endereço não encontrado');
       }
@@ -92,8 +104,17 @@ function LoginScreen() {
         Alert.alert('Erro', 'CEP não encontrado.');
       } else {
         setLocation(data.localidade, data.uf);
-        // @ts-ignore
-        navigation.navigate('Feed');
+        if (Platform.OS === 'web') {
+          // @ts-ignore
+          navigation.navigate('Feed');
+        } else {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'Home' }],
+            }),
+          );
+        }
       }
     } catch {
       Alert.alert(
@@ -111,16 +132,16 @@ function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { paddingTop: insets.top, paddingBottom: insets.bottom },
+      ]}>
       <ScrollView
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Home' as never)}
-          activeOpacity={0.8}>
-          <Image source={LogoV3} style={styles.logo} />
-        </TouchableOpacity>
+        <Image source={LogoV3} style={styles.logo} />
 
         <View style={styles.card}>
           <Text style={styles.title}>Onde você está?</Text>

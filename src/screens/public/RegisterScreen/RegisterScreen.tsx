@@ -29,6 +29,7 @@ import { useUserStore } from '@stores/User';
 import { useColors } from '@theme/ThemeProvider';
 import { HTTP_DOMAIN } from '@config/varEnvs';
 import LogoV3 from '@assets/LogoV3.png';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type RegisterFormData = {
   name: string;
@@ -48,6 +49,7 @@ function RegisterScreen() {
   const { setVerificationEmail } = useUserStore();
 
   const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const insets = useSafeAreaInsets();
   const [feedbackData, setFeedbackData] = useState({
     type: 'info' as 'success' | 'error' | 'info',
     title: '',
@@ -156,15 +158,17 @@ function RegisterScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { paddingTop: insets.top, paddingBottom: insets.bottom },
+      ]}>
       <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home' as never)}>
-          <Image source={LogoV3} style={styles.logo} resizeMode="contain" />
-        </TouchableOpacity>
+        <Image source={LogoV3} style={styles.logo} resizeMode="contain" />
 
         <View style={styles.formContainer}>
           <Text style={styles.title}>Crie sua conta</Text>

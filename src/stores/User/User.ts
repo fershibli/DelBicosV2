@@ -1,13 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'expo-zustand-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  UserStore,
-  Address,
-  ErrorResponse,
-  User,
-  UpdateUserData,
-} from './types';
+import { UserStore, Address, User, UpdateUserData } from './types';
 import { AxiosError } from 'axios';
 import { backendHttpClient } from '@lib/helpers/httpClient';
 
@@ -20,6 +14,9 @@ export const useUserStore = create<UserStore>()(
       verificationEmail: null,
       lastCodeSentAt: null,
       avatarBase64: null,
+      activeRole: null,
+
+      setActiveRole: (role) => set({ activeRole: role }),
 
       setVerificationEmail: (email) => set({ verificationEmail: email }),
 
@@ -414,6 +411,7 @@ export const useUserStore = create<UserStore>()(
                   ...currentUser,
                   professional_id: response.data.professional.id,
                 },
+                activeRole: 'professional',
               });
             }
           } else {
@@ -446,6 +444,7 @@ export const useUserStore = create<UserStore>()(
           avatarBase64: null,
           verificationEmail: null,
           lastCodeSentAt: null,
+          activeRole: null,
         });
       },
     }),
@@ -460,6 +459,7 @@ export const useUserStore = create<UserStore>()(
         avatarBase64: state.avatarBase64,
         verificationEmail: state.verificationEmail,
         lastCodeSentAt: state.lastCodeSentAt,
+        activeRole: state.activeRole,
       }),
     },
   ),

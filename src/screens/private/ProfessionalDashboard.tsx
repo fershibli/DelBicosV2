@@ -16,6 +16,7 @@ import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { createStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
+import { ClientProfileSubRoutes } from '@screens/types';
 
 const ProfessionalDashboard: React.FC = () => {
   const { kpis, loading, error, fetchKpis, fetchEarnings, fetchCategories } =
@@ -179,7 +180,12 @@ const ProfessionalDashboard: React.FC = () => {
         ]}>
         <QuickAction
           title="Área de Atendimento"
-          onPress={() => navigation.navigate('ProfessionalArea' as never)}>
+          onPress={() =>
+            navigation.navigate('ProfessionalProfileTab', {
+              screen: 'Profile',
+              params: { subroute: ClientProfileSubRoutes.ProfessionalArea },
+            })
+          }>
           <View style={styles.quickActionIcon}>
             <FontAwesome name="sliders" size={22} color={colors.primaryBlack} />
           </View>
@@ -188,7 +194,13 @@ const ProfessionalDashboard: React.FC = () => {
         <QuickAction
           title="Serviços"
           onPress={() =>
-            navigation.navigate('ProfessionalServicesTab', { openCreate: true })
+            navigation.navigate('ProfessionalProfileTab', {
+              screen: 'Profile',
+              params: {
+                subroute: ClientProfileSubRoutes.ProfessionalServices,
+                openCreate: true,
+              },
+            })
           }>
           <View style={styles.quickActionIcon}>
             <FontAwesome name="wrench" size={22} color={colors.primaryBlack} />
@@ -197,7 +209,14 @@ const ProfessionalDashboard: React.FC = () => {
 
         <QuickAction
           title="Disponibilidade"
-          onPress={() => navigation.navigate('ProfessionalAvailabilityTab')}>
+          onPress={() =>
+            navigation.navigate('ProfessionalProfileTab', {
+              screen: 'Profile',
+              params: {
+                subroute: ClientProfileSubRoutes.ProfessionalAvailability,
+              },
+            })
+          }>
           <View style={styles.quickActionIcon}>
             <FontAwesome
               name="calendar"

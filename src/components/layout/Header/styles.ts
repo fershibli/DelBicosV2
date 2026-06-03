@@ -27,7 +27,6 @@ export const createStyles = (colors: ColorsType) =>
     mobileLogo: {
       width: 120,
       height: 36,
-      resizeMode: 'contain',
     },
     mobileMenuTrigger: {
       padding: 4,
@@ -61,7 +60,6 @@ export const createStyles = (colors: ColorsType) =>
     logoImage: {
       width: 180,
       height: 50,
-      resizeMode: 'contain',
     },
 
     // --- MENU DE NAVEGAÇÃO (DESKTOP) ---

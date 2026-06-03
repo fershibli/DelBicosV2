@@ -14,6 +14,10 @@ export enum ClientProfileSubRoutes {
   Pagamentos = 'Pagamentos',
   Ajuda = 'Ajuda',
   TornarParceiro = 'TornarParceiro',
+  ProfessionalArea = 'ProfessionalArea',
+  ProfessionalServices = 'ProfessionalServices',
+  ProfessionalAvailability = 'ProfessionalAvailability',
+  ProfessionalEarnings = 'ProfessionalEarnings',
 }
 
 export type ClientProfileParams = {
@@ -47,18 +51,16 @@ export type NavigationParams = {
     serviceId: number;
   };
   PaymentStatus:
-  | {
-    appointmentId?: number;
-    paymentIntentId?: string;
-  }
-  | undefined;
+    | {
+        appointmentId?: number;
+        paymentIntentId?: string;
+      }
+    | undefined;
   MySchedules: undefined;
   ProfessionalTabs: undefined;
   ProfessionalHomeTab: undefined;
   ProfessionalSchedulesTab: undefined;
   ProfessionalEarningsTab: undefined;
-  ProfessionalServicesTab: undefined;
-  ProfessionalAvailabilityTab: undefined;
   ProfessionalProfileTab: undefined;
   Help: undefined;
   AboutUs: undefined;

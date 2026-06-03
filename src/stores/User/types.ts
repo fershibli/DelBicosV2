@@ -61,6 +61,8 @@ export type UserStore = {
   verificationEmail: string | null;
   avatarBase64: string | null;
   lastCodeSentAt: number | null;
+  activeRole: 'client' | 'professional' | 'admin' | null;
+  setActiveRole: (role: 'client' | 'professional' | 'admin' | null) => void;
   fetchCurrentUser: () => Promise<void>;
   setVerificationEmail: (email: string | null) => void;
   recordCodeSent: () => void;

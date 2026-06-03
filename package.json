@@ -3,6 +3,7 @@
   "version": "6.16.0",
   "main": "index.tsx",
   "scripts": {
+    "postinstall": "patch-package",
     "start": "expo start --dev-client",
     "web": "expo start --web",
     "set:dev": "cp environments/.env.dev .env && echo 'Switched to DEV environment'",
@@ -77,7 +78,6 @@
     "expo-splash-screen": "~31.0.10",
     "expo-system-ui": "~6.0.7",
     "expo-zustand-persist": "^1.0.4",
-    "import": "^0.0.6",
     "papaparse": "^5.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -120,6 +120,7 @@
     "eslint-plugin-prettier": "^5.4.0",
     "husky": "^9.1.7",
     "jest-expo": "54.0.17",
+    "patch-package": "^8.0.1",
     "prettier": "^3.5.3",
     "react-native-svg-transformer": "^1.5.1",
     "typescript": "^5.7.2"
