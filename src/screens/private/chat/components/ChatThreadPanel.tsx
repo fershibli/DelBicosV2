@@ -52,7 +52,8 @@ const ChatThreadPanel: React.FC<ChatThreadPanelProps> = ({
   const [hasMore, setHasMore] = useState(true);
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [roomStatus, setRoomStatus] = useState<ChatRoomStatus>(initialRoomStatus);
+  const [roomStatus, setRoomStatus] =
+    useState<ChatRoomStatus>(initialRoomStatus);
   const [input, setInput] = useState('');
   const loadingMoreRef = useRef(false);
 
@@ -170,7 +171,8 @@ const ChatThreadPanel: React.FC<ChatThreadPanelProps> = ({
             styles.bubble,
             isMine ? styles.bubbleMine : styles.bubbleTheirs,
           ]}>
-          <Text style={isMine ? styles.bubbleTextMine : styles.bubbleTextTheirs}>
+          <Text
+            style={isMine ? styles.bubbleTextMine : styles.bubbleTextTheirs}>
             {item.text}
           </Text>
           <Text
@@ -205,7 +207,11 @@ const ChatThreadPanel: React.FC<ChatThreadPanelProps> = ({
             onPress={onBack}
             accessibilityRole="button"
             accessibilityLabel="Voltar">
-            <FontAwesome name="arrow-left" size={20} color={colors.primaryBlack} />
+            <FontAwesome
+              name="arrow-left"
+              size={20}
+              color={colors.primaryBlack}
+            />
           </TouchableOpacity>
         ) : null}
 
@@ -250,6 +256,7 @@ const ChatThreadPanel: React.FC<ChatThreadPanelProps> = ({
             onEndReachedThreshold={0.4}
             ListFooterComponent={renderFooter}
             contentContainerStyle={styles.listContent}
+            // style={styles.flex}
             removeClippedSubviews={Platform.OS !== 'web'}
             initialNumToRender={15}
             maxToRenderPerBatch={15}
