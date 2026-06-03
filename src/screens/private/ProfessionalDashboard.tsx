@@ -13,6 +13,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useDashboardStore } from '@stores/Dashboard';
 import { useUserStore } from '@stores/User';
 import { useColors } from '@theme/ThemeProvider';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { createStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 
@@ -23,7 +24,10 @@ const ProfessionalDashboard: React.FC = () => {
   const navigation = useNavigation<any>();
 
   const colors = useColors();
-  const styles = createStyles(colors);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const styles = createStyles(colors, isDark, isHighContrast);
 
   const QuickAction: React.FC<{
     title: string;

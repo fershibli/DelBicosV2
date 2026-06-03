@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
+import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { FontAwesome } from '@expo/vector-icons';
 import AccordionItem from '@components/ui/AccordionItem';
 
@@ -57,7 +58,10 @@ const FAQ_DATA = [
 function HelpScreen() {
   const [searchTerm, setSearchTerm] = useState('');
   const colors = useColors();
-  const styles = createStyles(colors);
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
+  const styles = createStyles(colors, isDark, isHighContrast);
 
   const filteredData = useMemo(() => {
     if (!searchTerm) {

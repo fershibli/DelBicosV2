@@ -1,11 +1,19 @@
 import { StyleSheet, Platform } from 'react-native';
 import { ColorsType } from '@theme/types';
 
-export const createStyles = (colors: ColorsType) =>
+export const createStyles = (
+  colors: ColorsType,
+  isDark: boolean = false,
+  isHighContrast: boolean = false,
+) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.inputBackground,
+      backgroundColor: isDark
+        ? colors.secondaryGray
+        : isHighContrast
+          ? colors.primaryWhite
+          : '#DDE6F0',
       alignItems: 'center',
     },
     contentContainer: {

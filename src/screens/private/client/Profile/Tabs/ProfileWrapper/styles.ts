@@ -10,7 +10,7 @@ export const createStyles = (
     // --- ESTILOS BASE ---
     desktopContainer: {
       flex: 1,
-      backgroundColor: colors.inputBackground,
+      backgroundColor: isDark ? colors.secondaryGray : colors.primaryWhite,
       overflow: 'hidden',
     },
     desktopWrapper: {
@@ -75,7 +75,7 @@ export const createStyles = (
     // --- MOBILE ---
     mobileContainer: {
       flex: 1,
-      backgroundColor: colors.inputBackground,
+      backgroundColor: isDark ? colors.secondaryGray : colors.primaryWhite,
     },
     mobileHeader: {
       paddingTop: 16,
