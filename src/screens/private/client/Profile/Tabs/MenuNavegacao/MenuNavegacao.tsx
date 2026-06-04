@@ -7,7 +7,11 @@ import {
   Platform,
   useWindowDimensions,
 } from 'react-native';
-import { useNavigation, useRoute, CommonActions } from '@react-navigation/native';
+import {
+  useNavigation,
+  useRoute,
+  CommonActions,
+} from '@react-navigation/native';
 import { useUserStore } from '@stores/User';
 import { ClientProfileSubRoutes } from '@screens/types';
 import { useColors } from '@theme/ThemeProvider';
@@ -121,13 +125,19 @@ const MenuNavegacao = () => {
 
   const handlePress = (subroute: string) => {
     if (subroute === 'VoltarCliente') {
-      // @ts-ignore
-      navigation.navigate('MainTabs', { screen: 'FeedTab' });
+      if (Platform.OS === 'web') {
+        navigation.navigate('Feed');
+      } else {
+        // @ts-ignore
+        navigation.navigate('MainTabs', { screen: 'FeedTab' });
+      }
       return;
     }
     if (subroute === 'AcessarParceiro') {
       // @ts-ignore
-      navigation.navigate('ProfessionalTabs', { screen: 'ProfessionalHomeTab' });
+      navigation.navigate('ProfessionalTabs', {
+        screen: 'ProfessionalHomeTab',
+      });
       return;
     }
     if (subroute === ClientProfileSubRoutes.Conversas) {
@@ -162,7 +172,7 @@ const MenuNavegacao = () => {
               );
             },
           },
-        ]
+        ],
       );
       return;
     }
@@ -203,8 +213,8 @@ const MenuNavegacao = () => {
                   isActive
                     ? colors.primaryOrange
                     : isDestructive
-                    ? colors.primaryRed
-                    : colors.textTertiary
+                      ? colors.primaryRed
+                      : colors.textTertiary
                 }
               />
             </View>
