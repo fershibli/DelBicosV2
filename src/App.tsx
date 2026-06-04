@@ -58,13 +58,11 @@ function AppContent() {
         notification: colors.primaryOrange,
       },
       fonts: {
-        regular: 'Afacad-Regular',
-        medium: 'Afacad-SemiBold',
-        bold: 'Afacad-Bold',
+        regular: { fontFamily: 'Afacad-Regular', fontWeight: '400' as const },
+        medium: { fontFamily: 'Afacad-SemiBold', fontWeight: '600' as const },
+        bold: { fontFamily: 'Afacad-Bold', fontWeight: '700' as const },
+        heavy: { fontFamily: 'Afacad-Bold', fontWeight: '900' as const },
       },
-      fontSize: 16,
-      fontWeight: 'normal',
-      fontStyle: 'normal',
     }),
     [isDark, colors],
   );
