@@ -362,7 +362,17 @@ const RootStack = createNativeStackNavigator({
     },
     ProfessionalTabs: {
       screen: ProfessionalTabs,
-      linking: { path: 'professional' },
+      linking: {
+        path: 'professional',
+        screens: {
+          ProfessionalHomeTab: '',
+          ProfessionalSchedulesTab: 'ProfessionalSchedulesTab',
+          ProfessionalEarningsTab: 'ProfessionalEarningsTab',
+          ProfessionalServicesTab: 'ProfessionalServicesTab',
+          ProfessionalAvailabilityTab: 'ProfessionalAvailabilityTab',
+          ProfessionalProfileTab: 'ProfessionalProfileTab',
+        },
+      },
       options: {
         headerShown: false,
       },
