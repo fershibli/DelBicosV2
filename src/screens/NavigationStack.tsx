@@ -368,6 +368,7 @@ const RootStack = createNativeStackNavigator({
     },
     ProfessionalTabs: {
       screen: ProfessionalTabs,
+      linking: { path: 'professional' },
       options: {
         headerShown: false,
       },
