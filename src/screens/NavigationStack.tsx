@@ -306,12 +306,6 @@ const RootStack = createNativeStackNavigator({
         path: 'client-profile/*',
       },
     },
-    NotFound: {
-      screen: NotFound,
-      linking: {
-        path: '*',
-      },
-    },
     Category: {
       screen: CategoryScreen,
       linking: {
@@ -431,6 +425,17 @@ const RootStack = createNativeStackNavigator({
       },
       options: {
         headerShown: false,
+      },
+    },
+    /**
+     *  IMPORTANTE: NÃO REMOVA ESTE COMENTÁRIO
+     *  IMPORTANTE: NÃO ADICIONE NENHUMA ROTA APÓS ESTA
+     *    Rota curinga para 404 - deve ser a última definida para não sobrescrever outras rotas
+     */
+    NotFound: {
+      screen: NotFound,
+      linking: {
+        path: '*',
       },
     },
   },
