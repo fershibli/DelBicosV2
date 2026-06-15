@@ -11,7 +11,7 @@ export const createStyles = (
     desktopContainer: {
       flex: 1,
       backgroundColor: isDark ? colors.secondaryGray : colors.primaryWhite,
-      minHeight: Platform.OS === 'web' ? ('100vh' as any) : '100%',
+      overflow: 'hidden',
     },
     desktopWrapper: {
       flex: 1,
@@ -21,7 +21,7 @@ export const createStyles = (
       alignSelf: 'center',
       padding: 24,
       gap: 24,
-      height: '100%',
+      overflow: 'hidden',
     },
 
     // --- SIDEBAR (DESKTOP) ---
@@ -40,7 +40,7 @@ export const createStyles = (
       display: 'flex',
       flexDirection: 'column',
       maxHeight:
-        Platform.OS === 'web' ? ('calc(100vh - 120px)' as any) : undefined,
+        Platform.OS === 'web' ? ('calc(100vh - 195px)' as any) : undefined,
     },
 
     // --- CONTEÚDO PRINCIPAL (DESKTOP) ---
@@ -55,6 +55,17 @@ export const createStyles = (
         default: { elevation: 2 },
       }),
       overflow: 'hidden',
+    },
+    desktopMainContentFill: {
+      minHeight: 0,
+      ...Platform.select({
+        // 147px = header + pesquisar, 48px = desktopWrapper padding (24px top + 24px bottom)
+        web: {
+          height: 'calc(100vh - 195px)' as any,
+          maxHeight: 'calc(100vh - 195px)' as any,
+        },
+        default: {},
+      }),
     },
     desktopContentScroll: {
       padding: 40,
