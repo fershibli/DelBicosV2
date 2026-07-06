@@ -4,10 +4,11 @@ import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
 import { useFonts } from 'expo-font';
 import { Navigation } from '@screens/NavigationStack';
+import { navigationRef } from '@screens/navigationRef';
 import { LocationProvider } from '@lib/hooks/LocationContext';
 import { MenuProvider } from 'react-native-popup-menu';
 import { ThemeProvider, useColors } from '@theme/ThemeProvider';
-import { Platform, StatusBar, StyleSheet } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import {
   SafeAreaProvider,
   SafeAreaView,
@@ -21,6 +22,7 @@ import { registerTokenProvider } from '@lib/helpers/httpClient';
 import { useUserStore } from '@stores/User';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
+import { ChatWidget } from '@components/features/ChatBot/ChatWidget';
 
 Asset.loadAsync([...NavigationAssets]);
 
@@ -43,6 +45,7 @@ const styles = StyleSheet.create({
 function AppContent() {
   const { theme } = useThemeStore();
   const colors = useColors();
+  const { user } = useUserStore();
   const isDark = theme === ThemeMode.DARK;
 
   // Tema do NavigationContainer mapeado para os nossos tokens de cor
@@ -81,16 +84,25 @@ function AppContent() {
       <LocationProvider>
         <VLibrasSetup />
         <NotificationManager />
-        <Navigation
-          theme={navTheme}
-          linking={{
-            enabled: 'auto',
-            prefixes: ['delbicos://'],
-          }}
-          onReady={() => {
-            SplashScreen.hideAsync();
-          }}
-        />
+        <View style={styles.safeArea}>
+          <Navigation
+            ref={navigationRef}
+            theme={navTheme}
+            linking={{
+              enabled: 'auto',
+              prefixes: ['delbicos://'],
+            }}
+            onReady={() => {
+              SplashScreen.hideAsync();
+            }}
+          />
+          {/* ChatWidget: FAB flutuante do chatbot — exibido apenas para usuários autenticados */}
+          {!!user && (
+            <ChatWidget
+              bottomOffset={Platform.OS === 'web' ? 24 : 80}
+            />
+          )}
+        </View>
       </LocationProvider>
     </SafeAreaView>
   );
