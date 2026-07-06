@@ -7,6 +7,7 @@ import { Appointment, AppointmentStatus } from '@stores/Appointment/types';
 import { useUserStore } from '@stores/User';
 import { useAppointmentStore } from '@stores/Appointment';
 import { ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { createStyles } from './styles';
 
 interface AppointmentCardProps {
@@ -48,6 +49,19 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   const user = useUserStore((state) => state.user);
   const { updateAppointmentStatus } = useAppointmentStore();
   const [loadingAction, setLoadingAction] = React.useState(false);
+  const navigation = useNavigation();
+
+  const handlePayNow = () => {
+    // @ts-ignore
+    navigation.navigate('Checkout', {
+      professionalId: appointment.professional_id,
+      selectedTime: appointment.start_time,
+      serviceId: appointment.Service.id,
+      appointmentId: appointment.id,
+      imageUrl: appointment.Service.banner_uri || undefined,
+      professionalName: appointment.Professional?.User?.name,
+    });
+  };
 
   const isProfessional = user?.professional_id === appointment.professional_id;
   const isPending = statusVariant === AppointmentStatus.PENDING;
@@ -167,12 +181,23 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
               </>
             )
           ) : (
-            <TouchableOpacity
-              style={styles.detailsButton}
-              onPress={() => onOpenDetails(appointment)}
-              activeOpacity={0.8}>
-              <Text style={styles.btnTextPrimary}>Detalhes</Text>
-            </TouchableOpacity>
+            <>
+              <TouchableOpacity
+                style={styles.detailsButton}
+                onPress={() => onOpenDetails(appointment)}
+                activeOpacity={0.8}>
+                <Text style={styles.btnTextPrimary}>Detalhes</Text>
+              </TouchableOpacity>
+
+              {!isProfessional && statusVariant === AppointmentStatus.CONFIRMED && !appointment.payment_intent_id && (
+                <TouchableOpacity
+                  style={[styles.rateButton, { backgroundColor: colors.primaryOrange, borderColor: colors.primaryOrange, marginLeft: 8 }]}
+                  onPress={handlePayNow}
+                  activeOpacity={0.8}>
+                  <Text style={[styles.btnTextSecondary, { color: colors.primaryWhite }]}>Pagar</Text>
+                </TouchableOpacity>
+              )}
+            </>
           )}
 
           {statusVariant === AppointmentStatus.COMPLETED && onOpenRate && (
