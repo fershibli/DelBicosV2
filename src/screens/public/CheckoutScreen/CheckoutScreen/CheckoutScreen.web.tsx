@@ -33,6 +33,7 @@ async function fetchPaymentIntent(
   selectedTime: string,
   addressId: number,
   token: string | null,
+  appointmentId?: number,
 ): Promise<string | null> {
   if (!token) return null;
 
@@ -52,6 +53,7 @@ async function fetchPaymentIntent(
           serviceId,
           selectedTime,
           addressId,
+          ...(appointmentId ? { appointmentId } : {}),
         }),
       },
     );
@@ -75,7 +77,7 @@ function CheckoutScreen() {
   const navigation = useNavigation();
   const route =
     useRoute<RouteProp<{ params: CheckoutRouteParams }, 'params'>>();
-  const { professionalId, selectedTime, imageUrl, serviceId } = route.params;
+  const { professionalId, selectedTime, imageUrl, serviceId, appointmentId } = route.params;
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loadingIntent, setLoadingIntent] = useState(false);
@@ -151,13 +153,18 @@ function CheckoutScreen() {
         setLoadingIntent(true);
         setErrorIntent(null);
 
+        const amountValue = service.price_cents
+          ? service.price_cents / 100
+          : Number((service as any).price || 0);
+
         const secret = await fetchPaymentIntent(
-          (service.price_cents ?? 0) / 100,
+          amountValue,
           professionalId,
           service.id,
           selectedTime,
           selectedAddress.id,
           token,
+          appointmentId,
         );
 
         if (secret) {
@@ -169,7 +176,7 @@ function CheckoutScreen() {
       };
       initPayment();
     }
-  }, [service, selectedAddress, professionalId, selectedTime, token]);
+  }, [service, selectedAddress, professionalId, selectedTime, token, appointmentId]);
 
   // Configuração do Stripe Elements
   const stripeOptions = useMemo(
