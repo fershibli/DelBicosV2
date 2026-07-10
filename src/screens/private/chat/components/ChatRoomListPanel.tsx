@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   Text,
@@ -40,15 +40,16 @@ const ChatRoomListPanel: React.FC<ChatRoomListPanelProps> = ({
   const styles = createListPanelStyles(colors);
   const { conversations, loadingRooms, error, fetchRooms } = useChatStore();
 
-  useEffect(() => {
-    fetchRooms();
-  }, [fetchRooms]);
-
   useFocusEffect(
     useCallback(() => {
-      fetchRooms();
+      void fetchRooms();
     }, [fetchRooms]),
   );
+
+  const handleRefresh = useCallback(() => {
+    if (loadingRooms) return;
+    void fetchRooms({ forceRefresh: true });
+  }, [loadingRooms, fetchRooms]);
 
   const renderItem = ({ item }: { item: Conversation }) => {
     const name = item.correspondent?.name ?? 'Conversa';
@@ -128,10 +129,12 @@ const ChatRoomListPanel: React.FC<ChatRoomListPanelProps> = ({
         keyExtractor={(item) => String(item.room_id)}
         renderItem={renderItem}
         contentContainerStyle={
-          conversations.length === 0 ? styles.emptyContainer : styles.listContent
+          conversations.length === 0
+            ? styles.emptyContainer
+            : styles.listContent
         }
         refreshing={loadingRooms}
-        onRefresh={fetchRooms}
+        onRefresh={handleRefresh}
         ListEmptyComponent={
           !loadingRooms ? (
             <View style={styles.centered}>
