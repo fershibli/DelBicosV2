@@ -39,11 +39,15 @@ export type FetchMessagesResult = {
   role: ChatRole;
 };
 
+export type FetchRoomsOptions = {
+  forceRefresh?: boolean;
+};
+
 export type ChatStore = {
   conversations: Conversation[];
   loadingRooms: boolean;
   error: string | null;
-  fetchRooms: () => Promise<void>;
+  fetchRooms: (options?: FetchRoomsOptions) => Promise<void>;
   fetchMessages: (
     roomId: number,
     cursor?: string,
