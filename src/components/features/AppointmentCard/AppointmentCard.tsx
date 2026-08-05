@@ -1,12 +1,17 @@
 import React, { useMemo } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import {
+  ActivityIndicator,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import { Rating } from 'react-native-ratings';
 import { FontAwesome } from '@expo/vector-icons';
 import { useColors } from '@theme/ThemeProvider';
 import { Appointment, AppointmentStatus } from '@stores/Appointment/types';
 import { useUserStore } from '@stores/User';
 import { useAppointmentStore } from '@stores/Appointment';
-import { ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { createStyles } from './styles';
 
@@ -14,6 +19,7 @@ interface AppointmentCardProps {
   statusLabel: string;
   statusColor: string;
   appointment: Appointment;
+  viewerRole?: 'client' | 'professional';
   statusVariant: AppointmentStatus;
   isFavorite: boolean;
   onToggleFavorite: (apt: Appointment) => void;
@@ -37,6 +43,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   statusLabel,
   statusColor,
   appointment,
+  viewerRole,
   statusVariant,
   isFavorite,
   onToggleFavorite,
@@ -63,8 +70,20 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
     });
   };
 
-  const isProfessional = user?.professional_id === appointment.professional_id;
+  const isProfessional = viewerRole
+    ? viewerRole === 'professional'
+    : user?.professional_id === appointment.professional_id;
   const isPending = statusVariant === AppointmentStatus.PENDING;
+  const isPaymentPending =
+    !isProfessional &&
+    statusVariant === AppointmentStatus.CONFIRMED &&
+    !appointment.payment_intent_id;
+  const displayStatusLabel = isPaymentPending
+    ? 'Pagamento pendente'
+    : statusLabel;
+  const displayStatusColor = isPaymentPending
+    ? colors.primaryOrange
+    : statusColor;
 
   const handleAccept = async () => {
     setLoadingAction(true);
@@ -84,15 +103,16 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
     [appointment.Service.banner_uri],
   );
 
-  const displayAvatar = useMemo(
-    () => {
-      const uri = isProfessional
-        ? appointment.Client.User.avatar_uri
-        : appointment.Professional.User.avatar_uri;
-      return uri || 'https://via.placeholder.com/100';
-    },
-    [isProfessional, appointment.Client.User.avatar_uri, appointment.Professional.User.avatar_uri],
-  );
+  const displayAvatar = useMemo(() => {
+    const uri = isProfessional
+      ? appointment.Client.User.avatar_uri
+      : appointment.Professional.User.avatar_uri;
+    return uri || 'https://via.placeholder.com/100';
+  }, [
+    isProfessional,
+    appointment.Client.User.avatar_uri,
+    appointment.Professional.User.avatar_uri,
+  ]);
 
   return (
     <View style={styles.card}>
@@ -104,8 +124,11 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
           resizeMode="cover"
         />
 
-        <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
-          <Text style={styles.statusText}>{statusLabel.toUpperCase()}</Text>
+        <View
+          style={[styles.statusBadge, { backgroundColor: displayStatusColor }]}>
+          <Text style={styles.statusText}>
+            {displayStatusLabel.toUpperCase()}
+          </Text>
         </View>
 
         {statusVariant === AppointmentStatus.COMPLETED && (
@@ -122,17 +145,16 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
         )}
 
         <View style={styles.avatarContainer}>
-          <Image
-            source={{ uri: displayAvatar }}
-            style={styles.avatarImage}
-          />
+          <Image source={{ uri: displayAvatar }} style={styles.avatarImage} />
         </View>
       </View>
 
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.profName} numberOfLines={1}>
-            {isProfessional ? appointment.Client.User.name : appointment.Professional.User.name}
+            {isProfessional
+              ? appointment.Client.User.name
+              : appointment.Professional.User.name}
           </Text>
           {appointment.rating && (
             <View style={styles.ratingRow}>
@@ -163,17 +185,30 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
         <View style={styles.actions}>
           {isPending && isProfessional ? (
             loadingAction ? (
-              <ActivityIndicator size="small" color={colors.primaryOrange} style={{ flex: 1 }} />
+              <ActivityIndicator
+                size="small"
+                color={colors.primaryOrange}
+                style={{ flex: 1 }}
+              />
             ) : (
               <>
                 <TouchableOpacity
-                  style={[styles.detailsButton, { backgroundColor: colors.primaryGreen, borderColor: colors.primaryGreen }]}
+                  style={[
+                    styles.detailsButton,
+                    {
+                      backgroundColor: colors.primaryGreen,
+                      borderColor: colors.primaryGreen,
+                    },
+                  ]}
                   onPress={handleAccept}
                   activeOpacity={0.8}>
                   <Text style={styles.btnTextPrimary}>Aceitar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.detailsButton, { backgroundColor: '#ef4444', borderColor: '#ef4444' }]}
+                  style={[
+                    styles.detailsButton,
+                    { backgroundColor: '#ef4444', borderColor: '#ef4444' },
+                  ]}
                   onPress={handleReject}
                   activeOpacity={0.8}>
                   <Text style={styles.btnTextPrimary}>Recusar</Text>
@@ -189,14 +224,29 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
                 <Text style={styles.btnTextPrimary}>Detalhes</Text>
               </TouchableOpacity>
 
-              {!isProfessional && statusVariant === AppointmentStatus.CONFIRMED && !appointment.payment_intent_id && (
-                <TouchableOpacity
-                  style={[styles.rateButton, { backgroundColor: colors.primaryOrange, borderColor: colors.primaryOrange, marginLeft: 8 }]}
-                  onPress={handlePayNow}
-                  activeOpacity={0.8}>
-                  <Text style={[styles.btnTextSecondary, { color: colors.primaryWhite }]}>Pagar</Text>
-                </TouchableOpacity>
-              )}
+              {!isProfessional &&
+                statusVariant === AppointmentStatus.CONFIRMED &&
+                !appointment.payment_intent_id && (
+                  <TouchableOpacity
+                    style={[
+                      styles.rateButton,
+                      {
+                        backgroundColor: colors.primaryOrange,
+                        borderColor: colors.primaryOrange,
+                        marginLeft: 8,
+                      },
+                    ]}
+                    onPress={handlePayNow}
+                    activeOpacity={0.8}>
+                    <Text
+                      style={[
+                        styles.btnTextSecondary,
+                        { color: colors.primaryWhite },
+                      ]}>
+                      Pagar
+                    </Text>
+                  </TouchableOpacity>
+                )}
             </>
           )}
 
