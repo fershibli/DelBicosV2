@@ -74,13 +74,21 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
       if (!isWebOrLargeScreen) {
         // Roteamento explícito para dentro do MainTabs registrado no RootStack
         if (screen === 'Feed')
-          return (navigation as any).navigate('MainTabs', { screen: 'FeedTab' });
+          return (navigation as any).navigate('MainTabs', {
+            screen: 'FeedTab',
+          });
         if (screen === 'Category')
-          return (navigation as any).navigate('MainTabs', { screen: 'CategoryTab' });
+          return (navigation as any).navigate('MainTabs', {
+            screen: 'CategoryTab',
+          });
         if (screen === 'MySchedules')
-          return (navigation as any).navigate('MainTabs', { screen: 'SchedulesTab' });
+          return (navigation as any).navigate('MainTabs', {
+            screen: 'SchedulesTab',
+          });
         if (screen === 'ClientProfile')
-          return (navigation as any).navigate('MainTabs', { screen: 'ProfileTab' });
+          return (navigation as any).navigate('MainTabs', {
+            screen: 'ProfileTab',
+          });
       }
 
       // @ts-ignore
@@ -88,6 +96,12 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
     },
     [navigation, isWebOrLargeScreen],
   );
+
+  const handleSemanticSearch = useCallback(() => {
+    const query = search.trim();
+    if (query.length < 2) return;
+    (navigation as any).navigate('SearchResult', { query });
+  }, [navigation, search]);
 
   const handleSignOut = useCallback(() => {
     signOut();
@@ -215,7 +229,7 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
               style={[
                 styles.modalButton,
                 (isLocationLoading || !tempMarker) &&
-                styles.modalButtonDisabled,
+                  styles.modalButtonDisabled,
               ]}
               onPress={handleConfirmLocation}
               disabled={isLocationLoading || !tempMarker}>
@@ -589,8 +603,15 @@ const Header: React.FC<NativeStackHeaderProps> = (props) => {
             placeholderTextColor="#9CA3AF"
             value={search}
             onChangeText={setSearch}
+            onSubmitEditing={handleSemanticSearch}
+            returnKeyType="search"
           />
-          <TouchableOpacity style={styles.searchButton}>
+          <TouchableOpacity
+            style={styles.searchButton}
+            onPress={handleSemanticSearch}
+            disabled={search.trim().length < 2}
+            accessibilityRole="button"
+            accessibilityLabel="Buscar serviços por significado">
             <FontAwesome name="search" size={16} color="#666" />
           </TouchableOpacity>
         </View>
