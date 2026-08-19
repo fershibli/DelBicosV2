@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { backendHttpClient } from '@lib/helpers/httpClient';
-import { useUserStore } from '@stores/User';
 
 export type ServiceItem = {
   id: number;
@@ -14,12 +13,57 @@ export type ServiceItem = {
   banner_uri?: string | null;
   active?: boolean;
   category_id?: number;
-  availabilities?: Array<{
+  /** Pontuação retornada somente pela busca semântica (0 a 1). */
+  relevanceScore?: number;
+  availabilities?: {
     day: number; // 0=domingo .. 6=sábado
     start: string; // HH:MM
     end: string; // HH:MM
-  }>;
+  }[];
 };
+
+export type SemanticServiceSearchResult = {
+  services: ServiceItem[];
+  total: number;
+  resultsLimited: boolean;
+};
+
+/** Normaliza os formatos históricos e o retorno da busca semântica do backend. */
+function normalizeService(raw: any): ServiceItem {
+  return {
+    id: raw.id,
+    title: raw.title,
+    description: raw.description,
+    date: raw.date,
+    price_cents:
+      raw.price_cents ??
+      (raw.price != null ? Math.round(Number(raw.price) * 100) : undefined),
+    duration: raw.duration,
+    subcategory_id: raw.subcategory_id,
+    banner_uri: raw.banner_uri ?? raw.bannerUrl ?? null,
+    active: raw.active,
+    category_id:
+      raw.category_id ??
+      raw.Subcategory?.category_id ??
+      raw.subcategory?.category_id ??
+      raw.category?.id,
+    relevanceScore:
+      typeof raw.relevance_score === 'number' ? raw.relevance_score : undefined,
+    availabilities: Array.isArray(raw.availabilities)
+      ? raw.availabilities.map((availability: any) => ({
+          day: availability.day,
+          start: availability.start,
+          end: availability.end,
+        }))
+      : Array.isArray(raw.Availabilities)
+        ? raw.Availabilities.map((availability: any) => ({
+            day: availability.day_of_week ?? availability.day,
+            start: availability.start_time ?? availability.start,
+            end: availability.end_time ?? availability.end,
+          }))
+        : undefined,
+  };
+}
 
 type ServicesState = {
   services: ServiceItem[];
@@ -37,6 +81,9 @@ type ServicesState = {
     subcategory_id?: number;
     q?: string;
   }) => Promise<ServiceItem[]>;
+  searchServicesSemantically: (
+    query: string,
+  ) => Promise<SemanticServiceSearchResult>;
   fetchMyServices: (opts?: {
     page?: number;
     limit?: number;
@@ -80,31 +127,7 @@ export const useServicesStore = create<ServicesState>((set, get) => ({
       const raw = Array.isArray(res.data)
         ? res.data
         : res.data.data || res.data.services || [];
-      const data: ServiceItem[] = (raw as any[]).map((r) => ({
-        id: r.id,
-        title: r.title,
-        description: r.description,
-        date: r.date,
-        price_cents: r.price_cents ?? (r.price != null ? Math.round(Number(r.price) * 100) : undefined),
-        duration: r.duration,
-        subcategory_id: r.subcategory_id,
-        banner_uri: r.banner_uri ?? r.bannerUrl ?? null,
-        active: r.active,
-        category_id: r.category_id ?? r.Subcategory?.category_id ?? r.subcategory?.category_id ?? (r.category ? r.category.id : undefined),
-        availabilities: Array.isArray(r.availabilities)
-          ? r.availabilities.map((a: any) => ({
-            day: a.day,
-            start: a.start,
-            end: a.end,
-          }))
-          : Array.isArray(r.Availabilities)
-            ? r.Availabilities.map((a: any) => ({
-              day: a.day_of_week ?? a.day,
-              start: a.start_time ?? a.start,
-              end: a.end_time ?? a.end,
-            }))
-            : undefined,
-      }));
+      const data: ServiceItem[] = (raw as any[]).map(normalizeService);
       set({ services: data, loading: false });
       return data;
     } catch (e) {
@@ -124,37 +147,38 @@ export const useServicesStore = create<ServicesState>((set, get) => ({
       const raw = Array.isArray(res.data)
         ? res.data
         : res.data.data || res.data.services || [];
-      const data: ServiceItem[] = (raw as any[]).map((r) => ({
-        id: r.id,
-        title: r.title,
-        description: r.description,
-        date: r.date,
-        price_cents: r.price_cents ?? (r.price != null ? Math.round(Number(r.price) * 100) : undefined),
-        duration: r.duration,
-        subcategory_id: r.subcategory_id,
-        banner_uri: r.banner_uri ?? r.bannerUrl ?? null,
-        active: r.active,
-        category_id: r.category_id ?? r.Subcategory?.category_id ?? r.subcategory?.category_id ?? (r.category ? r.category.id : undefined),
-        availabilities: Array.isArray(r.availabilities)
-          ? r.availabilities.map((a: any) => ({
-            day: a.day,
-            start: a.start,
-            end: a.end,
-          }))
-          : Array.isArray(r.Availabilities)
-            ? r.Availabilities.map((a: any) => ({
-              day: a.day_of_week ?? a.day,
-              start: a.start_time ?? a.start,
-              end: a.end_time ?? a.end,
-            }))
-            : undefined,
-      }));
+      const data: ServiceItem[] = (raw as any[]).map(normalizeService);
       set({ myServices: data, loading: false });
       return data;
     } catch (e) {
       console.error('[Services] fetchMyServices', e);
       set({ myServices: [], loading: false });
       return [];
+    }
+  },
+
+  searchServicesSemantically: async (query: string) => {
+    const trimmedQuery = query.trim();
+    if (trimmedQuery.length < 2) {
+      return { services: [], total: 0, resultsLimited: false };
+    }
+
+    try {
+      const res = await backendHttpClient.get('/api/services/search/semantic', {
+        params: { q: trimmedQuery, limit: 20 },
+      });
+      const raw = Array.isArray(res.data)
+        ? res.data
+        : (res.data?.data ?? res.data?.services ?? []);
+
+      return {
+        services: (raw as any[]).map(normalizeService),
+        total: Number(res.data?.total ?? raw.length),
+        resultsLimited: res.data?.results_limited === true,
+      };
+    } catch (error) {
+      console.error('[Services] searchServicesSemantically', error);
+      throw error;
     }
   },
 
@@ -172,31 +196,7 @@ export const useServicesStore = create<ServicesState>((set, get) => ({
       // POST /api/services — rota principal; professional_id resolvido pelo token
       const res = await backendHttpClient.post('/api/services', data);
       const r = res.data && res.data.service ? res.data.service : res.data;
-      const created: ServiceItem = {
-        id: r.id,
-        title: r.title,
-        description: r.description,
-        date: r.date,
-        price_cents: r.price_cents ?? (r.price != null ? Math.round(Number(r.price) * 100) : undefined),
-        duration: r.duration,
-        subcategory_id: r.subcategory_id,
-        banner_uri: r.banner_uri ?? r.bannerUrl ?? null,
-        active: r.active,
-        category_id: r.category_id ?? r.Subcategory?.category_id ?? r.subcategory?.category_id ?? (r.category ? r.category.id : undefined),
-        availabilities: Array.isArray(r.availabilities)
-          ? r.availabilities.map((a: any) => ({
-            day: a.day,
-            start: a.start,
-            end: a.end,
-          }))
-          : Array.isArray(r.Availabilities)
-            ? r.Availabilities.map((a: any) => ({
-              day: a.day_of_week ?? a.day,
-              start: a.start_time ?? a.start,
-              end: a.end_time ?? a.end,
-            }))
-            : undefined,
-      };
+      const created = normalizeService(r);
       set({ myServices: [...(get().myServices || []), created] });
       return created;
     } catch (e) {
@@ -210,31 +210,7 @@ export const useServicesStore = create<ServicesState>((set, get) => ({
     try {
       const res = await backendHttpClient.put(`/api/services/${id}`, data);
       const r = res.data && res.data.service ? res.data.service : res.data;
-      const updated: ServiceItem = {
-        id: r.id,
-        title: r.title,
-        description: r.description,
-        date: r.date,
-        price_cents: r.price_cents ?? (r.price != null ? Math.round(Number(r.price) * 100) : undefined),
-        duration: r.duration,
-        subcategory_id: r.subcategory_id,
-        banner_uri: r.banner_uri ?? r.bannerUrl ?? null,
-        active: r.active,
-        category_id: r.category_id ?? r.Subcategory?.category_id ?? r.subcategory?.category_id ?? (r.category ? r.category.id : undefined),
-        availabilities: Array.isArray(r.availabilities)
-          ? r.availabilities.map((a: any) => ({
-            day: a.day,
-            start: a.start,
-            end: a.end,
-          }))
-          : Array.isArray(r.Availabilities)
-            ? r.Availabilities.map((a: any) => ({
-              day: a.day_of_week ?? a.day,
-              start: a.start_time ?? a.start,
-              end: a.end_time ?? a.end,
-            }))
-            : undefined,
-      };
+      const updated = normalizeService(r);
       set({
         myServices: (get().myServices || []).map((s) =>
           s.id === id ? updated : s,
