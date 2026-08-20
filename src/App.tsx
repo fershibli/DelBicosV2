@@ -47,6 +47,13 @@ function AppContent() {
   const colors = useColors();
   const { user } = useUserStore();
   const isDark = theme === ThemeMode.DARK;
+  const [currentRouteName, setCurrentRouteName] = React.useState<
+    string | undefined
+  >();
+
+  const syncCurrentRoute = React.useCallback(() => {
+    setCurrentRouteName(navigationRef.getCurrentRoute()?.name);
+  }, []);
 
   // Tema do NavigationContainer mapeado para os nossos tokens de cor
   const navTheme = React.useMemo(
@@ -93,14 +100,14 @@ function AppContent() {
               prefixes: ['delbicos://'],
             }}
             onReady={() => {
+              syncCurrentRoute();
               SplashScreen.hideAsync();
             }}
+            onStateChange={syncCurrentRoute}
           />
-          {/* ChatWidget: FAB flutuante do chatbot — exibido apenas para usuários autenticados */}
-          {!!user && (
-            <ChatWidget
-              bottomOffset={Platform.OS === 'web' ? 24 : 80}
-            />
+          {/* Evita montar um segundo chat sobre a tela dedicada do assistente. */}
+          {!!user && !!currentRouteName && currentRouteName !== 'ChatBot' && (
+            <ChatWidget bottomOffset={Platform.OS === 'web' ? 24 : 80} />
           )}
         </View>
       </LocationProvider>
