@@ -1,37 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Platform,
-  Alert,
-  Text,
-  ScrollView,
-  useWindowDimensions,
-  TouchableOpacity,
-  Modal,
-} from 'react-native';
-import { EncodingType } from 'expo-file-system/legacy';
-import { useAppointmentStore } from '@stores/Appointment';
+import { RateServiceModal } from '@components/features/RateServiceModal';
+import { FontAwesome } from '@expo/vector-icons';
 import {
   generateCSV,
   generateFileURI,
   generateXLSX,
 } from '@lib/helpers/fileGenerator';
 import { downloadFile, shareContent } from '@lib/helpers/shareHelperSimple';
-import { useColors } from '@theme/ThemeProvider';
-import { FontAwesome } from '@expo/vector-icons';
-import { createStyles } from './styles';
-import { ExportCard } from '@screens/private/client/Profile/Tabs/ExportCard';
-import { RateServiceModal } from '@components/features/RateServiceModal';
-import { Appointment } from '@stores/Appointment/types';
 import { Picker } from '@react-native-picker/picker';
+import { ExportCard } from '@screens/private/client/Profile/Tabs/ExportCard';
+import { useAppointmentStore } from '@stores/Appointment';
+import { Appointment } from '@stores/Appointment/types';
+import { useColors } from '@theme/ThemeProvider';
+import { EncodingType } from 'expo-file-system/legacy';
+import React, { useEffect, useState } from 'react';
+import {
+  Alert,
+  Modal,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { createStyles } from './styles';
 
 const getMonthName = (month: number) => {
   return new Date(2000, month - 1).toLocaleString('pt-BR', { month: 'long' });
 };
 
-const HistoryRow = ({ id, date, service, price, status, rating, colors, styles, onRate, onDetails }: any) => {
+const HistoryRow = ({
+  id,
+  date,
+  service,
+  price,
+  status,
+  rating,
+  colors,
+  styles,
+  onRate,
+  onDetails,
+}: any) => {
   const isCompleted = status === 'completed';
-  const isCanceled = status === 'canceled';
 
   const bgColor = isCompleted
     ? colors.successBackground
@@ -48,10 +58,22 @@ const HistoryRow = ({ id, date, service, price, status, rating, colors, styles, 
         <View>
           <Text style={styles.serviceText}>{service}</Text>
           <Text style={styles.dateText}>{date}</Text>
-          <View style={[styles.badgeContainer, { backgroundColor: isCompleted ? colors.successBackground : colors.errorBackground }]}>
-             <Text style={[styles.badgeText, { color: isCompleted ? colors.successText : colors.error }]}>
-               {isCompleted ? 'Concluído' : 'Cancelado'}
-             </Text>
+          <View
+            style={[
+              styles.badgeContainer,
+              {
+                backgroundColor: isCompleted
+                  ? colors.successBackground
+                  : colors.errorBackground,
+              },
+            ]}>
+            <Text
+              style={[
+                styles.badgeText,
+                { color: isCompleted ? colors.successText : colors.error },
+              ]}>
+              {isCompleted ? 'Concluído' : 'Cancelado'}
+            </Text>
           </View>
         </View>
       </View>
@@ -74,21 +96,28 @@ const HistoryRow = ({ id, date, service, price, status, rating, colors, styles, 
   );
 };
 
-export default function HistoricoCompras({ role = 'client' }: { role?: 'client' | 'professional' } = {}) {
+export default function HistoricoCompras({
+  role = 'client',
+}: { role?: 'client' | 'professional' } = {}) {
   const { fetchAppointmentsAsSheet, appointments, fetchAppointments } =
     useAppointmentStore();
   const colors = useColors();
   const styles = createStyles(colors);
 
   const [isExporting, setIsExporting] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState<number>(
+    new Date().getMonth() + 1,
+  );
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear(),
+  );
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [tempMonth, setTempMonth] = useState<number>(selectedMonth);
   const [tempYear, setTempYear] = useState<number>(selectedYear);
-  
+
   const [isRateModalVisible, setIsRateModalVisible] = useState(false);
-  const [appointmentToRate, setAppointmentToRate] = useState<Appointment | null>(null);
+  const [appointmentToRate, setAppointmentToRate] =
+    useState<Appointment | null>(null);
 
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
@@ -101,7 +130,10 @@ export default function HistoricoCompras({ role = 'client' }: { role?: 'client' 
     .filter((a) => a.status === 'completed' || a.status === 'canceled')
     .filter((a) => {
       const date = new Date(a.start_time);
-      return date.getMonth() + 1 === selectedMonth && date.getFullYear() === selectedYear;
+      return (
+        date.getMonth() + 1 === selectedMonth &&
+        date.getFullYear() === selectedYear
+      );
     })
     .sort(
       (a, b) =>
@@ -154,7 +186,9 @@ export default function HistoricoCompras({ role = 'client' }: { role?: 'client' 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.pageTitle}>
-        {role === 'professional' ? 'Histórico de Trabalhos' : 'Histórico e Relatórios'}
+        {role === 'professional'
+          ? 'Histórico de Trabalhos'
+          : 'Histórico e Relatórios'}
       </Text>
       <Text style={styles.subtitle}>
         {role === 'professional'
@@ -167,8 +201,8 @@ export default function HistoricoCompras({ role = 'client' }: { role?: 'client' 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Últimas Atividades</Text>
 
-          <TouchableOpacity 
-            style={styles.datePickerButton} 
+          <TouchableOpacity
+            style={styles.datePickerButton}
             onPress={() => {
               setTempMonth(selectedMonth);
               setTempYear(selectedYear);
@@ -193,19 +227,26 @@ export default function HistoricoCompras({ role = 'client' }: { role?: 'client' 
                 colors={colors}
                 styles={styles}
                 onDetails={() => {
-                   const dateObj = new Date(item.start_time);
-                   const dataFormatada = dateObj.toLocaleDateString('pt-BR');
-                   const horario = dateObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                   const preco = item.Service.price ? `R$ ${parseFloat(item.Service.price).toFixed(2).replace('.', ',')}` : 'R$ 0,00';
-                   const labelUsuario = role === 'professional' ? 'Cliente' : 'Profissional';
-                   const nomeUsuario = role === 'professional'
-                     ? item.Client?.User?.name
-                     : item.Professional?.User?.name || 'Não informado';
-                   
-                   Alert.alert(
-                     "Detalhes do Serviço", 
-                     `Serviço: ${item.Service.title}\nData: ${dataFormatada}\nHorário: ${horario}\nPreço: ${preco}\n${labelUsuario}: ${nomeUsuario}`
-                   );
+                  const dateObj = new Date(item.start_time);
+                  const dataFormatada = dateObj.toLocaleDateString('pt-BR');
+                  const horario = dateObj.toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  });
+                  const preco = item.Service.price
+                    ? `R$ ${parseFloat(item.Service.price).toFixed(2).replace('.', ',')}`
+                    : 'R$ 0,00';
+                  const labelUsuario =
+                    role === 'professional' ? 'Cliente' : 'Profissional';
+                  const nomeUsuario =
+                    role === 'professional'
+                      ? item.Client?.User?.name
+                      : item.Professional?.User?.name || 'Não informado';
+
+                  Alert.alert(
+                    'Detalhes do Serviço',
+                    `Serviço: ${item.Service.title}\nData: ${dataFormatada}\nHorário: ${horario}\nPreço: ${preco}\n${labelUsuario}: ${nomeUsuario}`,
+                  );
                 }}
                 onRate={
                   role === 'client'
@@ -273,31 +314,45 @@ export default function HistoricoCompras({ role = 'client' }: { role?: 'client' 
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Filtrar Período</Text>
-            
+
             <View style={styles.pickerContainer}>
               <View style={styles.pickerWrapper}>
                 <Picker
                   selectedValue={tempMonth}
-                  onValueChange={(itemValue) => setTempMonth(itemValue as number)}>
-                  {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => (
-                     <Picker.Item key={m} label={getMonthName(m)} value={m} color={colors.primaryBlack} />
+                  onValueChange={(itemValue) =>
+                    setTempMonth(itemValue as number)
+                  }>
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => (
+                    <Picker.Item
+                      key={m}
+                      label={getMonthName(m)}
+                      value={m}
+                      color={colors.primaryBlack}
+                    />
                   ))}
                 </Picker>
               </View>
-              
+
               <View style={styles.pickerWrapper}>
                 <Picker
                   selectedValue={tempYear}
-                  onValueChange={(itemValue) => setTempYear(itemValue as number)}>
-                  {[2024, 2025, 2026, 2027].map(y => (
-                     <Picker.Item key={y} label={y.toString()} value={y} color={colors.primaryBlack} />
+                  onValueChange={(itemValue) =>
+                    setTempYear(itemValue as number)
+                  }>
+                  {[2024, 2025, 2026, 2027].map((y) => (
+                    <Picker.Item
+                      key={y}
+                      label={y.toString()}
+                      value={y}
+                      color={colors.primaryBlack}
+                    />
                   ))}
                 </Picker>
               </View>
             </View>
 
-            <TouchableOpacity 
-              style={styles.modalButton} 
+            <TouchableOpacity
+              style={styles.modalButton}
               onPress={() => {
                 setSelectedMonth(tempMonth);
                 setSelectedYear(tempYear);

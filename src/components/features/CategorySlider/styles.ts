@@ -48,7 +48,7 @@ export const createStyles = (colors: ColorsType) =>
       color: colors.primaryBlack,
       lineHeight: 14,
     },
-    
+
     // --- IMAGE CARD STYLE (WEB) ---
     webCard: {
       width: 220,

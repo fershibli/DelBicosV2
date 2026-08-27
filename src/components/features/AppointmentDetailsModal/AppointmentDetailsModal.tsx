@@ -200,7 +200,10 @@ export function AppointmentDetailsModal({
               {onAccept && appointment.status === 'pending' ? (
                 <>
                   <TouchableOpacity
-                    style={[styles.okButton, { backgroundColor: colors.successText, marginBottom: 10 }]}
+                    style={[
+                      styles.okButton,
+                      { backgroundColor: colors.successText, marginBottom: 10 },
+                    ]}
                     onPress={() => {
                       if (onAccept) onAccept();
                       onClose();

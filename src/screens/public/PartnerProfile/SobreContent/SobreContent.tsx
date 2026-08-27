@@ -18,8 +18,7 @@ export function SobreContent({ nome, descricao, endereco }: SobreContentProps) {
   const hasContent = nome || descricao || endereco;
 
   return (
-    <View
-      style={[styles.sobreContainer, styles.sobreContentContainer]}>
+    <View style={[styles.sobreContainer, styles.sobreContentContainer]}>
       {!hasContent && (
         <View style={styles.emptyContainer}>
           <FontAwesome

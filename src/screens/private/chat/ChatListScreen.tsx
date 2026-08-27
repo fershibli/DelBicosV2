@@ -23,7 +23,10 @@ const ChatListScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <ChatRoomListPanel selectedRoomId={null} onSelectRoom={handleSelectRoom} />
+      <ChatRoomListPanel
+        selectedRoomId={null}
+        onSelectRoom={handleSelectRoom}
+      />
     </SafeAreaView>
   );
 };

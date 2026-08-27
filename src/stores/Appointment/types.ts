@@ -69,6 +69,8 @@ export interface Appointment {
   review: string | null;
   start_time: string;
   end_time: string;
+  completed_at?: string | null;
+  final_price?: number | null;
   status: AppointmentStatus;
   createdAt: string;
   updatedAt: string;

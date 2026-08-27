@@ -120,15 +120,24 @@ function CheckoutScreen() {
     }
   };
 
+  // Redirect unauthenticated users to Login
+  useEffect(() => {
+    if (!user) {
+      // @ts-ignore
+      navigation.navigate('Login');
+    }
+  }, [user, navigation]);
+
   // 1. Carrega Profissional
   useEffect(() => {
+    if (!user) return;
     const loadData = async () => {
       setIsLoadingProfessional(true);
       await fetchProfessionalById(professionalId);
       setIsLoadingProfessional(false);
     };
     loadData();
-  }, [professionalId, fetchProfessionalById]);
+  }, [user, professionalId, fetchProfessionalById]);
 
   // 2. Identifica o Serviço
   const service = useMemo(() => {

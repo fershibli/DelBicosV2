@@ -1,0 +1,391 @@
+import DelBicosLogo from '@assets/DelBicos_LogoH.png';
+import { Button } from '@components/ui/Button';
+import { MapComponent } from '@components/ui/MapComponent/MapComponent';
+import { ThemeToggle } from '@components/ui/ThemeToggle';
+import { FontAwesome } from '@expo/vector-icons';
+import { useLocation } from '@lib/hooks/LocationContext';
+import { Region } from '@lib/hooks/types';
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import { NativeStackHeaderProps } from '@react-navigation/native-stack';
+import { NavigationParams } from '@screens/types';
+import { useThemeStore } from '@stores/Theme';
+import { ThemeMode } from '@stores/Theme/types';
+import { useUserStore } from '@stores/User';
+import { useColors } from '@theme/ThemeProvider';
+import * as Location from 'expo-location';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Modal,
+  Pressable,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {
+  Menu,
+  MenuOption,
+  MenuOptions,
+  MenuTrigger,
+} from 'react-native-popup-menu';
+import DelBicosLogoDark from '../../../../assets/DelBicos_git.png';
+import { createStyles } from './styles';
+
+const HeaderWeb: React.FC<NativeStackHeaderProps> = () => {
+  const { theme } = useThemeStore();
+  const isDark = theme === ThemeMode.DARK;
+  const colors = useColors();
+  const styles = createStyles(colors);
+
+  const logo = isDark ? DelBicosLogoDark : DelBicosLogo;
+  const headerIconColor = isDark ? '#FFFFFF' : colors.primaryBlue;
+
+  const { user, signOut, address: userAddress } = useUserStore();
+  const {
+    address: locationAddress,
+    city,
+    state,
+    setLocation,
+    lookupByCoordinates,
+    loading: isLocationLoading,
+  } = useLocation();
+
+  const navigation = useNavigation();
+  const [search, setSearch] = useState('');
+  const [isMapModalVisible, setIsMapModalVisible] = useState(false);
+
+  const [tempMarker, setTempMarker] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [tempRegion, setTempRegion] = useState<Region | null>(null);
+
+  const navigateTo = useCallback(
+    (screen?: keyof NavigationParams) => {
+      if (!screen) return;
+      // @ts-ignore
+      navigation.navigate(screen);
+    },
+    [navigation],
+  );
+
+  const handleSignOut = useCallback(() => {
+    signOut();
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      }),
+    );
+  }, [signOut, navigation]);
+
+  const openMapModal = useCallback(async () => {
+    setIsMapModalVisible(true);
+    if (locationAddress?.lat && locationAddress?.lon) {
+      const savedCoords = {
+        latitude: parseFloat(locationAddress.lat),
+        longitude: parseFloat(locationAddress.lon),
+      };
+      setTempRegion({
+        ...savedCoords,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+      setTempMarker(savedCoords);
+      return;
+    }
+
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permissão negada', 'Precisamos da sua localização.');
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+      const currentCoords = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+
+      setTempRegion({
+        ...currentCoords,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+      setTempMarker(currentCoords);
+    } catch (error) {
+      console.warn('Usando fallback:', error);
+      setTempRegion({
+        latitude: -23.5505,
+        longitude: -46.6333,
+        latitudeDelta: 0.1,
+        longitudeDelta: 0.1,
+      });
+    }
+  }, [locationAddress]);
+
+  const handleMapPress = useCallback((event: any) => {
+    const { coordinate } = event.nativeEvent;
+    setTempMarker(coordinate);
+  }, []);
+
+  const handleConfirmLocation = useCallback(async () => {
+    if (!tempMarker) {
+      setIsMapModalVisible(false);
+      return;
+    }
+    try {
+      await lookupByCoordinates(tempMarker.latitude, tempMarker.longitude);
+    } catch (error) {
+      console.error('Erro ao buscar endereço:', error);
+    } finally {
+      setIsMapModalVisible(false);
+    }
+  }, [tempMarker, lookupByCoordinates]);
+
+  useEffect(() => {
+    if (user && userAddress?.city && !city) {
+      setLocation(userAddress.city, userAddress.state);
+    }
+  }, [user, userAddress, city, setLocation]);
+
+  const renderMapModal = useMemo(
+    () => (
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isMapModalVisible}
+        onRequestClose={() => setIsMapModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Selecione sua localização</Text>
+              <TouchableOpacity onPress={() => setIsMapModalVisible(false)}>
+                <FontAwesome
+                  name="close"
+                  size={24}
+                  color={colors.textSecondary}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.mapWrapper}>
+              {!tempRegion ? (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <ActivityIndicator size="large" color={colors.primaryBlue} />
+                </View>
+              ) : (
+                <MapComponent
+                  region={tempRegion}
+                  markerCoords={tempMarker}
+                  onMapPress={handleMapPress}
+                />
+              )}
+            </View>
+
+            <TouchableOpacity
+              style={[
+                styles.modalButton,
+                (isLocationLoading || !tempMarker) &&
+                  styles.modalButtonDisabled,
+              ]}
+              onPress={handleConfirmLocation}
+              disabled={isLocationLoading || !tempMarker}>
+              {isLocationLoading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={styles.modalButtonText}>
+                  Confirmar Localização
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    ),
+    [
+      isMapModalVisible,
+      tempRegion,
+      tempMarker,
+      isLocationLoading,
+      colors,
+      styles,
+      handleMapPress,
+      handleConfirmLocation,
+    ],
+  );
+
+  const MenuItem: React.FC<{
+    screen?: keyof NavigationParams;
+    children: React.ReactNode;
+  }> = ({ screen, children }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+      <Pressable
+        onPress={() => navigateTo(screen)}
+        onHoverIn={() => setIsHovered(true)}
+        onHoverOut={() => setIsHovered(false)}
+        style={[styles.menuItemPressable, isHovered && styles.menuItemHovered]}>
+        <Text
+          style={[
+            styles.menuItemText,
+            isHovered && styles.menuItemTextHovered,
+          ]}>
+          {children}
+        </Text>
+      </Pressable>
+    );
+  };
+
+  return (
+    <View style={styles.headerContainer}>
+      <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => navigateTo('Feed')}>
+          <Image source={logo} style={styles.logoImage} />
+        </TouchableOpacity>
+
+        <View style={styles.menu}>
+          <MenuItem screen={'Feed'}>Página Inicial</MenuItem>
+          <MenuItem screen={'Category'}>Categorias</MenuItem>
+          <MenuItem screen={'AboutUs'}>Quem Somos</MenuItem>
+          <MenuItem screen={'Help'}>FAQ</MenuItem>
+          {!!user && (
+            <>
+              <MenuItem screen={'MySchedules'}>Meus Agendamentos</MenuItem>
+              {user?.admin && (
+                <MenuItem screen={'AdminAnalytics'}>Analytics</MenuItem>
+              )}
+            </>
+          )}
+        </View>
+
+        <View style={styles.rightSection}>
+          <ThemeToggle />
+          <View style={styles.locationContainer}>
+            <Text style={styles.locationLabel}>Estou em:</Text>
+            <Button
+              colorVariant="secondary"
+              sizeVariant="smallPill"
+              fontVariant="AfacadRegular15"
+              onPress={openMapModal}
+              endIcon={
+                <FontAwesome
+                  name="chevron-down"
+                  size={12}
+                  color={colors.primaryWhite}
+                />
+              }>
+              {city && state ? `${city} - ${state}` : 'Definir Local'}
+            </Button>
+          </View>
+          {!!user ? (
+            <Menu>
+              <MenuTrigger>
+                <View style={styles.userContainer}>
+                  <Image
+                    source={
+                      user.avatar_uri
+                        ? { uri: user.avatar_uri }
+                        : require('@assets/logo.png')
+                    }
+                    style={styles.profileImage}
+                  />
+                </View>
+              </MenuTrigger>
+              <MenuOptions
+                customStyles={{
+                  optionsContainer: styles.menuOptionsContainer,
+                }}>
+                <MenuOption
+                  onSelect={() =>
+                    navigation.navigate('ClientProfile' as never)
+                  }>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="user-circle-o"
+                      size={18}
+                      color={headerIconColor}
+                      style={styles.menuIcon}
+                    />
+                    <Text style={styles.menuOptionText}>Meu Perfil</Text>
+                  </View>
+                </MenuOption>
+                <View style={styles.menuDivider} />
+                <MenuOption onSelect={handleSignOut}>
+                  <View style={styles.menuOption}>
+                    <FontAwesome
+                      name="sign-out"
+                      size={18}
+                      color={colors.errorText}
+                      style={styles.menuIcon}
+                    />
+                    <Text
+                      style={[
+                        styles.menuOptionText,
+                        { color: colors.errorText },
+                      ]}>
+                      Sair
+                    </Text>
+                  </View>
+                </MenuOption>
+              </MenuOptions>
+            </Menu>
+          ) : (
+            <View style={styles.authButtons}>
+              <Button
+                colorVariant="primaryOrange"
+                sizeVariant="default"
+                fontVariant="AfacadBold16"
+                variant="outlined"
+                onPress={() => navigateTo('Login')}>
+                Entrar
+              </Button>
+              <Button
+                colorVariant="primaryOrange"
+                sizeVariant="default"
+                variant="contained"
+                fontVariant="AfacadBold16"
+                onPress={() => navigateTo('Register')}>
+                Cadastre-se
+              </Button>
+            </View>
+          )}
+        </View>
+      </View>
+      <View style={styles.searchBar}>
+        {user && (
+          <Text style={styles.searchText}>
+            Olá, {user.name.split(' ')[0]}! Como podemos te ajudar hoje?
+          </Text>
+        )}
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="O que você precisa?"
+            placeholderTextColor="#9CA3AF"
+            value={search}
+            onChangeText={setSearch}
+          />
+          <TouchableOpacity style={styles.searchButton}>
+            <FontAwesome name="search" size={16} color="#666" />
+          </TouchableOpacity>
+        </View>
+      </View>
+      {renderMapModal}
+    </View>
+  );
+};
+
+export default HeaderWeb;

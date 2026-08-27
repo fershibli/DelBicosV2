@@ -1,22 +1,22 @@
-import React, { useEffect, useState, useRef } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  Text,
-  View,
-  Pressable,
-  Platform,
-  ImageBackground,
-  useWindowDimensions,
-} from 'react-native';
+import { FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useCategoryStore } from '@stores/Category/Category';
 import { Category } from '@stores/Category/types';
-import { useThemeStore, ThemeMode } from '@stores/Theme';
+import { ThemeMode, useThemeStore } from '@stores/Theme';
 import { useColors } from '@theme/ThemeProvider';
-import { createStyles } from './styles';
-import { FontAwesome5 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  ImageBackground,
+  Platform,
+  Pressable,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { createStyles } from './styles';
 
 // Mantemos os ícones mapeados por enquanto, até que decida trazê-los do banco também!
 const CATEGORY_ICONS: Record<number, string> = {
@@ -28,8 +28,8 @@ const CATEGORY_ICONS: Record<number, string> = {
   6: 'paw',
 };
 
-const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop';
-
+const PLACEHOLDER_IMAGE =
+  'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop';
 
 function getCategoryIconName(id: number) {
   return CATEGORY_ICONS[id] || 'shapes';
@@ -117,7 +117,6 @@ function CategoryCard({ category, onPress, isWebLayout }: CategoryCardProps) {
 function CategorySlider() {
   const [isLoading, setIsLoading] = useState(true);
   const { categories, fetchCategories } = useCategoryStore();
-  const hasFetchedRef = useRef(false);
   const navigation = useNavigation();
   const colors = useColors();
   const styles = createStyles(colors);
@@ -170,6 +169,9 @@ function CategorySlider() {
           <FlatList
             data={categories}
             keyExtractor={(item) => item.id.toString()}
+            initialNumToRender={6}
+            maxToRenderPerBatch={8}
+            windowSize={5}
             renderItem={({ item }) => (
               <CategoryCard
                 category={item}

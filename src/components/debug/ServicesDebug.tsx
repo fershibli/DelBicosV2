@@ -4,10 +4,11 @@ import useServicesLastQuery from '@hooks/useServicesLastQuery';
 import { useColors } from '@theme/ThemeProvider';
 
 const ServicesDebug: React.FC = () => {
-  if (!__DEV__) return null;
   const lastQuery = useServicesLastQuery();
   const colors = useColors();
   const styles = createStyles(colors);
+
+  if (!__DEV__) return null;
 
   return (
     <View style={styles.container}>

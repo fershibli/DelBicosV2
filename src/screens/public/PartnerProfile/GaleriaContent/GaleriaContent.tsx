@@ -1,10 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
-  FlatList,
   TouchableOpacity,
   Image,
-  Dimensions,
+  useWindowDimensions,
   Text,
   Modal,
   StatusBar,
@@ -26,12 +25,11 @@ type GaleriaContentProps = {
 export function GaleriaContent({ imagens }: GaleriaContentProps) {
   const [visible, setVisible] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const flatListRef = useRef<FlatList>(null);
+  const { width: screenWidth } = useWindowDimensions();
   const colors = useColors();
   const styles = createStyles(colors);
 
   const numColumns = 3;
-  const screenWidth = Dimensions.get('window').width;
   const containerPadding = 16;
   const gap = 10;
 
@@ -109,7 +107,15 @@ export function GaleriaContent({ imagens }: GaleriaContentProps) {
         </View>
       ) : (
         <>
-          <View style={[styles.galleryList, { padding: containerPadding, flexDirection: 'row', flexWrap: 'wrap' }]}>
+          <View
+            style={[
+              styles.galleryList,
+              {
+                padding: containerPadding,
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+              },
+            ]}>
             {imagens.map((item, index) => (
               <React.Fragment key={item.id}>
                 {renderItem({ item, index })}

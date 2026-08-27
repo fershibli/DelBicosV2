@@ -26,7 +26,8 @@ const AvaliacoesTab: React.FC<AvaliacoesTabProps> = ({ role = 'client' }) => {
   const isDesktop = width >= 768;
 
   const [isRateModalVisible, setIsRateModalVisible] = useState(false);
-  const [appointmentToRate, setAppointmentToRate] = useState<Appointment | null>(null);
+  const [appointmentToRate, setAppointmentToRate] =
+    useState<Appointment | null>(null);
 
   useEffect(() => {
     fetchAppointments(role);

@@ -47,11 +47,11 @@ export type NavigationParams = {
     serviceId: number;
   };
   PaymentStatus:
-  | {
-    appointmentId?: number;
-    paymentIntentId?: string;
-  }
-  | undefined;
+    | {
+        appointmentId?: number;
+        paymentIntentId?: string;
+      }
+    | undefined;
   MySchedules: undefined;
   ProfessionalTabs: undefined;
   ProfessionalHomeTab: undefined;

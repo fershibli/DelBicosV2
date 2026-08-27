@@ -63,7 +63,7 @@ export const LoginPassword = () => {
         }
 
         // @ts-ignore
-        navigation.navigate('Feed');
+        navigation.navigate('Home');
       } else if (selectedRole === 'partner') {
         await signInPassword(data.email, data.password);
         const user = useUserStore.getState().user;
@@ -71,7 +71,9 @@ export const LoginPassword = () => {
         if (!user || !user.professional_id) {
           // Desloga para segurança e lança erro se não for parceiro
           useUserStore.getState().signOut();
-          throw new Error('Esta conta não possui cadastro de parceiro colaborador.');
+          throw new Error(
+            'Esta conta não possui cadastro de parceiro colaborador.',
+          );
         }
 
         // @ts-ignore
@@ -91,7 +93,7 @@ export const LoginPassword = () => {
         }
 
         // @ts-ignore
-        navigation.navigate('Feed');
+        navigation.navigate('Home');
       }
     } catch (error: any) {
       console.error('Erro no login:', error);
@@ -121,27 +123,46 @@ export const LoginPassword = () => {
           <View style={styles.roleToggle}>
             <TouchableOpacity
               onPress={() => setSelectedRole('user')}
-              style={[styles.roleButton, selectedRole === 'user' && styles.roleButtonActive]}
+              style={[
+                styles.roleButton,
+                selectedRole === 'user' && styles.roleButtonActive,
+              ]}
               activeOpacity={0.8}>
               <Text
-                style={[styles.roleText, selectedRole === 'user' && styles.roleTextActive]}>
+                style={[
+                  styles.roleText,
+                  selectedRole === 'user' && styles.roleTextActive,
+                ]}>
                 Usuário
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setSelectedRole('partner')}
-              style={[styles.roleButton, selectedRole === 'partner' && styles.roleButtonActive]}
+              style={[
+                styles.roleButton,
+                selectedRole === 'partner' && styles.roleButtonActive,
+              ]}
               activeOpacity={0.8}>
               <Text
-                style={[styles.roleText, selectedRole === 'partner' && styles.roleTextActive]}>
+                style={[
+                  styles.roleText,
+                  selectedRole === 'partner' && styles.roleTextActive,
+                ]}>
                 Parceiro
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setSelectedRole('admin')}
-              style={[styles.roleButton, selectedRole === 'admin' && styles.roleButtonActive]}
+              style={[
+                styles.roleButton,
+                selectedRole === 'admin' && styles.roleButtonActive,
+              ]}
               activeOpacity={0.8}>
-              <Text style={[styles.roleText, selectedRole === 'admin' && styles.roleTextActive]}>
+              <Text
+                style={[
+                  styles.roleText,
+                  selectedRole === 'admin' && styles.roleTextActive,
+                ]}>
                 Admin
               </Text>
             </TouchableOpacity>

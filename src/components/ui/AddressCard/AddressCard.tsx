@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
-import { Address } from '@stores/Address';
+import type { Address } from '@stores/Address/types';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
 
@@ -13,7 +13,7 @@ interface AddressCardProps {
   onEditPress?: (address: Address) => void;
 }
 
-export const AddressCard: React.FC<AddressCardProps> = ({
+const AddressCardComponent: React.FC<AddressCardProps> = ({
   addressData,
   onDelete,
   onSetPrimary,
@@ -93,3 +93,6 @@ export const AddressCard: React.FC<AddressCardProps> = ({
     </View>
   );
 };
+
+export const AddressCard = React.memo(AddressCardComponent);
+AddressCard.displayName = 'AddressCard';

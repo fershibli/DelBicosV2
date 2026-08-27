@@ -10,8 +10,6 @@ import {
 import { FieldError } from 'react-hook-form';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
-import { useThemeStore } from '@stores/Theme';
-import { ThemeMode } from '@stores/Theme/types';
 
 interface CustomTextInputProps extends TextInputProps {
   label?: string;
@@ -28,8 +26,6 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   style,
   ...rest
 }) => {
-  const { theme } = useThemeStore();
-  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
   const colors = useColors();
   const styles = createStyles(colors);
 
@@ -38,27 +34,14 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
 
   return (
     <View style={[styles.container, containerStyle]}>
-      {label && (
-        <Text style={[styles.label, isHighContrast && { fontWeight: 'bold' }]}>
-          {label}
-        </Text>
-      )}
+      {label && <Text style={styles.label}>{label}</Text>}
 
       <View>
         {children ? (
           children
         ) : (
           <TextInput
-            style={[
-              styles.input,
-              hasError && styles.inputError,
-              isHighContrast && {
-                borderWidth: 2,
-                borderColor: colors.primaryBlack,
-                backgroundColor: colors.primaryWhite,
-              },
-              style,
-            ]}
+            style={[styles.input, hasError && styles.inputError, style]}
             placeholderTextColor={colors.textTertiary}
             accessibilityLabel={label}
             {...rest}

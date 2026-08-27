@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
@@ -127,6 +128,10 @@ const ChatRoomListPanel: React.FC<ChatRoomListPanelProps> = ({
       <FlatList
         data={conversations}
         keyExtractor={(item) => String(item.room_id)}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        removeClippedSubviews={Platform.OS !== 'web'}
         renderItem={renderItem}
         contentContainerStyle={
           conversations.length === 0

@@ -15,7 +15,7 @@ interface ReviewCardProps {
   onEdit?: () => void;
 }
 
-export function ReviewCard({
+export const ReviewCard = React.memo(function ReviewCard({
   rating,
   title,
   serviceTitle,
@@ -75,11 +75,20 @@ export function ReviewCard({
           <Text style={styles.date}>{date}</Text>
         </View>
         {onEdit && (
-          <TouchableOpacity onPress={onEdit} style={{ marginLeft: 'auto', padding: 4 }}>
-             <Text style={{ fontSize: 12, color: colors.primaryOrange, fontFamily: 'Afacad-Medium' }}>Editar</Text>
+          <TouchableOpacity
+            onPress={onEdit}
+            style={{ marginLeft: 'auto', padding: 4 }}>
+            <Text
+              style={{
+                fontSize: 12,
+                color: colors.primaryOrange,
+                fontFamily: 'Afacad-Medium',
+              }}>
+              Editar
+            </Text>
           </TouchableOpacity>
         )}
       </View>
     </View>
   );
-}
+});

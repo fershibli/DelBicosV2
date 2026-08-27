@@ -1,19 +1,13 @@
-import React from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
-import {
-  Controller,
-  Control,
-  FieldErrors,
-  UseFormSetValue,
-  useWatch,
-} from 'react-hook-form';
-import CustomTextInput from '@components/ui/CustomTextInput';
-import CustomSelect from '@components/ui/CustomSelect/CustomSelect';
 import Autocomplete from '@components/ui/Autocomplete/Autocomplete';
+import CustomSelect from '@components/ui/CustomSelect/CustomSelect';
+import CustomTextInput from '@components/ui/CustomTextInput';
+import { useIBGE } from '@lib/hooks//useIBGE';
 import { useViaCepStore } from '@stores/ViaCep';
 import { useColors } from '@theme/ThemeProvider';
+import React from 'react';
+import { Controller, useWatch } from 'react-hook-form';
+import { ActivityIndicator, Text, View } from 'react-native';
 import { createStyles } from './styles';
-import { useIBGE } from '@lib/hooks//useIBGE';
 
 export interface AddressFormData {
   cep: string;
@@ -26,9 +20,9 @@ export interface AddressFormData {
 }
 
 interface AddressFormProps {
-  control: Control<any>;
-  errors: FieldErrors<any>;
-  setValue: UseFormSetValue<any>;
+  control: any;
+  errors: any;
+  setValue: any;
   onSubmit?: () => void;
 }
 

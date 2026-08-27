@@ -1,12 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
-import { ListedProfessional } from '@stores/Professional/types';
+import type { ListedProfessional } from '@stores/Professional/types';
 import { useColors } from '@theme/ThemeProvider';
 import { createStyles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
-import { useThemeStore } from '@stores/Theme';
-import { ThemeMode } from '@stores/Theme/types';
 
 interface ProfessionalCardProps {
   professional: ListedProfessional;
@@ -14,65 +12,21 @@ interface ProfessionalCardProps {
 
 function ProfessionalCard({ professional }: ProfessionalCardProps) {
   const navigation = useNavigation();
-  const { theme } = useThemeStore();
   const colors = useColors();
   const styles = createStyles(colors);
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const isDark = theme === ThemeMode.DARK;
-  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
-
   const colorProps = useMemo(() => {
-    let bgColor = colors.cardBackground;
-    let borderColor = colors.borderColor;
-    let nameColor = colors.primaryOrange;
-    let textColor = colors.primaryBlack;
-    let subTextColor = colors.textSecondary;
-    let locationColor = colors.primaryBlue;
-
-    if (isDark) {
-      bgColor = colors.cardBackground;
-      borderColor = '#444444';
-      nameColor = colors.primaryOrange;
-      textColor = '#FFFFFF';
-      subTextColor = '#CCCCCC';
-      locationColor = '#60A5FA';
-    }
-
-    if (isHighContrast) {
-      bgColor = colors.primaryWhite;
-      borderColor = colors.primaryBlack;
-      nameColor = colors.primaryBlack;
-      textColor = colors.primaryBlack;
-      subTextColor = colors.primaryBlack;
-      locationColor = colors.primaryBlack;
-    }
-
-    if (isHovered) {
-      if (isHighContrast) {
-        bgColor = colors.primaryBlue;
-        nameColor = colors.primaryWhite;
-        textColor = colors.primaryWhite;
-        subTextColor = colors.primaryWhite;
-        locationColor = colors.primaryWhite;
-      } else if (isDark) {
-        bgColor = '#3A3A3A';
-        borderColor = colors.primaryOrange;
-      } else {
-        borderColor = colors.primaryBlue;
-      }
-    }
-
     return {
-      bgColor,
-      borderColor,
-      nameColor,
-      textColor,
-      subTextColor,
-      locationColor,
+      bgColor: isHovered ? colors.cardBackground : colors.cardBackground,
+      borderColor: isHovered ? colors.primaryBlue : colors.borderColor,
+      nameColor: colors.primaryOrange,
+      textColor: colors.primaryBlack,
+      subTextColor: colors.textSecondary,
+      locationColor: colors.primaryBlue,
     };
-  }, [isDark, isHighContrast, isHovered, colors]);
+  }, [isHovered, colors]);
 
   const navigateToProfile = () => {
     // @ts-ignore
@@ -92,7 +46,6 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
           borderColor: colorProps.borderColor,
           transform: [{ scale: pressed || isHovered ? 1.01 : 1 }],
         },
-        isHighContrast && { borderWidth: 2 },
       ]}
       onPress={navigateToProfile}
       onHoverIn={() => setIsHovered(true)}
@@ -159,4 +112,4 @@ function ProfessionalCard({ professional }: ProfessionalCardProps) {
   );
 }
 
-export default ProfessionalCard;
+export default React.memo(ProfessionalCard);

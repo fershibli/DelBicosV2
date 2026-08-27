@@ -8,8 +8,6 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { createStyles } from './styles';
 import { useColors } from '@theme/ThemeProvider';
-import { useThemeStore } from '@stores/Theme';
-import { ThemeMode } from '@stores/Theme/types';
 
 interface PasswordInputProps extends TextInputProps {
   error?: boolean | string;
@@ -17,24 +15,13 @@ interface PasswordInputProps extends TextInputProps {
 
 const PasswordInput: React.FC<PasswordInputProps> = ({ error, ...props }) => {
   const [visible, setVisible] = useState(false);
-  const { theme } = useThemeStore();
-  const isHighContrast = theme === ThemeMode.LIGHT_HI_CONTRAST;
   const colors = useColors();
   const styles = createStyles(colors);
 
   const hasError = !!error;
 
   return (
-    <View
-      style={[
-        styles.container,
-        hasError && styles.inputError,
-        isHighContrast && {
-          borderWidth: 2,
-          borderColor: colors.primaryBlack,
-          backgroundColor: colors.primaryWhite,
-        },
-      ]}>
+    <View style={[styles.container, hasError && styles.inputError]}>
       <TextInput
         style={styles.input}
         secureTextEntry={!visible}
