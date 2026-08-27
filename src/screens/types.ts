@@ -40,11 +40,12 @@ export type NavigationParams = {
   SearchResult: { subCategoryId: number; date: string };
   Checkout: {
     professionalId: number;
-    priceFrom: number;
+    priceFrom?: number;
     selectedTime: string;
     imageUrl?: string;
     professionalName?: string;
     serviceId: number;
+    appointmentId?: number;
   };
   PaymentStatus:
   | {
@@ -72,4 +73,5 @@ export type NavigationParams = {
     serviceTitle?: string | null;
     roomStatus?: ChatRoomStatus;
   };
+  ChatBot: undefined;
 };
