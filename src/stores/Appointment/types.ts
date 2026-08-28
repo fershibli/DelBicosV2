@@ -59,6 +59,19 @@ export interface Professional {
   User: User;
 }
 
+export interface Address {
+  id: number;
+  street: string;
+  number: string;
+  complement?: string | null;
+  neighborhood: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  lat?: number;
+  lng?: number;
+}
+
 export interface Appointment {
   id: number;
   professional_id: number;
@@ -77,7 +90,9 @@ export interface Appointment {
   Service: Service;
   Client: Client;
   payment_intent_id?: string | null;
+  payment_method?: string;
   Professional: Professional;
+  Address?: Address | null;
 }
 
 export interface InvoiceData {

@@ -1,3 +1,4 @@
+import { AppointmentDetailsModal } from '@components/features/AppointmentDetailsModal';
 import { RateServiceModal } from '@components/features/RateServiceModal';
 import { FontAwesome } from '@expo/vector-icons';
 import {
@@ -119,6 +120,10 @@ export default function HistoricoCompras({
   const [appointmentToRate, setAppointmentToRate] =
     useState<Appointment | null>(null);
 
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
+  const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
+
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
 
@@ -227,26 +232,8 @@ export default function HistoricoCompras({
                 colors={colors}
                 styles={styles}
                 onDetails={() => {
-                  const dateObj = new Date(item.start_time);
-                  const dataFormatada = dateObj.toLocaleDateString('pt-BR');
-                  const horario = dateObj.toLocaleTimeString('pt-BR', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  });
-                  const preco = item.Service.price
-                    ? `R$ ${parseFloat(item.Service.price).toFixed(2).replace('.', ',')}`
-                    : 'R$ 0,00';
-                  const labelUsuario =
-                    role === 'professional' ? 'Cliente' : 'Profissional';
-                  const nomeUsuario =
-                    role === 'professional'
-                      ? item.Client?.User?.name
-                      : item.Professional?.User?.name || 'Não informado';
-
-                  Alert.alert(
-                    'Detalhes do Serviço',
-                    `Serviço: ${item.Service.title}\nData: ${dataFormatada}\nHorário: ${horario}\nPreço: ${preco}\n${labelUsuario}: ${nomeUsuario}`,
-                  );
+                  setSelectedAppointment(item);
+                  setIsDetailsModalVisible(true);
                 }}
                 onRate={
                   role === 'client'
@@ -296,6 +283,12 @@ export default function HistoricoCompras({
         </View>
       </View>
 
+      <AppointmentDetailsModal
+        visible={isDetailsModalVisible}
+        onClose={() => setIsDetailsModalVisible(false)}
+        appointment={selectedAppointment}
+      />
+
       {appointmentToRate && (
         <RateServiceModal
           visible={isRateModalVisible}
@@ -305,7 +298,7 @@ export default function HistoricoCompras({
           existingRating={appointmentToRate.rating}
           existingReview={appointmentToRate.review}
           onClose={() => setIsRateModalVisible(false)}
-          onSuccess={() => fetchAppointments()}
+          onSuccess={() => fetchAppointments(role)}
         />
       )}
 

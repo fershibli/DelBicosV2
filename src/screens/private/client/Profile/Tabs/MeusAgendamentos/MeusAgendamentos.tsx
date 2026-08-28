@@ -1,23 +1,23 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import {
-  Text,
-  View,
-  ScrollView,
-  useWindowDimensions,
-  TouchableOpacity,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { AppointmentCard } from '@components/features/AppointmentCard';
+import { AppointmentDetailsModal } from '@components/features/AppointmentDetailsModal';
+import { RateServiceModal } from '@components/features/RateServiceModal';
 import { Button } from '@components/ui/Button';
+import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { useAppointmentStore } from '@stores/Appointment';
+import { Appointment, AppointmentStatus } from '@stores/Appointment/types';
 import { useFavoriteStore } from '@stores/Favorite';
 import { useUserStore } from '@stores/User';
 import { useColors } from '@theme/ThemeProvider';
-import { AppointmentDetailsModal } from '@components/features/AppointmentDetailsModal';
-import { RateServiceModal } from '@components/features/RateServiceModal';
-import { Appointment, AppointmentStatus } from '@stores/Appointment/types';
-import { AppointmentCard } from '@components/features/AppointmentCard';
-import { FontAwesome } from '@expo/vector-icons';
 import { ColorsType } from '@theme/types';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { createStyles } from './styles';
 
 const appointmentStatusRenderInfo = (
@@ -59,6 +59,8 @@ const appointmentStatusRenderInfo = (
 const appointmentStatusRenderOrder: AppointmentStatus[] = [
   AppointmentStatus.PENDING,
   AppointmentStatus.CONFIRMED,
+  AppointmentStatus.COMPLETED,
+  AppointmentStatus.CANCELED,
 ];
 
 interface MeusAgendamentosProps {
@@ -87,9 +89,9 @@ function MeusAgendamentos({ role }: MeusAgendamentosProps = {}) {
   const [appointmentToRate, setAppointmentToRate] =
     useState<Appointment | null>(null);
 
-  const [activeFilter, setActiveFilter] = useState<
-    'all' | AppointmentStatus.PENDING | AppointmentStatus.CONFIRMED
-  >('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | AppointmentStatus>(
+    'all',
+  );
 
   const navigation = useNavigation();
 
@@ -278,6 +280,38 @@ function MeusAgendamentos({ role }: MeusAgendamentosProps = {}) {
                 styles.filterTextActive,
             ]}>
             Confirmados
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.filterChip,
+            activeFilter === AppointmentStatus.COMPLETED &&
+              styles.filterChipActive,
+          ]}
+          onPress={() => setActiveFilter(AppointmentStatus.COMPLETED)}>
+          <Text
+            style={[
+              styles.filterText,
+              activeFilter === AppointmentStatus.COMPLETED &&
+                styles.filterTextActive,
+            ]}>
+            Histórico
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.filterChip,
+            activeFilter === AppointmentStatus.CANCELED &&
+              styles.filterChipActive,
+          ]}
+          onPress={() => setActiveFilter(AppointmentStatus.CANCELED)}>
+          <Text
+            style={[
+              styles.filterText,
+              activeFilter === AppointmentStatus.CANCELED &&
+                styles.filterTextActive,
+            ]}>
+            Cancelados
           </Text>
         </TouchableOpacity>
       </ScrollView>

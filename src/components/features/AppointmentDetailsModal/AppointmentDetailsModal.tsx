@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useColors } from '@theme/ThemeProvider';
 import { Appointment } from '@stores/Appointment/types';
+import { useUserStore } from '@stores/User';
 import { createStyles } from './styles';
 
 interface AppointmentDetailsModalProps {
@@ -31,8 +32,26 @@ export function AppointmentDetailsModal({
 }: AppointmentDetailsModalProps) {
   const colors = useColors();
   const styles = createStyles(colors);
+  const user = useUserStore((state) => state.user);
 
   if (!appointment) return null;
+
+  const isProfessionalView = user?.professional_id === appointment.professional_id;
+
+  const headerAvatar = isProfessionalView
+    ? appointment.Client?.User?.avatar_uri
+    : appointment.Professional?.User?.avatar_uri;
+
+  const headerName = isProfessionalView
+    ? appointment.Client?.User?.name || 'Cliente'
+    : appointment.Professional?.User?.name || 'Profissional';
+
+  const formattedFullAddress = (() => {
+    if (!appointment.Address) return 'Endereço não informado';
+    const { street, number, complement, neighborhood, city, state, postal_code } =
+      appointment.Address;
+    return `${street}, ${number}${complement ? ` (${complement})` : ''} - ${neighborhood}, ${city}/${state}${postal_code ? ` - CEP ${postal_code}` : ''}`;
+  })();
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -113,19 +132,17 @@ export function AppointmentDetailsModal({
             { backgroundColor: colors.primaryWhite },
           ]}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {/* Header com foto do profissional */}
+            {/* Header com foto do participante */}
             <View style={styles.header}>
               <Image
                 source={{
-                  uri:
-                    appointment.Professional?.User?.avatar_uri ||
-                    'https://via.placeholder.com/80',
+                  uri: headerAvatar || 'https://via.placeholder.com/80',
                 }}
                 style={styles.professionalImage}
               />
               <View style={styles.headerInfo}>
                 <Text style={styles.professionalName}>
-                  {appointment.Professional?.User?.name || 'Profissional'}
+                  {headerName}
                   <Text style={styles.superscript}> *</Text>
                 </Text>
                 <Text style={styles.dateText}>
@@ -142,9 +159,21 @@ export function AppointmentDetailsModal({
             {/* Informações do agendamento */}
             <View style={styles.infoContainer}>
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Profissional:</Text>
+                <Text style={styles.infoLabel}>ID do Agendamento:</Text>
+                <Text style={styles.infoValue}>#{appointment.id}</Text>
+              </View>
+
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Serviço:</Text>
                 <Text style={styles.infoValue}>
-                  {appointment.Professional?.User?.name || 'N/A'}
+                  {appointment.Service?.title || 'N/A'}
+                </Text>
+              </View>
+
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Categoria:</Text>
+                <Text style={styles.infoValue}>
+                  {appointment.Service?.Subcategory?.name || 'N/A'}
                 </Text>
               </View>
 
@@ -163,16 +192,37 @@ export function AppointmentDetailsModal({
               </View>
 
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Serviço:</Text>
+                <Text style={styles.infoLabel}>Cliente:</Text>
                 <Text style={styles.infoValue}>
-                  {appointment.Service?.title || 'N/A'}
+                  {appointment.Client?.User?.name || 'N/A'}
                 </Text>
               </View>
 
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Categoria:</Text>
+                <Text style={styles.infoLabel}>Profissional:</Text>
                 <Text style={styles.infoValue}>
-                  {appointment.Service?.Subcategory?.name || 'N/A'}
+                  {appointment.Professional?.User?.name || 'N/A'}
+                </Text>
+              </View>
+
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Endereço Completo:</Text>
+                <Text style={styles.infoValue}>{formattedFullAddress}</Text>
+              </View>
+
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Forma de Pagamento:</Text>
+                <Text style={styles.infoValue}>
+                  {appointment.payment_method || 'Cartão de Crédito'}
+                </Text>
+              </View>
+
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Valor:</Text>
+                <Text style={styles.infoValue}>
+                  {appointment.Service?.price
+                    ? `R$ ${parseFloat(appointment.Service.price).toFixed(2).replace('.', ',')}`
+                    : 'N/A'}
                 </Text>
               </View>
 

@@ -89,12 +89,16 @@ export const createStyles = (colors: ColorsType) =>
       alignItems: 'center',
       marginBottom: 4,
     },
+    idText: {
+      fontSize: 11,
+      fontFamily: 'Afacad-SemiBold',
+      color: colors.textTertiary,
+      marginBottom: 2,
+    },
     profName: {
       fontSize: 14,
       fontFamily: 'Afacad-Bold',
       color: colors.primaryBlack,
-      flex: 1,
-      marginRight: 8,
     },
     ratingRow: {
       flexDirection: 'row',
@@ -104,23 +108,28 @@ export const createStyles = (colors: ColorsType) =>
       fontSize: 16,
       fontFamily: 'Afacad-SemiBold',
       color: colors.primaryOrange,
-      marginBottom: 8,
+      marginBottom: 6,
     },
-    dateRow: {
+    infoRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 16,
+      marginBottom: 4,
     },
-    dateText: {
+    infoIcon: {
+      width: 16,
+      textAlign: 'center',
+      marginRight: 6,
+    },
+    infoText: {
       fontSize: 13,
       color: colors.textSecondary,
       fontFamily: 'Afacad-Regular',
-      marginLeft: 6,
-      textTransform: 'capitalize',
+      flex: 1,
     },
     actions: {
       flexDirection: 'row',
       gap: 12,
+      marginTop: 12,
     },
     detailsButton: {
       flex: 1,

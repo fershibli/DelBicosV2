@@ -89,6 +89,12 @@ const AppointmentCardComponent: React.FC<AppointmentCardProps> = ({
     appointment.Professional.User.avatar_uri,
   ]);
 
+  const formattedAddress = useMemo(() => {
+    if (!appointment.Address) return 'Endereço a combinar';
+    const { street, number, neighborhood, city, state } = appointment.Address;
+    return `${street}, ${number} - ${neighborhood}, ${city}/${state}`;
+  }, [appointment.Address]);
+
   return (
     <View style={styles.card}>
       {/* Imagem de Capa e Badges */}
@@ -123,11 +129,14 @@ const AppointmentCardComponent: React.FC<AppointmentCardProps> = ({
 
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.profName} numberOfLines={1}>
-            {isProfessional
-              ? appointment.Client.User.name
-              : appointment.Professional.User.name}
-          </Text>
+          <View style={{ flex: 1, marginRight: 8 }}>
+            <Text style={styles.idText}>Agendamento #{appointment.id}</Text>
+            <Text style={styles.profName} numberOfLines={1}>
+              {isProfessional
+                ? `Cliente: ${appointment.Client.User.name}`
+                : `Profissional: ${appointment.Professional.User.name}`}
+            </Text>
+          </View>
           {appointment.rating && (
             <View style={styles.ratingRow}>
               <Rating
@@ -136,7 +145,7 @@ const AppointmentCardComponent: React.FC<AppointmentCardProps> = ({
                 imageSize={12}
                 readonly
                 startingValue={appointment.rating}
-                tintColor={colors.cardBackground} // Ajuste para Dark Mode
+                tintColor={colors.cardBackground}
                 style={{ marginRight: 4, backgroundColor: 'transparent' }}
               />
             </View>
@@ -147,10 +156,39 @@ const AppointmentCardComponent: React.FC<AppointmentCardProps> = ({
           {appointment.Service.title}
         </Text>
 
-        <View style={styles.dateRow}>
-          <FontAwesome name="calendar" size={12} color={colors.textTertiary} />
-          <Text style={styles.dateText}>
+        <View style={styles.infoRow}>
+          <FontAwesome
+            name="calendar"
+            size={12}
+            color={colors.textTertiary}
+            style={styles.infoIcon}
+          />
+          <Text style={styles.infoText}>
             {formatDateTime(appointment.start_time)}
+          </Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <FontAwesome
+            name="map-marker"
+            size={13}
+            color={colors.textTertiary}
+            style={styles.infoIcon}
+          />
+          <Text style={styles.infoText} numberOfLines={1}>
+            {formattedAddress}
+          </Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <FontAwesome
+            name="credit-card"
+            size={11}
+            color={colors.textTertiary}
+            style={styles.infoIcon}
+          />
+          <Text style={styles.infoText}>
+            {appointment.payment_method || 'Cartão de Crédito'}
           </Text>
         </View>
 
