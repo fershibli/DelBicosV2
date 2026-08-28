@@ -5,6 +5,7 @@
   "main": "index.tsx",
   "scripts": {
     "start": "expo start --dev-client",
+    "test": "jest",
     "web": "expo start --web",
     "set:dev": "cp environments/.env.dev .env && echo 'Switched to DEV environment'",
     "set:prod": "cp environments/.env.prod .env && echo 'Switched to PROD environment'",

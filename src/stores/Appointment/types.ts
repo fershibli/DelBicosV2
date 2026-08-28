@@ -59,6 +59,9 @@ export interface Professional {
   User: User;
 }
 
+/**
+ * Representa os dados de endereço do local de atendimento do cliente.
+ */
 export interface Address {
   id: number;
   street: string;
@@ -72,6 +75,10 @@ export interface Address {
   lng?: number;
 }
 
+/**
+ * Entidade completa de Agendamento, contendo relacionamentos com Serviço, Cliente, Profissional,
+ * Endereço e Forma de Pagamento.
+ */
 export interface Appointment {
   id: number;
   professional_id: number;
