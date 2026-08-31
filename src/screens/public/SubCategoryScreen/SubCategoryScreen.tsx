@@ -18,6 +18,8 @@ import { useColors } from '@theme/ThemeProvider';
 import { useThemeStore, ThemeMode } from '@stores/Theme';
 import { FontAwesome5 } from '@expo/vector-icons';
 
+import { getIconForSubCategory } from '@utils/icons';
+
 type SubCategoryRouteParams = {
   categoryId: number;
   categoryTitle: string;
@@ -67,8 +69,6 @@ LocaleConfig.locales['pt-br'] = {
   today: 'Hoje',
 } as any;
 LocaleConfig.defaultLocale = 'pt-br';
-
-import { getIconForSubCategory } from '@utils/icons';
 
 const SubCategoryButton: React.FC<{
   item: SubCategory;

@@ -6,6 +6,7 @@ import {
   View,
   Pressable,
   useWindowDimensions,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useCategoryStore } from '@stores/Category/Category';
@@ -158,6 +159,10 @@ function CategoryList() {
         contentContainerStyle={styles.listContainer}
         data={categories}
         keyExtractor={(item) => item.id.toString()}
+        initialNumToRender={8}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        removeClippedSubviews={Platform.OS !== 'web'}
         renderItem={({ item }) => (
           // Padding de 12px para dar espaçamento entre os cards
           <View style={{ flex: 1 / numColumns, padding: 12 }}>

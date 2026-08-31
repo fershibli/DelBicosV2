@@ -1,12 +1,18 @@
 import React, { useMemo } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { Rating } from 'react-native-ratings';
 import { FontAwesome } from '@expo/vector-icons';
 import { useColors } from '@theme/ThemeProvider';
 import { Appointment, AppointmentStatus } from '@stores/Appointment/types';
 import { useUserStore } from '@stores/User';
 import { useAppointmentStore } from '@stores/Appointment';
-import { ActivityIndicator } from 'react-native';
+
 import { createStyles } from './styles';
 
 interface AppointmentCardProps {
@@ -32,7 +38,7 @@ const formatDateTime = (dateString: string) => {
   }).format(date);
 };
 
-export const AppointmentCard: React.FC<AppointmentCardProps> = ({
+const AppointmentCardComponent: React.FC<AppointmentCardProps> = ({
   statusLabel,
   statusColor,
   appointment,
@@ -46,7 +52,9 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   const styles = createStyles(colors);
 
   const user = useUserStore((state) => state.user);
-  const { updateAppointmentStatus } = useAppointmentStore();
+  const updateAppointmentStatus = useAppointmentStore(
+    (state) => state.updateAppointmentStatus,
+  );
   const [loadingAction, setLoadingAction] = React.useState(false);
 
   const isProfessional = user?.professional_id === appointment.professional_id;
@@ -70,15 +78,22 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
     [appointment.Service.banner_uri],
   );
 
-  const displayAvatar = useMemo(
-    () => {
-      const uri = isProfessional
-        ? appointment.Client.User.avatar_uri
-        : appointment.Professional.User.avatar_uri;
-      return uri || 'https://via.placeholder.com/100';
-    },
-    [isProfessional, appointment.Client.User.avatar_uri, appointment.Professional.User.avatar_uri],
-  );
+  const displayAvatar = useMemo(() => {
+    const uri = isProfessional
+      ? appointment.Client.User.avatar_uri
+      : appointment.Professional.User.avatar_uri;
+    return uri || 'https://via.placeholder.com/100';
+  }, [
+    isProfessional,
+    appointment.Client.User.avatar_uri,
+    appointment.Professional.User.avatar_uri,
+  ]);
+
+  const formattedAddress = useMemo(() => {
+    if (!appointment.Address) return 'Endereço a combinar';
+    const { street, number, neighborhood, city, state } = appointment.Address;
+    return `${street}, ${number} - ${neighborhood}, ${city}/${state}`;
+  }, [appointment.Address]);
 
   return (
     <View style={styles.card}>
@@ -108,18 +123,20 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
         )}
 
         <View style={styles.avatarContainer}>
-          <Image
-            source={{ uri: displayAvatar }}
-            style={styles.avatarImage}
-          />
+          <Image source={{ uri: displayAvatar }} style={styles.avatarImage} />
         </View>
       </View>
 
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.profName} numberOfLines={1}>
-            {isProfessional ? appointment.Client.User.name : appointment.Professional.User.name}
-          </Text>
+          <View style={{ flex: 1, marginRight: 8 }}>
+            <Text style={styles.idText}>Agendamento #{appointment.id}</Text>
+            <Text style={styles.profName} numberOfLines={1}>
+              {isProfessional
+                ? `Cliente: ${appointment.Client.User.name}`
+                : `Profissional: ${appointment.Professional.User.name}`}
+            </Text>
+          </View>
           {appointment.rating && (
             <View style={styles.ratingRow}>
               <Rating
@@ -128,7 +145,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
                 imageSize={12}
                 readonly
                 startingValue={appointment.rating}
-                tintColor={colors.cardBackground} // Ajuste para Dark Mode
+                tintColor={colors.cardBackground}
                 style={{ marginRight: 4, backgroundColor: 'transparent' }}
               />
             </View>
@@ -139,27 +156,69 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
           {appointment.Service.title}
         </Text>
 
-        <View style={styles.dateRow}>
-          <FontAwesome name="calendar" size={12} color={colors.textTertiary} />
-          <Text style={styles.dateText}>
+        <View style={styles.infoRow}>
+          <FontAwesome
+            name="calendar"
+            size={12}
+            color={colors.textTertiary}
+            style={styles.infoIcon}
+          />
+          <Text style={styles.infoText}>
             {formatDateTime(appointment.start_time)}
+          </Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <FontAwesome
+            name="map-marker"
+            size={13}
+            color={colors.textTertiary}
+            style={styles.infoIcon}
+          />
+          <Text style={styles.infoText} numberOfLines={1}>
+            {formattedAddress}
+          </Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <FontAwesome
+            name="credit-card"
+            size={11}
+            color={colors.textTertiary}
+            style={styles.infoIcon}
+          />
+          <Text style={styles.infoText}>
+            {appointment.payment_method || 'Cartão de Crédito'}
           </Text>
         </View>
 
         <View style={styles.actions}>
           {isPending && isProfessional ? (
             loadingAction ? (
-              <ActivityIndicator size="small" color={colors.primaryOrange} style={{ flex: 1 }} />
+              <ActivityIndicator
+                size="small"
+                color={colors.primaryOrange}
+                style={{ flex: 1 }}
+              />
             ) : (
               <>
                 <TouchableOpacity
-                  style={[styles.detailsButton, { backgroundColor: colors.primaryGreen, borderColor: colors.primaryGreen }]}
+                  style={[
+                    styles.detailsButton,
+                    {
+                      backgroundColor: colors.primaryGreen,
+                      borderColor: colors.primaryGreen,
+                    },
+                  ]}
                   onPress={handleAccept}
                   activeOpacity={0.8}>
                   <Text style={styles.btnTextPrimary}>Aceitar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.detailsButton, { backgroundColor: '#ef4444', borderColor: '#ef4444' }]}
+                  style={[
+                    styles.detailsButton,
+                    { backgroundColor: '#ef4444', borderColor: '#ef4444' },
+                  ]}
                   onPress={handleReject}
                   activeOpacity={0.8}>
                   <Text style={styles.btnTextPrimary}>Recusar</Text>
@@ -188,3 +247,6 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
     </View>
   );
 };
+
+export const AppointmentCard = React.memo(AppointmentCardComponent);
+AppointmentCard.displayName = 'AppointmentCard';

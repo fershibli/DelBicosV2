@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Dimensions, StyleSheet } from 'react-native';
+import { View, Text, useWindowDimensions, StyleSheet } from 'react-native';
 import { EarningsMonth } from '@stores/Dashboard/types';
 import { LineChart } from 'react-native-chart-kit';
 
@@ -7,9 +7,10 @@ type Props = {
   earnings: EarningsMonth[];
 };
 
-const screenWidth = Dimensions.get('window').width - 32;
-
 export const EarningsChart: React.FC<Props> = ({ earnings }) => {
+  const { width } = useWindowDimensions();
+  const chartWidth = Math.max(width - 32, 280);
+
   if (!earnings || earnings.length === 0) {
     return (
       <View style={styles.container}>
@@ -33,7 +34,7 @@ export const EarningsChart: React.FC<Props> = ({ earnings }) => {
       <Text style={styles.title}>Ganhos ao longo do tempo</Text>
       <LineChart
         data={{ labels, datasets: [{ data }] }}
-        width={screenWidth}
+        width={chartWidth}
         height={220}
         chartConfig={{
           backgroundGradientFrom: '#fff',

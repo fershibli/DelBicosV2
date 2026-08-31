@@ -1,15 +1,24 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View, ScrollView, useWindowDimensions, TouchableOpacity } from 'react-native';
+import { AppointmentCard } from '@components/features/AppointmentCard';
+import { AppointmentDetailsModal } from '@components/features/AppointmentDetailsModal';
+import { RateServiceModal } from '@components/features/RateServiceModal';
+import { Button } from '@components/ui/Button';
+import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { useAppointmentStore } from '@stores/Appointment';
+import { Appointment, AppointmentStatus } from '@stores/Appointment/types';
 import { useFavoriteStore } from '@stores/Favorite';
 import { useUserStore } from '@stores/User';
 import { useColors } from '@theme/ThemeProvider';
-import { AppointmentDetailsModal } from '@components/features/AppointmentDetailsModal';
-import { RateServiceModal } from '@components/features/RateServiceModal';
-import { Appointment, AppointmentStatus } from '@stores/Appointment/types';
-import { AppointmentCard } from '@components/features/AppointmentCard';
-import { FontAwesome } from '@expo/vector-icons';
 import { ColorsType } from '@theme/types';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { createStyles } from './styles';
 
 const appointmentStatusRenderInfo = (
   colors: ColorsType,
@@ -50,16 +59,21 @@ const appointmentStatusRenderInfo = (
 const appointmentStatusRenderOrder: AppointmentStatus[] = [
   AppointmentStatus.PENDING,
   AppointmentStatus.CONFIRMED,
+  AppointmentStatus.COMPLETED,
+  AppointmentStatus.CANCELED,
 ];
-import { createStyles } from './styles';
 
 interface MeusAgendamentosProps {
   role?: 'client' | 'professional';
 }
 
 function MeusAgendamentos({ role }: MeusAgendamentosProps = {}) {
-  const { appointments, appointmentsByStatus, fetchAppointments, updateAppointmentStatus } =
-    useAppointmentStore();
+  const {
+    appointments,
+    appointmentsByStatus,
+    fetchAppointments,
+    updateAppointmentStatus,
+  } = useAppointmentStore();
   const { addFavorite, removeFavorite, isFavorite } = useFavoriteStore();
   const { user } = useUserStore();
   const colors = useColors();
@@ -75,11 +89,17 @@ function MeusAgendamentos({ role }: MeusAgendamentosProps = {}) {
   const [appointmentToRate, setAppointmentToRate] =
     useState<Appointment | null>(null);
 
-  const [activeFilter, setActiveFilter] = useState<'all' | AppointmentStatus.PENDING | AppointmentStatus.CONFIRMED>('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | AppointmentStatus>(
+    'all',
+  );
+
+  const navigation = useNavigation();
 
   useEffect(() => {
-    fetchAppointments(role);
-  }, [fetchAppointments, role]);
+    if (user) {
+      fetchAppointments(role);
+    }
+  }, [user, fetchAppointments, role]);
 
   const proximosAgendamentos = useMemo(() => {
     return appointments
@@ -98,6 +118,58 @@ function MeusAgendamentos({ role }: MeusAgendamentosProps = {}) {
           new Date(b.start_time).getTime() - new Date(a.start_time).getTime(),
       );
   }, [appointments]);
+
+  if (!user) {
+    return (
+      <View
+        style={[
+          styles.container,
+          {
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 24,
+            minHeight: 400,
+          },
+        ]}>
+        <FontAwesome
+          name="calendar-check-o"
+          size={56}
+          color={colors.primaryOrange}
+          style={{ marginBottom: 16 }}
+        />
+        <Text
+          style={{
+            fontSize: 22,
+            fontFamily: 'Afacad-Bold',
+            color: colors.primaryBlack,
+            textAlign: 'center',
+            marginBottom: 8,
+          }}>
+          Acompanhe seus Agendamentos
+        </Text>
+        <Text
+          style={{
+            fontSize: 15,
+            fontFamily: 'Afacad-Regular',
+            color: colors.textSecondary,
+            textAlign: 'center',
+            marginBottom: 24,
+            maxWidth: 320,
+            lineHeight: 22,
+          }}>
+          Para visualizar seus compromissos, solicitar novos serviços ou ver seu
+          histórico, faça login.
+        </Text>
+        <Button
+          colorVariant="primaryOrange"
+          sizeVariant="default"
+          fontVariant="AfacadBold16"
+          onPress={() => (navigation as any).navigate('Login')}>
+          Entrar ou Cadastrar-se
+        </Button>
+      </View>
+    );
+  }
 
   const handleToggleFavorite = (appointment: Appointment) => {
     const professionalId = appointment.Professional.id;
@@ -160,81 +232,147 @@ function MeusAgendamentos({ role }: MeusAgendamentosProps = {}) {
       contentContainerStyle={{ paddingBottom: 40 }}>
       <Text style={styles.pageTitle}>Meus Agendamentos</Text>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
-        <TouchableOpacity 
-          style={[styles.filterChip, activeFilter === 'all' && styles.filterChipActive]} 
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[
+            styles.filterChip,
+            activeFilter === 'all' && styles.filterChipActive,
+          ]}
           onPress={() => setActiveFilter('all')}>
-          <Text style={[styles.filterText, activeFilter === 'all' && styles.filterTextActive]}>Todos</Text>
+          <Text
+            style={[
+              styles.filterText,
+              activeFilter === 'all' && styles.filterTextActive,
+            ]}>
+            Todos
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.filterChip, activeFilter === AppointmentStatus.PENDING && styles.filterChipActive]} 
+        <TouchableOpacity
+          style={[
+            styles.filterChip,
+            activeFilter === AppointmentStatus.PENDING &&
+              styles.filterChipActive,
+          ]}
           onPress={() => setActiveFilter(AppointmentStatus.PENDING)}>
-          <Text style={[styles.filterText, activeFilter === AppointmentStatus.PENDING && styles.filterTextActive]}>Pendentes</Text>
+          <Text
+            style={[
+              styles.filterText,
+              activeFilter === AppointmentStatus.PENDING &&
+                styles.filterTextActive,
+            ]}>
+            Pendentes
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.filterChip, activeFilter === AppointmentStatus.CONFIRMED && styles.filterChipActive]} 
+        <TouchableOpacity
+          style={[
+            styles.filterChip,
+            activeFilter === AppointmentStatus.CONFIRMED &&
+              styles.filterChipActive,
+          ]}
           onPress={() => setActiveFilter(AppointmentStatus.CONFIRMED)}>
-          <Text style={[styles.filterText, activeFilter === AppointmentStatus.CONFIRMED && styles.filterTextActive]}>Confirmados</Text>
+          <Text
+            style={[
+              styles.filterText,
+              activeFilter === AppointmentStatus.CONFIRMED &&
+                styles.filterTextActive,
+            ]}>
+            Confirmados
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.filterChip,
+            activeFilter === AppointmentStatus.COMPLETED &&
+              styles.filterChipActive,
+          ]}
+          onPress={() => setActiveFilter(AppointmentStatus.COMPLETED)}>
+          <Text
+            style={[
+              styles.filterText,
+              activeFilter === AppointmentStatus.COMPLETED &&
+                styles.filterTextActive,
+            ]}>
+            Histórico
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.filterChip,
+            activeFilter === AppointmentStatus.CANCELED &&
+              styles.filterChipActive,
+          ]}
+          onPress={() => setActiveFilter(AppointmentStatus.CANCELED)}>
+          <Text
+            style={[
+              styles.filterText,
+              activeFilter === AppointmentStatus.CANCELED &&
+                styles.filterTextActive,
+            ]}>
+            Cancelados
+          </Text>
         </TouchableOpacity>
       </ScrollView>
 
       {appointmentStatusRenderOrder
-        .filter(status => activeFilter === 'all' || status === activeFilter)
+        .filter((status) => activeFilter === 'all' || status === activeFilter)
         .map((status) => {
-        const renderInfo = appointmentStatusRenderInfo(colors)[status];
-        const appointmentInfo = appointmentsByStatus[status] || [];
+          const renderInfo = appointmentStatusRenderInfo(colors)[status];
+          const appointmentInfo = appointmentsByStatus[status] || [];
 
-        return (
-          <View key={status} style={styles.section}>
-            <View
-              style={[
-                styles.sectionHeader,
-                { backgroundColor: renderInfo.color },
-              ]}>
-              <FontAwesome
-                name={renderInfo.icon}
-                size={18}
-                color="white"
-                style={{ marginRight: 8 }}
-              />
-              <Text style={styles.sectionTitle}>{renderInfo.label}</Text>
-            </View>
-
-            {appointmentInfo.length === 0 ? (
-              <EmptyState text={renderInfo.emptyText} />
-            ) : (
-              <View style={styles.grid}>
-                {appointmentInfo.map((apt) => (
-                  <View
-                    key={apt.id}
-                    style={[styles.gridItem, isDesktop && { width: '48%' }]}>
-                    <AppointmentCard
-                      statusLabel={renderInfo.label}
-                      statusColor={renderInfo.color}
-                      appointment={apt}
-                      statusVariant={status}
-                      isFavorite={isFavorite(apt.Professional.id)}
-                      onToggleFavorite={handleToggleFavorite}
-                      onOpenDetails={() => {
-                        setSelectedAppointment(apt);
-                        setIsModalVisible(true);
-                      }}
-                      onOpenRate={
-                        status === AppointmentStatus.COMPLETED
-                          ? () => {
-                              setAppointmentToRate(apt);
-                              setIsRateModalVisible(true);
-                            }
-                          : undefined
-                      }
-                    />
-                  </View>
-                ))}
+          return (
+            <View key={status} style={styles.section}>
+              <View
+                style={[
+                  styles.sectionHeader,
+                  { backgroundColor: renderInfo.color },
+                ]}>
+                <FontAwesome
+                  name={renderInfo.icon}
+                  size={18}
+                  color="white"
+                  style={{ marginRight: 8 }}
+                />
+                <Text style={styles.sectionTitle}>{renderInfo.label}</Text>
               </View>
-            )}
-          </View>
-        );
-      })}
+
+              {appointmentInfo.length === 0 ? (
+                <EmptyState text={renderInfo.emptyText} />
+              ) : (
+                <View style={styles.grid}>
+                  {appointmentInfo.map((apt) => (
+                    <View
+                      key={apt.id}
+                      style={[styles.gridItem, isDesktop && { width: '48%' }]}>
+                      <AppointmentCard
+                        statusLabel={renderInfo.label}
+                        statusColor={renderInfo.color}
+                        appointment={apt}
+                        statusVariant={status}
+                        isFavorite={isFavorite(apt.Professional.id)}
+                        onToggleFavorite={handleToggleFavorite}
+                        onOpenDetails={() => {
+                          setSelectedAppointment(apt);
+                          setIsModalVisible(true);
+                        }}
+                        onOpenRate={
+                          status === AppointmentStatus.COMPLETED
+                            ? () => {
+                                setAppointmentToRate(apt);
+                                setIsRateModalVisible(true);
+                              }
+                            : undefined
+                        }
+                      />
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          );
+        })}
 
       <AppointmentDetailsModal
         visible={isModalVisible}

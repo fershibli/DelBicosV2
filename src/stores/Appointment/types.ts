@@ -59,6 +59,26 @@ export interface Professional {
   User: User;
 }
 
+/**
+ * Representa os dados de endereço do local de atendimento do cliente.
+ */
+export interface Address {
+  id: number;
+  street: string;
+  number: string;
+  complement?: string | null;
+  neighborhood: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  lat?: number;
+  lng?: number;
+}
+
+/**
+ * Entidade completa de Agendamento, contendo relacionamentos com Serviço, Cliente, Profissional,
+ * Endereço e Forma de Pagamento.
+ */
 export interface Appointment {
   id: number;
   professional_id: number;
@@ -69,13 +89,17 @@ export interface Appointment {
   review: string | null;
   start_time: string;
   end_time: string;
+  completed_at?: string | null;
+  final_price?: number | null;
   status: AppointmentStatus;
   createdAt: string;
   updatedAt: string;
   Service: Service;
   Client: Client;
   payment_intent_id?: string | null;
+  payment_method?: string;
   Professional: Professional;
+  Address?: Address | null;
 }
 
 export interface InvoiceData {

@@ -22,7 +22,7 @@ interface HighlightCardProps {
   item: HighlightItem;
 }
 
-export const HighlightCard: React.FC<HighlightCardProps> = ({ item }) => {
+const HighlightCardComponent: React.FC<HighlightCardProps> = ({ item }) => {
   const colors = useColors();
   const styles = createStyles(colors);
   const { width } = useWindowDimensions();
@@ -62,3 +62,6 @@ export const HighlightCard: React.FC<HighlightCardProps> = ({ item }) => {
     </TouchableOpacity>
   );
 };
+
+export const HighlightCard = React.memo(HighlightCardComponent);
+HighlightCard.displayName = 'HighlightCard';

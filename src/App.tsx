@@ -7,7 +7,7 @@ import { Navigation } from '@screens/NavigationStack';
 import { LocationProvider } from '@lib/hooks/LocationContext';
 import { MenuProvider } from 'react-native-popup-menu';
 import { ThemeProvider, useColors } from '@theme/ThemeProvider';
-import { Platform, StatusBar, StyleSheet } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import {
   SafeAreaProvider,
   SafeAreaView,
@@ -22,9 +22,12 @@ import { useUserStore } from '@stores/User';
 import { useThemeStore } from '@stores/Theme';
 import { ThemeMode } from '@stores/Theme/types';
 
-Asset.loadAsync([...NavigationAssets]);
+import { AuthProvider } from '@lib/hooks/AuthContext';
 
-SplashScreen.preventAutoHideAsync();
+// Pre-carrega assets de navegação com captura de erro resiliente
+Asset.loadAsync([...NavigationAssets]).catch(() => {});
+
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function NotificationManager() {
   return null;
@@ -33,19 +36,19 @@ function NotificationManager() {
 registerTokenProvider(() => useUserStore.getState().token);
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   safeArea: {
     flex: 1,
   },
 });
 
-// Componente interno que vive dentro do ThemeProvider e tem acesso aos tokens de cor.
-// Responsável por sincronizar StatusBar, SafeAreaView e NavigationContainer com o tema atual.
 function AppContent() {
-  const { theme } = useThemeStore();
+  const theme = useThemeStore((state) => state.theme);
   const colors = useColors();
   const isDark = theme === ThemeMode.DARK;
 
-  // Tema do NavigationContainer mapeado para os nossos tokens de cor
   const navTheme = React.useMemo(
     () => ({
       dark: isDark,
@@ -68,9 +71,8 @@ function AppContent() {
   );
 
   return (
-    <SafeAreaView
-      style={[styles.safeArea, { backgroundColor: colors.cardBackground }]}
-      edges={Platform.OS !== 'web' ? ['top', 'bottom'] : []}>
+    <View
+      style={[styles.container, { backgroundColor: colors.cardBackground }]}>
       {Platform.OS !== 'web' && (
         <StatusBar
           barStyle={isDark ? 'light-content' : 'dark-content'}
@@ -78,21 +80,25 @@ function AppContent() {
           translucent={false}
         />
       )}
-      <LocationProvider>
-        <VLibrasSetup />
-        <NotificationManager />
-        <Navigation
-          theme={navTheme}
-          linking={{
-            enabled: 'auto',
-            prefixes: ['delbicos://'],
-          }}
-          onReady={() => {
-            SplashScreen.hideAsync();
-          }}
-        />
-      </LocationProvider>
-    </SafeAreaView>
+      <SafeAreaView
+        style={styles.safeArea}
+        edges={Platform.OS !== 'web' ? ['top', 'bottom'] : []}>
+        <LocationProvider>
+          <VLibrasSetup />
+          <NotificationManager />
+          <Navigation
+            theme={navTheme}
+            linking={{
+              enabled: 'auto',
+              prefixes: ['delbicos://'],
+            }}
+            onReady={() => {
+              SplashScreen.hideAsync().catch(() => {});
+            }}
+          />
+        </LocationProvider>
+      </SafeAreaView>
+    </View>
   );
 }
 
@@ -111,21 +117,12 @@ export function App() {
     if (Platform.OS === 'web') {
       if (GOOGLE_ANALYTICS_ID) {
         initGAWeb(GOOGLE_ANALYTICS_ID);
-      } else {
-        console.warn('Variável de conexão do GA não definida');
       }
-
       if (CLARITY_ID) {
         initClarityWeb(CLARITY_ID);
-      } else {
-        console.warn('Variável de conexão do Clarity não definida');
       }
     }
-
-    if (loaded || error) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded, error]);
+  }, []);
 
   if (!loaded || error) {
     return null;
@@ -135,9 +132,13 @@ export function App() {
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <MenuProvider>
         <ThemeProvider>
-          <AppContent />
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
         </ThemeProvider>
       </MenuProvider>
     </SafeAreaProvider>
   );
 }
+
+export default App;

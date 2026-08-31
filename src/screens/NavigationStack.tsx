@@ -1,14 +1,9 @@
-import {
-  createStaticNavigation,
-  StaticParamList,
-} from '@react-navigation/native';
+import { createStaticNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome } from '@expo/vector-icons';
 import { Platform, Image } from 'react-native';
-import { useThemeStore } from '@stores/Theme';
 import { useColors } from '@theme/ThemeProvider';
-import { ThemeMode } from '@stores/Theme/types';
 import Feed from './public/Feed';
 import NotFound from './public/NotFound';
 import RegisterScreen from './public/RegisterScreen';
@@ -31,10 +26,7 @@ import AdminDashboard from './private/admin/AdminDashboard';
 import AdminAnalytics from './private/admin/AdminAnalytics';
 import ProfessionalDashboard from './private/ProfessionalDashboard';
 import ProfileScreen from '@screens/private/client/Profile/Tabs/ProfileScreen';
-
-import ProfessionalEarningsScreen from './private/ProfessionalEarningsScreen/ProfessionalEarningsScreen';
 import ServicesListScreen from '@screens/private/professional/Services/ServicesList';
-import AvailabilityListScreen from '@screens/private/professional/Availability/AvailabilityList';
 import ProfessionalRadiusScreen from '@screens/private/professional/RadiusScreen/ProfessionalRadiusScreen';
 import ChatListScreen from '@screens/private/chat/ChatListScreen';
 import ChatThreadScreen from '@screens/private/chat/ChatThreadScreen';
@@ -43,9 +35,7 @@ const Tab = createBottomTabNavigator();
 
 const MainTabs = () => {
   const { user } = useUserStore();
-  const { theme } = useThemeStore();
   const colors = useColors();
-  const isDark = theme === ThemeMode.DARK;
 
   return (
     <Tab.Navigator
@@ -128,9 +118,7 @@ const MainTabs = () => {
 
 const ProfessionalTabs = () => {
   const { user } = useUserStore();
-  const { theme } = useThemeStore();
   const colors = useColors();
-  const isDark = theme === ThemeMode.DARK;
 
   return (
     <Tab.Navigator
@@ -176,32 +164,12 @@ const ProfessionalTabs = () => {
         }}
       />
       <Tab.Screen
-        name="ProfessionalEarningsTab"
-        component={ProfessionalEarningsScreen}
-        options={{
-          title: 'Saldo',
-          tabBarIcon: ({ color, size }) => (
-            <FontAwesome name="dollar" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="ProfessionalServicesTab"
         component={ServicesListScreen}
         options={{
           title: 'Serviços',
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="wrench" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="ProfessionalAvailabilityTab"
-        component={AvailabilityListScreen}
-        options={{
-          title: 'Disponibilidade',
-          tabBarIcon: ({ color, size }) => (
-            <FontAwesome name="calendar" size={size} color={color} />
           ),
         }}
       />
@@ -231,10 +199,13 @@ const ProfessionalTabs = () => {
   );
 };
 
-// If logged in Home = MainTabs (mobile) or Feed (web), otherwise Home = Login
+// Home: Sempre abre o MainTabs (ou ProfessionalTabs) no Mobile e Feed na Web
 const Home = () => {
-  const { user } = useUserStore();
-  return user ? Platform.OS === 'web' ? <Feed /> : <MainTabs /> : <Login />;
+  const user = useUserStore((state) => state.user);
+  if (Platform.OS === 'web') {
+    return <Feed />;
+  }
+  return user?.professional_id ? <ProfessionalTabs /> : <MainTabs />;
 };
 
 const RootStack = createNativeStackNavigator({
@@ -366,11 +337,9 @@ const RootStack = createNativeStackNavigator({
         path: 'professional',
         screens: {
           ProfessionalHomeTab: '',
-          ProfessionalSchedulesTab: 'ProfessionalSchedulesTab',
-          ProfessionalEarningsTab: 'ProfessionalEarningsTab',
-          ProfessionalServicesTab: 'ProfessionalServicesTab',
-          ProfessionalAvailabilityTab: 'ProfessionalAvailabilityTab',
-          ProfessionalProfileTab: 'ProfessionalProfileTab',
+          ProfessionalSchedulesTab: 'schedules',
+          ProfessionalServicesTab: 'services',
+          ProfessionalProfileTab: 'profile',
         },
       },
       options: {

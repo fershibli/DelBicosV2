@@ -203,7 +203,7 @@ const FeedScreen: React.FC = () => {
                     ) : (
                       <View style={styles.dropdownEmpty}>
                         <Text style={styles.dropdownEmptyText}>
-                          Nenhum serviço encontrado com "{search}".
+                          Nenhum serviço encontrado com &quot;{search}&quot;.
                         </Text>
                       </View>
                     )}

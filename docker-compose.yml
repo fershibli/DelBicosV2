@@ -21,9 +21,9 @@ services:
     environment:
       # Variáveis de ambiente do .env
       - EXPO_PUBLIC_ENVIRONMENT=${EXPO_PUBLIC_ENVIRONMENT:-development}
-      # Usar host.docker.internal para acessar o backend na máquina host
       - EXPO_PUBLIC_DOMAIN_ANDROID=${EXPO_PUBLIC_DOMAIN_ANDROID:-host.docker.internal}
-      - EXPO_PUBLIC_DOMAIN_IOS=${EXPO_PUBLIC_DOMAIN_IOS:-host.docker.internal}
+      - EXPO_PUBLIC_DOMAIN_IOS=${EXPO_PUBLIC_DOMAIN_IOS:-localhost}
+      - EXPO_PUBLIC_DOMAIN_WEB=${EXPO_PUBLIC_DOMAIN_WEB:-localhost}
       - EXPO_PUBLIC_PORT=${EXPO_PUBLIC_PORT:-3000}
       - EXPO_PUBLIC_HTTP_PROTOCOL=${EXPO_PUBLIC_HTTP_PROTOCOL:-http}
       - EXPO_PUBLIC_WS_PROTOCOL=${EXPO_PUBLIC_WS_PROTOCOL:-ws}

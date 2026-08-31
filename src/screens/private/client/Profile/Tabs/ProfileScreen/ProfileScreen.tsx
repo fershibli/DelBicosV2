@@ -1,17 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, ActivityIndicator, Alert } from 'react-native';
+import { Alert } from 'react-native';
 import { useUserStore } from '@stores/User';
-import { useColors } from '@theme/ThemeProvider';
-import { createLoadingStyles } from './styles';
 import ProfileWrapper from '@screens/private/client/Profile/Tabs/ProfileWrapper';
+import { UnauthenticatedProfileView } from './UnauthenticatedProfileView';
 
 const UserProfileScreen: React.FC = () => {
   const [uploading, setUploading] = useState<boolean>(false);
   const { user, avatarBase64, uploadAvatar, removeAvatar, fetchCurrentUser } =
     useUserStore();
-
-  const colors = useColors();
-  const styles = createLoadingStyles(colors);
 
   useEffect(() => {
     fetchCurrentUser();
@@ -48,11 +44,7 @@ const UserProfileScreen: React.FC = () => {
   );
 
   if (!user) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primaryOrange} />
-      </View>
-    );
+    return <UnauthenticatedProfileView />;
   }
 
   return (

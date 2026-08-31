@@ -1,7 +1,5 @@
-import { StyleSheet, Platform, Dimensions } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { ColorsType } from '@theme/types';
-
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export const createStyles = (colors: ColorsType) =>
   StyleSheet.create({
@@ -18,7 +16,7 @@ export const createStyles = (colors: ColorsType) =>
       maxWidth: 500,
       borderRadius: 20,
       padding: 24,
-      maxHeight: SCREEN_HEIGHT * 0.85,
+      maxHeight: '85%',
       ...Platform.select({
         ios: {
           shadowColor: colors.primaryBlack,

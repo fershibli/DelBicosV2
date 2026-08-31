@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   ScrollView,
+  Platform,
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { createStyles } from './styles';
@@ -60,7 +61,6 @@ function SearchResultScreen() {
     };
 
     loadResults();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subCategoryId, date, fetchProfessionalsByAvailability, address]);
 
   const colors = useColors();
@@ -125,6 +125,10 @@ function SearchResultScreen() {
           contentContainerStyle={styles.contentContainer}
           data={results}
           keyExtractor={(item) => item.id.toString()}
+          initialNumToRender={6}
+          maxToRenderPerBatch={8}
+          windowSize={5}
+          removeClippedSubviews={Platform.OS !== 'web'}
           numColumns={numColumns}
           key={`grid-${numColumns}`}
           columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}

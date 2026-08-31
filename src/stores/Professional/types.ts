@@ -64,6 +64,20 @@ export interface Review {
   Client: AppointmentClient;
 }
 
+export interface GalleryItem {
+  id: number;
+  professional_id: number;
+  url: string;
+  description?: string;
+  active?: boolean;
+}
+
+export interface AmenityItem {
+  id: number;
+  name: string;
+  icon?: string;
+}
+
 export interface Professional {
   id: number;
   user_id: number;
@@ -79,6 +93,8 @@ export interface Professional {
   MainAddress?: Address;
   Services: Service[];
   Appointments: Review[];
+  Gallery?: GalleryItem[];
+  Amenities?: AmenityItem[];
 
   // Raio de atendimento
   service_radius_km?: number;
