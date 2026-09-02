@@ -36,6 +36,11 @@ async function fetchPaymentIntent(
 ): Promise<string | null> {
   if (!token) return null;
 
+  if (amount <= 0) {
+    console.error('[CheckoutScreen] Amount inválido:', amount);
+    return null;
+  }
+
   try {
     const response = await fetch(
       `${HTTP_DOMAIN}/api/payments/create-payment-intent`,
@@ -92,6 +97,19 @@ function CheckoutScreen() {
   const colors = useColors();
   const styles = createStyles(colors);
 
+  const service = useMemo(() => {
+    if (selectedProfessional && serviceId) {
+      const found = selectedProfessional.Services?.find(
+        (s) => String(s.id) === String(serviceId),
+      );
+      if (!found) {
+        setErrorIntent('Serviço não encontrado. Tente novamente.');
+      }
+      return found || null;
+    }
+    return null;
+  }, [selectedProfessional, serviceId]);
+
   const formattedTime = useMemo(() => {
     if (!selectedTime) return '';
     try {
@@ -110,25 +128,20 @@ function CheckoutScreen() {
     }
   }, [selectedTime]);
 
-  // Voltar com segurança
   const handleGoBack = () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else {
-      // @ts-ignore
       navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
     }
   };
 
-  // Redirect unauthenticated users to Login
   useEffect(() => {
     if (!user) {
-      // @ts-ignore
       navigation.navigate('Login');
     }
   }, [user, navigation]);
 
-  // 1. Carrega Profissional
   useEffect(() => {
     if (!user) return;
     const loadData = async () => {
@@ -139,29 +152,33 @@ function CheckoutScreen() {
     loadData();
   }, [user, professionalId, fetchProfessionalById]);
 
-  // 2. Identifica o Serviço
-  const service = useMemo(() => {
-    if (selectedProfessional && serviceId) {
-      const found = selectedProfessional.Services?.find(
-        (s) => String(s.id) === String(serviceId),
-      );
-      if (!found) {
-        setErrorIntent('Serviço não encontrado. Tente novamente.');
-      }
-      return found || null;
+  const amountInReais = useMemo(() => {
+    if (!service) return 0;
+    if (service.price_cents !== null && service.price_cents !== undefined) {
+      return service.price_cents / 100;
     }
-    return null;
-  }, [selectedProfessional, serviceId]);
+    if (service.price !== null && service.price !== undefined) {
+      return Number(service.price);
+    }
+    return 0;
+  }, [service]);
 
-  // 3. Inicializa Pagamento (Quando tiver serviço + endereço)
   useEffect(() => {
     if (service && selectedAddress && token) {
       const initPayment = async () => {
         setLoadingIntent(true);
         setErrorIntent(null);
 
+        if (amountInReais <= 0) {
+          setErrorIntent('Valor do serviço inválido. Entre em contato com o suporte.');
+          setLoadingIntent(false);
+          return;
+        }
+
+        console.log('[CheckoutScreen] Enviando amount (em reais):', amountInReais);
+
         const secret = await fetchPaymentIntent(
-          (service.price_cents ?? 0) / 100,
+          amountInReais,
           professionalId,
           service.id,
           selectedTime,
@@ -178,9 +195,8 @@ function CheckoutScreen() {
       };
       initPayment();
     }
-  }, [service, selectedAddress, professionalId, selectedTime, token]);
+  }, [service, selectedAddress, professionalId, selectedTime, token, amountInReais]);
 
-  // Configuração do Stripe Elements
   const stripeOptions = useMemo(
     () => ({
       clientSecret: clientSecret || '',
@@ -189,7 +205,6 @@ function CheckoutScreen() {
     [clientSecret],
   );
 
-  // --- Renderização de Estados ---
 
   if (isLoadingProfessional) {
     return (
@@ -218,7 +233,6 @@ function CheckoutScreen() {
       style={styles.container}
       contentContainerStyle={styles.centerContainer}>
       <View style={styles.contentMaxWidth}>
-        {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
             <FontAwesome
@@ -233,7 +247,6 @@ function CheckoutScreen() {
         <Text style={styles.pageTitle}>Confirmar Agendamento</Text>
 
         <View style={styles.mainContent}>
-          {/* COLUNA ESQUERDA: Resumo */}
           <View style={styles.leftColumn}>
             <View style={styles.summaryCard}>
               <Image
@@ -268,9 +281,7 @@ function CheckoutScreen() {
             </View>
           </View>
 
-          {/* COLUNA DIREITA: Endereço e Pagamento */}
           <View style={styles.rightColumn}>
-            {/* Seção Endereço */}
             {selectedAddress ? (
               <View style={styles.addressContainer}>
                 <View style={styles.addressRow}>
@@ -299,7 +310,6 @@ function CheckoutScreen() {
               </TouchableOpacity>
             )}
 
-            {/* Seção Pagamento */}
             <View style={styles.paymentCard}>
               <Text style={styles.sectionTitle}>Pagamento</Text>
 
